@@ -1,0 +1,134 @@
+﻿@{
+    ViewData["Title"] = "Overview";
+}
+
+<div class="hero-modern">
+    <div class="hero-badge">
+        <i class="bi bi-stars"></i>
+        <span>Modern inventory workspace</span>
+    </div>
+
+    <h1 class="hero-title">Manage your clothing inventory in a cleaner, smarter way.</h1>
+
+    <p class="hero-text">
+        Track products, size and color variants, stock in and stock out, inventory movement,
+        and business reports from one beautiful dashboard.
+    </p>
+
+    <div class="hero-actions">
+        <a asp-controller="Dashboard" asp-action="Index" class="btn-modern-light">
+            Open Dashboard
+        </a>
+        <a asp-controller="Stock" asp-action="Inventory" class="btn-modern-glass">
+            View Inventory Log
+        </a>
+    </div>
+</div>
+
+<div class="section-grid">
+    <div class="card-modern card-span-4 metric-card">
+        <div class="metric-icon">
+            <i class="bi bi-box-seam-fill"></i>
+        </div>
+        <div class="metric-label">Total Products</div>
+        <div class="metric-value">128</div>
+        <div class="metric-sub">Across all categories</div>
+    </div>
+
+    <div class="card-modern card-span-4 metric-card">
+        <div class="metric-icon">
+            <i class="bi bi-palette-fill"></i>
+        </div>
+        <div class="metric-label">Variants</div>
+        <div class="metric-value">356</div>
+        <div class="metric-sub">Sizes and colors tracked</div>
+    </div>
+
+    <div class="card-modern card-span-4 metric-card">
+        <div class="metric-icon">
+            <i class="bi bi-exclamation-circle-fill"></i>
+        </div>
+        <div class="metric-label">Low Stock</div>
+        <div class="metric-value">12</div>
+        <div class="metric-sub">Need replenishment soon</div>
+    </div>
+
+    <div class="card-modern card-span-8">
+        <h4 class="mb-3 fw-bold">Inventory trend</h4>
+        <div class="placeholder-chart"></div>
+    </div>
+
+    <div class="card-modern card-span-4">
+        <h4 class="mb-3 fw-bold">Quick actions</h4>
+
+        <div class="quick-links">
+            <a asp-controller="Products" asp-action="Index" class="quick-link-modern">
+                <i class="bi bi-plus-square-fill"></i>
+                <span>Add Product</span>
+            </a>
+
+            <a asp-controller="Stock" asp-action="StockIn" class="quick-link-modern">
+                <i class="bi bi-plus-circle-fill"></i>
+                <span>Stock In</span>
+            </a>
+
+            <a asp-controller="Stock" asp-action="StockOut" class="quick-link-modern">
+                <i class="bi bi-dash-circle-fill"></i>
+                <span>Stock Out</span>
+            </a>
+
+            <a asp-controller="Reports" asp-action="Index" class="quick-link-modern">
+                <i class="bi bi-file-earmark-bar-graph-fill"></i>
+                <span>Reports</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="card-modern card-span-12">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0 fw-bold">Recent inventory activity</h4>
+            <span class="text-secondary">Latest updates</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table-modern">
+                <thead>
+                    <tr>
+                        <th>SKU</th>
+                        <th>Product</th>
+                        <th>Action</th>
+                        <th>Qty</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>TSH-BLK-M</td>
+                        <td>Basic Tee Black M</td>
+                        <td>Stock In</td>
+                        <td>+25</td>
+                        <td>2026-04-07</td>
+                        <td><span class="badge-soft success">Completed</span></td>
+                    </tr>
+                    <tr>
+                        <td>DRS-WHT-S</td>
+                        <td>Summer Dress White S</td>
+                        <td>Stock Out</td>
+                        <td>-3</td>
+                        <td>2026-04-07</td>
+                        <td><span class="badge-soft success">Completed</span></td>
+                    </tr>
+                    <tr>
+                        <td>JKT-NVY-L</td>
+                        <td>Classic Jacket Navy L</td>
+                        <td>Low Stock Alert</td>
+                        <td>5 left</td>
+                        <td>2026-04-06</td>
+                        <td><span class="badge-soft warning">Attention</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
