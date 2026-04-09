@@ -1,0 +1,65 @@
+﻿@using ClothInventoryApp.Dto.Textile
+@model IEnumerable<ViewTextileDto>
+
+@{
+    ViewData["Title"] = "Textiles";
+}
+
+<div class="product-index-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <div class="hero-kicker">
+                <i class="bi bi-box-seam-fill"></i>
+                <span>Textile</span>
+            </div>
+
+            <h1>Textile List</h1>
+            <p>Manage your textile purchases and inventory records.</p>
+
+            <div class="hero-actions">
+                <a asp-action="Create" class="btn-modern-primary">
+                    <i class="bi bi-plus-circle"></i>
+                    Create Textile
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="product-table-card">
+        <table class="table-modern">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Purchase From</th>
+                    <th>Quantity</th>
+                    <th>Purchase Date</th>
+                    <th>Unit Price</th>
+                    <th>Total Price</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.PurchaseFrom</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.PurchaseDate.ToString("yyyy-MM-dd")</td>
+                        <td>@item.UnitPrice</td>
+                        <td>@item.TotalPrice</td>
+                        <td class="text-end">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn-icon"><i class="bi bi-pencil"></i></a>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn-icon"><i class="bi bi-eye"></i></a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn-icon text-danger"><i class="bi bi-trash"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/product-index.css" />
+}

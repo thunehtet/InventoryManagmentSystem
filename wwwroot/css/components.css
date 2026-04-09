@@ -1,0 +1,140 @@
+﻿.card-modern {
+    background: rgba(255,255,255,0.78);
+    border: 1px solid rgba(255,255,255,0.52);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+}
+
+.card-span-4 {
+    grid-column: span 4;
+}
+
+.card-span-6 {
+    grid-column: span 6;
+}
+
+.card-span-8 {
+    grid-column: span 8;
+}
+
+.card-span-12 {
+    grid-column: span 12;
+}
+
+.metric-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.metric-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #eef2ff, #ede9fe);
+    color: #4f46e5;
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+}
+
+.metric-label {
+    font-size: 0.9rem;
+    color: var(--muted);
+    font-weight: 500;
+}
+
+.metric-value {
+    font-size: 1.9rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.metric-sub {
+    font-size: 0.88rem;
+    color: var(--muted);
+}
+
+.quick-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.quick-link-modern {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: #ffffff;
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 600;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+}
+
+.placeholder-chart {
+    height: 280px;
+    border-radius: 22px;
+    background: linear-gradient(180deg, rgba(99,91,255,0.08), rgba(99,91,255,0.01)), repeating-linear-gradient( to top, rgba(16,24,40,0.04) 0px, rgba(16,24,40,0.04) 1px, transparent 1px, transparent 44px );
+    position: relative;
+    overflow: hidden;
+}
+
+    .placeholder-chart::after {
+        content: "";
+        position: absolute;
+        left: 5%;
+        right: 5%;
+        bottom: 20%;
+        height: 120px;
+        border-radius: 100px;
+        border: 4px solid rgba(99,91,255,0.45);
+        border-color: transparent transparent rgba(99,91,255,0.55) transparent;
+        transform: rotate(-4deg);
+    }
+
+
+.table-modern {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .table-modern th,
+    .table-modern td {
+        padding: 14px 10px;
+        text-align: left;
+        border-bottom: 1px solid rgba(16,24,40,0.06);
+    }
+
+    .table-modern th {
+        color: var(--muted);
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+.badge-soft {
+    display: inline-flex;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+    .badge-soft.success {
+        background: #ecfdf3;
+        color: #067647;
+    }
+
+    .badge-soft.warning {
+        background: #fffaeb;
+        color: #b54708;
+    }
+

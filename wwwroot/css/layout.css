@@ -1,0 +1,221 @@
+﻿.app-shell {
+    display: flex;
+    min-height: 100vh;
+    gap: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, var(--sidebar-1), var(--sidebar-2));
+    color: white;
+    border-radius: 28px;
+    padding: 22px 18px;
+    box-shadow: 0 18px 40px rgba(2, 6, 23, 0.25);
+    transition: all 0.28s ease;
+    overflow: hidden;
+}
+
+    .sidebar.collapsed {
+        width: 92px;
+    }
+
+        .sidebar.collapsed .brand-title,
+        .sidebar.collapsed .brand-subtitle,
+        .sidebar.collapsed .nav-link-modern span,
+        .sidebar.collapsed .nav-section-title {
+            display: none;
+        }
+
+        .sidebar.collapsed .sidebar-brand {
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .nav-link-modern {
+            justify-content: center;
+        }
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    padding: 10px 8px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.brand-logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #ffffff, #dbeafe);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+    .brand-logo img {
+        width: 30px;
+        height: 30px;
+        object-fit: contain;
+    }
+
+.brand-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.brand-subtitle {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.65);
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.nav-section-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.45);
+    margin-top: 18px;
+    margin-bottom: 6px;
+    padding: 0 10px;
+}
+
+.nav-link-modern {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: rgba(255,255,255,0.88);
+    text-decoration: none;
+    padding: 13px 14px;
+    border-radius: 16px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+    .nav-link-modern i {
+        font-size: 1.05rem;
+    }
+
+    .nav-link-modern:hover {
+        background: rgba(255,255,255,0.10);
+        color: white;
+        transform: translateX(2px);
+    }
+
+.main-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.45);
+    border-radius: 24px;
+    padding: 16px 20px;
+    box-shadow: var(--shadow);
+}
+
+.topbar-left,
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.menu-btn {
+    width: 46px;
+    height: 46px;
+    border: none;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    font-size: 1.2rem;
+}
+
+.topbar-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    border-radius: 16px;
+    padding: 12px 14px;
+    min-width: 320px;
+    box-shadow: inset 0 0 0 1px rgba(16,24,40,0.06);
+}
+
+    .topbar-search i {
+        color: var(--muted);
+    }
+
+    .topbar-search input {
+        border: none;
+        outline: none;
+        width: 100%;
+        background: transparent;
+        font-size: 0.95rem;
+    }
+
+.topbar-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #ede9fe, #eef2ff);
+    color: #4f46e5;
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-weight: 600;
+    font-size: 0.88rem;
+}
+
+.user-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    border-radius: 18px;
+    padding: 8px 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+}
+
+.user-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-2));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.user-name {
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
+.user-role {
+    font-size: 0.78rem;
+    color: var(--muted);
+}
+
+.page-content {
+    flex: 1;
+}

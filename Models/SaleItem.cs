@@ -11,7 +11,7 @@ public class SaleItem
     public ProductVariant ProductVariant { get; set; } = null!;
 
     public int Quantity { get; set; }
-    public decimal UnitPrice { get; set; }
-    public decimal CostPrice { get; set; }
+    public int UnitPrice { get; set; }
+    public int CostPrice { get; set; }
 }
 

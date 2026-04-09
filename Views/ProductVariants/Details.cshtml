@@ -1,0 +1,87 @@
+﻿@using ClothInventoryApp.Dto.ProductVariant
+@model ViewProductVariantDto
+
+@{
+    ViewData["Title"] = "Variant Details";
+}
+
+<div class="create-product-shell">
+    <div class="create-product-hero">
+        <div class="create-product-hero-content">
+            <div class="hero-kicker">
+                <i class="bi bi-eye-fill"></i>
+                <span>Variant Details</span>
+            </div>
+
+            <h1>Variant details</h1>
+            <p>
+                Review the selected product variant information.
+            </p>
+
+            <div class="hero-actions">
+                <a asp-action="Index" class="btn-soft-light">
+                    <i class="bi bi-arrow-left"></i>
+                    Back to Variants
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="create-product-grid">
+        <div class="create-main-card">
+            <div class="section-header">
+                <div>
+                    <h3>Variant information</h3>
+                    <p>Read-only view of the product variant.</p>
+                </div>
+            </div>
+
+            <div class="form-grid-modern">
+                <div class="form-group-modern form-group-full">
+                    <label class="form-label-modern">Product</label>
+                    <input value="@Model.ProductName" class="input-modern input-modern-lg" readonly />
+                </div>
+
+                <div class="form-group-modern form-group-full">
+                    <label class="form-label-modern">SKU</label>
+                    <input value="@Model.SKU" class="input-modern input-modern-lg" readonly />
+                </div>
+
+                <div class="form-group-modern">
+                    <label class="form-label-modern">Size</label>
+                    <input value="@Model.Size" class="input-modern" readonly />
+                </div>
+
+                <div class="form-group-modern">
+                    <label class="form-label-modern">Color</label>
+                    <input value="@Model.Color" class="input-modern" readonly />
+                </div>
+
+                <div class="form-group-modern">
+                    <label class="form-label-modern">Cost Price</label>
+                    <input value="@Model.CostPrice.ToString("0.00")" class="input-modern" readonly />
+                </div>
+
+                <div class="form-group-modern">
+                    <label class="form-label-modern">Selling Price</label>
+                    <input value="@Model.SellingPrice.ToString("0.00")" class="input-modern" readonly />
+                </div>
+            </div>
+
+            <div class="form-footer-modern">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-modern-primary btn-modern-lg">
+                    <i class="bi bi-pencil"></i>
+                    Edit Variant
+                </a>
+
+                <a asp-action="Index" class="btn-modern-outline btn-modern-lg">
+                    Back
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/create-product.css" />
+}

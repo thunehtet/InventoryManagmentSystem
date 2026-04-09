@@ -1,0 +1,79 @@
+﻿@model IEnumerable<ClothInventoryApp.Dto.InventoryViewModel>
+
+@{
+    ViewData["Title"] = "Inventory";
+}
+
+<div class="product-index-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <div class="hero-kicker">
+                <i class="bi bi-box-seam-fill"></i>
+                <span>Inventory</span>
+            </div>
+
+            <h1>Inventory Status</h1>
+            <p>View current stock balance for each product variant.</p>
+
+            <div class="hero-actions">
+                <a asp-action="StockIn" class="btn-modern-primary">
+                    <i class="bi bi-plus-circle"></i>
+                    Stock In
+                </a>
+
+                <a asp-action="StockOut" class="btn-modern-outline">
+                    <i class="bi bi-dash-circle"></i>
+                    Stock Out
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="product-table-card">
+        <div class="section-header">
+            <div>
+                <h3>Current Inventory</h3>
+                <p>Stock balance by product variant.</p>
+            </div>
+        </div>
+
+        <div class="table-responsive-modern">
+            <table class="table-modern">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>SKU</th>
+                        <th>Color</th>
+                        <th>Size</th>
+                        <th>Current Stock</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="empty-state">No inventory records found.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.ProductName</td>
+                                <td>@item.SKU</td>
+                                <td>@item.Color</td>
+                                <td>@item.Size</td>
+                                <td>@item.CurrentStock</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/product-index.css" />
+}

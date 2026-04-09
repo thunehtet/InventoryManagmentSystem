@@ -1,0 +1,34 @@
+﻿@using ClothInventoryApp.Dto.Textile
+@model ViewTextileDto
+
+@{
+    ViewData["Title"] = "Textile Details";
+}
+
+<div class="create-product-shell">
+    <div class="create-main-card">
+        <div class="section-header">
+            <div>
+                <h3>Textile Details</h3>
+            </div>
+        </div>
+
+        <div class="form-grid-modern">
+            <div class="form-group-modern"><label class="form-label-modern">Name</label><input value="@Model.Name" class="input-modern" readonly /></div>
+            <div class="form-group-modern"><label class="form-label-modern">Purchase From</label><input value="@Model.PurchaseFrom" class="input-modern" readonly /></div>
+            <div class="form-group-modern"><label class="form-label-modern">Quantity</label><input value="@Model.Quantity" class="input-modern" readonly /></div>
+            <div class="form-group-modern"><label class="form-label-modern">Purchase Date</label><input value="@Model.PurchaseDate.ToString("yyyy-MM-dd")" class="input-modern" readonly /></div>
+            <div class="form-group-modern"><label class="form-label-modern">Unit Price</label><input value="@Model.UnitPrice" class="input-modern" readonly /></div>
+            <div class="form-group-modern"><label class="form-label-modern">Total Price</label><input value="@Model.TotalPrice" class="input-modern" readonly /></div>
+        </div>
+
+        <div class="form-footer-modern">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-modern-primary btn-modern-lg">Edit</a>
+            <a asp-action="Index" class="btn-modern-outline btn-modern-lg">Back</a>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/create-product.css" />
+}

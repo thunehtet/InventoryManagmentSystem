@@ -1,0 +1,91 @@
+﻿@using ClothInventoryApp.Dto.ProductVariant
+@model ViewProductVariantDto
+
+@{
+    ViewData["Title"] = "Delete Variant";
+}
+
+<div class="create-product-shell">
+    <div class="create-product-hero">
+        <div class="create-product-hero-content">
+            <div class="hero-kicker">
+                <i class="bi bi-trash-fill"></i>
+                <span>Delete Variant</span>
+            </div>
+
+            <h1>Delete variant</h1>
+            <p>
+                Please review the variant details below before deleting it.
+            </p>
+
+            <div class="hero-actions">
+                <a asp-action="Index" class="btn-soft-light">
+                    <i class="bi bi-arrow-left"></i>
+                    Back to Variants
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="create-product-grid">
+        <div class="create-main-card">
+            <div class="section-header">
+                <div>
+                    <h3>Variant details</h3>
+                    <p>Confirm before deleting this product variant.</p>
+                </div>
+            </div>
+
+            <div class="form-grid-modern">
+                <div class="form-group-modern form-group-full">
+                    <label class="form-label-modern">Product</label>
+                    <input value="@Model.ProductName" class="input-modern input-modern-lg" readonly />
+                </div>
+
+                <div class="form-group-modern form-group-full">
+                    <label class="form-label-modern">SKU</label>
+                    <input value="@Model.SKU" class="input-modern input-modern-lg" readonly />
+                </div>
+
+                <div class="form-group-modern">
+                    <label class="form-label-modern">Size</label>
+                    <input value="@Model.Size" class="input-modern" readonly />
+                </div>
+
+                <div class="form-group-modern">
+                    <label class="form-label-modern">Color</label>
+                    <input value="@Model.Color" class="input-modern" readonly />
+                </div>
+
+                <div class="form-group-modern">
+                    <label class="form-label-modern">Cost Price</label>
+                    <input value="@Model.CostPrice.ToString("0.00")" class="input-modern" readonly />
+                </div>
+
+                <div class="form-group-modern">
+                    <label class="form-label-modern">Selling Price</label>
+                    <input value="@Model.SellingPrice.ToString("0.00")" class="input-modern" readonly />
+                </div>
+            </div>
+
+            <form asp-action="Delete" method="post" class="mt-4">
+                <input type="hidden" asp-for="Id" />
+
+                <div class="form-footer-modern">
+                    <button type="submit" class="btn-modern-danger btn-modern-lg">
+                        <i class="bi bi-trash"></i>
+                        Delete Variant
+                    </button>
+
+                    <a asp-action="Index" class="btn-modern-outline btn-modern-lg">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/create-product.css" />
+}

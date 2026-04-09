@@ -10,8 +10,8 @@ public class ProductVariant
     public string Size { get; set; } = "";
     public string Color { get; set; } = "";
 
-    public decimal CostPrice { get; set; }
-    public decimal SellingPrice { get; set; }
+    public int CostPrice { get; set; }
+    public int SellingPrice { get; set; }
 
     public List<StockMovement> StockMovements { get; set; } = new();
     public List<SaleItem> SaleItems { get; set; } = new();

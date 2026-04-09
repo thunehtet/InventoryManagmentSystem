@@ -1,0 +1,297 @@
+﻿@model ClothInventoryApp.Dto.Dashboard.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="dashboard-shell">
+    <section class="dashboard-hero">
+        <div class="dashboard-hero-content">
+            <div class="hero-badge-modern">
+                <i class="bi bi-stars"></i>
+                <span>Inventory control center</span>
+            </div>
+
+            <h1 class="dashboard-title">
+                Manage your clothing inventory with a cleaner and smarter dashboard.
+            </h1>
+
+            <p class="dashboard-subtitle">
+                Monitor products, variants, stock movement, and recent activity in one place.
+            </p>
+
+            <div class="dashboard-hero-actions">
+                <a asp-controller="Products" asp-action="Index" class="btn-dashboard-primary">
+                    <i class="bi bi-box-seam"></i>
+                    Manage Products
+                </a>
+
+                <a asp-controller="Stock" asp-action="Inventory" class="btn-dashboard-secondary">
+                    <i class="bi bi-boxes"></i>
+                    View Inventory
+                </a>
+            </div>
+        </div>
+
+        <div class="dashboard-hero-side">
+            <div class="hero-summary-card">
+                <div class="hero-summary-top">
+                    <span class="summary-label">System overview</span>
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+
+                <div class="hero-summary-metrics">
+                    <div class="mini-metric">
+                        <span class="mini-metric-label">Products</span>
+                        <span class="mini-metric-value">@Model.TotalProducts</span>
+                    </div>
+
+                    <div class="mini-metric">
+                        <span class="mini-metric-label">Variants</span>
+                        <span class="mini-metric-value">@Model.TotalVariants</span>
+                    </div>
+
+                    <div class="mini-metric">
+                        <span class="mini-metric-label">Low Stock</span>
+                        <span class="mini-metric-value">@Model.LowStockCount</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="stat-card-icon bg-blue-soft">
+                <i class="bi bi-box-seam-fill"></i>
+            </div>
+            <div class="stat-card-content">
+                <div class="stat-card-label">Total Products</div>
+                <div class="stat-card-value">@Model.TotalProducts</div>
+                <div class="stat-card-note">All master products in catalog</div>
+            </div>
+        </div>
+
+        <div class="dashboard-stat-card">
+            <div class="stat-card-icon bg-purple-soft">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+            </div>
+            <div class="stat-card-content">
+                <div class="stat-card-label">Total Variants</div>
+                <div class="stat-card-value">@Model.TotalVariants</div>
+                <div class="stat-card-note">Color and size combinations tracked</div>
+            </div>
+        </div>
+
+        <div class="dashboard-stat-card">
+            <div class="stat-card-icon bg-orange-soft">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <div class="stat-card-content">
+                <div class="stat-card-label">Low Stock Items</div>
+                <div class="stat-card-value">@Model.LowStockCount</div>
+                <div class="stat-card-note">Items that may need replenishment</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="dashboard-main-grid">
+        <div class="dashboard-panel dashboard-panel-large">
+            <div class="panel-header">
+                <div>
+                    <h3>Quick Actions</h3>
+                    <p>Access common tasks quickly from the dashboard.</p>
+                </div>
+            </div>
+
+            <div class="quick-action-grid">
+                <a asp-controller="Products" asp-action="Create" class="quick-action-card">
+                    <div class="quick-action-icon blue">
+                        <i class="bi bi-plus-square-fill"></i>
+                    </div>
+                    <div class="quick-action-body">
+                        <h4>Add Product</h4>
+                        <p>Create a new master product in your catalog.</p>
+                    </div>
+                    <i class="bi bi-arrow-right-short quick-action-arrow"></i>
+                </a>
+
+                <a asp-controller="ProductVariants" asp-action="Create" class="quick-action-card">
+                    <div class="quick-action-icon purple">
+                        <i class="bi bi-diagram-3-fill"></i>
+                    </div>
+                    <div class="quick-action-body">
+                        <h4>Add Variant</h4>
+                        <p>Create size and color combinations for products.</p>
+                    </div>
+                    <i class="bi bi-arrow-right-short quick-action-arrow"></i>
+                </a>
+
+                <a asp-controller="Stock" asp-action="StockIn" class="quick-action-card">
+                    <div class="quick-action-icon green">
+                        <i class="bi bi-box-arrow-in-down"></i>
+                    </div>
+                    <div class="quick-action-body">
+                        <h4>Stock In</h4>
+                        <p>Record incoming inventory for a product variant.</p>
+                    </div>
+                    <i class="bi bi-arrow-right-short quick-action-arrow"></i>
+                </a>
+
+                <a asp-controller="Stock" asp-action="StockOut" class="quick-action-card">
+                    <div class="quick-action-icon red">
+                        <i class="bi bi-box-arrow-up"></i>
+                    </div>
+                    <div class="quick-action-body">
+                        <h4>Stock Out</h4>
+                        <p>Record outgoing inventory movement accurately.</p>
+                    </div>
+                    <i class="bi bi-arrow-right-short quick-action-arrow"></i>
+                </a>
+
+                <a asp-controller="Sales" asp-action="Create" class="quick-action-card">
+                    <div class="quick-action-icon teal">
+                        <i class="bi bi-receipt-cutoff"></i>
+                    </div>
+                    <div class="quick-action-body">
+                        <h4>Create Sale</h4>
+                        <p>Record a new sale and update item movement.</p>
+                    </div>
+                    <i class="bi bi-arrow-right-short quick-action-arrow"></i>
+                </a>
+
+                <a asp-controller="Stock" asp-action="Inventory" class="quick-action-card">
+                    <div class="quick-action-icon dark">
+                        <i class="bi bi-bar-chart-line-fill"></i>
+                    </div>
+                    <div class="quick-action-body">
+                        <h4>Inventory Report</h4>
+                        <p>Review available stock and movement summary.</p>
+                    </div>
+                    <i class="bi bi-arrow-right-short quick-action-arrow"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="dashboard-panel dashboard-panel-side">
+            <div class="panel-header">
+                <div>
+                    <h3>Inventory Health</h3>
+                    <p>Quick inventory summary.</p>
+                </div>
+            </div>
+
+            <div class="health-list">
+                <div class="health-row">
+                    <div class="health-label-wrap">
+                        <span class="health-dot blue"></span>
+                        <span class="health-label">Products</span>
+                    </div>
+                    <span class="health-value">@Model.TotalProducts</span>
+                </div>
+
+                <div class="health-row">
+                    <div class="health-label-wrap">
+                        <span class="health-dot purple"></span>
+                        <span class="health-label">Variants</span>
+                    </div>
+                    <span class="health-value">@Model.TotalVariants</span>
+                </div>
+
+                <div class="health-row">
+                    <div class="health-label-wrap">
+                        <span class="health-dot orange"></span>
+                        <span class="health-label">Low Stock</span>
+                    </div>
+                    <span class="health-value">@Model.LowStockCount</span>
+                </div>
+            </div>
+
+            <div class="inventory-health-footer">
+                @if (Model.LowStockCount > 0)
+                {
+                    <div class="alert-soft warning">
+                        <i class="bi bi-exclamation-circle-fill"></i>
+                        <span>@Model.LowStockCount item(s) may need replenishment soon.</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert-soft success">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>No low stock alert at the moment.</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <section class="dashboard-panel recent-activity-panel">
+        <div class="panel-header panel-header-with-action">
+            <div>
+                <h3>Recent Inventory Activity</h3>
+                <p>Latest stock movement records from the system.</p>
+            </div>
+
+            <a asp-controller="Stock" asp-action="Index" class="panel-link-action">
+                View all
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table-modern dashboard-table">
+                <thead>
+                    <tr>
+                        <th>SKU</th>
+                        <th>Product</th>
+                        <th>Action</th>
+                        <th>Quantity</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.RecentActivities == null || !Model.RecentActivities.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="empty-state-cell">
+                                <div class="empty-state-wrap">
+                                    <i class="bi bi-inbox"></i>
+                                    <p>No recent activity found.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model.RecentActivities)
+                        {
+                            var isIn = item.Quantity >= 0;
+                            <tr>
+                                <td class="fw-semibold">@item.SKU</td>
+                                <td>@item.ProductName</td>
+                                <td>
+                                    <span class="activity-badge @(isIn ? "activity-in" : "activity-out")">
+                                        @item.Action
+                                    </span>
+                                </td>
+                                <td class="@(isIn ? "qty-positive" : "qty-negative")">
+                                    @(isIn ? "+" + item.Quantity : item.Quantity.ToString())
+                                </td>
+                                <td>@item.Date.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    <span class="badge-soft success">@item.Status</span>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/dashboard.css" />
+}

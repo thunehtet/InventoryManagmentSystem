@@ -1,0 +1,37 @@
+﻿@using ClothInventoryApp.Dto.CashTransaction
+@model ViewCashTransactionDto
+
+@{
+    ViewData["Title"] = "Delete Transaction";
+}
+
+<div class="create-product-shell">
+    <div class="create-main-card">
+        <div class="section-header">
+            <div>
+                <h3>Delete Transaction</h3>
+            </div>
+        </div>
+
+        <div class="form-grid-modern">
+            <div class="form-group-modern"><label class="form-label-modern">Date</label><input value="@Model.TransactionDate.ToString("yyyy-MM-dd")" class="input-modern" readonly /></div>
+            <div class="form-group-modern"><label class="form-label-modern">Type</label><input value="@Model.Type" class="input-modern" readonly /></div>
+            <div class="form-group-modern form-group-full"><label class="form-label-modern">Category</label><input value="@Model.Category" class="input-modern" readonly /></div>
+            <div class="form-group-modern"><label class="form-label-modern">Amount</label><input value="@Model.Amount" class="input-modern" readonly /></div>
+            <div class="form-group-modern"><label class="form-label-modern">Reference No</label><input value="@Model.ReferenceNo" class="input-modern" readonly /></div>
+            <div class="form-group-modern form-group-full"><label class="form-label-modern">Remarks</label><textarea class="input-modern" rows="4" readonly>@Model.Remarks</textarea></div>
+        </div>
+
+        <form asp-action="Delete" method="post" class="mt-4">
+            <input type="hidden" asp-for="Id" />
+            <div class="form-footer-modern">
+                <button type="submit" class="btn-modern-danger btn-modern-lg">Delete</button>
+                <a asp-action="Index" class="btn-modern-outline btn-modern-lg">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/create-product.css" />
+}

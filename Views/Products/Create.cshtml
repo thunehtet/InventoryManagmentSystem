@@ -1,5 +1,171 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using ClothInventoryApp.Dto.Product
+@model CreateProductDto
+
 @{
+    ViewData["Title"] = "Create Product";
+}
+
+<div class="create-product-shell">
+    <div class="create-product-hero">
+        <div class="create-product-hero-content">
+            <div class="hero-kicker">
+                <i class="bi bi-box-seam-fill"></i>
+                <span>Product Setup</span>
+            </div>
+
+            <h1>Create new product</h1>
+            <p>
+                Add a new clothing product to your catalog. Keep the core information clean first,
+                then you can add size, color, and stock variants later.
+            </p>
+
+            <div class="hero-actions">
+                <a asp-controller="Products" asp-action="Index" class="btn-soft-light">
+                    <i class="bi bi-arrow-left"></i>
+                    Back to Products
+                </a>
+            </div>
+        </div>
+
+        <div class="create-product-hero-side">
+            <div class="hero-stat-card">
+                <div class="hero-stat-icon">
+                    <i class="bi bi-stars"></i>
+                </div>
+                <div class="hero-stat-title">Catalog quality</div>
+                <div class="hero-stat-text">
+                    Use clear product name, category, and brand so your inventory stays organized.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="create-product-grid">
+        <div class="create-main-card">
+            <div class="section-header">
+                <div>
+                    <h3>Product details</h3>
+                    <p>Fill in the basic fields from your product table.</p>
+                </div>
+            </div>
+
+            <form asp-action="Create" method="post" class="modern-product-form">
+                <div asp-validation-summary="ModelOnly" class="validation-summary-modern"></div>
+
+                <div class="form-grid-modern">
+                    <div class="form-group-modern form-group-full">
+                        <label asp-for="Name" class="form-label-modern"></label>
+                        <div class="input-icon-wrap">
+                            <i class="bi bi-tag-fill"></i>
+                            <input asp-for="Name" class="input-modern input-modern-lg" placeholder="e.g. Basic Oversized Tee" />
+                        </div>
+                        <span asp-validation-for="Name" class="field-validation-modern"></span>
+                    </div>
+
+                    <div class="form-group-modern">
+                        <label asp-for="Category" class="form-label-modern"></label>
+                        <div class="input-icon-wrap">
+                            <i class="bi bi-grid-fill"></i>
+                            <input asp-for="Category" class="input-modern" placeholder="e.g. T-Shirt" />
+                        </div>
+                        <span asp-validation-for="Category" class="field-validation-modern"></span>
+                    </div>
+
+                    <div class="form-group-modern">
+                        <label asp-for="Brand" class="form-label-modern"></label>
+                        <div class="input-icon-wrap">
+                            <i class="bi bi-bookmark-star-fill"></i>
+                            <input asp-for="Brand" class="input-modern" placeholder="e.g. ClothCo" />
+                        </div>
+                        <span asp-validation-for="Brand" class="field-validation-modern"></span>
+                    </div>
+
+                    <div class="form-group-modern form-group-full">
+                        <label class="form-label-modern">Product status</label>
+
+                        <label class="status-toggle-card">
+                            <div class="status-toggle-copy">
+                                <div class="status-toggle-title">Active product</div>
+                                <div class="status-toggle-text">
+                                    When enabled, this product can be used for variants, stock movement, and future sales records.
+                                </div>
+                            </div>
+
+                            <div class="status-toggle-switch">
+                                <input asp-for="IsActive" class="form-check-input modern-switch" />
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-footer-modern">
+                    <button type="submit" class="btn-modern-primary btn-modern-lg">
+                        <i class="bi bi-check2-circle"></i>
+                        Save Product
+                    </button>
+
+                    <a asp-controller="Products" asp-action="Index" class="btn-modern-outline btn-modern-lg">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <div class="create-side-column">
+            <div class="side-info-card">
+                <div class="side-info-header">
+                    <i class="bi bi-lightbulb-fill"></i>
+                    <h4>Recommended format</h4>
+                </div>
+
+                <div class="info-list-modern">
+                    <div class="info-row-modern">
+                        <span class="info-label">Name</span>
+                        <span class="info-value">Main catalog product name</span>
+                    </div>
+                    <div class="info-row-modern">
+                        <span class="info-label">Category</span>
+                        <span class="info-value">T-Shirt, Dress, Jacket</span>
+                    </div>
+                    <div class="info-row-modern">
+                        <span class="info-label">Brand</span>
+                        <span class="info-value">Your own or supplier brand</span>
+                    </div>
+                    <div class="info-row-modern">
+                        <span class="info-label">Status</span>
+                        <span class="info-value">Active / Inactive</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="side-info-card">
+                <div class="side-info-header">
+                    <i class="bi bi-diagram-3-fill"></i>
+                    <h4>Next step</h4>
+                </div>
+
+                <p class="side-info-text">
+                    After saving the product, create its variants for size and color, then start stock in and stock out transactions.
+                </p>
+
+                <div class="next-step-chip-wrap">
+                    <span class="next-step-chip">Product</span>
+                    <i class="bi bi-arrow-right"></i>
+                    <span class="next-step-chip">Variant</span>
+                    <i class="bi bi-arrow-right"></i>
+                    <span class="next-step-chip">Stock</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/create-product.css" />
 }

@@ -1,0 +1,109 @@
+﻿@using ClothInventoryApp.Dto.ProductVariant
+@model IEnumerable<ViewProductVariantDto>
+
+@{
+    ViewData["Title"] = "Product Variants";
+}
+
+<div class="product-index-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <div class="hero-kicker">
+                <i class="bi bi-diagram-3-fill"></i>
+                <span>Variants</span>
+            </div>
+
+            <h1>Product Variants</h1>
+            <p>
+                Manage SKU, size, color, and pricing for each product variant.
+            </p>
+
+            <div class="hero-actions">
+                <a asp-action="Create" class="btn-modern-primary">
+                    <i class="bi bi-plus-circle"></i>
+                    Create Variant
+                </a>
+            </div>
+        </div>
+
+        <div class="product-hero-side">
+            <div class="hero-stat-card">
+                <div class="hero-stat-icon">
+                    <i class="bi bi-boxes"></i>
+                </div>
+                <div class="hero-stat-title">Total Variants</div>
+                <div class="hero-stat-text">
+                    @Model.Count() items in your variant catalog
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="product-table-card">
+        <div class="section-header">
+            <div>
+                <h3>All Variants</h3>
+                <p>Overview of all product variants in your inventory.</p>
+            </div>
+        </div>
+
+        <div class="table-responsive-modern">
+            <table class="table-modern">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>SKU</th>
+                        <th>Size</th>
+                        <th>Color</th>
+                        <th>Cost Price</th>
+                        <th>Selling Price</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <i class="bi bi-inbox"></i>
+                                <div>No product variants found</div>
+                                <a asp-action="Create" class="btn-modern-primary mt-2">
+                                    Create your first variant
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.ProductName</td>
+                                <td>@item.SKU</td>
+                                <td>@item.Size</td>
+                                <td>@item.Color</td>
+                                <td>@item.CostPrice.ToString("0.00")</td>
+                                <td>@item.SellingPrice.ToString("0.00")</td>
+                                <td class="text-end">
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn-icon">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn-icon">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn-icon text-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/product-index.css" />
+}

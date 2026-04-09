@@ -1,0 +1,99 @@
+﻿@using ClothInventoryApp.Dto.Stock
+@model CreateStockDto
+
+@{
+    ViewData["Title"] = "Create Stock Movement";
+}
+
+<div class="create-product-shell">
+    <div class="create-product-hero">
+        <div class="create-product-hero-content">
+            <div class="hero-kicker">
+                <i class="bi bi-plus-circle-fill"></i>
+                <span>Stock Setup</span>
+            </div>
+
+            <h1>Create stock movement</h1>
+            <p>Add a new stock in, stock out, or adjustment record for a product variant.</p>
+
+            <div class="hero-actions">
+                <a asp-action="Index" class="btn-soft-light">
+                    <i class="bi bi-arrow-left"></i>
+                    Back to Stock
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="create-product-grid">
+        <div class="create-main-card">
+            <div class="section-header">
+                <div>
+                    <h3>Stock movement details</h3>
+                    <p>Fill in the stock transaction information.</p>
+                </div>
+            </div>
+
+            <form asp-action="Create" method="post" class="modern-product-form">
+                <div asp-validation-summary="ModelOnly" class="validation-summary-modern"></div>
+
+                <div class="form-grid-modern">
+                    <div class="form-group-modern form-group-full">
+                        <label asp-for="ProductVariantId" class="form-label-modern"></label>
+                        <select asp-for="ProductVariantId" asp-items="ViewBag.ProductVariants" class="input-modern input-modern-lg">
+                            <option value="">-- Select Variant --</option>
+                        </select>
+                        <span asp-validation-for="ProductVariantId" class="field-validation-modern"></span>
+                    </div>
+
+                    <div class="form-group-modern">
+                        <label asp-for="MovementType" class="form-label-modern"></label>
+                        <select asp-for="MovementType" asp-items="ViewBag.MovementTypes" class="input-modern">
+                            <option value="">-- Select Type --</option>
+                        </select>
+                        <span asp-validation-for="MovementType" class="field-validation-modern"></span>
+                    </div>
+
+                    <div class="form-group-modern">
+                        <label asp-for="Quantity" class="form-label-modern"></label>
+                        <input asp-for="Quantity" class="input-modern" type="number" />
+                        <span asp-validation-for="Quantity" class="field-validation-modern"></span>
+                    </div>
+
+                    <div class="form-group-modern">
+                        <label asp-for="MovementDate" class="form-label-modern"></label>
+                        <input asp-for="MovementDate" class="input-modern" type="date" />
+                        <span asp-validation-for="MovementDate" class="field-validation-modern"></span>
+                    </div>
+
+                    <div class="form-group-modern form-group-full">
+                        <label asp-for="Remarks" class="form-label-modern"></label>
+                        <textarea asp-for="Remarks" class="input-modern" rows="4" placeholder="Optional remarks"></textarea>
+                        <span asp-validation-for="Remarks" class="field-validation-modern"></span>
+                    </div>
+                </div>
+
+                <div class="form-footer-modern">
+                    <button type="submit" class="btn-modern-primary btn-modern-lg">
+                        <i class="bi bi-check2-circle"></i>
+                        Save Stock Movement
+                    </button>
+
+                    <a asp-action="Index" class="btn-modern-outline btn-modern-lg">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/create-product.css" />
+}
