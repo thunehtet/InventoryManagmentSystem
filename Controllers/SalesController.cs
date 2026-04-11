@@ -1,6 +1,7 @@
 ﻿using ClothInventoryApp.Data;
 using ClothInventoryApp.Dto.Sale;
 using ClothInventoryApp.Models;
+using ClothInventoryApp.Services.Tenant;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +12,14 @@ namespace ClothInventoryApp.Controllers
     {
         private readonly AppDbContext _context;
 
-        public SalesController(AppDbContext context)
+        private readonly ITenantProvider _tenantProvider;
+
+        public SalesController(AppDbContext context, ITenantProvider tenantProvider)
         {
             _context = context;
+            _tenantProvider = tenantProvider;
         }
+       
 
         public async Task<IActionResult> Index()
         {
@@ -46,8 +51,9 @@ namespace ClothInventoryApp.Controllers
                 return View(dto);
             }
 
+            var tenantId = _tenantProvider.GetTenantId();
             dto.Items = dto.Items
-                .Where(x => x.ProductVariantId > 0 && x.Quantity > 0)
+                .Where(x =>  x.Quantity > 0)
                 .ToList();
 
             if (!dto.Items.Any())
@@ -83,6 +89,7 @@ namespace ClothInventoryApp.Controllers
                     Items = dto.Items.Select(i => new SaleItem
                     {
                         ProductVariantId = i.ProductVariantId,
+                        TenantId = tenantId,
                         Quantity = i.Quantity,
                         UnitPrice = i.UnitPrice,
                         CostPrice = i.CostPrice
@@ -100,6 +107,7 @@ namespace ClothInventoryApp.Controllers
                     _context.StockMovements.Add(new StockMovement
                     {
                         ProductVariantId = item.ProductVariantId,
+                        TenantId = tenantId,
                         Quantity = item.Quantity,
                         MovementType = "OUT",
                         MovementDate = DateTime.UtcNow,
@@ -110,6 +118,7 @@ namespace ClothInventoryApp.Controllers
                 _context.CashTransactions.Add(new CashTransaction
                 {
                     TransactionDate = sale.SaleDate,
+                    TenantId = tenantId,
                     Type = "IN",
                     Category = "Sale Income",
                     Amount = sale.TotalAmount,
@@ -131,7 +140,7 @@ namespace ClothInventoryApp.Controllers
             }
         }
 
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(Guid id)
         {
             var sale = await _context.Sales
                 .Include(s => s.Items)
@@ -161,7 +170,7 @@ namespace ClothInventoryApp.Controllers
             return View(dto);
         }
 
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             var sale = await _context.Sales
                 .Include(s => s.Items)
@@ -193,7 +202,7 @@ namespace ClothInventoryApp.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var sale = await _context.Sales
                 .Include(s => s.Items)

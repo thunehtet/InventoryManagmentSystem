@@ -1,33 +1,37 @@
 ﻿html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 body {
-  margin-bottom: 60px;
+    margin: 0;
+    min-height: 100%;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+.form-floating > .form-control-plaintext::placeholder,
+.form-floating > .form-control::placeholder {
+    color: var(--bs-secondary-color);
+    text-align: end;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.form-floating > .form-control-plaintext:focus::placeholder,
+.form-floating > .form-control:focus::placeholder {
+    text-align: start;
 }
 
 :root {
@@ -47,19 +51,20 @@ body {
     --radius-md: 14px;
 }
 
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
     font-family: 'Inter', sans-serif;
     background: radial-gradient(circle at top left, rgba(99,91,255,0.10), transparent 25%), radial-gradient(circle at top right, rgba(139,92,246,0.10), transparent 20%), var(--bg);
     color: var(--text);
     min-height: 100%;
+    overflow-x: hidden;
 }
 
 .modern-body {
     min-height: 100vh;
 }
-
 
 .hero-modern {
     background: radial-gradient(circle at top left, rgba(255,255,255,0.25), transparent 30%), linear-gradient(135deg, #635bff, #8b5cf6);
@@ -93,6 +98,7 @@ html, body {
     margin-bottom: 16px;
     font-size: 0.88rem;
     font-weight: 600;
+    flex-wrap: wrap;
 }
 
 .hero-title {
@@ -101,6 +107,7 @@ html, body {
     line-height: 1.12;
     margin-bottom: 14px;
     max-width: 700px;
+    word-break: break-word;
 }
 
 .hero-text {
@@ -108,6 +115,7 @@ html, body {
     max-width: 720px;
     font-size: 1rem;
     margin-bottom: 24px;
+    line-height: 1.6;
 }
 
 .hero-actions {
@@ -117,6 +125,9 @@ html, body {
 }
 
 .btn-modern-light {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     background: white;
     color: #111827;
     border: none;
@@ -124,9 +135,13 @@ html, body {
     padding: 12px 18px;
     font-weight: 600;
     text-decoration: none;
+    white-space: nowrap;
 }
 
 .btn-modern-glass {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     background: rgba(255,255,255,0.12);
     color: white;
     border: 1px solid rgba(255,255,255,0.18);
@@ -134,6 +149,7 @@ html, body {
     padding: 12px 18px;
     font-weight: 600;
     text-decoration: none;
+    white-space: nowrap;
 }
 
 .section-grid {
@@ -143,9 +159,9 @@ html, body {
     margin-top: 22px;
 }
 
-
-
-
+/* =========================
+   LARGE TABLET / SMALL LAPTOP
+========================= */
 @media (max-width: 1100px) {
     .card-span-4,
     .card-span-6,
@@ -167,9 +183,21 @@ html, body {
     .topbar-search {
         min-width: 0;
         flex: 1;
+        width: 100%;
+    }
+
+    .hero-modern {
+        padding: 32px;
+    }
+
+    .hero-title {
+        font-size: 2rem;
     }
 }
 
+/* =========================
+   TABLET
+========================= */
 @media (max-width: 900px) {
     .app-shell {
         padding: 12px;
@@ -183,7 +211,9 @@ html, body {
         bottom: 12px;
         z-index: 1000;
         width: 260px;
+        max-width: calc(100vw - 24px);
         transform: translateX(0);
+        overflow-y: auto;
     }
 
         .sidebar.collapsed {
@@ -193,13 +223,210 @@ html, body {
 
     .main-panel {
         width: 100%;
+        min-width: 0;
     }
 
     .hero-modern {
         padding: 28px;
+        border-radius: 24px;
     }
 
     .hero-title {
         font-size: 1.8rem;
     }
+
+    .hero-text {
+        font-size: 0.96rem;
+    }
+
+    .section-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media (max-width: 768px) {
+    html {
+        font-size: 14px;
+    }
+
+    body {
+        margin: 0;
+    }
+
+    .app-shell {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .main-panel {
+        gap: 14px;
+    }
+
+    .hero-modern {
+        padding: 22px 18px;
+        border-radius: 20px;
+    }
+
+        .hero-modern::after {
+            width: 140px;
+            height: 140px;
+            right: -30px;
+            top: -30px;
+        }
+
+    .hero-badge {
+        font-size: 0.8rem;
+        padding: 7px 12px;
+        margin-bottom: 12px;
+    }
+
+    .hero-title {
+        font-size: 1.45rem;
+        line-height: 1.2;
+        margin-bottom: 12px;
+    }
+
+    .hero-text {
+        font-size: 0.92rem;
+        margin-bottom: 18px;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-modern-light,
+    .btn-modern-glass {
+        width: 100%;
+        padding: 12px 14px;
+    }
+
+    .section-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        margin-top: 16px;
+    }
+}
+
+/* =========================
+   SMALL PHONE
+========================= */
+@media (max-width: 480px) {
+    .app-shell {
+        padding: 8px;
+    }
+
+    .sidebar {
+        left: 8px;
+        top: 8px;
+        bottom: 8px;
+        width: 240px;
+        max-width: calc(100vw - 16px);
+    }
+
+    .hero-modern {
+        padding: 18px 14px;
+        border-radius: 18px;
+    }
+
+    .hero-title {
+        font-size: 1.25rem;
+    }
+
+    .hero-text {
+        font-size: 0.88rem;
+    }
+
+    .hero-badge {
+        font-size: 0.75rem;
+        padding: 6px 10px;
+    }
+
+    .btn-modern-light,
+    .btn-modern-glass {
+        font-size: 0.9rem;
+        border-radius: 12px;
+    }
+
+    .section-grid {
+        gap: 12px;
+    }
+}
+
+
+.user-dropdown {
+    position: relative;
+}
+
+.user-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.user-avatar {
+    font-size: 1.4rem;
+    color: #635bff;
+}
+
+.user-name {
+    font-size: 0.9rem;
+}
+
+.user-menu {
+    position: absolute;
+    right: 0;
+    top: 110%;
+    width: 200px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    padding: 8px;
+    display: none;
+    z-index: 1000;
+}
+
+    .user-menu.show {
+        display: block;
+    }
+
+.user-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #111827;
+    font-size: 0.9rem;
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+    .user-menu-item:hover {
+        background: #f3f4f6;
+    }
+
+.user-menu-divider {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 6px 0;
+}
+
+.logout-btn {
+    color: #dc2626;
 }

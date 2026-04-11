@@ -2,6 +2,7 @@
 using ClothInventoryApp.Dto;
 using ClothInventoryApp.Dto.Product;
 using ClothInventoryApp.Models;
+using ClothInventoryApp.Services.Tenant;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,14 +11,17 @@ namespace ClothInventoryApp.Controllers
     public class ProductsController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly ITenantProvider _tenantProvider;
 
-        public ProductsController(AppDbContext context)
+        public ProductsController(AppDbContext context, ITenantProvider tenantProvider)
         {
             _context = context;
+            _tenantProvider = tenantProvider;
         }
 
         public async Task<IActionResult> Index()
         {
+            var tenantId = _tenantProvider.GetTenantId();
             var products = await _context.Products
                 .Select(p => new ViewProductDto
                 {
@@ -26,7 +30,7 @@ namespace ClothInventoryApp.Controllers
                     Category = p.Category,
                     Brand = p.Brand,
                     IsActive = p.IsActive
-                })
+                }).Where(x => x.TenantId == tenantId)
                 .ToListAsync();
 
             return View(products);
@@ -44,12 +48,15 @@ namespace ClothInventoryApp.Controllers
             if (!ModelState.IsValid)
                 return View(dto);
 
+            var tenantId = _tenantProvider.GetTenantId();
             var product = new Product
             {
                 Name = dto.Name,
                 Category = dto.Category,
                 Brand = dto.Brand,
-                IsActive = dto.IsActive
+                IsActive = dto.IsActive,
+                TenantId=tenantId
+               
             };
 
             _context.Products.Add(product);
@@ -58,7 +65,7 @@ namespace ClothInventoryApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(Guid id)
         {
             var product = await _context.Products.FindAsync(id);
 
@@ -100,7 +107,7 @@ namespace ClothInventoryApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             var product = await _context.Products
                 .Select(p => new ViewProductDto

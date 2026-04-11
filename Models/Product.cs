@@ -1,8 +1,12 @@
 ﻿using System;
+using ClothInventoryApp.Models;
 
 public class Product
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
+    public Guid TenantId { get; set; }
+    public Tenant Tenant { get; set; } = null!;
+
     public string Name { get; set; } = "";
     public string Category { get; set; } = "";
     public string Brand { get; set; } = "";

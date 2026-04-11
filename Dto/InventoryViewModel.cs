@@ -2,7 +2,7 @@
 {
     public class InventoryViewModel
     {
-        public int ProductVariantId { get; set; }
+        public Guid ProductVariantId { get; set; }
         public string ProductName { get; set; } = string.Empty;
         public string SKU { get; set; } = string.Empty;
         public string Size { get; set; } = string.Empty;

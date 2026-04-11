@@ -1,11 +1,12 @@
-﻿@{
+﻿@model ClothInventoryApp.Models.ViewModels.HomeOverviewViewModel
+@{
     ViewData["Title"] = "Overview";
 }
 
 <div class="hero-modern">
     <div class="hero-badge">
         <i class="bi bi-stars"></i>
-        <span>Modern inventory workspace</span>
+        <span>@Model.TenantName workspace</span>
     </div>
 
     <h1 class="hero-title">Manage your clothing inventory in a cleaner, smarter way.</h1>
@@ -31,7 +32,7 @@
             <i class="bi bi-box-seam-fill"></i>
         </div>
         <div class="metric-label">Total Products</div>
-        <div class="metric-value">128</div>
+        <div class="metric-value">@Model.TotalProducts</div>
         <div class="metric-sub">Across all categories</div>
     </div>
 
@@ -40,7 +41,7 @@
             <i class="bi bi-palette-fill"></i>
         </div>
         <div class="metric-label">Variants</div>
-        <div class="metric-value">356</div>
+        <div class="metric-value">@Model.TotalVariants</div>
         <div class="metric-sub">Sizes and colors tracked</div>
     </div>
 
@@ -49,7 +50,7 @@
             <i class="bi bi-exclamation-circle-fill"></i>
         </div>
         <div class="metric-label">Low Stock</div>
-        <div class="metric-value">12</div>
+        <div class="metric-value">@Model.LowStockCount</div>
         <div class="metric-sub">Need replenishment soon</div>
     </div>
 
@@ -103,30 +104,26 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>TSH-BLK-M</td>
-                        <td>Basic Tee Black M</td>
-                        <td>Stock In</td>
-                        <td>+25</td>
-                        <td>2026-04-07</td>
-                        <td><span class="badge-soft success">Completed</span></td>
-                    </tr>
-                    <tr>
-                        <td>DRS-WHT-S</td>
-                        <td>Summer Dress White S</td>
-                        <td>Stock Out</td>
-                        <td>-3</td>
-                        <td>2026-04-07</td>
-                        <td><span class="badge-soft success">Completed</span></td>
-                    </tr>
-                    <tr>
-                        <td>JKT-NVY-L</td>
-                        <td>Classic Jacket Navy L</td>
-                        <td>Low Stock Alert</td>
-                        <td>5 left</td>
-                        <td>2026-04-06</td>
-                        <td><span class="badge-soft warning">Attention</span></td>
-                    </tr>
+                    @foreach (var item in Model.RecentActivities)
+                    {
+                        <tr>
+                            <td>@item.SKU</td>
+                            <td>@item.ProductName</td>
+                            <td>@item.Action</td>
+                            <td>@item.QtyText</td>
+                            <td>@item.MovementDate.ToString("yyyy-MM-dd")</td>
+                            <td>
+                                @if (item.Status == "Completed")
+                                {
+                                    <span class="badge-soft success">@item.Status</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-soft warning">@item.Status</span>
+                                }
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>

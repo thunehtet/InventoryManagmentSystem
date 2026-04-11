@@ -1,0 +1,56 @@
+﻿@using ClothInventoryApp.Dto.Sale
+@model IEnumerable<ViewSaleDto>
+
+@{
+    ViewData["Title"] = "Sales";
+}
+
+<div class="product-index-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <div class="hero-kicker">
+                <i class="bi bi-receipt"></i>
+                <span>Sales</span>
+            </div>
+
+            <h1>Sales List</h1>
+            <p>Manage sales transactions and item details.</p>
+
+            <div class="hero-actions">
+                <a asp-action="Create" class="btn-modern-primary">
+                    <i class="bi bi-plus-circle"></i>
+                    Create Sale
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="product-table-card">
+        <table class="table-modern">
+            <thead>
+                <tr>
+                    <th>Sale Date</th>
+                    <th>Total Amount</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.SaleDate.ToString("yyyy-MM-dd")</td>
+                        <td>@item.TotalAmount</td>
+                        <td class="text-end">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn-icon"><i class="bi bi-eye"></i></a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn-icon text-danger"><i class="bi bi-trash"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/product-index.css" />
+}

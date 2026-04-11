@@ -21,7 +21,7 @@
 <body class="modern-body">
     <div class="app-shell">
         <aside class="sidebar" id="sidebar">
-            <div class="sidebar-brand">
+            <div class="sidebar-brand" id="sidebarBrand" role="button" tabindex="0">
                 <div class="brand-logo">
                     <img src="~/images/logo.jpeg" alt="Logo" />
                 </div>
@@ -116,11 +116,35 @@
                         <span>Smart Inventory</span>
                     </div>
 
-                    <div class="user-badge">
-                        <div class="user-avatar">T</div>
-                        <div>
-                            <div class="user-name">Admin</div>
-                            <div class="user-role">Owner</div>
+                    <div class="user-dropdown">
+                        <button class="user-btn" onclick="toggleUserMenu()">
+                            <div class="user-avatar">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                            <span class="user-name">@User.Identity?.Name</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </button>
+
+                        <div id="userMenu" class="user-menu">
+                            <a href="#" class="user-menu-item">
+                                <i class="bi bi-person"></i>
+                                Profile
+                            </a>
+
+                            <a href="#" class="user-menu-item">
+                                <i class="bi bi-gear"></i>
+                                Settings
+                            </a>
+
+                            <div class="user-menu-divider"></div>
+
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="user-menu-item logout-btn">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                    Logout
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -136,10 +160,32 @@
     <script>
         const menuToggle = document.getElementById("menuToggle");
         const sidebar = document.getElementById("sidebar");
+        const sidebarBrand = document.getElementById("sidebarBrand");
 
-        menuToggle?.addEventListener("click", function () {
+        function toggleSidebar() {
             sidebar.classList.toggle("collapsed");
+        }
+
+        menuToggle?.addEventListener("click", toggleSidebar);
+        sidebarBrand?.addEventListener("click", toggleSidebar);
+
+        sidebarBrand?.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                toggleSidebar();
+            }
         });
+
+        function handleResize() {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.add("collapsed");
+            } else {
+                sidebar.classList.remove("collapsed");
+            }
+        }
+
+        window.addEventListener("resize", handleResize);
+        handleResize();
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)

@@ -4,11 +4,11 @@ namespace ClothInventoryApp.Dto.Stock
 {
     public class CreateStockDto
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         [Display(Name = "Product Variant")]
-        public int ProductVariantId { get; set; }
+        public Guid ProductVariantId { get; set; }
 
         [Required]
         [Display(Name = "Movement Type")]

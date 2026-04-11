@@ -26,37 +26,39 @@
     </div>
 
     <div class="product-table-card">
-        <table class="table-modern">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Purchase From</th>
-                    <th>Quantity</th>
-                    <th>Purchase Date</th>
-                    <th>Unit Price</th>
-                    <th>Total Price</th>
-                    <th class="text-end">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
+        <div class="table-responsive-modern">
+            <table class="table-modern">
+                <thead>
                     <tr>
-                        <td>@item.Name</td>
-                        <td>@item.PurchaseFrom</td>
-                        <td>@item.Quantity</td>
-                        <td>@item.PurchaseDate.ToString("yyyy-MM-dd")</td>
-                        <td>@item.UnitPrice</td>
-                        <td>@item.TotalPrice</td>
-                        <td class="text-end">
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn-icon"><i class="bi bi-pencil"></i></a>
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn-icon"><i class="bi bi-eye"></i></a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn-icon text-danger"><i class="bi bi-trash"></i></a>
-                        </td>
+                        <th>Name</th>
+                        <th>Purchase From</th>
+                        <th>Quantity</th>
+                        <th>Purchase Date</th>
+                        <th>Unit Price</th>
+                        <th>Total Price</th>
+                        <th class="text-end">Actions</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.PurchaseFrom</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.PurchaseDate.ToString("yyyy-MM-dd")</td>
+                            <td>@item.UnitPrice</td>
+                            <td>@item.TotalPrice</td>
+                            <td class="text-end">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn-icon"><i class="bi bi-pencil"></i></a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn-icon"><i class="bi bi-eye"></i></a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn-icon text-danger"><i class="bi bi-trash"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

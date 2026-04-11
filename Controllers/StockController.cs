@@ -2,6 +2,7 @@
 using ClothInventoryApp.Dto;
 using ClothInventoryApp.Dto.Stock;
 using ClothInventoryApp.Models;
+using ClothInventoryApp.Services.Tenant;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,11 +12,14 @@ namespace ClothInventoryApp.Controllers
     public class StockController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly ITenantProvider _tenantProvider;
 
-        public StockController(AppDbContext context)
+        public StockController(AppDbContext context, ITenantProvider tenantProvider)
         {
             _context = context;
+            _tenantProvider = tenantProvider;
         }
+        
 
         public async Task<IActionResult> Index()
         {
@@ -58,10 +62,12 @@ namespace ClothInventoryApp.Controllers
                 ViewBag.MovementTypes = GetMovementTypes();
                 return View(dto);
             }
+            var tenantId = _tenantProvider.GetTenantId();
 
             var stockMovement = new StockMovement
             {
                 ProductVariantId = dto.ProductVariantId,
+                TenantId = tenantId,
                 MovementType = dto.MovementType,
                 Quantity = dto.Quantity,
                 MovementDate = dto.MovementDate,
@@ -124,7 +130,7 @@ namespace ClothInventoryApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(Guid id)
         {
             var stockMovement = await _context.StockMovements
                 .Include(s => s.ProductVariant)
@@ -151,7 +157,7 @@ namespace ClothInventoryApp.Controllers
             return View(stockMovement);
         }
 
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             var stockMovement = await _context.StockMovements
                 .Include(s => s.ProductVariant)

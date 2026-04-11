@@ -4,11 +4,11 @@ namespace ClothInventoryApp.Dto.ProductVariant
 {
     public class CreateProductVariantDto
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         [Display(Name = "Product")]
-        public int ProductId { get; set; }
+        public Guid ProductId { get; set; }
 
         [Required]
         [StringLength(100)]

@@ -1,0 +1,80 @@
+﻿@model ClothInventoryApp.Dtos.Tenant.TenantCreateDto
+@{
+    ViewData["Title"] = "Create Tenant";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-crud.css" asp-append-version="true" />
+}
+
+<div class="page-card">
+    <div class="page-header-modern">
+        <div class="page-title-modern">
+            <h2>Create Tenant</h2>
+            <p>Add a new company profile.</p>
+        </div>
+    </div>
+
+    <form asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="form-grid-modern">
+            <div>
+                <label asp-for="Code" class="form-label"></label>
+                <input asp-for="Code" class="form-control modern-input" />
+                <span asp-validation-for="Code" class="text-danger"></span>
+            </div>
+
+            <div>
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control modern-input" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="full">
+                <label asp-for="LegalName" class="form-label"></label>
+                <input asp-for="LegalName" class="form-control modern-input" />
+            </div>
+
+            <div class="full">
+                <label asp-for="LogoUrl" class="form-label"></label>
+                <input asp-for="LogoUrl" class="form-control modern-input" />
+            </div>
+
+            <div>
+                <label asp-for="ContactEmail" class="form-label"></label>
+                <input asp-for="ContactEmail" class="form-control modern-input" />
+            </div>
+
+            <div>
+                <label asp-for="ContactPhone" class="form-label"></label>
+                <input asp-for="ContactPhone" class="form-control modern-input" />
+            </div>
+
+            <div>
+                <label asp-for="Country" class="form-label"></label>
+                <input asp-for="Country" class="form-control modern-input" />
+            </div>
+
+            <div>
+                <label asp-for="CurrencyCode" class="form-label"></label>
+                <input asp-for="CurrencyCode" class="form-control modern-input" />
+            </div>
+
+
+            <div class="full">
+                <div class="form-check mt-2">
+                    <input asp-for="IsActive" class="form-check-input" />
+                    <label asp-for="IsActive" class="form-check-label"></label>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-row">
+            <button type="submit" class="btn-soft-primary">Save</button>
+            <a asp-action="Index" class="btn btn-light">Back</a>
+        </div>
+    </form>
+</div>
+
+<partial name="_ValidationScriptsPartial" />

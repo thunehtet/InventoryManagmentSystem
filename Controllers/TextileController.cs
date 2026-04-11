@@ -1,6 +1,7 @@
 ﻿using ClothInventoryApp.Data;
 using ClothInventoryApp.Dto.Textile;
 using ClothInventoryApp.Models;
+using ClothInventoryApp.Services.Tenant;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,12 +10,14 @@ namespace ClothInventoryApp.Controllers
     public class TextileController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly ITenantProvider _tenantProvider;
 
-        public TextileController(AppDbContext context)
+        public TextileController(AppDbContext context, ITenantProvider tenantProvider)
         {
             _context = context;
+            _tenantProvider = tenantProvider;
         }
-
+ 
         public async Task<IActionResult> Index()
         {
             var textiles = await _context.Textile
@@ -45,10 +48,13 @@ namespace ClothInventoryApp.Controllers
             if (!ModelState.IsValid)
                 return View(dto);
 
+
+            var tenantId = _tenantProvider.GetTenantId();
             var textile = new Textile
             {
                 Name = dto.Name,
                 PurchaseFrom = dto.PurchaseFrom,
+                TenantId = tenantId,
                 Quantity = dto.Quantity,
                 PurchaseDate = dto.PurchaseDate,
                 UnitPrice = dto.UnitPrice,
@@ -61,6 +67,7 @@ namespace ClothInventoryApp.Controllers
             _context.CashTransactions.Add(new CashTransaction
             {
                 TransactionDate = textile.PurchaseDate,
+                TenantId = tenantId,
                 Type = "OUT",
                 Category = "Textile Purchase",
                 Amount = textile.TotalPrice,
@@ -117,7 +124,7 @@ namespace ClothInventoryApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(Guid id)
         {
             var textile = await _context.Textile
                 .Select(t => new ViewTextileDto
@@ -138,7 +145,7 @@ namespace ClothInventoryApp.Controllers
             return View(textile);
         }
 
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             var textile = await _context.Textile
                 .Select(t => new ViewTextileDto

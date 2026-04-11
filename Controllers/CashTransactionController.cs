@@ -1,19 +1,24 @@
 ﻿using ClothInventoryApp.Data;
 using ClothInventoryApp.Dto.CashTransaction;
 using ClothInventoryApp.Models;
+using ClothInventoryApp.Services.Tenant;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClothInventoryApp.Controllers
 {
+    [Authorize]
     public class CashTransactionController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly ITenantProvider _tenantProvider;
 
-        public CashTransactionController(AppDbContext context)
+        public CashTransactionController(AppDbContext context, ITenantProvider tenantProvider)
         {
             _context = context;
+            _tenantProvider = tenantProvider;
         }
 
         public async Task<IActionResult> Index()
@@ -51,11 +56,12 @@ namespace ClothInventoryApp.Controllers
                 LoadDropDowns();
                 return View(dto);
             }
-
+            var tenantId = _tenantProvider.GetTenantId();
             var item = new CashTransaction
             {
                 TransactionDate = dto.TransactionDate,
                 Type = dto.Type,
+                TenantId = tenantId,
                 Category = dto.Category,
                 Amount = dto.Amount,
                 ReferenceNo = dto.ReferenceNo,
@@ -163,7 +169,7 @@ namespace ClothInventoryApp.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var item = await _context.CashTransactions.FindAsync(id);
 

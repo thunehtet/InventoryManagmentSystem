@@ -1,6 +1,7 @@
 ﻿using ClothInventoryApp.Data;
 using ClothInventoryApp.Dto.ProductVariant;
 using ClothInventoryApp.Models;
+using ClothInventoryApp.Services.Tenant;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +11,12 @@ namespace ClothInventoryApp.Controllers
     public class ProductVariantsController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly ITenantProvider _tenantProvider;
 
-        public ProductVariantsController(AppDbContext context)
+        public ProductVariantsController(AppDbContext context,ITenantProvider tenantProvider)
         {
             _context = context;
+            _tenantProvider = tenantProvider;
         }
 
         public async Task<IActionResult> Index()
@@ -51,10 +54,11 @@ namespace ClothInventoryApp.Controllers
                 await LoadProductsDropDown();
                 return View(dto);
             }
-
+            var tenantId = _tenantProvider.GetTenantId();
             var variant = new ProductVariant
             {
                 ProductId = dto.ProductId,
+                TenantId = tenantId,
                 SKU = dto.SKU,
                 Size = dto.Size,
                 Color = dto.Color,
@@ -118,7 +122,7 @@ namespace ClothInventoryApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(Guid id)
         {
             var variant = await _context.ProductVariants
                 .Include(v => v.Product)
@@ -142,7 +146,7 @@ namespace ClothInventoryApp.Controllers
             return View(variant);
         }
 
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             var variant = await _context.ProductVariants
                 .Include(v => v.Product)

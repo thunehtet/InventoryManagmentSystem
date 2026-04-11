@@ -1,0 +1,50 @@
+﻿@model IEnumerable<ClothInventoryApp.Models.Tenant>
+@{
+    ViewData["Title"] = "Tenants";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-crud.css" asp-append-version="true" />
+}
+
+<div class="page-card">
+    <div class="page-header-modern">
+        <div class="page-title-modern">
+            <h2>Tenants</h2>
+            <p>Manage companies, branding, and contract owners.</p>
+        </div>
+        <a asp-action="Create" class="btn-soft-primary">
+            <i class="bi bi-plus-lg"></i> New Tenant
+        </a>
+    </div>
+
+    <div class="table-modern-wrap">
+        <table class="table-modern">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Code</th>
+                    <th>Email</th>
+                    <th>Active</th>
+                    <th style="width:220px;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.Code</td>
+                        <td>@item.ContactEmail</td>
+                        <td>@(item.IsActive ? "Yes" : "No")</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,69 @@
+﻿@using ClothInventoryApp.Dto.Sale
+@model CreateSaleDto
+
+@{
+    ViewData["Title"] = "Create Sale";
+}
+
+<div class="create-product-shell">
+    <div class="create-main-card">
+        <div class="section-header">
+            <div>
+                <h3>Create Sale</h3>
+            </div>
+        </div>
+
+        <form asp-action="Create" method="post" class="modern-product-form">
+            <div asp-validation-summary="ModelOnly" class="validation-summary-modern"></div>
+
+            <div class="form-grid-modern">
+                <div class="form-group-modern form-group-full">
+                    <label asp-for="SaleDate" class="form-label-modern"></label>
+                    <input asp-for="SaleDate" class="input-modern" type="date" />
+                </div>
+            </div>
+
+            <hr />
+
+            <h5>Sale Items</h5>
+
+            @for (int i = 0; i < Model.Items.Count; i++)
+            {
+                <div class="form-grid-modern mb-3">
+                    <div class="form-group-modern form-group-full">
+                        <label class="form-label-modern">Product Variant</label>
+                        <select asp-for="Items[@i].ProductVariantId" asp-items="ViewBag.ProductVariants" class="input-modern">
+                            <option value="">-- Select Variant --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group-modern">
+                        <label class="form-label-modern">Quantity</label>
+                        <input asp-for="Items[@i].Quantity" class="input-modern" type="number" />
+                    </div>
+
+                    <div class="form-group-modern">
+                        <label class="form-label-modern">Unit Price</label>
+                        <input asp-for="Items[@i].UnitPrice" class="input-modern" type="number" />
+                    </div>
+
+                </div>
+            }
+
+            <div class="form-footer-modern">
+                <button type="submit" class="btn-modern-primary btn-modern-lg">Save Sale</button>
+                <a asp-action="Index" class="btn-modern-outline btn-modern-lg">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/create-product.css" />
+}

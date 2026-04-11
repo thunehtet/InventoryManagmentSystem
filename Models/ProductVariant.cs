@@ -1,10 +1,14 @@
-﻿using System;
+﻿using ClothInventoryApp.Models;
 
 public class ProductVariant
 {
-    public int Id { get; set; }
-    public int ProductId { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
+
+    public Guid ProductId { get; set; }
     public Product Product { get; set; } = null!;
+
+    public Guid TenantId { get; set; }
+    public Tenant Tenant { get; set; } = null!;
 
     public string SKU { get; set; } = "";
     public string Size { get; set; } = "";
