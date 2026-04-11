@@ -186,6 +186,18 @@
 
         window.addEventListener("resize", handleResize);
         handleResize();
+
+        function toggleUserMenu() {
+            document.getElementById("userMenu").classList.toggle("show");
+        }
+
+        // close when click outside
+        window.onclick = function (event) {
+            if (!event.target.closest('.user-dropdown')) {
+                document.getElementById("userMenu").classList.remove("show");
+            }
+        }
+
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)
