@@ -1,0 +1,68 @@
+@model ClothInventoryApp.Dto.Product.ViewProductDto
+@{
+    ViewData["Title"] = "Edit Product";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/product-index.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/create-product.css" asp-append-version="true" />
+}
+
+<div class="product-index-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title">
+                <i class="bi bi-pencil-fill"></i> Edit Product
+            </h1>
+            <p class="product-hero-sub">Update product details</p>
+        </div>
+        <a asp-action="Index" class="btn-modern-secondary">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+    </div>
+
+    <div class="product-table-card product-form-card">
+        <form asp-action="Edit" method="post">
+            <input asp-for="Id" type="hidden" />
+            <input asp-for="TenantId" type="hidden" />
+
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label fw-semibold"></label>
+                <input asp-for="Name" class="form-control" placeholder="Product name" />
+                <span asp-validation-for="Name" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Category" class="form-label fw-semibold"></label>
+                <input asp-for="Category" class="form-control" placeholder="e.g. Shirt, Pants" />
+                <span asp-validation-for="Category" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Brand" class="form-label fw-semibold"></label>
+                <input asp-for="Brand" class="form-control" placeholder="Brand name" />
+                <span asp-validation-for="Brand" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-4">
+                <div class="form-check">
+                    <input asp-for="IsActive" class="form-check-input" />
+                    <label asp-for="IsActive" class="form-check-label">Active</label>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn-modern-primary">
+                    <i class="bi bi-check-circle-fill"></i> Save Changes
+                </button>
+                <a asp-action="Index" class="btn-modern-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

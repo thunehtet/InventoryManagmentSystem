@@ -1,0 +1,91 @@
+@model IEnumerable<ClothInventoryApp.Models.Feature>
+@{
+    ViewData["Title"] = "Features";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/superadmin.css" asp-append-version="true" />
+}
+
+<div class="superadmin-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title"><i class="bi bi-toggles"></i> Features</h1>
+            <p class="product-hero-sub">Manage available feature flags for plans</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Create" class="sa-btn-add">
+                <i class="bi bi-plus-lg"></i> New Feature
+            </a>
+            <a asp-controller="Plan" asp-action="Index" class="sa-btn-back">
+                <i class="bi bi-arrow-left"></i> Back to Plans
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @{ var featpg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel; }
+    <div class="product-table-card">
+        <div class="table-responsive">
+            <table class="superadmin-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Code</th>
+                        <th>Description</th>
+                        <th>Plans</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var f in Model)
+                    {
+                        <tr>
+                            <td><span class="fw-semibold text-dark">@f.Name</span></td>
+                            <td><span class="sa-detail-mono">@f.Code</span></td>
+                            <td class="text-muted small">@(f.Description ?? "—")</td>
+                            <td><span class="fw-bold text-dark">@f.PlanFeatures.Count</span></td>
+                            <td>
+                                <span class="status-badge @(f.IsActive ? "active" : "inactive")">
+                                    @(f.IsActive ? "Active" : "Inactive")
+                                </span>
+                            </td>
+                            <td>
+                                <div class="table-actions">
+                                    <a asp-action="Edit" asp-route-id="@f.Id" class="action-btn action-btn-edit" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@f.Id" class="action-btn action-btn-delete" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">No features defined yet.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (featpg != null) { @await Html.PartialAsync("_Pagination", featpg) }
+    </div>
+</div>

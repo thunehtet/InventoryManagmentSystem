@@ -1,43 +1,38 @@
-﻿using ClothInventoryApp.Data;
+using ClothInventoryApp.Data;
 using ClothInventoryApp.Dto.Dashboard;
+using ClothInventoryApp.Services.Tenant;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClothInventoryApp.Controllers
 {
-    public class DashboardController : Controller
+    [Authorize(Roles = "Admin")]
+    public class DashboardController : TenantAwareController
     {
-        private readonly AppDbContext _context;
-
-        public DashboardController(AppDbContext context)
+        public DashboardController(AppDbContext context, ITenantProvider tenantProvider)
+            : base(context, tenantProvider)
         {
-            _context = context;
         }
 
         public async Task<IActionResult> Index()
         {
             var vm = new DashboardViewModel();
 
-            // Total Products
             vm.TotalProducts = await _context.Products.CountAsync();
-
-            // Total Variants
             vm.TotalVariants = await _context.ProductVariants.CountAsync();
 
-            // Low Stock (example: stock < 10)
             var stockData = await _context.ProductVariants
                 .Select(v => new
                 {
-                    v.Id,
                     Stock =
-                        v.StockMovements.Where(m => m.MovementType == "IN").Sum(m => (int?)m.Quantity) ?? 0
-                        - v.StockMovements.Where(m => m.MovementType == "OUT").Sum(m => (int?)m.Quantity) ?? 0
+                        (v.StockMovements.Where(m => m.MovementType == "IN").Sum(m => (int?)m.Quantity) ?? 0)
+                        - (v.StockMovements.Where(m => m.MovementType == "OUT").Sum(m => (int?)m.Quantity) ?? 0)
                 })
                 .ToListAsync();
 
             vm.LowStockCount = stockData.Count(x => x.Stock < 10);
 
-            // Recent Activity (latest stock movements)
             vm.RecentActivities = await _context.StockMovements
                 .Include(s => s.ProductVariant)
                 .ThenInclude(v => v.Product)
@@ -53,6 +48,42 @@ namespace ClothInventoryApp.Controllers
                     Status = "Completed"
                 })
                 .ToListAsync();
+
+            var now = DateTime.UtcNow;
+
+            // ── Daily: last 30 days ──────────────────────────────────
+            var dailyFrom = now.Date.AddDays(-29);
+            var dailySales = await _context.Sales
+                .Where(s => s.SaleDate >= dailyFrom)
+                .Select(s => new { s.SaleDate, s.TotalAmount, s.TotalProfit })
+                .ToListAsync();
+
+            vm.DailyTrend = Enumerable.Range(0, 30)
+                .Select(i => dailyFrom.AddDays(i))
+                .Select(d => new SalesTrendPoint
+                {
+                    Label  = d.ToString("dd MMM"),
+                    Amount = dailySales.Where(s => s.SaleDate.Date == d).Sum(s => s.TotalAmount),
+                    Profit = dailySales.Where(s => s.SaleDate.Date == d).Sum(s => s.TotalProfit)
+                })
+                .ToList();
+
+            // ── Monthly: last 12 months ──────────────────────────────
+            var monthlyFrom = new DateTime(now.Year, now.Month, 1).AddMonths(-11);
+            var monthlySales = await _context.Sales
+                .Where(s => s.SaleDate >= monthlyFrom)
+                .Select(s => new { s.SaleDate, s.TotalAmount, s.TotalProfit })
+                .ToListAsync();
+
+            vm.MonthlyTrend = Enumerable.Range(0, 12)
+                .Select(i => monthlyFrom.AddMonths(i))
+                .Select(m => new SalesTrendPoint
+                {
+                    Label  = m.ToString("MMM yy"),
+                    Amount = monthlySales.Where(s => s.SaleDate.Year == m.Year && s.SaleDate.Month == m.Month).Sum(s => s.TotalAmount),
+                    Profit = monthlySales.Where(s => s.SaleDate.Year == m.Year && s.SaleDate.Month == m.Month).Sum(s => s.TotalProfit)
+                })
+                .ToList();
 
             return View(vm);
         }

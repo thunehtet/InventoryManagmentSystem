@@ -1,5 +1,27 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+@using Microsoft.Extensions.Localization
+@using ClothInventoryApp.Resources
+@using ClothInventoryApp.Services.Feature
+@using ClothInventoryApp.Services.Tenant
+@using System.Globalization
+@inject IStringLocalizer<SharedResource> Localizer
+@inject IFeatureService FeatureService
+@inject ITenantProvider TenantProvider
+@{
+    bool hasSales = false, hasFinance = false, hasTextiles = false;
+    if (!User.IsInRole("SuperAdmin") && User.Identity?.IsAuthenticated == true)
+    {
+        try
+        {
+            var _tid = TenantProvider.GetTenantId();
+            hasSales    = await FeatureService.HasFeatureAsync(_tid, "sales");
+            hasFinance  = await FeatureService.HasFeatureAsync(_tid, "finance");
+            hasTextiles = await FeatureService.HasFeatureAsync(_tid, "textiles");
+        }
+        catch { }
+    }
+}
+<!DOCTYPE html>
+<html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,114 +32,252 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/layout.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/components.css" asp-append-version="true" />
-    
 
     @RenderSection("Styles", required: false)
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Myanmar:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="modern-body">
+<body class="modern-body @(User.IsInRole("SuperAdmin") && User.Identity?.IsAuthenticated == true ? "sa-body" : "")"
+      data-controller="@ViewContext.RouteData.Values["controller"]"
+      data-action="@ViewContext.RouteData.Values["action"]">
+
+    <!-- Sidebar backdrop (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <div class="app-shell">
-        <aside class="sidebar" id="sidebar">
+        <aside class="sidebar" id="sidebar" data-initial>
             <div class="sidebar-brand" id="sidebarBrand" role="button" tabindex="0">
                 <div class="brand-logo">
                     <img src="~/images/logo.jpeg" alt="Logo" />
                 </div>
                 <div>
                     <div class="brand-title">ClothCo</div>
-                    <div class="brand-subtitle">Inventory Manager</div>
+                    <div class="brand-subtitle">@Localizer["Inventory Manager"]</div>
                 </div>
             </div>
 
+            @if (User.IsInRole("SuperAdmin"))
+            {
+            <!-- ── SuperAdmin navigation ── -->
             <nav class="sidebar-nav">
-                <div class="nav-section-title">Main</div>
+                <div class="nav-section-title">System</div>
 
-                <a asp-controller="Home" asp-action="Index" class="nav-link-modern">
-                    <i class="bi bi-grid-1x2-fill"></i>
-                    <span>Overview</span>
-                </a>
-
-                <a asp-controller="Dashboard" asp-action="Index" class="nav-link-modern">
-                    <i class="bi bi-bar-chart-line-fill"></i>
+                <a asp-controller="SuperAdmin" asp-action="Index" class="nav-link-modern">
+                    <i class="bi bi-speedometer2"></i>
                     <span>Dashboard</span>
                 </a>
 
-                <a asp-controller="Finance" asp-action="Index" class="nav-link-modern">
-                    <i class="bi bi-cash-coin"></i>
-                    <span>Finance Dashboard</span>
+                <div class="nav-section-title">Management</div>
+
+                <a asp-controller="Tenant" asp-action="Index" class="nav-link-modern">
+                    <i class="bi bi-building"></i>
+                    <span>Tenants</span>
                 </a>
 
-                <div class="nav-section-title">Inventory</div>
+                <a asp-controller="Plan" asp-action="Index" class="nav-link-modern">
+                    <i class="bi bi-layers-fill"></i>
+                    <span>Plans</span>
+                </a>
+
+                <a asp-controller="Feature" asp-action="Index" class="nav-link-modern">
+                    <i class="bi bi-toggles"></i>
+                    <span>Features</span>
+                </a>
+
+                <a asp-controller="PlanFeature" asp-action="Index" class="nav-link-modern">
+                    <i class="bi bi-diagram-3-fill"></i>
+                    <span>Plan Features</span>
+                </a>
+
+                <a asp-controller="Subscription" asp-action="Index" class="nav-link-modern">
+                    <i class="bi bi-credit-card-fill"></i>
+                    <span>Subscriptions</span>
+                </a>
+
+                <a asp-controller="Subscription" asp-action="History" class="nav-link-modern">
+                    <i class="bi bi-clock-history"></i>
+                    <span>Sub History</span>
+                </a>
+
+                <div class="nav-section-title">Inbox</div>
+
+                <a asp-controller="InquiryBox" asp-action="Index" class="nav-link-modern">
+                    <i class="bi bi-envelope-fill"></i>
+                    <span>Inquiry Box</span>
+                    @if ((int)(ViewBag.InquiryUnread ?? 0) > 0)
+                    {
+                        <span class="badge bg-danger ms-auto">@ViewBag.InquiryUnread</span>
+                    }
+                </a>
+            </nav>
+            }
+            else
+            {
+            <!-- ── Tenant user navigation ── -->
+            <nav class="sidebar-nav">
+                <div class="nav-section-title">@Localizer["Main"]</div>
+
+                <a asp-controller="Home" asp-action="Index" class="nav-link-modern">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                    <span>@Localizer["Overview"]</span>
+                </a>
+
+                @if (User.IsInRole("Admin"))
+                {
+                <a asp-controller="Dashboard" asp-action="Index" class="nav-link-modern">
+                    <i class="bi bi-bar-chart-line-fill"></i>
+                    <span>@Localizer["Dashboard"]</span>
+                </a>
+
+                @if (hasFinance)
+                {
+                <a asp-controller="Finance" asp-action="Index" class="nav-link-modern">
+                    <i class="bi bi-cash-coin"></i>
+                    <span>@Localizer["Finance Dashboard"]</span>
+                </a>
+                }
+                else
+                {
+                <span class="nav-link-modern nav-link-locked" title="Upgrade to Pro">
+                    <i class="bi bi-cash-coin"></i>
+                    <span>@Localizer["Finance Dashboard"]</span>
+                    <i class="bi bi-lock-fill ms-auto nav-lock-icon"></i>
+                </span>
+                }
+                }
+
+                <div class="nav-section-title">@Localizer["Inventory"]</div>
 
                 <a asp-controller="Products" asp-action="Index" class="nav-link-modern">
                     <i class="bi bi-box-seam-fill"></i>
-                    <span>Products</span>
+                    <span>@Localizer["Products"]</span>
                 </a>
 
                 <a asp-controller="ProductVariants" asp-action="Index" class="nav-link-modern">
                     <i class="bi bi-tags-fill"></i>
-                    <span>Variants</span>
+                    <span>@Localizer["Variants"]</span>
                 </a>
 
+                @if (hasTextiles)
+                {
                 <a asp-controller="Textile" asp-action="Index" class="nav-link-modern">
                     <i class="bi bi-tags-fill"></i>
-                    <span>Textile List</span>
+                    <span>@Localizer["Textile List"]</span>
                 </a>
+                }
+                else
+                {
+                <span class="nav-link-modern nav-link-locked" title="Upgrade to Pro">
+                    <i class="bi bi-tags-fill"></i>
+                    <span>@Localizer["Textile List"]</span>
+                    <i class="bi bi-lock-fill ms-auto nav-lock-icon"></i>
+                </span>
+                }
 
                 <a asp-controller="Stock" asp-action="Index" class="nav-link-modern">
                     <i class="bi bi-plus-circle-fill"></i>
-                    <span>Stock Movement</span>
+                    <span>@Localizer["Stock Movement"]</span>
                 </a>
-
 
                 <a asp-controller="Stock" asp-action="Inventory" class="nav-link-modern">
                     <i class="bi bi-clock-history"></i>
-                    <span>Inventory Log</span>
+                    <span>@Localizer["Inventory Log"]</span>
                 </a>
 
-                <div class="nav-section-title">Business</div>
+                <div class="nav-section-title">@Localizer["Business"]</div>
 
+                @if (hasSales)
+                {
                 <a asp-controller="Sales" asp-action="Index" class="nav-link-modern">
                     <i class="bi bi-bag-check-fill"></i>
-                    <span>Sales</span>
+                    <span>@Localizer["Sales"]</span>
                 </a>
-
-                <a asp-controller="CashTransaction" asp-action="Index" class="nav-link-modern">
+                }
+                else
+                {
+                <span class="nav-link-modern nav-link-locked" title="Upgrade to Starter">
                     <i class="bi bi-bag-check-fill"></i>
-                    <span>Expenses Management</span>
-                </a>
-                
+                    <span>@Localizer["Sales"]</span>
+                    <i class="bi bi-lock-fill ms-auto nav-lock-icon"></i>
+                </span>
+                }
 
-                <a asp-controller="Reports" asp-action="Index" class="nav-link-modern">
-                    <i class="bi bi-pie-chart-fill"></i>
-                    <span>Reports</span>
+                <a asp-controller="Customer" asp-action="Index" class="nav-link-modern">
+                    <i class="bi bi-people-fill"></i>
+                    <span>@Localizer["Customers"]</span>
                 </a>
+
+                @if (User.IsInRole("Admin"))
+                {
+                @if (hasFinance)
+                {
+                <a asp-controller="CashTransaction" asp-action="Index" class="nav-link-modern">
+                    <i class="bi bi-wallet2"></i>
+                    <span>@Localizer["Expenses"]</span>
+                </a>
+                }
+                else
+                {
+                <span class="nav-link-modern nav-link-locked" title="Upgrade to Pro">
+                    <i class="bi bi-wallet2"></i>
+                    <span>@Localizer["Expenses"]</span>
+                    <i class="bi bi-lock-fill ms-auto nav-lock-icon"></i>
+                </span>
+                }
+
+                <a asp-controller="ApplicationUser" asp-action="Index" class="nav-link-modern">
+                    <i class="bi bi-people-fill"></i>
+                    <span>@Localizer["Manage Users"]</span>
+                </a>
+                }
             </nav>
+            }
         </aside>
+        <script>(function(){if(window.innerWidth<=900){document.getElementById('sidebar').classList.add('collapsed');}}());</script>
 
         <div class="main-panel">
             <header class="topbar">
                 <div class="topbar-left">
-                    <button class="menu-btn" id="menuToggle" type="button">
+                    <button class="menu-btn" id="menuToggle" type="button" aria-label="Toggle menu">
                         <i class="bi bi-list"></i>
                     </button>
 
                     <div class="topbar-search">
                         <i class="bi bi-search"></i>
-                        <input type="text" placeholder="Search products, SKU, stock..." />
+                        <input type="text" id="topbarSearch"
+                               placeholder="@Localizer["Search products, SKU, stock…"]"
+                               value="@(ViewBag.Search ?? "")"
+                               autocomplete="off" />
                     </div>
                 </div>
 
                 <div class="topbar-right">
                     <div class="topbar-chip">
                         <i class="bi bi-stars"></i>
-                        <span>Smart Inventory</span>
+                        <span>@Localizer["Smart Inventory"]</span>
+                    </div>
+
+                    <!-- Language switcher -->
+                    <div class="lang-switcher">
+                        <a asp-controller="Language" asp-action="Set"
+                           asp-route-culture="en"
+                           asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)"
+                           class="lang-btn @(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "en" ? "lang-active" : "")">
+                            EN
+                        </a>
+                        <span class="lang-sep">|</span>
+                        <a asp-controller="Language" asp-action="Set"
+                           asp-route-culture="my"
+                           asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)"
+                           class="lang-btn @(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "my" ? "lang-active" : "")">
+                            MY
+                        </a>
                     </div>
 
                     <div class="user-dropdown">
-                        <button class="user-btn" onclick="toggleUserMenu()">
+                        <button class="user-btn" onclick="toggleUserMenu()" type="button">
                             <div class="user-avatar">
                                 <i class="bi bi-person-circle"></i>
                             </div>
@@ -128,21 +288,22 @@
                         <div id="userMenu" class="user-menu">
                             <a href="#" class="user-menu-item">
                                 <i class="bi bi-person"></i>
-                                Profile
+                                @Localizer["Profile"]
                             </a>
-
+                            <a asp-controller="Account" asp-action="ChangePassword" class="user-menu-item">
+                                <i class="bi bi-key-fill"></i>
+                                @Localizer["Change Password"]
+                            </a>
                             <a href="#" class="user-menu-item">
                                 <i class="bi bi-gear"></i>
-                                Settings
+                                @Localizer["Settings"]
                             </a>
-
                             <div class="user-menu-divider"></div>
-
                             <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
                                 @Html.AntiForgeryToken()
                                 <button type="submit" class="user-menu-item logout-btn">
                                     <i class="bi bi-box-arrow-right"></i>
-                                    Logout
+                                    @Localizer["Logout"]
                                 </button>
                             </form>
                         </div>
@@ -153,53 +314,89 @@
             <main class="page-content">
                 @RenderBody()
             </main>
+
+            <!-- Mobile bottom navigation — SuperAdmin -->
+            @if (User.IsInRole("SuperAdmin"))
+            {
+            <nav class="mob-bottom-nav" id="mobBottomNav">
+                <a href="/SuperAdmin/Index" class="mob-nav-item">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/Tenant/Index" class="mob-nav-item">
+                    <i class="bi bi-building"></i>
+                    <span>Tenants</span>
+                </a>
+                <a href="/Plan/Index" class="mob-nav-item mob-nav-center mob-nav-sa-center">
+                    <i class="bi bi-layers-fill"></i>
+                    <span>Plans</span>
+                </a>
+                <a href="/Subscription/Index" class="mob-nav-item">
+                    <i class="bi bi-credit-card-fill"></i>
+                    <span>Subs</span>
+                </a>
+                <a href="/InquiryBox/Index" class="mob-nav-item">
+                    <i class="bi bi-envelope-fill"></i>
+                    <span>Inbox</span>
+                </a>
+            </nav>
+            }
+
+            <!-- Mobile bottom navigation — Tenant users -->
+            @if (!User.IsInRole("SuperAdmin"))
+            {
+            <nav class="mob-bottom-nav" id="mobBottomNav">
+                <a href="/Home/Index" class="mob-nav-item">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                    <span>@Localizer["Overview"]</span>
+                </a>
+                <a href="/Stock/Inventory" class="mob-nav-item">
+                    <i class="bi bi-box-seam-fill"></i>
+                    <span>@Localizer["Inventory"]</span>
+                </a>
+                @if (hasSales)
+                {
+                <a href="/Sales/Create" class="mob-nav-item mob-nav-center">
+                    <i class="bi bi-plus-circle-fill"></i>
+                    <span>@Localizer["New Sale"]</span>
+                </a>
+                <a href="/Sales/Index" class="mob-nav-item">
+                    <i class="bi bi-bag-check-fill"></i>
+                    <span>@Localizer["Sales"]</span>
+                </a>
+                }
+                else
+                {
+                <span class="mob-nav-item mob-nav-center mob-nav-locked">
+                    <i class="bi bi-plus-circle-fill"></i>
+                    <span>@Localizer["New Sale"]</span>
+                </span>
+                <span class="mob-nav-item mob-nav-locked">
+                    <i class="bi bi-bag-check-fill"></i>
+                    <span>@Localizer["Sales"]</span>
+                </span>
+                }
+                @if (hasFinance)
+                {
+                <a href="/Finance/Index" class="mob-nav-item">
+                    <i class="bi bi-cash-coin"></i>
+                    <span>@Localizer["Finance"]</span>
+                </a>
+                }
+                else
+                {
+                <span class="mob-nav-item mob-nav-locked">
+                    <i class="bi bi-cash-coin"></i>
+                    <span>@Localizer["Finance"]</span>
+                </span>
+                }
+            </nav>
+            }
         </div>
     </div>
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        const menuToggle = document.getElementById("menuToggle");
-        const sidebar = document.getElementById("sidebar");
-        const sidebarBrand = document.getElementById("sidebarBrand");
-
-        function toggleSidebar() {
-            sidebar.classList.toggle("collapsed");
-        }
-
-        menuToggle?.addEventListener("click", toggleSidebar);
-        sidebarBrand?.addEventListener("click", toggleSidebar);
-
-        sidebarBrand?.addEventListener("keydown", function (e) {
-            if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                toggleSidebar();
-            }
-        });
-
-        function handleResize() {
-            if (window.innerWidth <= 768) {
-                sidebar.classList.add("collapsed");
-            } else {
-                sidebar.classList.remove("collapsed");
-            }
-        }
-
-        window.addEventListener("resize", handleResize);
-        handleResize();
-
-        function toggleUserMenu() {
-            document.getElementById("userMenu").classList.toggle("show");
-        }
-
-        // close when click outside
-        window.onclick = function (event) {
-            if (!event.target.closest('.user-dropdown')) {
-                document.getElementById("userMenu").classList.remove("show");
-            }
-        }
-
-    </script>
-
+    <script src="~/js/layout.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

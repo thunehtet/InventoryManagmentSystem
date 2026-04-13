@@ -1,8 +1,9 @@
-﻿@using ClothInventoryApp.Dto.Sale
+@using ClothInventoryApp.Dto.Sale
 @model ViewSaleDto
 
 @{
     ViewData["Title"] = "Sale Details";
+    var currency = ViewData["Currency"] as string ?? "";
 }
 
 <div class="create-product-shell">
@@ -10,6 +11,15 @@
         <div class="section-header">
             <div>
                 <h3>Sale Details</h3>
+            </div>
+            <div class="d-flex gap-2">
+                <a asp-action="InvoicePdf" asp-route-id="@Model.Id"
+                   class="btn-modern-primary" style="height:40px;padding:0 16px;font-size:.85rem">
+                    <i class="bi bi-file-earmark-pdf-fill me-1"></i> Download Invoice
+                </a>
+                <a asp-action="Index" class="btn-modern-outline" style="height:40px;padding:0 16px;font-size:.85rem">
+                    <i class="bi bi-arrow-left me-1"></i> Back
+                </a>
             </div>
         </div>
 
@@ -19,9 +29,39 @@
                 <input value="@Model.SaleDate.ToString("yyyy-MM-dd")" class="input-modern" readonly />
             </div>
 
+            @if (Model.CustomerId.HasValue)
+            {
+                <div class="form-group-modern">
+                    <label class="form-label-modern">Customer</label>
+                    <div class="input-modern d-flex align-items-center gap-2" style="background:#f8fafc;cursor:default">
+                        <i class="bi bi-person-fill" style="color:#6366f1"></i>
+                        <a asp-controller="Customer" asp-action="Details" asp-route-id="@Model.CustomerId"
+                           style="color:#0f172a;text-decoration:none;font-weight:600">@Model.CustomerName</a>
+                        @if (!string.IsNullOrEmpty(Model.CustomerPhone))
+                        {
+                            <span class="text-muted" style="font-size:13px">· @Model.CustomerPhone</span>
+                        }
+                    </div>
+                </div>
+            }
+
             <div class="form-group-modern">
-                <label class="form-label-modern">Total Amount</label>
-                <input value="@Model.TotalAmount" class="input-modern" readonly />
+                <label class="form-label-modern">Total Revenue</label>
+                <input value="@(Model.TotalAmount.ToString("N0") + " " + currency)" class="input-modern" readonly />
+            </div>
+
+            @if (Model.Discount > 0)
+            {
+                <div class="form-group-modern">
+                    <label class="form-label-modern">Discount</label>
+                    <input value="@(Model.Discount.ToString("N0") + " " + currency)" class="input-modern text-danger" readonly />
+                </div>
+            }
+
+            <div class="form-group-modern">
+                <label class="form-label-modern">Total Profit</label>
+                <input value="@(Model.TotalProfit.ToString("N0") + " " + currency)"
+                       class="input-modern @(Model.TotalProfit >= 0 ? "text-success" : "text-danger") fw-bold" readonly />
             </div>
         </div>
 
@@ -31,10 +71,11 @@
                 <thead>
                     <tr>
                         <th>Variant</th>
-                        <th>Quantity</th>
+                        <th>Qty</th>
                         <th>Unit Price</th>
                         <th>Cost Price</th>
-                        <th>Line Total</th>
+                        <th>Revenue</th>
+                        <th>Profit</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,17 +84,22 @@
                         <tr>
                             <td>@item.ProductVariantName</td>
                             <td>@item.Quantity</td>
-                            <td>@item.UnitPrice</td>
-                            <td>@item.CostPrice</td>
-                            <td>@item.LineTotal</td>
+                            <td>@item.UnitPrice.ToString("N0") @currency</td>
+                            <td>@item.CostPrice.ToString("N0") @currency</td>
+                            <td>@item.LineTotal.ToString("N0") @currency</td>
+                            <td class="@(item.LineProfit >= 0 ? "text-success" : "text-danger") fw-semibold">
+                                @item.LineProfit.ToString("N0") @currency
+                            </td>
                         </tr>
                     }
                 </tbody>
             </table>
         </div>
-        
 
         <div class="form-footer-modern">
+            <a asp-action="InvoicePdf" asp-route-id="@Model.Id" class="btn-modern-primary btn-modern-lg">
+                <i class="bi bi-file-earmark-pdf-fill"></i> Download Invoice PDF
+            </a>
             <a asp-action="Index" class="btn-modern-outline btn-modern-lg">Back</a>
         </div>
     </div>

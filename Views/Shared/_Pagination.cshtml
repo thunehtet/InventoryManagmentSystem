@@ -1,0 +1,106 @@
+@model ClothInventoryApp.Models.PaginationViewModel
+@{
+    // Resolve controller from model or from the ambient request route
+    var ctrl = Model.Controller ?? ViewContext.RouteData.Values["controller"]?.ToString();
+
+    // Use Url.Action() — reliable, explicit, no tag-helper resolution ambiguity
+    string PageUrl(int p)
+    {
+        var rv = new RouteValueDictionary();
+        foreach (var kv in Model.Extra) if (kv.Value != null) rv[kv.Key] = kv.Value;
+        rv["page"] = p;
+        rv["size"] = Model.PageSize;
+        return Url.Action(Model.Action, ctrl, rv) ?? "#";
+    }
+    string SizeUrl(int s)
+    {
+        var rv = new RouteValueDictionary();
+        foreach (var kv in Model.Extra) if (kv.Value != null) rv[kv.Key] = kv.Value;
+        rv["page"] = 1;
+        rv["size"] = s;
+        return Url.Action(Model.Action, ctrl, rv) ?? "#";
+    }
+
+    int windowStart = Math.Max(1, Model.Page - 2);
+    int windowEnd   = Math.Min(Model.TotalPages, windowStart + 4);
+    if (windowEnd - windowStart < 4) windowStart = Math.Max(1, windowEnd - 4);
+}
+
+@if (Model.TotalCount == 0) { return; }
+
+<div class="pagination-bar">
+    <!-- Entry count -->
+    <div class="pagination-info">
+        Showing <strong>@Model.From</strong>–<strong>@Model.To</strong>
+        of <strong>@Model.TotalCount</strong>
+    </div>
+
+    <!-- Page controls -->
+    <nav class="pagination-nav" aria-label="Page navigation">
+        @if (Model.HasPrev)
+        {
+            <a class="page-btn" href="@PageUrl(Model.Page - 1)" aria-label="Previous">
+                <i class="bi bi-chevron-left"></i>
+                <span class="d-none d-sm-inline">Prev</span>
+            </a>
+        }
+        else
+        {
+            <span class="page-btn page-btn-disabled"><i class="bi bi-chevron-left"></i><span class="d-none d-sm-inline">Prev</span></span>
+        }
+
+        <span class="page-mobile-label d-sm-none">@Model.Page / @Model.TotalPages</span>
+
+        <div class="page-numbers d-none d-sm-flex">
+            @if (windowStart > 1)
+            {
+                <a class="page-btn" href="@PageUrl(1)">1</a>
+                @if (windowStart > 2) { <span class="page-ellipsis">…</span> }
+            }
+            @for (int p = windowStart; p <= windowEnd; p++)
+            {
+                if (p == Model.Page)
+                {
+                    <span class="page-btn page-btn-active" aria-current="page">@p</span>
+                }
+                else
+                {
+                    <a class="page-btn" href="@PageUrl(p)">@p</a>
+                }
+            }
+            @if (windowEnd < Model.TotalPages)
+            {
+                @if (windowEnd < Model.TotalPages - 1) { <span class="page-ellipsis">…</span> }
+                <a class="page-btn" href="@PageUrl(Model.TotalPages)">@Model.TotalPages</a>
+            }
+        </div>
+
+        @if (Model.HasNext)
+        {
+            <a class="page-btn" href="@PageUrl(Model.Page + 1)" aria-label="Next">
+                <span class="d-none d-sm-inline">Next</span>
+                <i class="bi bi-chevron-right"></i>
+            </a>
+        }
+        else
+        {
+            <span class="page-btn page-btn-disabled"><span class="d-none d-sm-inline">Next</span><i class="bi bi-chevron-right"></i></span>
+        }
+    </nav>
+
+    <!-- Row size selector -->
+    <div class="pagination-size">
+        <span class="size-label d-none d-md-inline">Rows:</span>
+        @foreach (var s in ClothInventoryApp.Models.PaginationViewModel.AllowedSizes)
+        {
+            @if (s == Model.PageSize)
+            {
+                <span class="size-btn size-btn-active">@s</span>
+            }
+            else
+            {
+                <a class="size-btn" href="@SizeUrl(s)">@s</a>
+            }
+        }
+    </div>
+</div>

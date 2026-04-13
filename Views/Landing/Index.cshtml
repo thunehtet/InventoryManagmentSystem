@@ -1,0 +1,589 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en" data-lang="en" id="htmlRoot">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockEasy — Inventory Management for Small Business</title>
+    <meta name="description" content="StockEasy helps small businesses manage inventory, track sales, and grow faster." />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/pages/landing.css" asp-append-version="true" />
+
+    <!-- Apply saved language BEFORE render to avoid flash -->
+    <script>
+        (function(){
+            var l = localStorage.getItem('se-lang') || 'en';
+            document.getElementById('htmlRoot').setAttribute('data-lang', l);
+        })();
+    </script>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     NAVBAR
+     ═══════════════════════════════════════════════════════════ -->
+<header class="nav" id="navbar">
+    <div class="nav-inner">
+
+        <a href="#" class="nav-brand">
+            <span class="nav-brand-icon"><i class="bi bi-boxes"></i></span>
+            StockEasy
+        </a>
+
+        <nav class="nav-links">
+            <a href="#features"><span class="en">Features</span><span class="my">လုပ်ဆောင်ချက်</span></a>
+            <a href="#how"><span class="en">How It Works</span><span class="my">အသုံးပြုပုံ</span></a>
+            <a href="#pricing"><span class="en">Pricing</span><span class="my">စျေးနှုန်း</span></a>
+            <a href="#contact"><span class="en">Contact</span><span class="my">ဆက်သွယ်ရန်</span></a>
+        </nav>
+
+        <div class="nav-actions">
+            <button class="lang-btn" id="langBtn" aria-label="Switch language">
+                <i class="bi bi-translate"></i>
+                <span class="en">မြန်မာ</span><span class="my">English</span>
+            </button>
+            <a href="/Account/Login" class="btn-nav-ghost">
+                <span class="en">Sign In</span><span class="my">ဝင်ရောက်ပါ</span>
+            </a>
+            <a href="#contact" class="btn-nav-cta">
+                <span class="en">Get Started</span><span class="my">စတင်ပါ</span>
+            </a>
+        </div>
+
+        <label class="nav-burger" for="nav-toggle" aria-label="Open menu">
+            <i class="bi bi-list"></i>
+        </label>
+    </div>
+
+    <input type="checkbox" id="nav-toggle" class="nav-toggle-input" />
+    <div class="nav-mobile">
+        <a href="#features"><span class="en">Features</span><span class="my">လုပ်ဆောင်ချက်</span></a>
+        <a href="#how"><span class="en">How It Works</span><span class="my">အသုံးပြုပုံ</span></a>
+        <a href="#pricing"><span class="en">Pricing</span><span class="my">စျေးနှုန်း</span></a>
+        <a href="#contact"><span class="en">Contact</span><span class="my">ဆက်သွယ်ရန်</span></a>
+        <hr />
+        <!-- Get Started CTA (btn-nav-cta is hidden on mobile, so show it here) -->
+        <a href="#contact" class="btn-nav-cta" style="text-align:center;border-radius:10px;padding:11px 20px;">
+            <span class="en">Get Started Free</span><span class="my">အခမဲ့ စတင်ပါ</span>
+        </a>
+    </div>
+</header>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     HERO
+     ═══════════════════════════════════════════════════════════ -->
+<section class="hero" id="home">
+    <div class="hero-inner">
+
+        <div class="hero-copy">
+            <div class="hero-badge">
+                <i class="bi bi-stars"></i>
+                <span class="en">Built for Small Business</span>
+                <span class="my">ကုန်သေးစိတ်လုပ်ငန်းများအတွက်</span>
+            </div>
+
+            <h1 class="hero-title">
+                <span class="en">Manage Inventory.<br /><span class="hero-title-accent">Grow Faster.</span></span>
+                <span class="my">ကုန်ပစ္စည်းများ စီမံပါ။<br /><span class="hero-title-accent">ပိုမြန်မြန် ကြီးထွားပါ။</span></span>
+            </h1>
+
+            <p class="hero-sub">
+                <span class="en">StockEasy gives your team real-time stock visibility, streamlined sales, and clear financial dashboards — all in one place.</span>
+                <span class="my">StockEasy သည် သင့်အဖွဲ့ကို လက်ရှိ ကုန်ပစ္စည်းအခြေအနေ၊ ရောင်းအားစီမံမှုနှင့် ငွေကြေး dashboard တို့ကို တစ်နေရာတည်းမှ ကြည့်ရှုနိုင်အောင် ဖန်တီးပေးသည်။</span>
+            </p>
+
+            <div class="hero-btns">
+                <a href="#contact" class="btn-hero-primary">
+                    <i class="bi bi-rocket-takeoff-fill"></i>
+                    <span class="en">Get Started Free</span><span class="my">အခမဲ့ စတင်ပါ</span>
+                </a>
+                <a href="/Account/Login" class="btn-hero-ghost">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    <span class="en">Sign In</span><span class="my">ဝင်ရောက်ပါ</span>
+                </a>
+            </div>
+
+            <div class="hero-trust">
+                <span><i class="bi bi-check-circle-fill"></i> <span class="en">No credit card</span><span class="my">ကတ်မလိုပါ</span></span>
+                <span><i class="bi bi-check-circle-fill"></i> <span class="en">Cancel anytime</span><span class="my">အချိန်မရွေး ဖျက်ခွင့်</span></span>
+                <span><i class="bi bi-check-circle-fill"></i> <span class="en">Free setup</span><span class="my">အခမဲ့ ထည့်သွင်း</span></span>
+            </div>
+        </div>
+
+        <!-- CSS-drawn mockup dashboard -->
+        <div class="hero-mockup" aria-hidden="true">
+            <div class="mockup-browser">
+                <div class="mockup-titlebar">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span class="mockup-url">app.stockeasy.io/dashboard</span>
+                </div>
+                <div class="mockup-body">
+                    <div class="mockup-stats">
+                        <div class="mockup-stat">
+                            <div class="mockup-stat-label">Products</div>
+                            <div class="mockup-stat-value">1,248</div>
+                        </div>
+                        <div class="mockup-stat">
+                            <div class="mockup-stat-label">Sales Today</div>
+                            <div class="mockup-stat-value">84</div>
+                        </div>
+                        <div class="mockup-stat">
+                            <div class="mockup-stat-label">Revenue</div>
+                            <div class="mockup-stat-value">K 2.4M</div>
+                        </div>
+                    </div>
+                    <div class="mockup-section-label">Recent Sales</div>
+                    <div class="mockup-table">
+                        <div class="mockup-table-row header">
+                            <span>Product</span><span>Qty</span><span>Amount</span>
+                        </div>
+                        <div class="mockup-table-row">
+                            <span class="row-dot indigo"></span>
+                            <span>Cotton Shirt — M/White</span><span>3</span><span>K 45,000</span>
+                        </div>
+                        <div class="mockup-table-row">
+                            <span class="row-dot green"></span>
+                            <span>Silk Scarf — Blue</span><span>1</span><span>K 28,000</span>
+                        </div>
+                        <div class="mockup-table-row">
+                            <span class="row-dot purple"></span>
+                            <span>Denim Jacket — L</span><span>2</span><span>K 92,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mockup-float-1">
+                <i class="bi bi-graph-up-arrow"></i>
+                <div><div class="float-value">+24%</div><div class="float-label">This Month</div></div>
+            </div>
+            <div class="mockup-float-2">
+                <i class="bi bi-shield-check-fill"></i>
+                <div><div class="float-value">99.9%</div><div class="float-label">Uptime</div></div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     STATS STRIP
+     ═══════════════════════════════════════════════════════════ -->
+<section class="stats-strip">
+    <div class="stats-inner">
+        <div class="stat-item fade-up">
+            <div class="stat-item-value">500+</div>
+            <div class="stat-item-label"><span class="en">Businesses Served</span><span class="my">လုပ်ငန်းများ</span></div>
+        </div>
+        <div class="stat-divider" aria-hidden="true"></div>
+        <div class="stat-item fade-up">
+            <div class="stat-item-value">50,000+</div>
+            <div class="stat-item-label"><span class="en">Products Tracked</span><span class="my">ကုန်ပစ္စည်းများ</span></div>
+        </div>
+        <div class="stat-divider" aria-hidden="true"></div>
+        <div class="stat-item fade-up">
+            <div class="stat-item-value">99.9%</div>
+            <div class="stat-item-label"><span class="en">Uptime Guarantee</span><span class="my">ပြေးဆွဲချိန်</span></div>
+        </div>
+        <div class="stat-divider" aria-hidden="true"></div>
+        <div class="stat-item fade-up">
+            <div class="stat-item-value">24/7</div>
+            <div class="stat-item-label"><span class="en">Support Available</span><span class="my">အကူအညီ</span></div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     FEATURES
+     ═══════════════════════════════════════════════════════════ -->
+<section class="features" id="features">
+    <div class="section-inner">
+        <div class="section-header fade-up">
+            <span class="section-label"><span class="en">Everything You Need</span><span class="my">လိုအပ်သမျှ</span></span>
+            <h2 class="section-title">
+                <span class="en">Powerful Features, Simple Interface</span>
+                <span class="my">ထိရောက်သည့် လုပ်ဆောင်ချက်များ၊ ရိုးရှင်းသည့် မျက်နှာပြင်</span>
+            </h2>
+            <p class="section-sub">
+                <span class="en">From raw material tracking to final sale, StockEasy covers every step of your inventory workflow.</span>
+                <span class="my">ကုန်ကြမ်းမှ အပြီးအပိုင်ရောင်းချမှုအထိ StockEasy သည် သင့် inventory လည်ပတ်မှုတိုင်းကို ဆောင်ရွက်ပေးသည်။</span>
+            </p>
+        </div>
+
+        <div class="features-grid">
+
+            <div class="feature-card fade-up">
+                <div class="feature-icon fi-indigo"><i class="bi bi-box-seam-fill"></i></div>
+                <h3 class="feature-title"><span class="en">Products &amp; Variants</span><span class="my">ကုန်ပစ္စည်းနှင့် မျိုးကွဲများ</span></h3>
+                <p class="feature-desc"><span class="en">Manage products with full size, color, and SKU variants. Never lose track of what you carry.</span><span class="my">အရွယ်အစား၊ အရောင်နှင့် SKU မျိုးကွဲများနှင့်အတူ ကုန်ပစ္စည်းများကို စီမံပါ။</span></p>
+            </div>
+
+            <div class="feature-card fade-up">
+                <div class="feature-icon fi-green"><i class="bi bi-bar-chart-line-fill"></i></div>
+                <h3 class="feature-title"><span class="en">Live Stock Tracking</span><span class="my">လက်ရှိ ကုန်ပစ္စည်းလက်ကျန်</span></h3>
+                <p class="feature-desc"><span class="en">Real-time stock levels with full movement history — every IN, OUT, and adjustment recorded.</span><span class="my">ကုန်ဝင်၊ ကုန်ထွက် အပြည့်အဝ မှတ်တမ်းနှင့်အတူ လက်ရှိ ကုန်ပစ္စည်းအခြေအနေ ကြည့်ရှုနိုင်သည်။</span></p>
+            </div>
+
+            <div class="feature-card fade-up">
+                <div class="feature-icon fi-blue"><i class="bi bi-receipt-cutoff"></i></div>
+                <h3 class="feature-title"><span class="en">Sales Management</span><span class="my">အရောင်းစီမံခန့်ခွဲမှု</span></h3>
+                <p class="feature-desc"><span class="en">Create sales that automatically deduct stock and record cash flow. Clean, audit-ready records.</span><span class="my">ရောင်းချမှုများ ဖန်တီးသည်နှင့် ကုန်ပစ္စည်းနှင်ငွေကြေး အလိုအလျောက် မှတ်တမ်းတင်သည်။</span></p>
+            </div>
+
+            <div class="feature-card fade-up">
+                <div class="feature-icon fi-orange"><i class="bi bi-wallet2"></i></div>
+                <h3 class="feature-title"><span class="en">Finance Dashboard</span><span class="my">ငွေကြေး Dashboard</span></h3>
+                <p class="feature-desc"><span class="en">See total income, expenses, and net cash flow at a glance. Know your numbers every day.</span><span class="my">ဝင်ငွေ၊ ထွက်ငွေနှင့် အသားတင်ငွေကြေးစီးဆင်းမှုကို တစ်နှင့်ကြည့်ရှုနိုင်သည်။</span></p>
+            </div>
+
+            <div class="feature-card fade-up">
+                <div class="feature-icon fi-purple"><i class="bi bi-people-fill"></i></div>
+                <h3 class="feature-title"><span class="en">Multi-User Access</span><span class="my">အသုံးပြုသူ စီမံမှု</span></h3>
+                <p class="feature-desc"><span class="en">Invite staff with limited access. Admins control what each team member can see and do.</span><span class="my">ဝန်ထမ်းများကို သတ်မှတ်ထားသောအခွင့်များဖြင့် ဖိတ်ကြားနိုင်သည်။ Admin မှ ထိန်းချုပ်သည်။</span></p>
+            </div>
+
+            <div class="feature-card fade-up">
+                <div class="feature-icon fi-teal"><i class="bi bi-building-fill"></i></div>
+                <h3 class="feature-title"><span class="en">Multi-Tenant Ready</span><span class="my">လုပ်ငန်းစုများအတွက်</span></h3>
+                <p class="feature-desc"><span class="en">Each business gets its own isolated workspace. Your data stays yours — always.</span><span class="my">လုပ်ငန်းတိုင်းသည် သီးခြား workspace ရရှိသည်။ သင့်ဒေတာသည် သင်တစ်ဦးတည်းသာ မြင်နိုင်သည်။</span></p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     HOW IT WORKS
+     ═══════════════════════════════════════════════════════════ -->
+<section class="how" id="how">
+    <div class="section-inner">
+        <div class="section-header fade-up">
+            <span class="section-label"><span class="en">Simple Process</span><span class="my">ရိုးရှင်းသောလုပ်ငန်းစဉ်</span></span>
+            <h2 class="section-title">
+                <span class="en">Up and Running in Minutes</span>
+                <span class="my">မိနစ်ပိုင်းအတွင်း စတင်အသုံးပြုနိုင်</span>
+            </h2>
+            <p class="section-sub">
+                <span class="en">No complex setup. No long onboarding. Just a quick contact and you're in.</span>
+                <span class="my">ပြင်ဆင်မှုမလိုပါ။ ဆက်သွယ်ပြီးတာနဲ့ သင့် workspace ဝင်ခွင့်ရမည်။</span>
+            </p>
+        </div>
+
+        <div class="steps">
+            <div class="step fade-up">
+                <div class="step-num">1</div>
+                <h3 class="step-title"><span class="en">Contact Us</span><span class="my">ဆက်သွယ်ပါ</span></h3>
+                <p class="step-desc">
+                    <span class="en">Fill in the contact form with your business name and needs. We'll respond within 24 hours.</span>
+                    <span class="my">အောက်ပါ ဆက်သွယ်ရေးပုံစံဖြင့် သင့်လုပ်ငန်းအကြောင်း ဖြည့်ပေးပါ။ ၂၄နာရီအတွင်း ပြန်ဆက်သွယ်မည်။</span>
+                </p>
+            </div>
+            <div class="step fade-up">
+                <div class="step-num">2</div>
+                <h3 class="step-title"><span class="en">Get Access</span><span class="my">ဝင်ခွင့်ရပါ</span></h3>
+                <p class="step-desc">
+                    <span class="en">We create your workspace and send login credentials. Your data is isolated from day one.</span>
+                    <span class="my">သင့် workspace ဖန်တီးပြီး login အချက်အလက်များ ပေးပို့မည်။ သင့်ဒေတာ သီးခြားကင်းကင်းနှင့် ဖြစ်သည်။</span>
+                </p>
+            </div>
+            <div class="step fade-up">
+                <div class="step-num">3</div>
+                <h3 class="step-title"><span class="en">Start Managing</span><span class="my">စီမံပါ</span></h3>
+                <p class="step-desc">
+                    <span class="en">Add products, record stock, process sales. Your whole inventory operation in one dashboard.</span>
+                    <span class="my">ကုန်ပစ္စည်းထည့်၊ stock မှတ်တမ်းတင်၊ အရောင်းများ ဆောင်ရွက်ပါ — dashboard တစ်ခုတည်းမှာ အားလုံး။</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PRICING
+     ═══════════════════════════════════════════════════════════ -->
+<section class="pricing" id="pricing">
+    <div class="section-inner">
+        <div class="section-header fade-up">
+            <span class="section-label"><span class="en">Transparent Pricing</span><span class="my">ပွင့်လင်းသောစျေးနှုန်း</span></span>
+            <h2 class="section-title">
+                <span class="en">Plans That Grow With You</span>
+                <span class="my">သင်နှင့်အတူ ကြီးထွားသောအစီအစဉ်</span>
+            </h2>
+            <p class="section-sub">
+                <span class="en">Start free and scale as your business grows. No hidden fees.</span>
+                <span class="my">အခမဲ့ စတင်ပြီး လုပ်ငန်းကြီးထွားသည်နှင့် တိုးချဲ့နိုင်သည်။ ဝှက်ထားသောကြေးများ မရှိပါ။</span>
+            </p>
+        </div>
+
+        <div class="pricing-grid">
+
+            <div class="price-card fade-up">
+                <div class="price-plan"><span class="en">Starter</span><span class="my">စတင်သူ</span></div>
+                <div class="price-amount"><span class="price-value"><span class="en">Free</span><span class="my">အခမဲ့</span></span></div>
+                <div class="price-period"><span class="en">Forever free</span><span class="my">အမြဲအခမဲ့</span></div>
+                <ul class="price-features">
+                    <li><i class="bi bi-check2"></i> <span class="en">Up to 2 users</span><span class="my">အသုံးပြုသူ ၂ ယောက်</span></li>
+                    <li><i class="bi bi-check2"></i> <span class="en">100 products</span><span class="my">ကုန်ပစ္စည်း ၁၀၀</span></li>
+                    <li><i class="bi bi-check2"></i> <span class="en">Sales tracking</span><span class="my">အရောင်းမှတ်တမ်း</span></li>
+                    <li><i class="bi bi-check2"></i> <span class="en">Basic reports</span><span class="my">အခြေခံ အစီရင်ခံစာ</span></li>
+                    <li class="disabled"><i class="bi bi-x"></i> <span class="en">Finance dashboard</span><span class="my">ငွေကြေး dashboard</span></li>
+                    <li class="disabled"><i class="bi bi-x"></i> <span class="en">Priority support</span><span class="my">ဦးစားပေး ပံ့ပိုးမှု</span></li>
+                </ul>
+                <a href="#contact" class="btn-price"><span class="en">Get Started</span><span class="my">စတင်ပါ</span></a>
+            </div>
+
+            <div class="price-card featured fade-up">
+                <div class="price-ribbon"><span class="en">Most Popular</span><span class="my">အကြိုက်ဆုံး</span></div>
+                <div class="price-plan"><span class="en">Growth</span><span class="my">တိုးတက်မှု</span></div>
+                <div class="price-amount">
+                    <span class="price-currency">K </span><span class="price-value">49,000</span>
+                </div>
+                <div class="price-period"><span class="en">per month</span><span class="my">တစ်လ</span></div>
+                <ul class="price-features">
+                    <li><i class="bi bi-check2"></i> <span class="en">Up to 10 users</span><span class="my">အသုံးပြုသူ ၁၀ ယောက်</span></li>
+                    <li><i class="bi bi-check2"></i> <span class="en">Unlimited products</span><span class="my">ကုန်ပစ္စည်း အကန့်အသတ်မဲ့</span></li>
+                    <li><i class="bi bi-check2"></i> <span class="en">Full sales management</span><span class="my">အရောင်းစီမံခန့်ခွဲမှု အပြည့်</span></li>
+                    <li><i class="bi bi-check2"></i> <span class="en">Finance dashboard</span><span class="my">ငွေကြေး dashboard</span></li>
+                    <li><i class="bi bi-check2"></i> <span class="en">Stock movement history</span><span class="my">ကုန်ရွေ့လျားမှု မှတ်တမ်း</span></li>
+                    <li><i class="bi bi-check2"></i> <span class="en">Priority support</span><span class="my">ဦးစားပေး ပံ့ပိုးမှု</span></li>
+                </ul>
+                <a href="#contact" class="btn-price featured"><span class="en">Get Started</span><span class="my">စတင်ပါ</span></a>
+            </div>
+
+            <div class="price-card fade-up">
+                <div class="price-plan"><span class="en">Enterprise</span><span class="my">လုပ်ငန်းကြီး</span></div>
+                <div class="price-amount"><span class="price-value"><span class="en">Custom</span><span class="my">သတ်မှတ်</span></span></div>
+                <div class="price-period"><span class="en">Contact for pricing</span><span class="my">စျေးနှုန်းအတွက် ဆက်သွယ်ပါ</span></div>
+                <ul class="price-features">
+                    <li><i class="bi bi-check2"></i> <span class="en">Unlimited users</span><span class="my">အသုံးပြုသူ အကန့်အသတ်မဲ့</span></li>
+                    <li><i class="bi bi-check2"></i> <span class="en">Unlimited products</span><span class="my">ကုန်ပစ္စည်း အကန့်အသတ်မဲ့</span></li>
+                    <li><i class="bi bi-check2"></i> <span class="en">All Growth features</span><span class="my">Growth အင်္ဂါရပ်အားလုံး</span></li>
+                    <li><i class="bi bi-check2"></i> <span class="en">Dedicated workspace</span><span class="my">သီးသန့် workspace</span></li>
+                    <li><i class="bi bi-check2"></i> <span class="en">Custom onboarding</span><span class="my">သတ်မှတ် onboarding</span></li>
+                    <li><i class="bi bi-check2"></i> <span class="en">SLA guarantee</span><span class="my">SLA အာမခံ</span></li>
+                </ul>
+                <a href="#contact" class="btn-price"><span class="en">Contact Us</span><span class="my">ဆက်သွယ်ပါ</span></a>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     CONTACT
+     ═══════════════════════════════════════════════════════════ -->
+<section class="contact" id="contact">
+    <div class="contact-inner">
+
+        <div class="contact-info fade-up">
+            <span class="section-label light"><span class="en">Get in Touch</span><span class="my">ဆက်သွယ်ပါ</span></span>
+            <h2 class="contact-title">
+                <span class="en">Ready to Get Started?</span>
+                <span class="my">စတင်ရန် အသင့်ဖြစ်ပြီလား?</span>
+            </h2>
+            <p class="contact-sub">
+                <span class="en">Tell us about your business and we'll set up your workspace within 24 hours. No commitment required.</span>
+                <span class="my">သင့်လုပ်ငန်းအကြောင်း ပြောပြပါ၊ ၂၄နာရီအတွင်း သင့် workspace ကို ဖြည့်ဆည်းပေးပါမည်။ မည်သည့်ကတိမျှ မလိုပါ။</span>
+            </p>
+
+            <div class="contact-details">
+                <div class="contact-detail-row">
+                    <div class="contact-detail-icon"><i class="bi bi-envelope-fill"></i></div>
+                    <div>
+                        <div class="contact-detail-label"><span class="en">Email Us</span><span class="my">အီးမေးလ်ပို့ပါ</span></div>
+                        <div class="contact-detail-value">hello@stockeasy.io</div>
+                    </div>
+                </div>
+                <div class="contact-detail-row">
+                    <div class="contact-detail-icon"><i class="bi bi-telephone-fill"></i></div>
+                    <div>
+                        <div class="contact-detail-label"><span class="en">Call Us</span><span class="my">ဖုန်းဆက်ပါ</span></div>
+                        <div class="contact-detail-value">+95 9 123 456 789</div>
+                    </div>
+                </div>
+                <div class="contact-detail-row">
+                    <div class="contact-detail-icon"><i class="bi bi-geo-alt-fill"></i></div>
+                    <div>
+                        <div class="contact-detail-label"><span class="en">Location</span><span class="my">တည်နေရာ</span></div>
+                        <div class="contact-detail-value"><span class="en">Yangon, Myanmar</span><span class="my">ရန်ကုန်၊ မြန်မာနိုင်ငံ</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-form-card fade-up">
+
+            @if (TempData["ContactSuccess"] != null)
+            {
+                <div class="contact-success">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <div>
+                        <div class="success-title"><span class="en">Message Sent!</span><span class="my">မက်ဆေ့ ရောက်ပြီ!</span></div>
+                        <div class="success-sub">
+                            <span class="en">Thanks @TempData["ContactName"], we'll be in touch within 24 hours.</span>
+                            <span class="my">ကျေးဇူးတင်ပါသည် @TempData["ContactName"]၊ ၂၄နာရီအတွင်း ဆက်သွယ်ပါမည်။</span>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <h3 class="form-card-title"><span class="en">Send Us a Message</span><span class="my">မက်ဆေ့ပေးပို့ပါ</span></h3>
+
+            <form asp-controller="Landing" asp-action="ContactSubmit" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="cname">
+                            <span class="en">Full Name *</span><span class="my">နာမည် *</span>
+                        </label>
+                        <input type="text" id="cname" name="name" class="form-input"
+                               placeholder="Your name" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="cemail">
+                            <span class="en">Email Address *</span><span class="my">အီးမေးလ် *</span>
+                        </label>
+                        <input type="email" id="cemail" name="email" class="form-input"
+                               placeholder="you@example.com" required />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="cphone">
+                        <span class="en">Phone Number</span><span class="my">ဖုန်းနံပါတ်</span>
+                    </label>
+                    <input type="tel" id="cphone" name="phone" class="form-input"
+                           placeholder="+95 9 xxx xxx xxx" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="cmsg">
+                        <span class="en">Message *</span><span class="my">မက်ဆေ့ *</span>
+                    </label>
+                    <textarea id="cmsg" name="message" class="form-input form-textarea"
+                              placeholder="Tell us about your business..."
+                              rows="4" required></textarea>
+                </div>
+
+                <button type="submit" class="btn-contact-submit">
+                    <i class="bi bi-send-fill"></i>
+                    <span class="en">Send Message</span><span class="my">မက်ဆေ့ပို့ပါ</span>
+                </button>
+            </form>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════════════════════ -->
+<footer class="footer">
+    <div class="footer-inner">
+
+        <div class="footer-brand">
+            <div class="footer-brand-logo"><i class="bi bi-boxes"></i></div>
+            <div class="footer-brand-name">StockEasy</div>
+            <p class="footer-tagline">
+                <span class="en">Inventory management made simple for small businesses.</span>
+                <span class="my">ကုန်သေးစိတ်လုပ်ငန်းများအတွက် ကုန်ပစ္စည်းစီမံမှုကို ရိုးရှင်းလွယ်ကူအောင် ဖန်တီးထားသည်။</span>
+            </p>
+        </div>
+
+        <div class="footer-col">
+            <div class="footer-col-title"><span class="en">Product</span><span class="my">ထုတ်ကုန်</span></div>
+            <ul class="footer-links">
+                <li><a href="#features"><span class="en">Features</span><span class="my">လုပ်ဆောင်ချက်</span></a></li>
+                <li><a href="#pricing"><span class="en">Pricing</span><span class="my">စျေးနှုန်း</span></a></li>
+                <li><a href="#how"><span class="en">How It Works</span><span class="my">အသုံးပြုပုံ</span></a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <div class="footer-col-title"><span class="en">Company</span><span class="my">ကုမ္ပဏီ</span></div>
+            <ul class="footer-links">
+                <li><a href="#contact"><span class="en">Contact Us</span><span class="my">ဆက်သွယ်ရန်</span></a></li>
+                <li><a href="/Account/Login"><span class="en">Sign In</span><span class="my">ဝင်ရောက်ပါ</span></a></li>
+            </ul>
+        </div>
+
+    </div>
+    <div class="footer-bottom">
+        <span class="footer-copy">&copy; @DateTime.Now.Year StockEasy. <span class="en">All rights reserved.</span><span class="my">မူပိုင်ခွင့်များ ပိုင်ဆိုင်သည်။</span></span>
+    </div>
+</footer>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     JAVASCRIPT
+     ═══════════════════════════════════════════════════════════ -->
+<script>
+(function () {
+
+    // ── Language toggle ────────────────────────────────────────
+    window.toggleLang = function () {
+        var root = document.getElementById('htmlRoot');
+        var current = root.getAttribute('data-lang') || 'en';
+        var next = current === 'en' ? 'my' : 'en';
+        root.setAttribute('data-lang', next);
+        localStorage.setItem('se-lang', next);
+
+        // Sync ASP.NET culture cookie so app sections use correct culture
+        var culture = next === 'my' ? 'my-MM' : 'en';
+        document.cookie = '.AspNetCore.Culture=c%3D' + culture + '%7Cuic%3D' + culture
+            + '; path=/; max-age=31536000; SameSite=Strict';
+    };
+
+    var langBtn = document.getElementById('langBtn');
+    if (langBtn) langBtn.addEventListener('click', toggleLang);
+
+    // ── Navbar scroll effect ───────────────────────────────────
+    var nav = document.getElementById('navbar');
+    window.addEventListener('scroll', function () {
+        nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    // ── Close mobile menu when a link is clicked ───────────────
+    document.querySelectorAll('.nav-mobile a').forEach(function (link) {
+        link.addEventListener('click', function () {
+            var t = document.getElementById('nav-toggle');
+            if (t) t.checked = false;
+        });
+    });
+
+    // ── Scroll fade-up animations ──────────────────────────────
+    var fadeEls = document.querySelectorAll('.fade-up');
+    if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    io.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.10, rootMargin: '0px 0px -40px 0px' });
+        fadeEls.forEach(function (el) { io.observe(el); });
+    } else {
+        fadeEls.forEach(function (el) { el.classList.add('visible'); });
+    }
+
+})();
+</script>
+
+</body>
+</html>

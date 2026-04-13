@@ -1,7 +1,7 @@
-﻿@model ClothInventoryApp.Dtos.Account.LoginDto
+@model ClothInventoryApp.Dtos.Account.LoginDto
 @{
     Layout = null;
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Sign In";
 }
 
 <!DOCTYPE html>
@@ -9,103 +9,164 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - Cloth Inventory</title>
+    <title>Sign In — StockEasy</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
 </head>
 <body class="auth-body-modern">
+
     <div class="auth-bg-shape auth-bg-shape-1"></div>
     <div class="auth-bg-shape auth-bg-shape-2"></div>
 
     <div class="auth-page">
         <div class="auth-layout">
+
+            <!-- ══════ LEFT: Showcase ══════ -->
             <div class="auth-showcase">
+
+                <!-- Floating stat cards -->
+                <div class="auth-deco-card auth-deco-card--1">
+                    <div class="auth-deco-icon"><i class="bi bi-boxes"></i></div>
+                    <div>
+                        <div class="auth-deco-val">1,240</div>
+                        <div class="auth-deco-lbl">Units in stock</div>
+                    </div>
+                </div>
+                <div class="auth-deco-card auth-deco-card--2">
+                    <div class="auth-deco-icon auth-deco-icon--green"><i class="bi bi-graph-up-arrow"></i></div>
+                    <div>
+                        <div class="auth-deco-val" style="color:#34d399">+18%</div>
+                        <div class="auth-deco-lbl">Sales this month</div>
+                    </div>
+                </div>
+                <div class="auth-deco-card auth-deco-card--3">
+                    <div class="auth-deco-icon auth-deco-icon--amber"><i class="bi bi-exclamation-triangle-fill"></i></div>
+                    <div>
+                        <div class="auth-deco-val" style="color:#fbbf24">3</div>
+                        <div class="auth-deco-lbl">Low stock alerts</div>
+                    </div>
+                </div>
+
                 <div class="auth-showcase-content">
+
+                    <!-- Brand -->
                     <div class="auth-brand-modern">
                         <div class="auth-brand-logo">
-                            <img src="~/images/default.jpeg" alt="Logo" />
+                            <i class="bi bi-boxes"></i>
                         </div>
                         <div>
-                            <div class="auth-brand-title">Cloth Inventory</div>
-                            <div class="auth-brand-subtitle">Smart business workspace</div>
+                            <div class="auth-brand-title">StockEasy</div>
+                            <div class="auth-brand-subtitle">Inventory for small business</div>
                         </div>
                     </div>
 
+                    <!-- Headline -->
                     <div class="auth-showcase-text">
                         <div class="auth-badge">
                             <i class="bi bi-stars"></i>
-                            <span>Modern inventory platform</span>
+                            <span>Free · Simple · Powerful</span>
                         </div>
 
-                        <h1>Run your inventory, stock, and sales from one elegant dashboard.</h1>
+                        <h1>
+                            The smart inventory tool built for
+                            <span class="auth-headline-accent">small businesses.</span>
+                        </h1>
 
                         <p>
-                            Track product variants, manage stock movement, monitor low stock,
-                            and keep your business organized with a cleaner workflow.
+                            Skip the expensive ERP. Manage products, track stock,
+                            record sales, and watch your profit grow — all from one
+                            clean dashboard.
                         </p>
                     </div>
 
+                    <!-- Features -->
                     <div class="auth-feature-list">
                         <div class="auth-feature-item">
                             <div class="auth-feature-icon">
                                 <i class="bi bi-box-seam-fill"></i>
                             </div>
                             <div>
-                                <div class="auth-feature-title">Product & Variant Tracking</div>
-                                <div class="auth-feature-text">Manage size, color, and SKU with clarity.</div>
+                                <div class="auth-feature-title">Products &amp; Variants</div>
+                                <div class="auth-feature-text">Track every size, color, and SKU — no spreadsheets needed.</div>
                             </div>
                         </div>
-
                         <div class="auth-feature-item">
                             <div class="auth-feature-icon">
                                 <i class="bi bi-arrow-left-right"></i>
                             </div>
                             <div>
-                                <div class="auth-feature-title">Real-Time Stock Movement</div>
-                                <div class="auth-feature-text">View stock in, stock out, and adjustments easily.</div>
+                                <div class="auth-feature-title">Live Stock Movement</div>
+                                <div class="auth-feature-text">Real-time stock-in, stock-out, and adjustment records.</div>
                             </div>
                         </div>
-
                         <div class="auth-feature-item">
                             <div class="auth-feature-icon">
-                                <i class="bi bi-bar-chart-fill"></i>
+                                <i class="bi bi-cash-coin"></i>
                             </div>
                             <div>
-                                <div class="auth-feature-title">Business Insights</div>
-                                <div class="auth-feature-text">Stay on top of trends, sales, and inventory health.</div>
+                                <div class="auth-feature-title">Sales &amp; Finance</div>
+                                <div class="auth-feature-text">See your revenue, cost, and profit with every sale.</div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Trust strip -->
+                    <div class="auth-trust-strip">
+                        <span><i class="bi bi-check-circle-fill"></i> No credit card</span>
+                        <span class="auth-trust-sep">·</span>
+                        <span><i class="bi bi-check-circle-fill"></i> Multi-tenant</span>
+                        <span class="auth-trust-sep">·</span>
+                        <span><i class="bi bi-check-circle-fill"></i> Works anywhere</span>
+                    </div>
+
                 </div>
             </div>
 
+            <!-- ══════ RIGHT: Login Form ══════ -->
             <div class="auth-panel">
+
+                <!-- Back to home -->
+                <a href="/" class="auth-back-link">
+                    <i class="bi bi-arrow-left"></i> Back to home
+                </a>
+
                 <div class="auth-card-modern">
+
                     <div class="auth-card-header">
-                        <h2>Sign in</h2>
-                        <p>Enter your account details to continue.</p>
+                        <div class="auth-card-avatar">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                        <h2>Welcome back</h2>
+                        <p>Sign in to your workspace and pick up where you left off.</p>
                     </div>
 
                     <form asp-action="Login" method="post" class="auth-form">
                         <div asp-validation-summary="ModelOnly" class="auth-validation"></div>
 
                         <div class="auth-input-group">
-                            <label asp-for="UserNameOrEmail" class="auth-label"></label>
+                            <label asp-for="UserNameOrEmail" class="auth-label">Email or Username</label>
                             <div class="auth-input-wrap">
                                 <i class="bi bi-person-circle"></i>
-                                <input asp-for="UserNameOrEmail" class="form-control auth-input" placeholder="Enter email or username" />
+                                <input asp-for="UserNameOrEmail" class="form-control auth-input"
+                                       placeholder="Email or username" autocomplete="username" />
                             </div>
                             <span asp-validation-for="UserNameOrEmail" class="text-danger small"></span>
                         </div>
 
                         <div class="auth-input-group">
-                            <label asp-for="Password" class="auth-label"></label>
+                            <label asp-for="Password" class="auth-label">Password</label>
                             <div class="auth-input-wrap">
                                 <i class="bi bi-shield-lock-fill"></i>
-                                <input asp-for="Password" class="form-control auth-input" placeholder="Enter password" />
+                                <input asp-for="Password" class="form-control auth-input"
+                                       placeholder="Your password" autocomplete="current-password" />
+                                <button type="button" class="auth-toggle-pw" id="togglePw" tabindex="-1">
+                                    <i class="bi bi-eye" id="pwEyeIcon"></i>
+                                </button>
                             </div>
                             <span asp-validation-for="Password" class="text-danger small"></span>
                         </div>
@@ -113,10 +174,9 @@
                         <div class="auth-form-row">
                             <div class="form-check auth-check">
                                 <input asp-for="RememberMe" class="form-check-input" />
-                                <label asp-for="RememberMe" class="form-check-label"></label>
+                                <label asp-for="RememberMe" class="form-check-label" style="font-size:.88rem;color:#64748b;">Remember me</label>
                             </div>
-
-                            <a href="#" class="auth-link">Forgot password?</a>
+                            <a asp-action="ForgotPassword" class="auth-link">Forgot password?</a>
                         </div>
 
                         <button type="submit" class="btn auth-submit-btn">
@@ -124,11 +184,19 @@
                             <span>Sign In</span>
                         </button>
                     </form>
+
+                    <div class="auth-card-footer">
+                        <i class="bi bi-shield-check"></i>
+                        Your data is protected and tenant-isolated.
+                    </div>
+
                 </div>
             </div>
+
         </div>
     </div>
 
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/login.js" asp-append-version="true"></script>
 </body>
 </html>

@@ -1,0 +1,54 @@
+@{
+    Layout = null;
+    var tenantName = ViewBag.TenantName as string ?? "the shop";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registered! — @tenantName</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,.08);
+            padding: 48px 40px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        .check {
+            width: 64px;
+            height: 64px;
+            background: #d1fae5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 28px;
+        }
+        h1 { font-size: 22px; font-weight: 700; color: #0f172a; margin-bottom: 10px; }
+        p  { font-size: 14px; color: #64748b; line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="check">&#10003;</div>
+        <h1>You're registered!</h1>
+        <p>Thanks for registering with <strong>@tenantName</strong>.<br>Your details have been saved.</p>
+    </div>
+</body>
+</html>

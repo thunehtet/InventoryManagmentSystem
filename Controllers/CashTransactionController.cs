@@ -1,5 +1,6 @@
 ﻿using ClothInventoryApp.Data;
 using ClothInventoryApp.Dto.CashTransaction;
+using ClothInventoryApp.Filters;
 using ClothInventoryApp.Models;
 using ClothInventoryApp.Services.Tenant;
 using Microsoft.AspNetCore.Authorization;
@@ -9,23 +10,33 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClothInventoryApp.Controllers
 {
-    [Authorize]
-    public class CashTransactionController : Controller
+    [Authorize(Roles = "Admin")]
+    [FeatureRequired("finance")]
+    public class CashTransactionController : TenantAwareController
     {
-        private readonly AppDbContext _context;
-        private readonly ITenantProvider _tenantProvider;
-
         public CashTransactionController(AppDbContext context, ITenantProvider tenantProvider)
+            : base(context, tenantProvider)
         {
-            _context = context;
-            _tenantProvider = tenantProvider;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? search, int page = 1, int size = 10)
         {
-            var items = await _context.CashTransactions
+            size = PaginationViewModel.Clamp(size);
+            var query = _context.CashTransactions.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+                query = query.Where(x =>
+                    x.Category.Contains(search) ||
+                    x.Type.Contains(search) ||
+                    (x.ReferenceNo != null && x.ReferenceNo.Contains(search)) ||
+                    (x.Remarks != null && x.Remarks.Contains(search)));
+
+            var total = await query.CountAsync();
+            var items = await query
                 .OrderByDescending(x => x.TransactionDate)
                 .ThenByDescending(x => x.Id)
+                .Skip((page - 1) * size)
+                .Take(size)
                 .Select(x => new ViewCashTransactionDto
                 {
                     Id = x.Id,
@@ -38,6 +49,13 @@ namespace ClothInventoryApp.Controllers
                 })
                 .ToListAsync();
 
+            ViewBag.Search = search;
+            ViewBag.Pagination = new PaginationViewModel
+            {
+                Page = page, PageSize = size, TotalCount = total,
+                Action = nameof(Index),
+                Extra = new() { ["search"] = search }
+            };
             return View(items);
         }
 
@@ -74,7 +92,7 @@ namespace ClothInventoryApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(Guid id)
         {
             var item = await _context.CashTransactions.FindAsync(id);
 

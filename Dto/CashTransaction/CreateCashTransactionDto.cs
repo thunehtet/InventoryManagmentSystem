@@ -20,8 +20,8 @@ namespace ClothInventoryApp.Dto.CashTransaction
         public int Amount { get; set; }
 
         [Display(Name = "Reference No")]
-        public string ReferenceNo { get; set; } 
+        public string? ReferenceNo { get; set; }
 
-        public string Remarks { get; set; } 
+        public string? Remarks { get; set; }
     }
 }

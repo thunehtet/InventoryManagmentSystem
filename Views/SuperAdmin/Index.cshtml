@@ -1,0 +1,186 @@
+@model ClothInventoryApp.Dto.SuperAdmin.SuperAdminDashboardDto
+@{
+    ViewData["Title"] = "System Dashboard";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/superadmin.css" asp-append-version="true" />
+}
+
+<div class="superadmin-shell">
+
+    <!-- Hero -->
+    <div class="superadmin-hero">
+        <div class="superadmin-hero-content">
+            <div class="superadmin-badge">
+                <i class="bi bi-shield-lock-fill"></i>
+                Super Admin
+            </div>
+            <h1 class="superadmin-title">System Dashboard</h1>
+            <p class="superadmin-subtitle">
+                System-wide overview — tenants, subscriptions, and platform health.
+            </p>
+            <div class="dashboard-hero-actions">
+                <a asp-action="Tenants" class="btn-dashboard-secondary">
+                    <i class="bi bi-building"></i> View All Tenants
+                </a>
+                <a asp-action="Subscriptions" class="btn-dashboard-secondary">
+                    <i class="bi bi-credit-card-fill"></i> Subscriptions
+                </a>
+            </div>
+        </div>
+
+        <div class="superadmin-hero-side">
+            <div class="superadmin-hero-side-card">
+                <div class="hero-summary-top">
+                    <span class="summary-label">Platform Snapshot</span>
+                    <i class="bi bi-activity"></i>
+                </div>
+                <div class="superadmin-mini-metrics">
+                    <div class="superadmin-mini-metric">
+                        <span class="superadmin-mini-label">Active Tenants</span>
+                        <span class="superadmin-mini-value">@Model.ActiveTenants</span>
+                    </div>
+                    <div class="superadmin-mini-metric">
+                        <span class="superadmin-mini-label">New This Month</span>
+                        <span class="superadmin-mini-value">@Model.NewTenantsThisMonth</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="superadmin-stats-grid">
+        <div class="superadmin-stat-card">
+            <div class="superadmin-stat-icon red">
+                <i class="bi bi-building"></i>
+            </div>
+            <div>
+                <div class="superadmin-stat-label">Total Tenants</div>
+                <div class="superadmin-stat-value">@Model.TotalTenants</div>
+                <div class="superadmin-stat-note">@Model.ActiveTenants active</div>
+            </div>
+        </div>
+        <div class="superadmin-stat-card">
+            <div class="superadmin-stat-icon blue">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div>
+                <div class="superadmin-stat-label">Total Users</div>
+                <div class="superadmin-stat-value">@Model.TotalUsers</div>
+                <div class="superadmin-stat-note">Across all tenants</div>
+            </div>
+        </div>
+        <div class="superadmin-stat-card">
+            <div class="superadmin-stat-icon green">
+                <i class="bi bi-credit-card-fill"></i>
+            </div>
+            <div>
+                <div class="superadmin-stat-label">Active Subscriptions</div>
+                <div class="superadmin-stat-value">@Model.ActiveSubscriptions</div>
+                <div class="superadmin-stat-note">Live plans</div>
+            </div>
+        </div>
+        <div class="superadmin-stat-card">
+            <div class="superadmin-stat-icon orange">
+                <i class="bi bi-cash-stack"></i>
+            </div>
+            <div>
+                <div class="superadmin-stat-label">Monthly Revenue</div>
+                <div class="superadmin-stat-value">@Model.MonthlyRevenue.ToString("N0")</div>
+                <div class="superadmin-stat-note">Recurring MRR</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="superadmin-grid">
+
+        <!-- Recent Tenants -->
+        <div class="superadmin-panel">
+            <div class="superadmin-panel-header-with-action">
+                <div class="superadmin-panel-header" style="margin-bottom:0;">
+                    <h3>Recent Tenants</h3>
+                    <p>Latest registered workspaces</p>
+                </div>
+                <a asp-action="Tenants" class="superadmin-panel-link">
+                    View all <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="superadmin-table">
+                    <thead>
+                        <tr>
+                            <th>Tenant</th>
+                            <th>Plan</th>
+                            <th>Status</th>
+                            <th>Joined</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var t in Model.RecentTenants)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="fw-semibold text-dark">@t.Name</div>
+                                    <div class="text-muted small">@t.ContactEmail</div>
+                                </td>
+                                <td>@(t.ActivePlan ?? "—")</td>
+                                <td>
+                                    <span class="status-badge @(t.IsActive ? "active" : "inactive")">
+                                        @(t.IsActive ? "Active" : "Inactive")
+                                    </span>
+                                </td>
+                                <td class="text-muted small">@t.CreatedAt.ToString("dd MMM yyyy")</td>
+                            </tr>
+                        }
+                        @if (!Model.RecentTenants.Any())
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-4">No tenants yet.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Plan Distribution -->
+        <div class="superadmin-panel">
+            <div class="superadmin-panel-header">
+                <h3>Plan Distribution</h3>
+                <p>Active subscriptions by plan</p>
+            </div>
+
+            @if (Model.PlanDistribution.Any())
+            {
+                var maxCount = Model.PlanDistribution.Max(p => p.Count);
+                <div class="plan-dist-list">
+                    @foreach (var p in Model.PlanDistribution)
+                    {
+                        var pct = maxCount > 0 ? (double)p.Count / maxCount * 100 : 0;
+                        <div class="plan-dist-row">
+                            <span class="plan-dist-name">@p.PlanName</span>
+                            <div class="plan-dist-bar-wrap">
+                                <div class="plan-dist-bar" style="width:@pct.ToString("F0")%"></div>
+                            </div>
+                            <span class="plan-dist-count">@p.Count</span>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="text-muted small">No active subscriptions.</p>
+            }
+
+            <div class="mt-4">
+                <a asp-action="Plans" class="superadmin-panel-link">
+                    Manage plans <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>

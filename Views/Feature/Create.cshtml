@@ -1,0 +1,76 @@
+@model ClothInventoryApp.Dto.SuperAdmin.FeatureCreateDto
+@{
+    ViewData["Title"] = "New Feature";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/superadmin.css" asp-append-version="true" />
+}
+
+<div class="superadmin-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title"><i class="bi bi-toggles"></i> New Feature</h1>
+            <p class="product-hero-sub">Create a new feature flag for plan assignment</p>
+        </div>
+        <a asp-action="Index" class="sa-btn-back">
+            <i class="bi bi-arrow-left"></i> Back to Features
+        </a>
+    </div>
+
+    <div class="sa-form-card">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger mx-4 mt-4 mb-0"></div>
+
+            <div class="sa-form-section">
+                <div class="sa-section-header">
+                    <span class="sa-section-dot"></span>
+                    <span class="sa-section-title">Feature Identity</span>
+                </div>
+                <div class="superadmin-form-grid">
+                    <div class="form-group-modern">
+                        <label asp-for="Name" class="form-label-modern">Feature Name</label>
+                        <input asp-for="Name" class="form-input-modern" placeholder="e.g. Sales Management" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+                    <div class="form-group-modern">
+                        <label asp-for="Code" class="form-label-modern">Feature Code</label>
+                        <input asp-for="Code" class="form-input-modern" placeholder="e.g. sales" />
+                        <span class="text-muted small">Lowercase, no spaces. Used in [FeatureRequired] attribute.</span>
+                        <span asp-validation-for="Code" class="text-danger small"></span>
+                    </div>
+                    <div class="form-group-modern form-span-2">
+                        <label asp-for="Description" class="form-label-modern">Description</label>
+                        <textarea asp-for="Description" class="form-input-modern" rows="2" placeholder="Brief description…"></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sa-form-section">
+                <div class="sa-section-header">
+                    <span class="sa-section-dot"></span>
+                    <span class="sa-section-title">Visibility</span>
+                </div>
+                <div class="form-check-modern">
+                    <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                    <label asp-for="IsActive" class="form-check-label">Active (available for plan assignment)</label>
+                </div>
+            </div>
+
+            <div class="sa-form-actions">
+                <a asp-action="Index" class="sa-btn-cancel">
+                    <i class="bi bi-x-lg"></i> Cancel
+                </a>
+                <button type="submit" class="sa-btn-save">
+                    <i class="bi bi-plus-lg"></i> Create Feature
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

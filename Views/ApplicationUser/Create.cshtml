@@ -1,69 +1,72 @@
-﻿@using ClothInventoryApp.Dto.Sale
-@model CreateSaleDto
-
+@model ClothInventoryApp.Dtos.ApplicationUser.ApplicationUserCreateDto
 @{
-    ViewData["Title"] = "Create Sale";
+    ViewData["Title"] = "Add User";
 }
 
-<div class="create-product-shell">
-    <div class="create-main-card">
-        <div class="section-header">
-            <div>
-                <h3>Create Sale</h3>
-            </div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/product-index.css" asp-append-version="true" />
+}
+
+<div class="product-index-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title">
+                <i class="bi bi-person-plus-fill"></i> Add User
+            </h1>
+            <p class="product-hero-sub">Create a new staff account for your workspace</p>
         </div>
+        <a asp-action="Index" class="btn-modern-secondary" style="align-self:center">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+    </div>
 
-        <form asp-action="Create" method="post" class="modern-product-form">
-            <div asp-validation-summary="ModelOnly" class="validation-summary-modern"></div>
+    <div class="product-table-card product-form-card">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
 
-            <div class="form-grid-modern">
-                <div class="form-group-modern form-group-full">
-                    <label asp-for="SaleDate" class="form-label-modern"></label>
-                    <input asp-for="SaleDate" class="input-modern" type="date" />
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="FullName" class="form-label fw-semibold"></label>
+                <input asp-for="FullName" class="form-control" placeholder="e.g. Kyaw Zin" />
+                <span asp-validation-for="FullName" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label fw-semibold"></label>
+                <input asp-for="Email" class="form-control" placeholder="staff@company.com" />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+                <div class="form-text">This will also be used as the login username.</div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label fw-semibold">Default Password</label>
+                <input asp-for="Password" type="password" class="form-control" placeholder="Min 8 characters" />
+                <span asp-validation-for="Password" class="text-danger small"></span>
+                <div class="form-text">Share this with the user — they can change it after first login.</div>
+            </div>
+
+            <div class="mb-4 d-flex gap-4">
+                <div class="form-check">
+                    <input asp-for="IsTenantAdmin" class="form-check-input" />
+                    <label asp-for="IsTenantAdmin" class="form-check-label">Admin role</label>
+                </div>
+                <div class="form-check">
+                    <input asp-for="IsActive" class="form-check-input" />
+                    <label asp-for="IsActive" class="form-check-label">Active</label>
                 </div>
             </div>
 
-            <hr />
-
-            <h5>Sale Items</h5>
-
-            @for (int i = 0; i < Model.Items.Count; i++)
-            {
-                <div class="form-grid-modern mb-3">
-                    <div class="form-group-modern form-group-full">
-                        <label class="form-label-modern">Product Variant</label>
-                        <select asp-for="Items[@i].ProductVariantId" asp-items="ViewBag.ProductVariants" class="input-modern">
-                            <option value="">-- Select Variant --</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group-modern">
-                        <label class="form-label-modern">Quantity</label>
-                        <input asp-for="Items[@i].Quantity" class="input-modern" type="number" />
-                    </div>
-
-                    <div class="form-group-modern">
-                        <label class="form-label-modern">Unit Price</label>
-                        <input asp-for="Items[@i].UnitPrice" class="input-modern" type="number" />
-                    </div>
-
-                </div>
-            }
-
-            <div class="form-footer-modern">
-                <button type="submit" class="btn-modern-primary btn-modern-lg">Save Sale</button>
-                <a asp-action="Index" class="btn-modern-outline btn-modern-lg">Cancel</a>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn-modern-primary">
+                    <i class="bi bi-person-plus-fill"></i> Create User
+                </button>
+                <a asp-action="Index" class="btn btn-light">Cancel</a>
             </div>
         </form>
     </div>
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
-
-@section Styles {
-    <link rel="stylesheet" href="~/css/pages/create-product.css" />
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

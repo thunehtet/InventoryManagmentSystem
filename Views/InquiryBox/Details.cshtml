@@ -1,0 +1,78 @@
+@model ClothInventoryApp.Models.ContactInquiry
+@{
+    ViewData["Title"] = "Inquiry Details";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/superadmin.css" asp-append-version="true" />
+}
+
+<div class="superadmin-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title">
+                <i class="bi bi-envelope-open-fill"></i> @Model.Name
+            </h1>
+            <p class="product-hero-sub">Received @Model.SubmittedAt.ToString("dddd, dd MMMM yyyy 'at' HH:mm") UTC</p>
+        </div>
+        <a asp-action="Index" class="sa-btn-back">
+            <i class="bi bi-arrow-left"></i> Back to Inbox
+        </a>
+    </div>
+
+    <div class="sa-panel" style="max-width:680px;">
+        <div class="sa-panel-header">
+            <span class="sa-section-dot"></span>
+            <h3 class="sa-panel-title">Inquiry Details</h3>
+            @if (Model.IsRead)
+            {
+                <span class="status-badge active ms-auto">Read</span>
+            }
+            else
+            {
+                <span class="status-badge trial ms-auto">New</span>
+            }
+        </div>
+
+        <div class="sa-detail-rows">
+            <div class="sa-detail-row">
+                <span class="sa-detail-label">Name</span>
+                <span class="sa-detail-value fw-semibold">@Model.Name</span>
+            </div>
+            <div class="sa-detail-row">
+                <span class="sa-detail-label">Email</span>
+                <span class="sa-detail-value">
+                    <a href="mailto:@Model.Email" class="ib-email-link">@Model.Email</a>
+                </span>
+            </div>
+            <div class="sa-detail-row">
+                <span class="sa-detail-label">Phone</span>
+                <span class="sa-detail-value">@(Model.Phone ?? "—")</span>
+            </div>
+            <div class="sa-detail-row" style="align-items:flex-start;">
+                <span class="sa-detail-label" style="padding-top:.15rem;">Message</span>
+                <span class="sa-detail-value" style="white-space:pre-wrap;line-height:1.7;">@(Model.Message ?? "—")</span>
+            </div>
+            <div class="sa-detail-row">
+                <span class="sa-detail-label">Received</span>
+                <span class="sa-detail-value text-muted small">@Model.SubmittedAt.ToString("dd MMM yyyy HH:mm") UTC</span>
+            </div>
+        </div>
+
+        <div class="sa-form-actions">
+            <a asp-action="Index" class="sa-btn-cancel">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+            <a href="mailto:@Model.Email" class="sa-btn-save">
+                <i class="bi bi-reply-fill"></i> Reply by Email
+            </a>
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post"
+                  onsubmit="return confirm('Delete this inquiry permanently?');" class="m-0">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="sa-btn-danger">
+                    <i class="bi bi-trash"></i> Delete
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

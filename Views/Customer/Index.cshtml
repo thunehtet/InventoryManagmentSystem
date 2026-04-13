@@ -1,0 +1,152 @@
+@using ClothInventoryApp.Dto.Customer
+@model IEnumerable<ViewCustomerDto>
+@{
+    ViewData["Title"] = "Customers";
+    var currency = ViewData["Currency"] as string ?? "";
+    var pg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel;
+}
+
+<div class="product-index-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <div class="hero-kicker">
+                <i class="bi bi-people-fill"></i>
+                <span>Customers</span>
+            </div>
+            <h1>Customer List</h1>
+            <p>Manage your customer records and purchase history.</p>
+            <div class="hero-actions">
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Create" class="btn-modern-primary">
+                        <i class="bi bi-person-plus-fill"></i> Add Customer
+                    </a>
+                }
+            </div>
+        </div>
+        <div class="product-hero-side">
+            <div class="hero-stat-card">
+                <div class="hero-stat-icon"><i class="bi bi-people"></i></div>
+                <div class="hero-stat-title">Total Customers</div>
+                <div class="hero-stat-text">@(pg?.TotalCount ?? 0) customers total</div>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- FILTER BAR -->
+    <div class="list-filter-bar">
+        <form method="get" asp-action="Index" class="filter-form">
+            @if (pg != null) { <input type="hidden" name="size" value="@pg.PageSize" /> }
+            <div class="filter-search-wrap">
+                <i class="bi bi-search filter-search-icon"></i>
+                <input type="text" name="search" value="@ViewBag.Search"
+                       class="filter-search-input" placeholder="Search name, phone, Facebook, email…" autocomplete="off" />
+                @if (!string.IsNullOrWhiteSpace(ViewBag.Search as string))
+                {
+                    <a href="@Url.Action("Index", new { size = pg?.PageSize ?? 10 })" class="filter-clear-btn" title="Clear">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </a>
+                }
+            </div>
+            <button type="submit" class="filter-search-btn">
+                <i class="bi bi-search"></i> Search
+            </button>
+        </form>
+    </div>
+
+    <!-- TABLE CARD -->
+    <div class="product-table-card">
+        <div class="table-responsive-modern">
+            <table class="table-modern">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Facebook</th>
+                        <th>Sales</th>
+                        <th>Revenue</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <i class="bi bi-people"></i>
+                                <div>@(string.IsNullOrWhiteSpace(ViewBag.Search as string) ? "No customers yet" : "No customers match your search")</div>
+                                @if (User.IsInRole("Admin") && string.IsNullOrWhiteSpace(ViewBag.Search as string))
+                                {
+                                    <a asp-action="Create" class="btn-modern-primary mt-2">Add first customer</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var c in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="fw-semibold" style="color:#0f172a">@c.Name</div>
+                                    @if (!string.IsNullOrEmpty(c.Email))
+                                    {
+                                        <div style="font-size:12px;color:#94a3b8">@c.Email</div>
+                                    }
+                                </td>
+                                <td class="text-muted">@(c.Phone ?? "—")</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(c.FacebookAccount))
+                                    {
+                                        <span class="sc-tag" style="background:#e8f0fe;color:#1a56db;padding:3px 8px;border-radius:6px;font-size:0.8rem">
+                                            <i class="bi bi-facebook me-1"></i>@c.FacebookAccount
+                                        </span>
+                                    }
+                                    else { <span class="text-muted">—</span> }
+                                </td>
+                                <td class="fw-semibold">@c.TotalSales</td>
+                                <td class="fw-semibold">@c.TotalRevenue.ToString("N0") @currency</td>
+                                <td>
+                                    <span class="badge-modern @(c.IsActive ? "badge-success" : "badge-muted")">
+                                        @(c.IsActive ? "Active" : "Inactive")
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a asp-action="Details" asp-route-id="@c.Id" class="action-btn action-btn-view" title="Details">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </a>
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@c.Id" class="action-btn action-btn-edit" title="Edit">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@c.Id" class="action-btn action-btn-delete" title="Delete">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (pg != null) { @await Html.PartialAsync("_Pagination", pg) }
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/product-index.css" />
+    <link rel="stylesheet" href="~/css/pages/sale-create.css" />
+}

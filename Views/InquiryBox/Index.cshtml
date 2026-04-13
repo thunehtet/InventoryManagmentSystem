@@ -1,0 +1,127 @@
+@model IEnumerable<ClothInventoryApp.Models.ContactInquiry>
+@{
+    ViewData["Title"] = "Inquiry Box";
+    var filter = (string)(ViewBag.Filter ?? "all");
+    int unread = (int)(ViewBag.UnreadCount ?? 0);
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/superadmin.css" asp-append-version="true" />
+}
+
+<div class="superadmin-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title">
+                <i class="bi bi-envelope-fill"></i> Inquiry Box
+                @if (unread > 0)
+                {
+                    <span class="ib-unread-badge">@unread new</span>
+                }
+            </h1>
+            <p class="product-hero-sub">Contact form submissions from the landing page</p>
+        </div>
+        <a asp-controller="SuperAdmin" asp-action="Index" class="sa-btn-back">
+            <i class="bi bi-arrow-left"></i> Dashboard
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Filter tabs -->
+    @{ var ibpg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel; }
+    <div class="ib-filter-tabs">
+        <a asp-action="Index" asp-route-filter="all" asp-route-size="@(ibpg?.PageSize ?? 10)"
+           class="ib-tab @(filter == "all" ? "active" : "")">
+            All <span class="ib-tab-count">@(ibpg?.TotalCount ?? Model.Count())</span>
+        </a>
+        <a asp-action="Index" asp-route-filter="unread" asp-route-size="@(ibpg?.PageSize ?? 10)"
+           class="ib-tab @(filter == "unread" ? "active" : "")">
+            Unread <span class="ib-tab-count">@unread</span>
+        </a>
+        <a asp-action="Index" asp-route-filter="read" asp-route-size="@(ibpg?.PageSize ?? 10)"
+           class="ib-tab @(filter == "read" ? "active" : "")">
+            Read
+        </a>
+    </div>
+
+    <div class="product-table-card">
+        @if (!Model.Any())
+        {
+            <div class="ib-empty">
+                <i class="bi bi-inbox"></i>
+                <span>No inquiries yet</span>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="superadmin-table">
+                    <thead>
+                        <tr>
+                            <th style="width:60px;"></th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Message</th>
+                            <th>Received</th>
+                            <th style="width:100px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr class="@(!item.IsRead ? "ib-row-unread" : "")">
+                                <td>
+                                    @if (!item.IsRead)
+                                    {
+                                        <span class="ib-new-dot"></span>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-check2 text-muted"></i>
+                                    }
+                                </td>
+                                <td class="@(!item.IsRead ? "fw-semibold" : "")">@item.Name</td>
+                                <td>
+                                    <a href="mailto:@item.Email" class="ib-email-link">@item.Email</a>
+                                </td>
+                                <td class="text-muted small">@(item.Phone ?? "—")</td>
+                                <td class="ib-msg-cell">
+                                    @(item.Message != null && item.Message.Length > 60
+                                        ? item.Message[..60] + "…"
+                                        : (item.Message ?? "—"))
+                                </td>
+                                <td class="text-muted small" style="white-space:nowrap;">
+                                    @item.SubmittedAt.ToString("dd MMM yyyy HH:mm")
+                                </td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a asp-action="Details" asp-route-id="@item.Id"
+                                           class="action-btn action-btn-view" title="View">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <form asp-action="Delete" asp-route-id="@item.Id" method="post"
+                                              onsubmit="return confirm('Delete this inquiry?');" class="m-0">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="action-btn action-btn-delete" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @if (ibpg != null) { @await Html.PartialAsync("_Pagination", ibpg) }
+        }
+    </div>
+</div>

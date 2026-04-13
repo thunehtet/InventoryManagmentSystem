@@ -1,0 +1,113 @@
+@model ClothInventoryApp.Dto.SuperAdmin.PlanCreateDto
+@{
+    ViewData["Title"] = "New Plan";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/superadmin.css" asp-append-version="true" />
+}
+
+<div class="superadmin-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title"><i class="bi bi-layers-fill"></i> New Plan</h1>
+            <p class="product-hero-sub">Create a new subscription plan</p>
+        </div>
+        <a asp-action="Index" class="sa-btn-back">
+            <i class="bi bi-arrow-left"></i> Back to Plans
+        </a>
+    </div>
+
+    <div class="sa-form-card">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger mx-4 mt-4 mb-0"></div>
+
+            <div class="sa-form-section">
+                <div class="sa-section-header">
+                    <span class="sa-section-dot"></span>
+                    <span class="sa-section-title">Plan Identity</span>
+                </div>
+                <div class="superadmin-form-grid">
+                    <div class="form-group-modern">
+                        <label asp-for="Name" class="form-label-modern">Plan Name</label>
+                        <input asp-for="Name" class="form-input-modern" placeholder="e.g. Starter" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+                    <div class="form-group-modern">
+                        <label asp-for="Code" class="form-label-modern">Plan Code</label>
+                        <input asp-for="Code" class="form-input-modern" placeholder="e.g. STARTER" />
+                        <span asp-validation-for="Code" class="text-danger small"></span>
+                    </div>
+                    <div class="form-group-modern form-span-2">
+                        <label asp-for="Description" class="form-label-modern">Description</label>
+                        <textarea asp-for="Description" class="form-input-modern" rows="2" placeholder="Brief description…"></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sa-form-section">
+                <div class="sa-section-header">
+                    <span class="sa-section-dot"></span>
+                    <span class="sa-section-title">Pricing</span>
+                </div>
+                <div class="superadmin-form-grid">
+                    <div class="form-group-modern">
+                        <label asp-for="PriceMonthly" class="form-label-modern">Monthly Price ($)</label>
+                        <input asp-for="PriceMonthly" class="form-input-modern" type="number" step="1" min="0" placeholder="0.00" />
+                        <span asp-validation-for="PriceMonthly" class="text-danger small"></span>
+                    </div>
+                    <div class="form-group-modern">
+                        <label asp-for="PriceYearly" class="form-label-modern">Yearly Price ($)</label>
+                        <input asp-for="PriceYearly" class="form-input-modern" type="number" step="1" min="0" placeholder="Leave blank if not offered" />
+                        <span asp-validation-for="PriceYearly" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sa-form-section">
+                <div class="sa-section-header">
+                    <span class="sa-section-dot"></span>
+                    <span class="sa-section-title">Limits</span>
+                </div>
+                <div class="superadmin-form-grid">
+                    <div class="form-group-modern">
+                        <label asp-for="MaxUsers" class="form-label-modern">Max Users</label>
+                        <input asp-for="MaxUsers" class="form-input-modern" type="number" min="1" placeholder="Leave blank for unlimited" />
+                        <span asp-validation-for="MaxUsers" class="text-danger small"></span>
+                    </div>
+                    <div class="form-group-modern">
+                        <label asp-for="MaxProducts" class="form-label-modern">Max Products</label>
+                        <input asp-for="MaxProducts" class="form-input-modern" type="number" min="1" placeholder="Leave blank for unlimited" />
+                        <span asp-validation-for="MaxProducts" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sa-form-section">
+                <div class="sa-section-header">
+                    <span class="sa-section-dot"></span>
+                    <span class="sa-section-title">Visibility</span>
+                </div>
+                <div class="form-check-modern">
+                    <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                    <label asp-for="IsActive" class="form-check-label">Active (visible when assigning subscriptions)</label>
+                </div>
+            </div>
+
+            <div class="sa-form-actions">
+                <a asp-action="Index" class="sa-btn-cancel">
+                    <i class="bi bi-x-lg"></i> Cancel
+                </a>
+                <button type="submit" class="sa-btn-save">
+                    <i class="bi bi-plus-lg"></i> Create Plan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,112 @@
+@using ClothInventoryApp.Dto.Customer
+@model CreateCustomerDto
+@{
+    ViewData["Title"] = "Add Customer";
+}
+
+<div class="create-product-shell">
+    <div class="create-main-card">
+        <div class="section-header">
+            <div>
+                <h3><i class="bi bi-person-plus-fill me-2 text-primary"></i>Add Customer</h3>
+                <p>Create a new customer record for your workspace</p>
+            </div>
+            <a asp-action="Index" class="btn-modern-outline">
+                <i class="bi bi-arrow-left me-1"></i> Back
+            </a>
+        </div>
+
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="validation-summary-modern"></div>
+
+            <div class="form-grid-modern">
+                <!-- Name (full width) -->
+                <div class="form-group-modern form-group-full">
+                    <label asp-for="Name" class="form-label-modern"></label>
+                    <div class="input-icon-wrap">
+                        <i class="bi bi-person-fill"></i>
+                        <input asp-for="Name" class="input-modern input-modern-lg" placeholder="Customer full name" />
+                    </div>
+                    <span asp-validation-for="Name" class="field-validation-modern"></span>
+                </div>
+
+                <!-- Phone -->
+                <div class="form-group-modern">
+                    <label asp-for="Phone" class="form-label-modern"></label>
+                    <div class="input-icon-wrap">
+                        <i class="bi bi-telephone-fill"></i>
+                        <input asp-for="Phone" class="input-modern" placeholder="e.g. 09 123 456 789" />
+                    </div>
+                    <span asp-validation-for="Phone" class="field-validation-modern"></span>
+                </div>
+
+                <!-- Email -->
+                <div class="form-group-modern">
+                    <label asp-for="Email" class="form-label-modern"></label>
+                    <div class="input-icon-wrap">
+                        <i class="bi bi-envelope-fill"></i>
+                        <input asp-for="Email" class="input-modern" placeholder="customer@email.com" />
+                    </div>
+                    <span asp-validation-for="Email" class="field-validation-modern"></span>
+                </div>
+
+                <!-- Facebook -->
+                <div class="form-group-modern form-group-full">
+                    <label asp-for="FacebookAccount" class="form-label-modern"></label>
+                    <div class="input-icon-wrap">
+                        <i class="bi bi-facebook"></i>
+                        <input asp-for="FacebookAccount" class="input-modern" placeholder="Facebook name or profile URL" />
+                    </div>
+                    <span asp-validation-for="FacebookAccount" class="field-validation-modern"></span>
+                </div>
+
+                <!-- Address -->
+                <div class="form-group-modern form-group-full">
+                    <label asp-for="Address" class="form-label-modern"></label>
+                    <div class="input-icon-wrap">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <input asp-for="Address" class="input-modern" placeholder="Street, city, township…" />
+                    </div>
+                    <span asp-validation-for="Address" class="field-validation-modern"></span>
+                </div>
+
+                <!-- Notes -->
+                <div class="form-group-modern form-group-full">
+                    <label asp-for="Notes" class="form-label-modern"></label>
+                    <textarea asp-for="Notes" class="input-modern" rows="3"
+                              style="height:auto;padding-top:.75rem;padding-left:1rem"
+                              placeholder="Any additional notes about this customer…"></textarea>
+                    <span asp-validation-for="Notes" class="field-validation-modern"></span>
+                </div>
+
+                <!-- Active -->
+                <div class="form-group-modern form-group-full">
+                    <div class="status-toggle-card" onclick="document.getElementById('isActiveToggle').click()">
+                        <div class="status-toggle-copy">
+                            <div class="status-toggle-title">Active Customer</div>
+                            <div class="status-toggle-text">Active customers appear in the sale customer picker.</div>
+                        </div>
+                        <div class="status-toggle-switch">
+                            <input asp-for="IsActive" id="isActiveToggle" class="form-check-input modern-switch" type="checkbox" onclick="event.stopPropagation()" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-footer-modern">
+                <button type="submit" class="btn-modern-primary btn-modern-lg">
+                    <i class="bi bi-person-plus-fill"></i> Save Customer
+                </button>
+                <a asp-action="Index" class="btn-modern-outline btn-modern-lg">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/create-product.css" />
+}
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

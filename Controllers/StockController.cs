@@ -3,12 +3,14 @@ using ClothInventoryApp.Dto;
 using ClothInventoryApp.Dto.Stock;
 using ClothInventoryApp.Models;
 using ClothInventoryApp.Services.Tenant;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClothInventoryApp.Controllers
 {
+    [Authorize]
     public class StockController : Controller
     {
         private readonly AppDbContext _context;
@@ -21,11 +23,26 @@ namespace ClothInventoryApp.Controllers
         }
         
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? search, int page = 1, int size = 10)
         {
-            var stockMovements = await _context.StockMovements
+            size = PaginationViewModel.Clamp(size);
+            var query = _context.StockMovements
                 .Include(s => s.ProductVariant)
                 .ThenInclude(v => v.Product)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+                query = query.Where(s =>
+                    s.ProductVariant.Product.Name.Contains(search) ||
+                    s.ProductVariant.SKU.Contains(search) ||
+                    s.MovementType.Contains(search) ||
+                    (s.Remarks != null && s.Remarks.Contains(search)));
+
+            var total = await query.CountAsync();
+            var stockMovements = await query
+                .OrderByDescending(s => s.MovementDate)
+                .Skip((page - 1) * size)
+                .Take(size)
                 .Select(s => new ViewStockDto
                 {
                     Id = s.Id,
@@ -39,12 +56,19 @@ namespace ClothInventoryApp.Controllers
                     MovementDate = s.MovementDate,
                     Remarks = s.Remarks
                 })
-                .OrderByDescending(s => s.MovementDate)
                 .ToListAsync();
 
+            ViewBag.Search = search;
+            ViewBag.Pagination = new PaginationViewModel
+            {
+                Page = page, PageSize = size, TotalCount = total,
+                Action = nameof(Index),
+                Extra = new() { ["search"] = search }
+            };
             return View(stockMovements);
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
             await LoadVariantDropDown();
@@ -54,6 +78,7 @@ namespace ClothInventoryApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(CreateStockDto dto)
         {
             if (!ModelState.IsValid)
@@ -80,7 +105,8 @@ namespace ClothInventoryApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Edit(int id)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(Guid id)
         {
             var stockMovement = await _context.StockMovements.FindAsync(id);
 
@@ -104,6 +130,7 @@ namespace ClothInventoryApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(ViewStockDto dto)
         {
             if (!ModelState.IsValid)
@@ -157,6 +184,7 @@ namespace ClothInventoryApp.Controllers
             return View(stockMovement);
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var stockMovement = await _context.StockMovements
@@ -186,7 +214,8 @@ namespace ClothInventoryApp.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var stockMovement = await _context.StockMovements.FindAsync(id);
 
@@ -287,10 +316,20 @@ namespace ClothInventoryApp.Controllers
             return RedirectToAction(nameof(Inventory));
         }
 
-        public async Task<IActionResult> Inventory()
+        public async Task<IActionResult> Inventory(string? search, bool lowstock = false)
         {
-            var inventory = await _context.ProductVariants
+            var query = _context.ProductVariants
                 .Include(v => v.Product)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+                query = query.Where(v =>
+                    v.Product.Name.Contains(search) ||
+                    v.SKU.Contains(search) ||
+                    v.Color.Contains(search) ||
+                    v.Size.Contains(search));
+
+            var inventory = await query
                 .Select(v => new InventoryViewModel
                 {
                     ProductVariantId = v.Id,
@@ -299,11 +338,16 @@ namespace ClothInventoryApp.Controllers
                     Size = v.Size,
                     Color = v.Color,
                     CurrentStock =
-                        v.StockMovements.Where(m => m.MovementType == "IN").Sum(m => (int?)m.Quantity) ?? 0
-                        - v.StockMovements.Where(m => m.MovementType == "OUT").Sum(m => (int?)m.Quantity) ?? 0
+                        (v.StockMovements.Where(m => m.MovementType == "IN").Sum(m => (int?)m.Quantity) ?? 0)
+                        - (v.StockMovements.Where(m => m.MovementType == "OUT").Sum(m => (int?)m.Quantity) ?? 0)
                 })
                 .ToListAsync();
 
+            if (lowstock)
+                inventory = inventory.Where(x => x.CurrentStock < 10).ToList();
+
+            ViewBag.Search = search;
+            ViewBag.LowStock = lowstock;
             return View(inventory);
         }
 

@@ -1,8 +1,9 @@
-﻿@using ClothInventoryApp.Dto.Sale
+@using ClothInventoryApp.Dto.Sale
 @model IEnumerable<ViewSaleDto>
-
 @{
     ViewData["Title"] = "Sales";
+    var currency = ViewData["Currency"] as string ?? "";
+    var pg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel;
 }
 
 <div class="product-index-shell">
@@ -12,42 +13,112 @@
                 <i class="bi bi-receipt"></i>
                 <span>Sales</span>
             </div>
-
             <h1>Sales List</h1>
             <p>Manage sales transactions and item details.</p>
-
             <div class="hero-actions">
                 <a asp-action="Create" class="btn-modern-primary">
-                    <i class="bi bi-plus-circle"></i>
-                    Create Sale
+                    <i class="bi bi-plus-circle"></i> Create Sale
                 </a>
+            </div>
+        </div>
+        <div class="product-hero-side">
+            <div class="hero-stat-card">
+                <div class="hero-stat-icon"><i class="bi bi-bag-check-fill"></i></div>
+                <div class="hero-stat-title">Total Sales</div>
+                <div class="hero-stat-text">@(pg?.TotalCount ?? 0) transactions</div>
             </div>
         </div>
     </div>
 
-    <div class="product-table-card">
-        <table class="table-modern">
-            <thead>
-                <tr>
-                    <th>Sale Date</th>
-                    <th>Total Amount</th>
-                    <th class="text-end">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
+    <!-- FILTER BAR -->
+    <div class="list-filter-bar">
+        <form method="get" asp-action="Index" class="filter-form">
+            @if (pg != null) { <input type="hidden" name="size" value="@pg.PageSize" /> }
+            <div class="filter-search-wrap">
+                <i class="bi bi-search filter-search-icon"></i>
+                <input type="text" name="search" value="@ViewBag.Search"
+                       class="filter-search-input" placeholder="Search by customer name…" autocomplete="off" />
+                @if (!string.IsNullOrWhiteSpace(ViewBag.Search as string))
                 {
-                    <tr>
-                        <td>@item.SaleDate.ToString("yyyy-MM-dd")</td>
-                        <td>@item.TotalAmount</td>
-                        <td class="text-end">
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn-icon"><i class="bi bi-eye"></i></a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn-icon text-danger"><i class="bi bi-trash"></i></a>
-                        </td>
-                    </tr>
+                    <a href="@Url.Action("Index", new { size = pg?.PageSize ?? 10 })" class="filter-clear-btn" title="Clear">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </a>
                 }
-            </tbody>
-        </table>
+            </div>
+            <button type="submit" class="filter-search-btn">
+                <i class="bi bi-search"></i> Search
+            </button>
+        </form>
+    </div>
+
+    <!-- TABLE CARD -->
+    <div class="product-table-card">
+        <div class="table-responsive-modern">
+            <table class="table-modern">
+                <thead>
+                    <tr>
+                        <th>Sale Date</th>
+                        <th>Customer</th>
+                        <th>Revenue</th>
+                        <th>Discount</th>
+                        <th>Profit</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <i class="bi bi-inbox"></i>
+                                <div>@(string.IsNullOrWhiteSpace(ViewBag.Search as string) ? "No sales yet" : "No sales match your search")</div>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-muted" style="font-size:0.875rem">@item.SaleDate.ToString("dd MMM yyyy")</td>
+                                <td>
+                                    @if (item.CustomerId.HasValue)
+                                    {
+                                        <a asp-controller="Customer" asp-action="Details" asp-route-id="@item.CustomerId"
+                                           style="color:#6366f1;text-decoration:none;font-weight:600">
+                                            <i class="bi bi-person-fill me-1"></i>@item.CustomerName
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Walk-in</span>
+                                    }
+                                </td>
+                                <td class="fw-semibold">@item.TotalAmount.ToString("N0") @currency</td>
+                                <td class="@(item.Discount > 0 ? "text-danger fw-semibold" : "text-muted")">
+                                    @(item.Discount > 0 ? "- " + item.Discount.ToString("N0") + " " + currency : "—")
+                                </td>
+                                <td class="@(item.TotalProfit >= 0 ? "qty-positive" : "qty-negative") fw-semibold">
+                                    @item.TotalProfit.ToString("N0") @currency
+                                </td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="action-btn action-btn-view" title="Details"><i class="bi bi-eye-fill"></i></a>
+                                        <a asp-action="InvoicePdf" asp-route-id="@item.Id" class="action-btn" title="Download Invoice PDF"
+                                           style="color:#6366f1;border-color:#e0e7ff;background:#f5f3ff"><i class="bi bi-file-earmark-pdf-fill"></i></a>
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="action-btn action-btn-delete" title="Delete"><i class="bi bi-trash-fill"></i></a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (pg != null) { @await Html.PartialAsync("_Pagination", pg) }
     </div>
 </div>
 

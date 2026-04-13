@@ -1,8 +1,9 @@
-﻿@using ClothInventoryApp.Dto.ProductVariant
+@using ClothInventoryApp.Dto.ProductVariant
 @model IEnumerable<ViewProductVariantDto>
-
 @{
     ViewData["Title"] = "Product Variants";
+    var currency = ViewData["Currency"] as string ?? "";
+    var pg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel;
 }
 
 <div class="product-index-shell">
@@ -12,41 +13,49 @@
                 <i class="bi bi-diagram-3-fill"></i>
                 <span>Variants</span>
             </div>
-
             <h1>Product Variants</h1>
-            <p>
-                Manage SKU, size, color, and pricing for each product variant.
-            </p>
-
+            <p>Manage SKU, size, color, and pricing for each product variant.</p>
             <div class="hero-actions">
-                <a asp-action="Create" class="btn-modern-primary">
-                    <i class="bi bi-plus-circle"></i>
-                    Create Variant
-                </a>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Create" class="btn-modern-primary">
+                        <i class="bi bi-plus-circle"></i> Create Variant
+                    </a>
+                }
             </div>
         </div>
-
         <div class="product-hero-side">
             <div class="hero-stat-card">
-                <div class="hero-stat-icon">
-                    <i class="bi bi-boxes"></i>
-                </div>
+                <div class="hero-stat-icon"><i class="bi bi-boxes"></i></div>
                 <div class="hero-stat-title">Total Variants</div>
-                <div class="hero-stat-text">
-                    @Model.Count() items in your variant catalog
-                </div>
+                <div class="hero-stat-text">@(pg?.TotalCount ?? 0) variants in your catalog</div>
             </div>
         </div>
     </div>
 
-    <div class="product-table-card">
-        <div class="section-header">
-            <div>
-                <h3>All Variants</h3>
-                <p>Overview of all product variants in your inventory.</p>
+    <!-- FILTER BAR -->
+    <div class="list-filter-bar">
+        <form method="get" asp-action="Index" class="filter-form">
+            @if (pg != null) { <input type="hidden" name="size" value="@pg.PageSize" /> }
+            <div class="filter-search-wrap">
+                <i class="bi bi-search filter-search-icon"></i>
+                <input type="text" name="search" value="@ViewBag.Search"
+                       class="filter-search-input" placeholder="Search product, SKU, color, size…" autocomplete="off" />
+                @if (!string.IsNullOrWhiteSpace(ViewBag.Search as string))
+                {
+                    <a href="@Url.Action("Index", new { size = pg?.PageSize ?? 10 })" class="filter-clear-btn" title="Clear">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </a>
+                }
             </div>
-        </div>
+            <button type="submit" class="filter-search-btn">
+                <i class="bi bi-search"></i> Search
+            </button>
+        </form>
+    </div>
 
+    <!-- TABLE CARD -->
+    <div class="product-table-card">
         <div class="table-responsive-modern">
             <table class="table-modern">
                 <thead>
@@ -57,7 +66,7 @@
                         <th>Color</th>
                         <th>Cost Price</th>
                         <th>Selling Price</th>
-                        <th class="text-end">Actions</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -66,10 +75,11 @@
                         <tr>
                             <td colspan="7" class="empty-state">
                                 <i class="bi bi-inbox"></i>
-                                <div>No product variants found</div>
-                                <a asp-action="Create" class="btn-modern-primary mt-2">
-                                    Create your first variant
-                                </a>
+                                <div>@(string.IsNullOrWhiteSpace(ViewBag.Search as string) ? "No variants yet" : "No variants match your search")</div>
+                                @if (User.IsInRole("Admin") && string.IsNullOrWhiteSpace(ViewBag.Search as string))
+                                {
+                                    <a asp-action="Create" class="btn-modern-primary mt-2">Create your first variant</a>
+                                }
                             </td>
                         </tr>
                     }
@@ -79,21 +89,20 @@
                         {
                             <tr>
                                 <td>@item.ProductName</td>
-                                <td>@item.SKU</td>
+                                <td class="fw-semibold">@item.SKU</td>
                                 <td>@item.Size</td>
                                 <td>@item.Color</td>
-                                <td>@item.CostPrice.ToString("0.00")</td>
-                                <td>@item.SellingPrice.ToString("0.00")</td>
-                                <td class="text-end">
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn-icon">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn-icon">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn-icon text-danger">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
+                                <td>@item.CostPrice.ToString("N0") @currency</td>
+                                <td>@item.SellingPrice.ToString("N0") @currency</td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="action-btn action-btn-view" title="Details"><i class="bi bi-eye-fill"></i></a>
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="action-btn action-btn-edit" title="Edit"><i class="bi bi-pencil-fill"></i></a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="action-btn action-btn-delete" title="Delete"><i class="bi bi-trash-fill"></i></a>
+                                        }
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -101,6 +110,7 @@
                 </tbody>
             </table>
         </div>
+        @if (pg != null) { @await Html.PartialAsync("_Pagination", pg) }
     </div>
 </div>
 

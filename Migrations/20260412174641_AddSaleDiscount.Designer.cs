@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClothInventoryApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260410065221_InitialSetup")]
-    partial class InitialSetup
+    [Migration("20260412174641_AddSaleDiscount")]
+    partial class AddSaleDiscount
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -69,6 +69,9 @@ namespace ClothInventoryApp.Migrations
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("MustChangePassword")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -135,12 +138,13 @@ namespace ClothInventoryApp.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("ReferenceNo")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Remarks")
-                        .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<Guid?>("SaleId")
+                        .HasColumnType("char(36)");
 
                     b.Property<Guid>("TenantId")
                         .HasColumnType("char(36)");
@@ -157,6 +161,41 @@ namespace ClothInventoryApp.Migrations
                     b.HasIndex("TenantId");
 
                     b.ToTable("CashTransactions");
+                });
+
+            modelBuilder.Entity("ClothInventoryApp.Models.ContactInquiry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Message")
+                        .HasMaxLength(2000)
+                        .HasColumnType("varchar(2000)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime>("SubmittedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ContactInquiries");
                 });
 
             modelBuilder.Entity("ClothInventoryApp.Models.Feature", b =>
@@ -225,11 +264,11 @@ namespace ClothInventoryApp.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<decimal>("PriceMonthly")
-                        .HasColumnType("decimal(65,30)");
+                    b.Property<int>("PriceMonthly")
+                        .HasColumnType("int");
 
-                    b.Property<decimal?>("PriceYearly")
-                        .HasColumnType("decimal(65,30)");
+                    b.Property<int?>("PriceYearly")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -262,6 +301,72 @@ namespace ClothInventoryApp.Migrations
                         .IsUnique();
 
                     b.ToTable("PlanFeatures");
+                });
+
+            modelBuilder.Entity("ClothInventoryApp.Models.Sale", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("Discount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("SaleDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("TotalAmount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalProfit")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("Sales");
+                });
+
+            modelBuilder.Entity("ClothInventoryApp.Models.SaleItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("CostPrice")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ProductVariantId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("Profit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("SaleId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("UnitPrice")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductVariantId");
+
+                    b.HasIndex("SaleId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("SaleItems");
                 });
 
             modelBuilder.Entity("ClothInventoryApp.Models.Tenant", b =>
@@ -429,8 +534,8 @@ namespace ClothInventoryApp.Migrations
                     b.Property<Guid>("PlanId")
                         .HasColumnType("char(36)");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(65,30)");
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime(6)");
@@ -470,6 +575,9 @@ namespace ClothInventoryApp.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("char(36)");
+
                     b.Property<int>("TotalPrice")
                         .HasColumnType("int");
 
@@ -477,6 +585,8 @@ namespace ClothInventoryApp.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("Textile");
                 });
@@ -671,6 +781,9 @@ namespace ClothInventoryApp.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("char(36)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
@@ -678,54 +791,9 @@ namespace ClothInventoryApp.Migrations
                     b.HasIndex("SKU")
                         .IsUnique();
 
+                    b.HasIndex("TenantId");
+
                     b.ToTable("ProductVariants");
-                });
-
-            modelBuilder.Entity("Sale", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<DateTime>("SaleDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("TotalAmount")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Sales");
-                });
-
-            modelBuilder.Entity("SaleItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<int>("CostPrice")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("ProductVariantId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("SaleId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<int>("UnitPrice")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductVariantId");
-
-                    b.HasIndex("SaleId");
-
-                    b.ToTable("SaleItems");
                 });
 
             modelBuilder.Entity("StockMovement", b =>
@@ -750,6 +818,9 @@ namespace ClothInventoryApp.Migrations
 
                     b.Property<string>("Remarks")
                         .HasColumnType("longtext");
+
+                    b.Property<Guid?>("SaleId")
+                        .HasColumnType("char(36)");
 
                     b.Property<Guid>("TenantId")
                         .HasColumnType("char(36)");
@@ -804,6 +875,44 @@ namespace ClothInventoryApp.Migrations
                     b.Navigation("Plan");
                 });
 
+            modelBuilder.Entity("ClothInventoryApp.Models.Sale", b =>
+                {
+                    b.HasOne("ClothInventoryApp.Models.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("ClothInventoryApp.Models.SaleItem", b =>
+                {
+                    b.HasOne("ProductVariant", "ProductVariant")
+                        .WithMany("SaleItems")
+                        .HasForeignKey("ProductVariantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ClothInventoryApp.Models.Sale", "Sale")
+                        .WithMany("Items")
+                        .HasForeignKey("SaleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ClothInventoryApp.Models.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProductVariant");
+
+                    b.Navigation("Sale");
+
+                    b.Navigation("Tenant");
+                });
+
             modelBuilder.Entity("ClothInventoryApp.Models.TenantFeatureOverride", b =>
                 {
                     b.HasOne("ClothInventoryApp.Models.Feature", "Feature")
@@ -849,6 +958,17 @@ namespace ClothInventoryApp.Migrations
                         .IsRequired();
 
                     b.Navigation("Plan");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("ClothInventoryApp.Models.Textile", b =>
+                {
+                    b.HasOne("ClothInventoryApp.Models.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Tenant");
                 });
@@ -923,26 +1043,15 @@ namespace ClothInventoryApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ClothInventoryApp.Models.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Product");
-                });
 
-            modelBuilder.Entity("SaleItem", b =>
-                {
-                    b.HasOne("ProductVariant", "ProductVariant")
-                        .WithMany("SaleItems")
-                        .HasForeignKey("ProductVariantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sale", "Sale")
-                        .WithMany("Items")
-                        .HasForeignKey("SaleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ProductVariant");
-
-                    b.Navigation("Sale");
+                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("StockMovement", b =>
@@ -978,6 +1087,11 @@ namespace ClothInventoryApp.Migrations
                     b.Navigation("TenantSubscriptions");
                 });
 
+            modelBuilder.Entity("ClothInventoryApp.Models.Sale", b =>
+                {
+                    b.Navigation("Items");
+                });
+
             modelBuilder.Entity("ClothInventoryApp.Models.Tenant", b =>
                 {
                     b.Navigation("FeatureOverrides");
@@ -999,11 +1113,6 @@ namespace ClothInventoryApp.Migrations
                     b.Navigation("SaleItems");
 
                     b.Navigation("StockMovements");
-                });
-
-            modelBuilder.Entity("Sale", b =>
-                {
-                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

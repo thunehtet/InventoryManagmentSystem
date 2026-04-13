@@ -1,17 +1,20 @@
 ﻿using ClothInventoryApp.Data;
 using ClothInventoryApp.Dto.Finance;
+using ClothInventoryApp.Filters;
+using ClothInventoryApp.Services.Tenant;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClothInventoryApp.Controllers
 {
-    public class FinanceController : Controller
+    [Authorize(Roles = "Admin")]
+    [FeatureRequired("finance")]
+    public class FinanceController : TenantAwareController
     {
-        private readonly AppDbContext _context;
-
-        public FinanceController(AppDbContext context)
+        public FinanceController(AppDbContext context, ITenantProvider tenantProvider)
+            : base(context, tenantProvider)
         {
-            _context = context;
         }
 
         public async Task<IActionResult> Index()

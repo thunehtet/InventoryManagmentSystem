@@ -1,69 +1,141 @@
-﻿@using ClothInventoryApp.Dto.Sale
+@using ClothInventoryApp.Dto.Sale
 @model CreateSaleDto
 
 @{
-    ViewData["Title"] = "Create Sale";
+    ViewData["Title"] = "New Sale";
 }
 
-<div class="create-product-shell">
-    <div class="create-main-card">
-        <div class="section-header">
-            <div>
-                <h3>Create Sale</h3>
+<div class="sc-shell">
+
+    <!-- ══════════ LEFT: Product Picker ══════════ -->
+    <div class="sc-picker">
+        <div class="sc-picker-head">
+            <div class="sc-picker-title">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+                <span>Products</span>
+                <span class="sc-chip" id="variantCount">—</span>
+            </div>
+            <div class="sc-search-wrap">
+                <i class="bi bi-search sc-search-icon"></i>
+                <input type="text" id="variantSearch"
+                       placeholder="Search name, SKU, color, size…"
+                       class="sc-search-input" autocomplete="off" />
             </div>
         </div>
 
-        <form asp-action="Create" method="post" class="modern-product-form">
-            <div asp-validation-summary="ModelOnly" class="validation-summary-modern"></div>
+        <div class="sc-grid" id="variantGrid">
+            <div class="sc-loading">
+                <div class="spinner-border spinner-border-sm" role="status"></div>
+                <span>Loading products…</span>
+            </div>
+        </div>
+    </div>
 
-            <div class="form-grid-modern">
-                <div class="form-group-modern form-group-full">
-                    <label asp-for="SaleDate" class="form-label-modern"></label>
-                    <input asp-for="SaleDate" class="input-modern" type="date" />
+    <!-- ══════════ RIGHT: Order Panel ══════════ -->
+    <div class="sc-order">
+
+        <div class="sc-order-head">
+            <i class="bi bi-receipt-cutoff"></i>
+            <span>New Sale</span>
+        </div>
+
+        <form asp-action="Create" method="post" id="saleForm" class="sc-form">
+
+            <div id="clientError" class="sc-error" style="display:none"></div>
+            <div asp-validation-summary="ModelOnly" class="sc-error"></div>
+
+            <!-- Sale Date -->
+            <div class="sc-field-group">
+                <label class="sc-label">Sale Date</label>
+                <input name="SaleDate" type="date" class="sc-input"
+                       value="@DateTime.Today.ToString("yyyy-MM-dd")" required />
+            </div>
+
+            <!-- Customer (optional) -->
+            <div class="sc-field-group">
+                <label class="sc-label">Customer <span class="text-muted small">(optional)</span></label>
+                <select name="CustomerId" class="sc-input">
+                    <option value="">— Walk-in / No customer —</option>
+                    @foreach (var c in (ViewBag.Customers as Microsoft.AspNetCore.Mvc.Rendering.SelectList ?? new Microsoft.AspNetCore.Mvc.Rendering.SelectList(Enumerable.Empty<object>())))
+                    {
+                        <option value="@c.Value">@c.Text</option>
+                    }
+                </select>
+                <div style="margin-top:4px">
+                    <a asp-controller="Customer" asp-action="Create" target="_blank"
+                       style="font-size:12px;color:#6366f1;text-decoration:none">
+                        <i class="bi bi-person-plus-fill"></i> Add new customer
+                    </a>
                 </div>
             </div>
 
-            <hr />
-
-            <h5>Sale Items</h5>
-
-            @for (int i = 0; i < Model.Items.Count; i++)
-            {
-                <div class="form-grid-modern mb-3">
-                    <div class="form-group-modern form-group-full">
-                        <label class="form-label-modern">Product Variant</label>
-                        <select asp-for="Items[@i].ProductVariantId" asp-items="ViewBag.ProductVariants" class="input-modern">
-                            <option value="">-- Select Variant --</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group-modern">
-                        <label class="form-label-modern">Quantity</label>
-                        <input asp-for="Items[@i].Quantity" class="input-modern" type="number" />
-                    </div>
-
-                    <div class="form-group-modern">
-                        <label class="form-label-modern">Unit Price</label>
-                        <input asp-for="Items[@i].UnitPrice" class="input-modern" type="number" />
-                    </div>
-
+            <!-- Cart -->
+            <div class="sc-cart-wrap">
+                <div class="sc-cart-head">
+                    <span class="sc-cart-title"><i class="bi bi-cart3"></i> Items</span>
+                    <span class="sc-cart-badge" id="cartBadge">0</span>
                 </div>
-            }
 
-            <div class="form-footer-modern">
-                <button type="submit" class="btn-modern-primary btn-modern-lg">Save Sale</button>
+                <div id="emptyCart" class="sc-empty">
+                    <i class="bi bi-cart-dash"></i>
+                    <p>Click a product card to add items</p>
+                </div>
+
+                <div id="cartList" class="sc-cart-list"></div>
+            </div>
+
+            <!-- Hidden inputs populated by JS before submit -->
+            <div id="hiddenInputs"></div>
+
+            <!-- Discount (optional) -->
+            <div class="sc-field-group">
+                <label class="sc-label">Discount <span class="text-muted small">(optional)</span></label>
+                <input name="Discount" id="discountInput" type="number" min="0" class="sc-input"
+                       placeholder="Enter discount amount (0 = no discount)" value="0" />
+            </div>
+
+            <!-- Totals -->
+            <div class="sc-totals">
+                <div class="sc-total-row">
+                    <span class="sc-total-label">Subtotal</span>
+                    <span class="sc-total-val" id="sumRevenue">0</span>
+                </div>
+                <div class="sc-total-row" id="discountRow" style="display:none">
+                    <span class="sc-total-label">Discount</span>
+                    <span class="sc-total-val sc-cost" id="sumDiscount">0</span>
+                </div>
+                <div class="sc-total-row">
+                    <span class="sc-total-label">Revenue</span>
+                    <span class="sc-total-val" id="sumFinal">0</span>
+                </div>
+                <div class="sc-total-row">
+                    <span class="sc-total-label">Cost</span>
+                    <span class="sc-total-val sc-cost" id="sumCost">0</span>
+                </div>
+                <div class="sc-total-row sc-profit-row">
+                    <span class="sc-total-label">Profit</span>
+                    <span class="sc-total-val sc-profit" id="sumProfit">0</span>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="sc-form-footer">
+                <button type="submit" class="btn-modern-primary btn-modern-lg sc-submit">
+                    <i class="bi bi-check-circle-fill"></i> Save Sale
+                </button>
                 <a asp-action="Index" class="btn-modern-outline btn-modern-lg">Cancel</a>
             </div>
+
         </form>
     </div>
+
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <script src="~/js/sale-create.js" asp-append-version="true"></script>
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/pages/create-product.css" />
+    <link rel="stylesheet" href="~/css/pages/sale-create.css" />
 }

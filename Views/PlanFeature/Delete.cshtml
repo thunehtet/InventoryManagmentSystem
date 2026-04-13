@@ -1,0 +1,70 @@
+@model ClothInventoryApp.Models.PlanFeature
+@{
+    ViewData["Title"] = "Remove Plan Feature";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/superadmin.css" asp-append-version="true" />
+}
+
+<div class="superadmin-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title"><i class="bi bi-trash3-fill"></i> Remove Plan Feature</h1>
+            <p class="product-hero-sub">This action cannot be undone</p>
+        </div>
+        <a asp-action="Index" class="sa-btn-back">
+            <i class="bi bi-arrow-left"></i> Back to Plan Features
+        </a>
+    </div>
+
+    <div class="sa-delete-card">
+        <div class="sa-delete-banner">
+            <div class="sa-delete-banner-icon">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <div>
+                <div class="sa-delete-title">Remove "@Model.Feature.Name" from "@Model.Plan.Name"?</div>
+                <div class="sa-delete-sub">
+                    Tenants subscribed to <strong>@Model.Plan.Name</strong> will lose access to
+                    <strong>@Model.Feature.Name</strong> unless they have a tenant-level override.
+                </div>
+            </div>
+        </div>
+
+        <div class="sa-detail-rows">
+            <div class="sa-detail-row">
+                <span class="sa-detail-label">Plan</span>
+                <span class="sa-detail-value fw-semibold">@Model.Plan.Name</span>
+            </div>
+            <div class="sa-detail-row">
+                <span class="sa-detail-label">Feature</span>
+                <span class="sa-detail-value fw-semibold">@Model.Feature.Name</span>
+            </div>
+            <div class="sa-detail-row">
+                <span class="sa-detail-label">Code</span>
+                <span class="sa-detail-value"><span class="sa-detail-mono">@Model.Feature.Code</span></span>
+            </div>
+            <div class="sa-detail-row">
+                <span class="sa-detail-label">Currently</span>
+                <span class="sa-detail-value">
+                    <span class="status-badge @(Model.IsEnabled ? "active" : "inactive")">
+                        @(Model.IsEnabled ? "Enabled" : "Disabled")
+                    </span>
+                </span>
+            </div>
+        </div>
+
+        <div class="sa-form-actions">
+            <a asp-action="Index" class="sa-btn-cancel">
+                <i class="bi bi-x-lg"></i> Cancel
+            </a>
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="m-0">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="sa-btn-danger">
+                    <i class="bi bi-trash3"></i> Remove Assignment
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

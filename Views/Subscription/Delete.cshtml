@@ -1,0 +1,87 @@
+@model ClothInventoryApp.Models.TenantSubscription
+@{
+    ViewData["Title"] = "Delete Subscription";
+    var isExpired = Model.EndDate < DateTime.UtcNow;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/superadmin.css" asp-append-version="true" />
+}
+
+<div class="superadmin-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title"><i class="bi bi-trash3-fill"></i> Delete Subscription</h1>
+            <p class="product-hero-sub">This action cannot be undone</p>
+        </div>
+        <a asp-action="Index" class="sa-btn-back">
+            <i class="bi bi-arrow-left"></i> Back to Subscriptions
+        </a>
+    </div>
+
+    <div class="sa-delete-card">
+        <div class="sa-delete-banner">
+            <div class="sa-delete-banner-icon">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <div>
+                <div class="sa-delete-title">Delete "@Model.Tenant.Name — @Model.Plan.Name"?</div>
+                <div class="sa-delete-sub">This will permanently remove the subscription record.</div>
+            </div>
+        </div>
+
+        <div class="sa-detail-rows">
+            <div class="sa-detail-row">
+                <span class="sa-detail-label">Tenant</span>
+                <span class="sa-detail-value fw-semibold">@Model.Tenant.Name</span>
+            </div>
+            <div class="sa-detail-row">
+                <span class="sa-detail-label">Plan</span>
+                <span class="sa-detail-value">@Model.Plan.Name</span>
+            </div>
+            <div class="sa-detail-row">
+                <span class="sa-detail-label">Billing</span>
+                <span class="sa-detail-value">@Model.BillingCycle</span>
+            </div>
+            <div class="sa-detail-row">
+                <span class="sa-detail-label">Price</span>
+                <span class="sa-detail-value">@Model.Price.ToString("N0") @(Model.Tenant.CurrencyCode ?? "")</span>
+            </div>
+            <div class="sa-detail-row">
+                <span class="sa-detail-label">Period</span>
+                <span class="sa-detail-value">
+                    @Model.StartDate.ToString("dd MMM yyyy") — @Model.EndDate.ToString("dd MMM yyyy")
+                </span>
+            </div>
+            <div class="sa-detail-row">
+                <span class="sa-detail-label">Status</span>
+                <span class="sa-detail-value">
+                    @if (Model.IsTrial)
+                    {
+                        <span class="status-badge trial">Trial</span>
+                    }
+                    else if (Model.IsActive && !isExpired)
+                    {
+                        <span class="status-badge active">Active</span>
+                    }
+                    else
+                    {
+                        <span class="status-badge inactive">Expired</span>
+                    }
+                </span>
+            </div>
+        </div>
+
+        <div class="sa-form-actions">
+            <a asp-action="Index" class="sa-btn-cancel">
+                <i class="bi bi-x-lg"></i> Cancel
+            </a>
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="m-0">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="sa-btn-danger">
+                    <i class="bi bi-trash3"></i> Delete Permanently
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

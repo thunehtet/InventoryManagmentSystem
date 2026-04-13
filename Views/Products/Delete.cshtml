@@ -1,0 +1,62 @@
+@model ClothInventoryApp.Dto.Product.ViewProductDto
+@{
+    ViewData["Title"] = "Delete Product";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/product-index.css" asp-append-version="true" />
+}
+
+<div class="product-index-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title">
+                <i class="bi bi-trash-fill"></i> Delete Product
+            </h1>
+            <p class="product-hero-sub">This action cannot be undone</p>
+        </div>
+        <a asp-action="Index" class="btn-modern-secondary">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+    </div>
+
+    <div class="product-table-card product-form-card">
+        <p class="mb-3 text-muted">Are you sure you want to delete this product?</p>
+
+        <div class="product-detail-card">
+            <div class="product-detail-row">
+                <span class="product-detail-label">Name</span>
+                <span class="product-detail-value">@Model.Name</span>
+            </div>
+            <div class="product-detail-row">
+                <span class="product-detail-label">Category</span>
+                <span class="product-detail-value">@Model.Category</span>
+            </div>
+            <div class="product-detail-row">
+                <span class="product-detail-label">Brand</span>
+                <span class="product-detail-value">@Model.Brand</span>
+            </div>
+            <div class="product-detail-row">
+                <span class="product-detail-label">Status</span>
+                <span class="product-detail-value">
+                    @if (Model.IsActive)
+                    {
+                        <span class="badge-modern badge-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge-modern badge-muted">Inactive</span>
+                    }
+                </span>
+            </div>
+        </div>
+
+        <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-flex gap-2">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn-modern-danger">
+                <i class="bi bi-trash-fill"></i> Yes, Delete
+            </button>
+            <a asp-action="Index" class="btn-modern-secondary">Cancel</a>
+        </form>
+    </div>
+</div>

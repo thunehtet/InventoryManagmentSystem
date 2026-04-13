@@ -1,67 +1,68 @@
-﻿@using ClothInventoryApp.Dto.Sale
-@model ViewSaleDto
-
+@model ClothInventoryApp.Models.ApplicationUser
 @{
-    ViewData["Title"] = "Delete Sale";
+    ViewData["Title"] = "Delete User";
 }
-
-<div class="create-product-shell">
-    <div class="create-main-card">
-        <div class="section-header">
-            <div>
-                <h3>Delete Sale</h3>
-            </div>
-        </div>
-
-        <div class="form-grid-modern">
-            <div class="form-group-modern">
-                <label class="form-label-modern">Sale Date</label>
-                <input value="@Model.SaleDate.ToString("yyyy-MM-dd")" class="input-modern" readonly />
-            </div>
-
-            <div class="form-group-modern">
-                <label class="form-label-modern">Total Amount</label>
-                <input value="@Model.TotalAmount" class="input-modern" readonly />
-            </div>
-        </div>
-
-        <hr />
-        <div class="table-responsive-modern">
-            <table class="table-modern">
-                <thead>
-                    <tr>
-                        <th>Variant</th>
-                        <th>Quantity</th>
-                        <th>Unit Price</th>
-                        <th>Cost Price</th>
-                        <th>Line Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Items)
-                    {
-                        <tr>
-                            <td>@item.ProductVariantName</td>
-                            <td>@item.Quantity</td>
-                            <td>@item.UnitPrice</td>
-                            <td>@item.CostPrice</td>
-                            <td>@item.LineTotal</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-
-        <form asp-action="Delete" method="post" class="mt-4">
-            <input type="hidden" asp-for="Id" />
-            <div class="form-footer-modern">
-                <button type="submit" class="btn-modern-danger btn-modern-lg">Delete Sale</button>
-                <a asp-action="Index" class="btn-modern-outline btn-modern-lg">Cancel</a>
-            </div>
-        </form>
-    </div>
-</div>
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/pages/create-product.css" />
+    <link rel="stylesheet" href="~/css/pages/product-index.css" asp-append-version="true" />
 }
+
+<div class="product-index-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title">
+                <i class="bi bi-person-x-fill"></i> Delete User
+            </h1>
+            <p class="product-hero-sub">This action cannot be undone</p>
+        </div>
+        <a asp-action="Index" class="btn-modern-secondary" style="align-self:center">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+    </div>
+
+    <div class="product-table-card product-form-card">
+
+        <div class="alert alert-warning d-flex align-items-start gap-3 mb-4">
+            <i class="bi bi-exclamation-triangle-fill fs-5 mt-1 flex-shrink-0"></i>
+            <div>
+                <div class="fw-semibold">Are you sure you want to delete this user?</div>
+                <div class="small mt-1">This will permanently remove the account. The user will no longer be able to log in.</div>
+            </div>
+        </div>
+
+        <div class="product-detail-card">
+            <div class="product-detail-row">
+                <span class="product-detail-label">Name</span>
+                <span class="product-detail-value fw-semibold">@Model.FullName</span>
+            </div>
+            <div class="product-detail-row">
+                <span class="product-detail-label">Email</span>
+                <span class="product-detail-value">@Model.Email</span>
+            </div>
+            <div class="product-detail-row">
+                <span class="product-detail-label">Role</span>
+                <span class="product-detail-value">
+                    <span class="badge-pill @(Model.IsTenantAdmin ? "badge-role-admin" : "badge-role-staff")">
+                        @(Model.IsTenantAdmin ? "Admin" : "Staff")
+                    </span>
+                </span>
+            </div>
+            <div class="product-detail-row">
+                <span class="product-detail-label">Last Login</span>
+                <span class="product-detail-value">
+                    @(Model.LastLoginAt.HasValue ? Model.LastLoginAt.Value.ToString("dd MMM yyyy HH:mm") : "Never")
+                </span>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-4">
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="m-0">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn-modern-danger">
+                    <i class="bi bi-trash-fill"></i> Yes, Delete User
+                </button>
+            </form>
+            <a asp-action="Index" class="btn btn-light">Cancel</a>
+        </div>
+    </div>
+</div>

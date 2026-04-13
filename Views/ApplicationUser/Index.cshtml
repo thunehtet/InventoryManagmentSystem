@@ -1,56 +1,150 @@
-﻿@using ClothInventoryApp.Dto.Sale
-@model IEnumerable<ViewSaleDto>
-
+@model IEnumerable<ClothInventoryApp.Models.ApplicationUser>
 @{
-    ViewData["Title"] = "Sales";
+    ViewData["Title"] = "Manage Users";
+    var currentUserId = ViewBag.CurrentUserId as string;
+    bool canAdd     = (bool)(ViewBag.CanAddUser ?? true);
+    int  userCount  = (int)(ViewBag.UserCount ?? 0);
+    int? userMax    = ViewBag.UserMax as int?;
 }
 
 <div class="product-index-shell">
+
     <div class="product-hero">
         <div class="product-hero-content">
-            <div class="hero-kicker">
-                <i class="bi bi-receipt"></i>
-                <span>Sales</span>
-            </div>
-
-            <h1>Sales List</h1>
-            <p>Manage sales transactions and item details.</p>
-
+            <h1>Manage Users</h1>
+            <p>Add and manage staff accounts within your workspace.</p>
             <div class="hero-actions">
-                <a asp-action="Create" class="btn-modern-primary">
-                    <i class="bi bi-plus-circle"></i>
-                    Create Sale
-                </a>
+                @if (canAdd)
+                {
+                    <a asp-action="Create" class="btn-modern-primary">
+                        <i class="bi bi-person-plus-fill"></i> Add User
+                    </a>
+                }
+                else
+                {
+                    <span class="btn-modern-primary" style="opacity:.5;cursor:not-allowed;"
+                          title="User limit reached — upgrade your plan">
+                        <i class="bi bi-person-plus-fill"></i> Add User
+                    </span>
+                }
+            </div>
+        </div>
+
+        <div class="product-hero-side">
+            <div class="hero-stat-card">
+                <div class="hero-stat-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="hero-stat-title">Team Members</div>
+                <div class="hero-stat-text">
+                    @userCount @(userMax.HasValue ? $"/ {userMax} (plan limit)" : "users") total
+                </div>
+                @if (!canAdd)
+                {
+                    <div style="margin-top:.5rem;font-size:.78rem;color:#f87171;font-weight:600;">
+                        <i class="bi bi-lock-fill me-1"></i> Plan limit reached
+                    </div>
+                }
             </div>
         </div>
     </div>
 
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @{ var aupg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel; }
     <div class="product-table-card">
-        <table class="table-modern">
-            <thead>
-                <tr>
-                    <th>Sale Date</th>
-                    <th>Total Amount</th>
-                    <th class="text-end">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
+        <div class="table-responsive-modern">
+            <table class="table-modern">
+                <thead>
                     <tr>
-                        <td>@item.SaleDate.ToString("yyyy-MM-dd")</td>
-                        <td>@item.TotalAmount</td>
-                        <td class="text-end">
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn-icon"><i class="bi bi-eye"></i></a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn-icon text-danger"><i class="bi bi-trash"></i></a>
-                        </td>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Last Login</th>
+                        <th>Actions</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="empty-state">No users found.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var user in Model)
+                        {
+                            var isSelf = user.Id == currentUserId;
+                            var initial = user.FullName.Length > 0 ? user.FullName[0].ToString().ToUpper() : "?";
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="user-avatar-circle @(isSelf ? "is-you" : "")">@initial</div>
+                                        <div>
+                                            <div class="fw-semibold" style="font-size:14px;color:#1e293b">
+                                                @user.FullName
+                                                @if (isSelf)
+                                                {
+                                                    <span class="you-chip"><i class="bi bi-person-fill"></i> You</span>
+                                                }
+                                            </div>
+                                            <div style="font-size:12px;color:#94a3b8">Since @user.CreatedAt.ToString("MMM yyyy")</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="color:#64748b;font-size:13px">@user.Email</td>
+                                <td>
+                                    <span class="badge-pill @(user.IsTenantAdmin ? "badge-role-admin" : "badge-role-staff")">
+                                        @(user.IsTenantAdmin ? "Admin" : "Staff")
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge-pill @(user.IsActive ? "badge-status-active" : "badge-status-inactive")">
+                                        @(user.IsActive ? "Active" : "Inactive")
+                                    </span>
+                                </td>
+                                <td style="color:#94a3b8;font-size:13px">
+                                    @(user.LastLoginAt.HasValue ? user.LastLoginAt.Value.ToString("dd MMM yyyy HH:mm") : "Never")
+                                </td>
+                                <td>
+                                    <div class="table-actions">
+                                        @if (!isSelf)
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@user.Id" class="action-btn action-btn-edit" title="Edit">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@user.Id" class="action-btn action-btn-delete" title="Delete">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (aupg != null) { @await Html.PartialAsync("_Pagination", aupg) }
     </div>
 </div>
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/pages/product-index.css" />
+    <link rel="stylesheet" href="~/css/pages/product-index.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/create-product.css" asp-append-version="true" />
 }

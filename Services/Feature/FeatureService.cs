@@ -14,10 +14,12 @@ namespace ClothInventoryApp.Services.Feature
 
         public async Task<bool> HasFeatureAsync(Guid tenantId, string featureCode)
         {
-            // 1. Get active subscription
+            // 1. Get active, non-expired subscription
+            var today = DateTime.UtcNow;
             var subscription = await _context.TenantSubscriptions
                 .Include(s => s.Plan)
-                .Where(s => s.TenantId == tenantId && s.IsActive)
+                .Where(s => s.TenantId == tenantId && s.IsActive
+                         && s.StartDate <= today && s.EndDate >= today)
                 .OrderByDescending(s => s.EndDate)
                 .FirstOrDefaultAsync();
 

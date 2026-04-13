@@ -1,50 +1,112 @@
-﻿@model IEnumerable<ClothInventoryApp.Models.Tenant>
+@model IEnumerable<ClothInventoryApp.Models.Tenant>
 @{
-    ViewData["Title"] = "Tenants";
+    ViewData["Title"] = "Tenant Management";
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/admin-crud.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/superadmin.css" asp-append-version="true" />
 }
 
-<div class="page-card">
-    <div class="page-header-modern">
-        <div class="page-title-modern">
-            <h2>Tenants</h2>
-            <p>Manage companies, branding, and contract owners.</p>
+<div class="superadmin-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title"><i class="bi bi-building"></i> Tenant Management</h1>
+            <p class="product-hero-sub">All registered workspaces on the platform</p>
         </div>
-        <a asp-action="Create" class="btn-soft-primary">
-            <i class="bi bi-plus-lg"></i> New Tenant
-        </a>
+        <div class="d-flex gap-2">
+            <a asp-action="Create" class="sa-btn-add">
+                <i class="bi bi-plus-lg"></i> New Tenant
+            </a>
+            <a asp-controller="SuperAdmin" asp-action="Index" class="sa-btn-back">
+                <i class="bi bi-arrow-left"></i> Dashboard
+            </a>
+        </div>
     </div>
 
-    <div class="table-modern-wrap">
-        <table class="table-modern">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Code</th>
-                    <th>Email</th>
-                    <th>Active</th>
-                    <th style="width:220px;">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @{ var tpg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel; }
+    <form method="get" asp-action="Index" class="sa-search-bar">
+        @if (tpg != null) { <input type="hidden" name="size" value="@tpg.PageSize" /> }
+        <div class="sa-search-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" name="search" value="@ViewBag.Search"
+                   class="sa-search-input" placeholder="Search by name, code, or email…" />
+        </div>
+        <button type="submit" class="sa-search-btn">
+            <i class="bi bi-search"></i> Search
+        </button>
+        @if (!string.IsNullOrWhiteSpace(ViewBag.Search as string))
+        {
+            <a asp-action="Index" asp-route-size="@(tpg?.PageSize ?? 10)" class="sa-btn-back" style="height:40px;padding:0 14px">Clear</a>
+        }
+    </form>
+
+    <div class="product-table-card">
+        <div class="table-responsive">
+            <table class="superadmin-table">
+                <thead>
                     <tr>
-                        <td>@item.Name</td>
-                        <td>@item.Code</td>
-                        <td>@item.ContactEmail</td>
-                        <td>@(item.IsActive ? "Yes" : "No")</td>
-                        <td>
-                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                        </td>
+                        <th>Tenant</th>
+                        <th>Code</th>
+                        <th>Contact</th>
+                        <th>Country</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th></th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var t in Model)
+                    {
+                        <tr>
+                            <td><span class="fw-semibold text-dark">@t.Name</span></td>
+                            <td class="text-muted small">@t.Code</td>
+                            <td class="text-muted small">@(t.ContactEmail ?? "—")</td>
+                            <td class="text-muted small">@(t.Country ?? "—")</td>
+                            <td>
+                                <span class="status-badge @(t.IsActive ? "active" : "inactive")">
+                                    @(t.IsActive ? "Active" : "Inactive")
+                                </span>
+                            </td>
+                            <td class="text-muted small">@t.CreatedAt.ToString("dd MMM yyyy")</td>
+                            <td>
+                                <div class="table-actions">
+                                    <a asp-action="Details" asp-route-id="@t.Id" class="action-btn action-btn-view" title="View">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@t.Id" class="action-btn action-btn-edit" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@t.Id" class="action-btn action-btn-delete" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">No tenants found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (tpg != null) { @await Html.PartialAsync("_Pagination", tpg) }
     </div>
 </div>

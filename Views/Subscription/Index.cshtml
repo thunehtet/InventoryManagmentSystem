@@ -1,0 +1,117 @@
+@model IEnumerable<ClothInventoryApp.Models.TenantSubscription>
+@{
+    ViewData["Title"] = "Subscriptions";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/superadmin.css" asp-append-version="true" />
+}
+
+<div class="superadmin-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title"><i class="bi bi-credit-card-fill"></i> Subscriptions</h1>
+            <p class="product-hero-sub">Active and historical subscription records</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Create" class="sa-btn-add">
+                <i class="bi bi-plus-lg"></i> New Subscription
+            </a>
+            <a asp-action="History" class="sa-btn-back">
+                <i class="bi bi-clock-history"></i> History
+            </a>
+            <a asp-controller="SuperAdmin" asp-action="Index" class="sa-btn-back">
+                <i class="bi bi-arrow-left"></i> Dashboard
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @{ var subpg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel; }
+    <form method="get" asp-action="Index" class="sa-search-bar">
+        @if (subpg != null) { <input type="hidden" name="size" value="@subpg.PageSize" /> }
+        <div class="sa-search-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" name="search" value="@ViewBag.Search"
+                   class="sa-search-input" placeholder="Search by tenant, plan, or billing cycle…" />
+        </div>
+        <button type="submit" class="sa-search-btn">
+            <i class="bi bi-search"></i> Search
+        </button>
+        @if (!string.IsNullOrWhiteSpace(ViewBag.Search as string))
+        {
+            <a asp-action="Index" asp-route-size="@(subpg?.PageSize ?? 10)" class="sa-btn-back" style="height:40px;padding:0 14px">Clear</a>
+        }
+    </form>
+
+    <div class="product-table-card">
+        <div class="table-responsive">
+            <table class="superadmin-table">
+                <thead>
+                    <tr>
+                        <th>Tenant</th>
+                        <th>Plan</th>
+                        <th>Billing</th>
+                        <th>Price</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var s in Model)
+                    {
+                        var isExpired = s.EndDate < DateTime.UtcNow;
+                        <tr>
+                            <td class="fw-semibold text-dark">@s.Tenant.Name</td>
+                            <td>@s.Plan.Name</td>
+                            <td class="text-muted small">@s.BillingCycle</td>
+                            <td class="fw-semibold">@s.Price.ToString("N0") @(s.Tenant.CurrencyCode ?? "")</td>
+                            <td class="text-muted small">@s.StartDate.ToString("dd MMM yyyy")</td>
+                            <td class="text-muted small">@s.EndDate.ToString("dd MMM yyyy")</td>
+                            <td>
+                                @if (s.IsTrial)
+                                {
+                                    <span class="status-badge trial">Trial</span>
+                                }
+                                else if (s.IsActive && !isExpired)
+                                {
+                                    <span class="status-badge active">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="status-badge inactive">Expired</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="table-actions">
+                                    <a asp-action="Edit" asp-route-id="@s.Id" class="action-btn action-btn-edit" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@s.Id" class="action-btn action-btn-delete" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">No subscriptions found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (subpg != null) { @await Html.PartialAsync("_Pagination", subpg) }
+    </div>
+</div>

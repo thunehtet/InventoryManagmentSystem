@@ -2,27 +2,38 @@
 using ClothInventoryApp.Dto.ProductVariant;
 using ClothInventoryApp.Models;
 using ClothInventoryApp.Services.Tenant;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClothInventoryApp.Controllers
 {
-    public class ProductVariantsController : Controller
+    [Authorize]
+    public class ProductVariantsController : TenantAwareController
     {
-        private readonly AppDbContext _context;
-        private readonly ITenantProvider _tenantProvider;
-
-        public ProductVariantsController(AppDbContext context,ITenantProvider tenantProvider)
+        public ProductVariantsController(AppDbContext context, ITenantProvider tenantProvider)
+            : base(context, tenantProvider)
         {
-            _context = context;
-            _tenantProvider = tenantProvider;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? search, int page = 1, int size = 10)
         {
-            var variants = await _context.ProductVariants
-                .Include(v => v.Product)
+            size = PaginationViewModel.Clamp(size);
+            var query = _context.ProductVariants.Include(v => v.Product).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+                query = query.Where(v =>
+                    v.Product.Name.Contains(search) ||
+                    v.SKU.Contains(search) ||
+                    v.Color.Contains(search) ||
+                    v.Size.Contains(search));
+
+            var total = await query.CountAsync();
+            var variants = await query
+                .OrderBy(v => v.Product.Name).ThenBy(v => v.SKU)
+                .Skip((page - 1) * size)
+                .Take(size)
                 .Select(v => new ViewProductVariantDto
                 {
                     Id = v.Id,
@@ -36,9 +47,17 @@ namespace ClothInventoryApp.Controllers
                 })
                 .ToListAsync();
 
+            ViewBag.Search = search;
+            ViewBag.Pagination = new PaginationViewModel
+            {
+                Page = page, PageSize = size, TotalCount = total,
+                Action = nameof(Index),
+                Extra = new() { ["search"] = search }
+            };
             return View(variants);
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
             await LoadProductsDropDown();
@@ -47,6 +66,7 @@ namespace ClothInventoryApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(CreateProductVariantDto dto)
         {
             if (!ModelState.IsValid)
@@ -72,17 +92,21 @@ namespace ClothInventoryApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Edit(int id)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(Guid id)
         {
-            var variant = await _context.ProductVariants.FindAsync(id);
+            var variant = await _context.ProductVariants
+                .Include(v => v.Product)
+                .FirstOrDefaultAsync(v => v.Id == id);
 
             if (variant == null)
                 return NotFound();
 
-            var dto = new CreateProductVariantDto
+            var dto = new ViewProductVariantDto
             {
                 Id = variant.Id,
                 ProductId = variant.ProductId,
+                ProductName = variant.Product.Name,
                 SKU = variant.SKU,
                 Size = variant.Size,
                 Color = variant.Color,
@@ -96,7 +120,8 @@ namespace ClothInventoryApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(CreateProductVariantDto dto)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(ViewProductVariantDto dto)
         {
             if (!ModelState.IsValid)
             {
@@ -146,6 +171,7 @@ namespace ClothInventoryApp.Controllers
             return View(variant);
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var variant = await _context.ProductVariants
@@ -172,7 +198,8 @@ namespace ClothInventoryApp.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var variant = await _context.ProductVariants.FindAsync(id);
 

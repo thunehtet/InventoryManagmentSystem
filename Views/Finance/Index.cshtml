@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Finance Overview";
+    var currency = ViewData["Currency"] as string ?? "";
 }
 
 <div class="dashboard-shell">
@@ -37,7 +38,7 @@
             <div class="stat-card-icon bg-blue-soft"><i class="bi bi-arrow-down-circle-fill"></i></div>
             <div class="stat-card-content">
                 <div class="stat-card-label">Total Cash In</div>
-                <div class="stat-card-value">@Model.TotalCashIn</div>
+                <div class="stat-card-value">@Model.TotalCashIn.ToString("N0") @currency</div>
             </div>
         </div>
 
@@ -45,7 +46,7 @@
             <div class="stat-card-icon bg-orange-soft"><i class="bi bi-arrow-up-circle-fill"></i></div>
             <div class="stat-card-content">
                 <div class="stat-card-label">Total Cash Out</div>
-                <div class="stat-card-value">@Model.TotalCashOut</div>
+                <div class="stat-card-value">@Model.TotalCashOut.ToString("N0") @currency</div>
             </div>
         </div>
 
@@ -53,7 +54,7 @@
             <div class="stat-card-icon bg-purple-soft"><i class="bi bi-wallet2"></i></div>
             <div class="stat-card-content">
                 <div class="stat-card-label">Cash Balance</div>
-                <div class="stat-card-value">@Model.CashBalance</div>
+                <div class="stat-card-value">@Model.CashBalance.ToString("N0") @currency</div>
             </div>
         </div>
     </section>
@@ -71,42 +72,42 @@
                 <div class="quick-action-card">
                     <div class="quick-action-body">
                         <h4>Sales Income</h4>
-                        <p>@Model.TotalSalesIncome</p>
+                        <p>@Model.TotalSalesIncome.ToString("N0") @currency</p>
                     </div>
                 </div>
 
                 <div class="quick-action-card">
                     <div class="quick-action-body">
                         <h4>Textile Purchase</h4>
-                        <p>@Model.TotalTextileExpense</p>
+                        <p>@Model.TotalTextileExpense.ToString("N0") @currency</p>
                     </div>
                 </div>
 
                 <div class="quick-action-card">
                     <div class="quick-action-body">
                         <h4>Tailor Fee</h4>
-                        <p>@Model.TotalTailorFee</p>
+                        <p>@Model.TotalTailorFee.ToString("N0") @currency</p>
                     </div>
                 </div>
 
                 <div class="quick-action-card">
                     <div class="quick-action-body">
                         <h4>Living Expense</h4>
-                        <p>@Model.TotalLivingExpense</p>
+                        <p>@Model.TotalLivingExpense.ToString("N0") @currency</p>
                     </div>
                 </div>
 
                 <div class="quick-action-card">
                     <div class="quick-action-body">
                         <h4>Other Expense</h4>
-                        <p>@Model.TotalOtherExpense</p>
+                        <p>@Model.TotalOtherExpense.ToString("N0") @currency</p>
                     </div>
                 </div>
 
                 <div class="quick-action-card">
                     <div class="quick-action-body">
                         <h4>Estimated Profit</h4>
-                        <p>@Model.GrossProfitEstimate</p>
+                        <p>@Model.GrossProfitEstimate.ToString("N0") @currency</p>
                     </div>
                 </div>
             </div>
@@ -157,7 +158,7 @@
                                     }
                                 </td>
                                 <td>@item.Category</td>
-                                <td>@item.Amount</td>
+                                <td>@item.Amount.ToString("N0") @currency</td>
                                 <td>@item.ReferenceNo</td>
                                 <td>@item.Remarks</td>
                             </tr>

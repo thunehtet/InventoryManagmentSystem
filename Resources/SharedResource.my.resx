@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="xml:space" msdata:IsReadOnly="true" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- ── Brand ─────────────────────────────────────────── -->
+  <data name="Inventory Manager" xml:space="preserve">
+    <value>ကုန်ပစ္စည်းစာရင်းစီမံခန့်ခွဲမှု</value>
+  </data>
+
+  <!-- ── Nav section titles ─────────────────────────────── -->
+  <data name="Main" xml:space="preserve">
+    <value>အဓိက</value>
+  </data>
+  <data name="Inventory" xml:space="preserve">
+    <value>ကုန်ပစ္စည်းစာရင်း</value>
+  </data>
+  <data name="Business" xml:space="preserve">
+    <value>စီးပွားရေး</value>
+  </data>
+
+  <!-- ── Nav links ──────────────────────────────────────── -->
+  <data name="Overview" xml:space="preserve">
+    <value>မျှော်ကြည့်ချက်</value>
+  </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>ဒက်ရှ်ဘုတ်</value>
+  </data>
+  <data name="Finance Dashboard" xml:space="preserve">
+    <value>ဘဏ္ဍာရေးဒက်ရှ်ဘုတ်</value>
+  </data>
+  <data name="Products" xml:space="preserve">
+    <value>ကုန်ပစ္စည်းများ</value>
+  </data>
+  <data name="Variants" xml:space="preserve">
+    <value>မျိုးကွဲများ</value>
+  </data>
+  <data name="Textile List" xml:space="preserve">
+    <value>အထည်အလိပ်စာရင်း</value>
+  </data>
+  <data name="Stock Movement" xml:space="preserve">
+    <value>ကုန်ပစ္စည်းရွှေ့လျားမှု</value>
+  </data>
+  <data name="Inventory Log" xml:space="preserve">
+    <value>ကုန်ပစ္စည်းမှတ်တမ်း</value>
+  </data>
+  <data name="Sales" xml:space="preserve">
+    <value>ရောင်းချမှုများ</value>
+  </data>
+  <data name="Expenses" xml:space="preserve">
+    <value>ကုန်ကျစရိတ်များ</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>အစီရင်ခံစာများ</value>
+  </data>
+
+  <!-- ── Topbar ─────────────────────────────────────────── -->
+  <data name="Smart Inventory" xml:space="preserve">
+    <value>ဉာဏ်ရည်ကုန်ပစ္စည်းစာရင်း</value>
+  </data>
+  <data name="Search products, SKU, stock…" xml:space="preserve">
+    <value>ကုန်ပစ္စည်း၊ SKU၊ စတော့ ရှာဖွေရန်…</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>ပရိုဖိုင်</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>ဆက်တင်များ</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>ထွက်မည်</value>
+  </data>
+
+  <!-- ── User management ──────────────────────────────────── -->
+  <data name="Manage Users" xml:space="preserve">
+    <value>အသုံးပြုသူများ စီမံခန့်ခွဲမှု</value>
+  </data>
+  <data name="Change Password" xml:space="preserve">
+    <value>စကားဝှက် ပြောင်းရန်</value>
+  </data>
+
+  <!-- ── Mobile bottom nav ──────────────────────────────── -->
+  <data name="New Sale" xml:space="preserve">
+    <value>ရောင်းချမှုသစ်</value>
+  </data>
+  <data name="Finance" xml:space="preserve">
+    <value>ဘဏ္ဍာရေး</value>
+  </data>
+</root>

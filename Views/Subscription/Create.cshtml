@@ -1,0 +1,144 @@
+@model ClothInventoryApp.Dto.SuperAdmin.SubscriptionCreateDto
+@{
+    ViewData["Title"] = "New Subscription";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/superadmin.css" asp-append-version="true" />
+}
+
+<div class="superadmin-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title"><i class="bi bi-credit-card-fill"></i> New Subscription</h1>
+            <p class="product-hero-sub">Assign a plan to a tenant</p>
+        </div>
+        <a asp-action="Index" class="sa-btn-back">
+            <i class="bi bi-arrow-left"></i> Back to Subscriptions
+        </a>
+    </div>
+
+    <div class="sa-form-card">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger mx-4 mt-4 mb-0"></div>
+
+            <div id="activeSubWarning" class="alert alert-warning d-none mx-4 mt-4 mb-0">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                This tenant already has an active subscription on plan <strong id="activeSubPlan"></strong>.
+                Saving will deactivate it automatically.
+            </div>
+
+            <div class="sa-form-section">
+                <div class="sa-section-header">
+                    <span class="sa-section-dot"></span>
+                    <span class="sa-section-title">Assignment</span>
+                </div>
+                <div class="superadmin-form-grid">
+                    <div class="form-group-modern">
+                        <label asp-for="TenantId" class="form-label-modern">Tenant</label>
+                        <select asp-for="TenantId" asp-items="ViewBag.Tenants" class="form-input-modern" id="tenantSelect">
+                            <option value="">— Select Tenant —</option>
+                        </select>
+                        <span asp-validation-for="TenantId" class="text-danger small"></span>
+                    </div>
+                    <div class="form-group-modern">
+                        <label asp-for="PlanId" class="form-label-modern">Plan</label>
+                        <select asp-for="PlanId" asp-items="ViewBag.Plans" class="form-input-modern">
+                            <option value="">— Select Plan —</option>
+                        </select>
+                        <span asp-validation-for="PlanId" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sa-form-section">
+                <div class="sa-section-header">
+                    <span class="sa-section-dot"></span>
+                    <span class="sa-section-title">Billing</span>
+                </div>
+                <div class="superadmin-form-grid">
+                    <div class="form-group-modern">
+                        <label asp-for="BillingCycle" class="form-label-modern">Billing Cycle</label>
+                        <select asp-for="BillingCycle" asp-items="ViewBag.BillingCycles" class="form-input-modern"></select>
+                        <span asp-validation-for="BillingCycle" class="text-danger small"></span>
+                    </div>
+                    <div class="form-group-modern">
+                        <label asp-for="Price" class="form-label-modern">Price ($)</label>
+                        <input asp-for="Price" class="form-input-modern" type="number" step="1" min="0" placeholder="0" />
+                        <span asp-validation-for="Price" class="text-danger small"></span>
+                    </div>
+                    <div class="form-group-modern">
+                        <label asp-for="StartDate" class="form-label-modern">Start Date</label>
+                        <input asp-for="StartDate" class="form-input-modern" type="date" />
+                        <span asp-validation-for="StartDate" class="text-danger small"></span>
+                    </div>
+                    <div class="form-group-modern">
+                        <label asp-for="EndDate" class="form-label-modern">End Date</label>
+                        <input asp-for="EndDate" class="form-input-modern" type="date" />
+                        <span asp-validation-for="EndDate" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sa-form-section">
+                <div class="sa-section-header">
+                    <span class="sa-section-dot"></span>
+                    <span class="sa-section-title">Options</span>
+                </div>
+                <div class="superadmin-form-grid">
+                    <div class="form-group-modern form-span-2">
+                        <label asp-for="Notes" class="form-label-modern">Internal Notes</label>
+                        <textarea asp-for="Notes" class="form-input-modern" rows="2" placeholder="Internal notes…"></textarea>
+                        <span asp-validation-for="Notes" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="d-flex gap-4 mt-3 px-1">
+                    <div class="form-check-modern">
+                        <input asp-for="IsTrial" class="form-check-input" type="checkbox" />
+                        <label asp-for="IsTrial" class="form-check-label">Trial</label>
+                    </div>
+                    <div class="form-check-modern">
+                        <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                        <label asp-for="IsActive" class="form-check-label">Active</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sa-form-actions">
+                <a asp-action="Index" class="sa-btn-cancel">
+                    <i class="bi bi-x-lg"></i> Cancel
+                </a>
+                <button type="submit" class="sa-btn-save">
+                    <i class="bi bi-plus-lg"></i> Create Subscription
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+    (function () {
+        var activeSubs = @Html.Raw(
+            System.Text.Json.JsonSerializer.Serialize(
+                (ViewBag.ActiveSubByTenant as Dictionary<Guid, string>)
+                    ?.ToDictionary(k => k.Key.ToString(), k => k.Value)
+                ?? new Dictionary<string, string>()
+            )
+        );
+        document.getElementById('tenantSelect').addEventListener('change', function () {
+            var selected = this.value;
+            var warning  = document.getElementById('activeSubWarning');
+            var planName = document.getElementById('activeSubPlan');
+            if (selected && activeSubs[selected]) {
+                planName.textContent = activeSubs[selected];
+                warning.classList.remove('d-none');
+            } else {
+                warning.classList.add('d-none');
+            }
+        });
+    })();
+    </script>
+}

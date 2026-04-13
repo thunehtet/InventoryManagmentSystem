@@ -1,0 +1,79 @@
+@model ClothInventoryApp.Models.Plan
+@{
+    ViewData["Title"] = "Delete Plan";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/superadmin.css" asp-append-version="true" />
+}
+
+<div class="superadmin-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title"><i class="bi bi-trash3-fill"></i> Delete Plan</h1>
+            <p class="product-hero-sub">This action cannot be undone</p>
+        </div>
+        <a asp-action="Index" class="sa-btn-back">
+            <i class="bi bi-arrow-left"></i> Back to Plans
+        </a>
+    </div>
+
+    <div class="sa-delete-card">
+        <div class="sa-delete-banner">
+            <div class="sa-delete-banner-icon">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <div>
+                <div class="sa-delete-title">Delete "@Model.Name"?</div>
+                <div class="sa-delete-sub">
+                    @if (Model.TenantSubscriptions.Any())
+                    {
+                        <span class="fw-semibold" style="color:#dc2626;">
+                            This plan has @Model.TenantSubscriptions.Count linked subscription(s) and cannot be deleted.
+                        </span>
+                    }
+                    else
+                    {
+                        <span>This plan has no subscriptions and can be safely deleted.</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="sa-detail-rows">
+            <div class="sa-detail-row">
+                <span class="sa-detail-label">Name</span>
+                <span class="sa-detail-value fw-semibold">@Model.Name</span>
+            </div>
+            <div class="sa-detail-row">
+                <span class="sa-detail-label">Code</span>
+                <span class="sa-detail-value"><span class="sa-detail-mono">@Model.Code</span></span>
+            </div>
+            <div class="sa-detail-row">
+                <span class="sa-detail-label">Monthly Price</span>
+                <span class="sa-detail-value">@Model.PriceMonthly.ToString("N0")</span>
+            </div>
+            <div class="sa-detail-row">
+                <span class="sa-detail-label">Subscriptions</span>
+                <span class="sa-detail-value @(Model.TenantSubscriptions.Any() ? "text-danger fw-bold" : "")">
+                    @Model.TenantSubscriptions.Count
+                </span>
+            </div>
+        </div>
+
+        <div class="sa-form-actions">
+            <a asp-action="Index" class="sa-btn-cancel">
+                <i class="bi bi-x-lg"></i> Cancel
+            </a>
+            @if (!Model.TenantSubscriptions.Any())
+            {
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="m-0">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="sa-btn-danger">
+                        <i class="bi bi-trash3"></i> Delete Permanently
+                    </button>
+                </form>
+            }
+        </div>
+    </div>
+</div>

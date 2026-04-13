@@ -1,8 +1,8 @@
-﻿@using ClothInventoryApp.Dto.Stock
+@using ClothInventoryApp.Dto.Stock
 @model IEnumerable<ViewStockDto>
-
 @{
     ViewData["Title"] = "Stock Movements";
+    var pg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel;
 }
 
 <div class="product-index-shell">
@@ -12,49 +12,59 @@
                 <i class="bi bi-arrow-left-right"></i>
                 <span>Stock</span>
             </div>
-
             <h1>Stock Movements</h1>
             <p>Manage stock in, stock out, and adjustment records for your product variants.</p>
-
             <div class="hero-actions">
-                <a asp-action="Create" class="btn-modern-primary">
-                    <i class="bi bi-plus-circle"></i>
-                    Create Stock Movement
-                </a>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Create" class="btn-modern-primary">
+                        <i class="bi bi-plus-circle"></i> Create Stock Movement
+                    </a>
+                }
             </div>
         </div>
-
         <div class="product-hero-side">
             <div class="hero-stat-card">
-                <div class="hero-stat-icon">
-                    <i class="bi bi-boxes"></i>
-                </div>
+                <div class="hero-stat-icon"><i class="bi bi-boxes"></i></div>
                 <div class="hero-stat-title">Total Records</div>
-                <div class="hero-stat-text">
-                    @Model.Count() stock movements
-                </div>
+                <div class="hero-stat-text">@(pg?.TotalCount ?? 0) stock movements</div>
             </div>
         </div>
     </div>
 
-    <div class="product-table-card">
-        <div class="section-header">
-            <div>
-                <h3>All Stock Movements</h3>
-                <p>Overview of stock transactions for your inventory.</p>
+    <!-- FILTER BAR -->
+    <div class="list-filter-bar">
+        <form method="get" asp-action="Index" class="filter-form">
+            @if (pg != null) { <input type="hidden" name="size" value="@pg.PageSize" /> }
+            <div class="filter-search-wrap">
+                <i class="bi bi-search filter-search-icon"></i>
+                <input type="text" name="search" value="@ViewBag.Search"
+                       class="filter-search-input" placeholder="Search variant, SKU, type, remarks…" autocomplete="off" />
+                @if (!string.IsNullOrWhiteSpace(ViewBag.Search as string))
+                {
+                    <a href="@Url.Action("Index", new { size = pg?.PageSize ?? 10 })" class="filter-clear-btn" title="Clear">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </a>
+                }
             </div>
-        </div>
+            <button type="submit" class="filter-search-btn">
+                <i class="bi bi-search"></i> Search
+            </button>
+        </form>
+    </div>
 
+    <!-- TABLE CARD -->
+    <div class="product-table-card">
         <div class="table-responsive-modern">
             <table class="table-modern">
                 <thead>
                     <tr>
                         <th>Variant</th>
-                        <th>Movement Type</th>
+                        <th>Type</th>
                         <th>Quantity</th>
-                        <th>Movement Date</th>
+                        <th>Date</th>
                         <th>Remarks</th>
-                        <th class="text-end">Actions</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -63,10 +73,11 @@
                         <tr>
                             <td colspan="6" class="empty-state">
                                 <i class="bi bi-inbox"></i>
-                                <div>No stock movement found</div>
-                                <a asp-action="Create" class="btn-modern-primary mt-2">
-                                    Create your first stock movement
-                                </a>
+                                <div>@(string.IsNullOrWhiteSpace(ViewBag.Search as string) ? "No stock movements yet" : "No movements match your search")</div>
+                                @if (User.IsInRole("Admin") && string.IsNullOrWhiteSpace(ViewBag.Search as string))
+                                {
+                                    <a asp-action="Create" class="btn-modern-primary mt-2">Create your first stock movement</a>
+                                }
                             </td>
                         </tr>
                     }
@@ -75,21 +86,33 @@
                         foreach (var item in Model)
                         {
                             <tr>
-                                <td>@item.ProductVariantName</td>
-                                <td>@item.MovementType</td>
-                                <td>@item.Quantity</td>
-                                <td>@item.MovementDate.ToString("yyyy-MM-dd")</td>
-                                <td>@item.Remarks</td>
-                                <td class="text-end">
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn-icon">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn-icon">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn-icon text-danger">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
+                                <td class="fw-semibold" style="font-size:0.875rem">@item.ProductVariantName</td>
+                                <td>
+                                    @if (item.MovementType == "IN")
+                                    {
+                                        <span class="badge-modern badge-success">IN</span>
+                                    }
+                                    else if (item.MovementType == "OUT")
+                                    {
+                                        <span class="badge-modern" style="background:#fee2e2;color:#dc2626;">OUT</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-modern badge-muted">@item.MovementType</span>
+                                    }
+                                </td>
+                                <td class="fw-semibold">@item.Quantity</td>
+                                <td class="text-muted" style="font-size:0.875rem">@item.MovementDate.ToString("dd MMM yyyy")</td>
+                                <td class="text-muted" style="font-size:0.875rem">@(item.Remarks ?? "—")</td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="action-btn action-btn-view" title="Details"><i class="bi bi-eye-fill"></i></a>
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="action-btn action-btn-edit" title="Edit"><i class="bi bi-pencil-fill"></i></a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="action-btn action-btn-delete" title="Delete"><i class="bi bi-trash-fill"></i></a>
+                                        }
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -97,6 +120,7 @@
                 </tbody>
             </table>
         </div>
+        @if (pg != null) { @await Html.PartialAsync("_Pagination", pg) }
     </div>
 </div>
 

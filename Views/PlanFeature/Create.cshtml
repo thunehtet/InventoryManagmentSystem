@@ -1,0 +1,74 @@
+@model ClothInventoryApp.Dto.SuperAdmin.PlanFeatureCreateDto
+@{
+    ViewData["Title"] = "Assign Feature to Plan";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/superadmin.css" asp-append-version="true" />
+}
+
+<div class="superadmin-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title"><i class="bi bi-diagram-3-fill"></i> Assign Feature to Plan</h1>
+            <p class="product-hero-sub">Link a feature to a subscription plan</p>
+        </div>
+        <a asp-action="Index" class="sa-btn-back">
+            <i class="bi bi-arrow-left"></i> Back to Plan Features
+        </a>
+    </div>
+
+    <div class="sa-form-card">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger mx-4 mt-4 mb-0"></div>
+
+            <div class="sa-form-section">
+                <div class="sa-section-header">
+                    <span class="sa-section-dot"></span>
+                    <span class="sa-section-title">Assignment</span>
+                </div>
+                <div class="superadmin-form-grid">
+                    <div class="form-group-modern">
+                        <label asp-for="PlanId" class="form-label-modern">Plan</label>
+                        <select asp-for="PlanId" asp-items="ViewBag.Plans" class="form-input-modern">
+                            <option value="">— Select plan —</option>
+                        </select>
+                        <span asp-validation-for="PlanId" class="text-danger small"></span>
+                    </div>
+                    <div class="form-group-modern">
+                        <label asp-for="FeatureId" class="form-label-modern">Feature</label>
+                        <select asp-for="FeatureId" asp-items="ViewBag.Features" class="form-input-modern">
+                            <option value="">— Select feature —</option>
+                        </select>
+                        <span asp-validation-for="FeatureId" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sa-form-section">
+                <div class="sa-section-header">
+                    <span class="sa-section-dot"></span>
+                    <span class="sa-section-title">State</span>
+                </div>
+                <div class="form-check-modern">
+                    <input asp-for="IsEnabled" class="form-check-input" type="checkbox" />
+                    <label asp-for="IsEnabled" class="form-check-label">Enabled for this plan</label>
+                </div>
+            </div>
+
+            <div class="sa-form-actions">
+                <a asp-action="Index" class="sa-btn-cancel">
+                    <i class="bi bi-x-lg"></i> Cancel
+                </a>
+                <button type="submit" class="sa-btn-save">
+                    <i class="bi bi-plus-lg"></i> Assign Feature
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

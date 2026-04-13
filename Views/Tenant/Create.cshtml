@@ -1,80 +1,105 @@
-﻿@model ClothInventoryApp.Dtos.Tenant.TenantCreateDto
+@model ClothInventoryApp.Dtos.Tenant.TenantCreateDto
 @{
-    ViewData["Title"] = "Create Tenant";
+    ViewData["Title"] = "New Tenant";
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/admin-crud.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/superadmin.css" asp-append-version="true" />
 }
 
-<div class="page-card">
-    <div class="page-header-modern">
-        <div class="page-title-modern">
-            <h2>Create Tenant</h2>
-            <p>Add a new company profile.</p>
+<div class="superadmin-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title"><i class="bi bi-building-add"></i> New Tenant</h1>
+            <p class="product-hero-sub">Register a new workspace on the platform</p>
         </div>
+        <a asp-action="Index" class="sa-btn-back">
+            <i class="bi bi-arrow-left"></i> Back to Tenants
+        </a>
     </div>
 
-    <form asp-action="Create" method="post">
-        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="sa-form-card">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger mx-4 mt-4 mb-0"></div>
 
-        <div class="form-grid-modern">
-            <div>
-                <label asp-for="Code" class="form-label"></label>
-                <input asp-for="Code" class="form-control modern-input" />
-                <span asp-validation-for="Code" class="text-danger"></span>
-            </div>
-
-            <div>
-                <label asp-for="Name" class="form-label"></label>
-                <input asp-for="Name" class="form-control modern-input" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-
-            <div class="full">
-                <label asp-for="LegalName" class="form-label"></label>
-                <input asp-for="LegalName" class="form-control modern-input" />
-            </div>
-
-            <div class="full">
-                <label asp-for="LogoUrl" class="form-label"></label>
-                <input asp-for="LogoUrl" class="form-control modern-input" />
-            </div>
-
-            <div>
-                <label asp-for="ContactEmail" class="form-label"></label>
-                <input asp-for="ContactEmail" class="form-control modern-input" />
-            </div>
-
-            <div>
-                <label asp-for="ContactPhone" class="form-label"></label>
-                <input asp-for="ContactPhone" class="form-control modern-input" />
-            </div>
-
-            <div>
-                <label asp-for="Country" class="form-label"></label>
-                <input asp-for="Country" class="form-control modern-input" />
-            </div>
-
-            <div>
-                <label asp-for="CurrencyCode" class="form-label"></label>
-                <input asp-for="CurrencyCode" class="form-control modern-input" />
-            </div>
-
-
-            <div class="full">
-                <div class="form-check mt-2">
-                    <input asp-for="IsActive" class="form-check-input" />
-                    <label asp-for="IsActive" class="form-check-label"></label>
+            <div class="sa-form-section">
+                <div class="sa-section-header">
+                    <span class="sa-section-dot"></span>
+                    <span class="sa-section-title">Workspace Info</span>
+                </div>
+                <div class="superadmin-form-grid">
+                    <div class="form-group-modern">
+                        <label asp-for="Name" class="form-label-modern">Business Name</label>
+                        <input asp-for="Name" class="form-input-modern" placeholder="e.g. ThreadCo" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+                    <div class="form-group-modern">
+                        <label asp-for="Code" class="form-label-modern">Tenant Code</label>
+                        <input asp-for="Code" class="form-input-modern" placeholder="e.g. THREADCO" />
+                        <span asp-validation-for="Code" class="text-danger small"></span>
+                    </div>
+                    <div class="form-group-modern">
+                        <label asp-for="CurrencyCode" class="form-label-modern">Currency</label>
+                        <input asp-for="CurrencyCode" class="form-input-modern" placeholder="e.g. USD, MMK" />
+                        <span asp-validation-for="CurrencyCode" class="text-danger small"></span>
+                    </div>
+                    <div class="form-group-modern">
+                        <label asp-for="Country" class="form-label-modern">Country</label>
+                        <input asp-for="Country" class="form-input-modern" placeholder="e.g. Myanmar" />
+                        <span asp-validation-for="Country" class="text-danger small"></span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="action-row">
-            <button type="submit" class="btn-soft-primary">Save</button>
-            <a asp-action="Index" class="btn btn-light">Back</a>
-        </div>
-    </form>
+            <div class="sa-form-section">
+                <div class="sa-section-header">
+                    <span class="sa-section-dot"></span>
+                    <span class="sa-section-title">Contact</span>
+                </div>
+                <div class="superadmin-form-grid">
+                    <div class="form-group-modern">
+                        <label asp-for="ContactEmail" class="form-label-modern">Contact Email</label>
+                        <input asp-for="ContactEmail" class="form-input-modern" placeholder="admin@company.com" />
+                        <span asp-validation-for="ContactEmail" class="text-danger small"></span>
+                        <div class="form-hint">Used as admin login — temp password: <strong>Mandalay@2026</strong></div>
+                    </div>
+                    <div class="form-group-modern">
+                        <label asp-for="ContactPhone" class="form-label-modern">Contact Phone</label>
+                        <input asp-for="ContactPhone" class="form-input-modern" placeholder="+95 9…" />
+                        <span asp-validation-for="ContactPhone" class="text-danger small"></span>
+                    </div>
+                    <div class="form-group-modern form-span-2">
+                        <label asp-for="LogoUrl" class="form-label-modern">Logo URL</label>
+                        <input asp-for="LogoUrl" class="form-input-modern" placeholder="https://…" />
+                        <span asp-validation-for="LogoUrl" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sa-form-section">
+                <div class="sa-section-header">
+                    <span class="sa-section-dot"></span>
+                    <span class="sa-section-title">Settings</span>
+                </div>
+                <div class="form-check-modern">
+                    <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                    <label asp-for="IsActive" class="form-check-label">Active (tenant can log in immediately)</label>
+                </div>
+            </div>
+
+            <div class="sa-form-actions">
+                <a asp-action="Index" class="sa-btn-cancel">
+                    <i class="bi bi-x-lg"></i> Cancel
+                </a>
+                <button type="submit" class="sa-btn-save">
+                    <i class="bi bi-building-add"></i> Create Tenant
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
-<partial name="_ValidationScriptsPartial" />
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

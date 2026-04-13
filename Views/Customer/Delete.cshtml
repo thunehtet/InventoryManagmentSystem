@@ -1,0 +1,64 @@
+@using ClothInventoryApp.Models
+@model Customer
+@{
+    ViewData["Title"] = "Delete Customer";
+    var currency = ViewData["Currency"] as string ?? "";
+}
+
+<div class="create-product-shell">
+    <div class="create-main-card">
+        <div class="section-header">
+            <div>
+                <h3><i class="bi bi-trash-fill me-2 text-danger"></i>Delete Customer</h3>
+                <p>This action cannot be undone.</p>
+            </div>
+            <a asp-action="Index" class="btn-modern-outline">
+                <i class="bi bi-arrow-left me-1"></i> Back
+            </a>
+        </div>
+
+        <div class="alert alert-danger" role="alert" style="border-radius:10px;margin-bottom:24px">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            Are you sure you want to delete <strong>@Model.Name</strong>?
+            @if (Model.Sales.Any())
+            {
+                <span>This customer has <strong>@Model.Sales.Count</strong> sale(s). The customer link on those sales will be removed, but the sales will remain.</span>
+            }
+        </div>
+
+        <div class="form-grid-modern mb-4">
+            <div class="form-group-modern">
+                <label class="form-label-modern">Name</label>
+                <input value="@Model.Name" class="input-modern" readonly />
+            </div>
+            @if (!string.IsNullOrEmpty(Model.Phone))
+            {
+                <div class="form-group-modern">
+                    <label class="form-label-modern">Phone</label>
+                    <input value="@Model.Phone" class="input-modern" readonly />
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Address))
+            {
+                <div class="form-group-modern form-group-full">
+                    <label class="form-label-modern">Address</label>
+                    <input value="@Model.Address" class="input-modern" readonly />
+                </div>
+            }
+        </div>
+
+        <form asp-action="Delete" method="post">
+            @Html.AntiForgeryToken()
+            <div class="form-footer-modern">
+                <button type="submit" class="btn btn-danger btn-modern-lg" style="border-radius:10px;font-weight:600">
+                    <i class="bi bi-trash-fill me-1"></i> Yes, Delete
+                </button>
+                <a asp-action="Index" class="btn-modern-outline btn-modern-lg">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/create-product.css" />
+}

@@ -1,26 +1,38 @@
 ﻿using ClothInventoryApp.Data;
 using ClothInventoryApp.Dto.Textile;
+using ClothInventoryApp.Filters;
 using ClothInventoryApp.Models;
 using ClothInventoryApp.Services.Tenant;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClothInventoryApp.Controllers
 {
-    public class TextileController : Controller
+    [Authorize]
+    [FeatureRequired("textiles")]
+    public class TextileController : TenantAwareController
     {
-        private readonly AppDbContext _context;
-        private readonly ITenantProvider _tenantProvider;
-
         public TextileController(AppDbContext context, ITenantProvider tenantProvider)
+            : base(context, tenantProvider)
         {
-            _context = context;
-            _tenantProvider = tenantProvider;
         }
  
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? search, int page = 1, int size = 10)
         {
-            var textiles = await _context.Textile
+            size = PaginationViewModel.Clamp(size);
+            var query = _context.Textile.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+                query = query.Where(t =>
+                    t.Name.Contains(search) ||
+                    t.PurchaseFrom.Contains(search));
+
+            var total = await query.CountAsync();
+            var textiles = await query
+                .OrderByDescending(t => t.PurchaseDate)
+                .Skip((page - 1) * size)
+                .Take(size)
                 .Select(t => new ViewTextileDto
                 {
                     Id = t.Id,
@@ -33,9 +45,17 @@ namespace ClothInventoryApp.Controllers
                 })
                 .ToListAsync();
 
+            ViewBag.Search = search;
+            ViewBag.Pagination = new PaginationViewModel
+            {
+                Page = page, PageSize = size, TotalCount = total,
+                Action = nameof(Index),
+                Extra = new() { ["search"] = search }
+            };
             return View(textiles);
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View(new CreateTextileDto());
@@ -43,6 +63,7 @@ namespace ClothInventoryApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(CreateTextileDto dto)
         {
             if (!ModelState.IsValid)
@@ -79,7 +100,8 @@ namespace ClothInventoryApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Edit(int id)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(Guid id)
         {
             var textile = await _context.Textile.FindAsync(id);
 
@@ -101,6 +123,7 @@ namespace ClothInventoryApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(ViewTextileDto dto)
         {
             if (!ModelState.IsValid)
@@ -145,6 +168,7 @@ namespace ClothInventoryApp.Controllers
             return View(textile);
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var textile = await _context.Textile
@@ -168,7 +192,8 @@ namespace ClothInventoryApp.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var textile = await _context.Textile.FindAsync(id);
 

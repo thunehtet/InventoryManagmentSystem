@@ -21,6 +21,6 @@ namespace ClothInventoryApp.Dto.Stock
         [DataType(DataType.Date)]
         public DateTime MovementDate { get; set; } = DateTime.Today;
 
-        public string Remarks { get; set; } = string.Empty;
+        public string? Remarks { get; set; }
     }
 }

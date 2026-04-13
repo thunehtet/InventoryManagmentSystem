@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Dashboard";
+    var currency = ViewData["Currency"] as string ?? "";
 }
 
 <div class="dashboard-shell">
@@ -182,29 +183,38 @@
             </div>
 
             <div class="health-list">
-                <div class="health-row">
+                <a asp-controller="Products" asp-action="Index" class="health-row health-row-link">
                     <div class="health-label-wrap">
                         <span class="health-dot blue"></span>
                         <span class="health-label">Products</span>
                     </div>
-                    <span class="health-value">@Model.TotalProducts</span>
-                </div>
+                    <div class="health-value-wrap">
+                        <span class="health-value">@Model.TotalProducts</span>
+                        <i class="bi bi-chevron-right health-arrow"></i>
+                    </div>
+                </a>
 
-                <div class="health-row">
+                <a asp-controller="ProductVariants" asp-action="Index" class="health-row health-row-link">
                     <div class="health-label-wrap">
                         <span class="health-dot purple"></span>
                         <span class="health-label">Variants</span>
                     </div>
-                    <span class="health-value">@Model.TotalVariants</span>
-                </div>
+                    <div class="health-value-wrap">
+                        <span class="health-value">@Model.TotalVariants</span>
+                        <i class="bi bi-chevron-right health-arrow"></i>
+                    </div>
+                </a>
 
-                <div class="health-row">
+                <a asp-controller="Stock" asp-action="Inventory" asp-route-lowstock="true" class="health-row health-row-link @(Model.LowStockCount > 0 ? "health-row-warning" : "")">
                     <div class="health-label-wrap">
                         <span class="health-dot orange"></span>
                         <span class="health-label">Low Stock</span>
                     </div>
-                    <span class="health-value">@Model.LowStockCount</span>
-                </div>
+                    <div class="health-value-wrap">
+                        <span class="health-value">@Model.LowStockCount</span>
+                        <i class="bi bi-chevron-right health-arrow"></i>
+                    </div>
+                </a>
             </div>
 
             <div class="inventory-health-footer">
@@ -223,6 +233,31 @@
                     </div>
                 }
             </div>
+        </div>
+    </section>
+
+    <!-- Sales Trend Chart -->
+    <section class="dashboard-panel chart-panel">
+        <div class="panel-header panel-header-with-action">
+            <div>
+                <h3>Sales &amp; Profit Trend</h3>
+                <p id="chartSubtitle">Daily revenue and profit for the last 30 days</p>
+            </div>
+            <div class="chart-legend-row">
+                <div class="chart-legend-item">
+                    <span class="chart-legend-dot legend-sales"></span> Sales
+                </div>
+                <div class="chart-legend-item">
+                    <span class="chart-legend-dot legend-profit"></span> Profit
+                </div>
+                <div class="trend-filter-group">
+                    <button id="btnDaily"  class="trend-filter-btn trend-filter-active" type="button">Daily</button>
+                    <button id="btnMonthly" class="trend-filter-btn" type="button">Monthly</button>
+                </div>
+            </div>
+        </div>
+        <div class="chart-wrap">
+            <canvas id="salesTrendChart"></canvas>
         </div>
     </section>
 
@@ -293,5 +328,121 @@
 </div>
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/pages/dashboard.css" />
+    <link rel="stylesheet" href="~/css/pages/dashboard.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script>
+    (function () {
+        // ── Data from server ─────────────────────────────────────────
+        var daily = {
+            labels:  @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DailyTrend.Select(p => p.Label))),
+            sales:   @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DailyTrend.Select(p => p.Amount))),
+            profit:  @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DailyTrend.Select(p => p.Profit)))
+        };
+        var monthly = {
+            labels:  @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthlyTrend.Select(p => p.Label))),
+            sales:   @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthlyTrend.Select(p => p.Amount))),
+            profit:  @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthlyTrend.Select(p => p.Profit)))
+        };
+
+        // ── Number formatter: abbreviate large values ─────────────────
+        function fmtAxis(v) {
+            var abs = Math.abs(v);
+            if (abs >= 1000000) return (v / 1000000).toFixed(abs >= 10000000 ? 0 : 1) + 'M';
+            if (abs >= 1000)    return (v / 1000).toFixed(abs >= 10000 ? 0 : 1) + 'K';
+            return v.toLocaleString();
+        }
+        var currencyCode = '@currency';
+        function fmtTooltip(v) {
+            return v.toLocaleString() + (currencyCode ? ' ' + currencyCode : '');
+        }
+
+        // ── Chart config ──────────────────────────────────────────────
+        var ctx = document.getElementById('salesTrendChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: daily.labels,
+                datasets: [
+                    {
+                        label: 'Sales',
+                        data: daily.sales,
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99,102,241,0.08)',
+                        borderWidth: 2.5,
+                        pointRadius: 3,
+                        pointHoverRadius: 6,
+                        tension: 0.35,
+                        fill: true
+                    },
+                    {
+                        label: 'Profit',
+                        data: daily.profit,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16,185,129,0.07)',
+                        borderWidth: 2.5,
+                        pointRadius: 3,
+                        pointHoverRadius: 6,
+                        tension: 0.35,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(c) {
+                                return ' ' + c.dataset.label + ': ' + fmtTooltip(c.parsed.y);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#94a3b8', font: { size: 11 }, maxRotation: 45, autoSkip: true, maxTicksLimit: 15 }
+                    },
+                    y: {
+                        grid: { color: '#f1f5f9' },
+                        ticks: {
+                            color: '#94a3b8',
+                            font: { size: 11 },
+                            callback: fmtAxis
+                        }
+                    }
+                }
+            }
+        });
+
+        // ── Filter buttons (no page reload, no scroll jump) ───────────
+        var btnDaily   = document.getElementById('btnDaily');
+        var btnMonthly = document.getElementById('btnMonthly');
+        var subtitle   = document.getElementById('chartSubtitle');
+
+        function setMode(mode) {
+            var src = mode === 'month' ? monthly : daily;
+            chart.data.labels = src.labels;
+            chart.data.datasets[0].data = src.sales;
+            chart.data.datasets[1].data = src.profit;
+            chart.update();
+
+            subtitle.textContent = mode === 'month'
+                ? 'Monthly revenue and profit for the last 12 months'
+                : 'Daily revenue and profit for the last 30 days';
+
+            btnDaily.classList.toggle('trend-filter-active',   mode === 'day');
+            btnMonthly.classList.toggle('trend-filter-active', mode === 'month');
+        }
+
+        btnDaily.addEventListener('click',   function() { setMode('day'); });
+        btnMonthly.addEventListener('click', function() { setMode('month'); });
+    })();
+    </script>
 }

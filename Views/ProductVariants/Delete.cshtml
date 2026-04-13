@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Delete Variant";
+    var currency = ViewData["Currency"] as string ?? "";
 }
 
 <div class="create-product-shell">
@@ -59,12 +60,12 @@
 
                 <div class="form-group-modern">
                     <label class="form-label-modern">Cost Price</label>
-                    <input value="@Model.CostPrice.ToString("0.00")" class="input-modern" readonly />
+                    <input value="@(Model.CostPrice.ToString("N0") + " " + currency)" class="input-modern" readonly />
                 </div>
 
                 <div class="form-group-modern">
                     <label class="form-label-modern">Selling Price</label>
-                    <input value="@Model.SellingPrice.ToString("0.00")" class="input-modern" readonly />
+                    <input value="@(Model.SellingPrice.ToString("N0") + " " + currency)" class="input-modern" readonly />
                 </div>
             </div>
 

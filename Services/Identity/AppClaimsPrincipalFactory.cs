@@ -20,8 +20,19 @@ namespace ClothInventoryApp.Services.Identity
         {
             var identity = await base.GenerateClaimsAsync(user);
 
-            
             identity.AddClaim(new Claim("TenantId", user.TenantId.ToString()));
+
+            // SuperAdmin overrides all tenant roles
+            if (user.IsSuperAdmin)
+            {
+                identity.AddClaim(new Claim(ClaimTypes.Role, "SuperAdmin"));
+            }
+            else
+            {
+                // Role claim: IsTenantAdmin → "Admin", otherwise "Staff"
+                var role = user.IsTenantAdmin ? "Admin" : "Staff";
+                identity.AddClaim(new Claim(ClaimTypes.Role, role));
+            }
 
             return identity;
         }

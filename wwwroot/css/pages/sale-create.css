@@ -1,0 +1,594 @@
+/* ============================================================
+   SALE CREATE — two-panel card-picker UI
+   Reuses .btn-modern-* and .input-modern from create-product.css
+   ============================================================ */
+
+/* ── Shell ─────────────────────────────────────────────────── */
+.sc-shell {
+    display: flex;
+    gap: 20px;
+    height: calc(100vh - 96px);
+    padding: 20px 24px 20px;
+    box-sizing: border-box;
+    min-height: 560px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   LEFT PANEL — variant picker
+══════════════════════════════════════════════════════════════ */
+.sc-picker {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.05);
+}
+
+/* Picker header */
+.sc-picker-head {
+    padding: 1.1rem 1.25rem;
+    border-bottom: 1px solid #f1f5f9;
+    background: #fafafa;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    flex-shrink: 0;
+}
+
+.sc-picker-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #1e293b;
+}
+
+.sc-chip {
+    background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+    color: #6d28d9;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.15rem 0.6rem;
+    border-radius: 20px;
+}
+
+/* Search */
+.sc-search-wrap {
+    position: relative;
+}
+
+.sc-search-icon {
+    position: absolute;
+    left: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 0.85rem;
+    pointer-events: none;
+}
+
+.sc-search-input {
+    width: 100%;
+    padding: 0.55rem 0.8rem 0.55rem 2.2rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    color: #1e293b;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    box-sizing: border-box;
+}
+
+.sc-search-input:focus {
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+/* Grid */
+.sc-grid {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 0.75rem;
+    align-content: start;
+}
+
+/* Loading / empty state */
+.sc-loading {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 3rem;
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+/* ── Variant Card ──────────────────────────────────────────── */
+.sc-card {
+    border: 2px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 0.85rem;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.12s;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    user-select: none;
+}
+
+.sc-card:hover:not(.sc-card--disabled) {
+    border-color: #7c3aed;
+    box-shadow: 0 6px 18px rgba(109, 40, 217, 0.14);
+    transform: translateY(-2px);
+}
+
+.sc-card--selected {
+    border-color: #7c3aed;
+    background: #f5f3ff;
+}
+
+.sc-card--disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* Avatar */
+.sc-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: var(--av-color, #6366f1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #fff;
+    position: relative;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    flex-shrink: 0;
+}
+
+.sc-qty-badge {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    background: #7c3aed;
+    color: #fff;
+    border-radius: 50%;
+    width: 19px;
+    height: 19px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #fff;
+}
+
+/* Card body */
+.sc-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.sc-card-name {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.3;
+    word-break: break-word;
+}
+
+.sc-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+}
+
+.sc-tag {
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 0.1rem 0.38rem;
+    border-radius: 4px;
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.sc-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(0,0,0,0.08);
+    flex-shrink: 0;
+}
+
+.sc-card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.2rem;
+}
+
+.sc-price {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.sc-stock {
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 0.1rem 0.45rem;
+    border-radius: 20px;
+}
+.sc-stock-ok   { background: #d1fae5; color: #065f46; }
+.sc-stock-low  { background: #fef3c7; color: #92400e; }
+.sc-stock-none { background: #fee2e2; color: #991b1b; }
+
+/* ══════════════════════════════════════════════════════════════
+   RIGHT PANEL — order form
+══════════════════════════════════════════════════════════════ */
+.sc-order {
+    width: 370px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.05);
+}
+
+.sc-order-head {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg, #1e1b4b, #312e81);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    letter-spacing: -0.01em;
+}
+
+.sc-order-head i {
+    font-size: 1.15rem;
+    opacity: 0.85;
+}
+
+/* Form */
+.sc-form {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+/* Error */
+.sc-error {
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    border-radius: 10px;
+    padding: 0.7rem 0.9rem;
+    color: #be123c;
+    font-size: 0.84rem;
+    font-weight: 500;
+}
+
+/* Field */
+.sc-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.sc-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.sc-input {
+    width: 100%;
+    height: 44px;
+    padding: 0 0.9rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    background: #f8fafc;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #0f172a;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    box-sizing: border-box;
+}
+
+.sc-input:focus {
+    border-color: #7c3aed;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(124,58,237,0.08);
+}
+
+/* ── Cart ──────────────────────────────────────────────────── */
+.sc-cart-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+    min-height: 0;
+}
+
+.sc-cart-head {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.sc-cart-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.sc-cart-badge {
+    margin-left: auto;
+    background: #6366f1;
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.15rem 0.55rem;
+    border-radius: 20px;
+}
+
+/* Empty */
+.sc-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.8rem;
+    color: #cbd5e1;
+    text-align: center;
+}
+
+.sc-empty i { font-size: 2.2rem; }
+.sc-empty p { font-size: 0.78rem; color: #94a3b8; margin: 0; }
+
+/* Cart list */
+.sc-cart-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 260px;
+    overflow-y: auto;
+    padding-right: 2px;
+}
+
+/* Cart item */
+.sc-cart-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0.65rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.sc-ci-info { display: flex; flex-direction: column; gap: 0.1rem; }
+
+.sc-ci-name {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.sc-ci-meta {
+    font-size: 0.7rem;
+    color: #94a3b8;
+}
+
+.sc-ci-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+}
+
+/* Qty control */
+.sc-qty {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.sc-qty-btn {
+    background: #f1f5f9;
+    border: none;
+    padding: 0.3rem 0.5rem;
+    cursor: pointer;
+    color: #475569;
+    font-size: 0.75rem;
+    transition: background 0.1s;
+    line-height: 1;
+}
+
+.sc-qty-btn:hover { background: #e2e8f0; }
+
+.sc-qty-inp {
+    width: 40px;
+    border: none;
+    text-align: center;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 0.3rem 0;
+    color: #0f172a;
+    outline: none;
+    background: transparent;
+    -moz-appearance: textfield;
+}
+.sc-qty-inp::-webkit-outer-spin-button,
+.sc-qty-inp::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+/* Price input */
+.sc-price-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.sc-price-lbl {
+    font-size: 0.68rem;
+    color: #94a3b8;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.sc-price-inp {
+    flex: 1;
+    min-width: 0;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 7px;
+    padding: 0.3rem 0.45rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: right;
+    color: #0f172a;
+    outline: none;
+    background: #fff;
+    transition: border-color 0.1s;
+    -moz-appearance: textfield;
+}
+.sc-price-inp::-webkit-outer-spin-button,
+.sc-price-inp::-webkit-inner-spin-button { -webkit-appearance: none; }
+.sc-price-inp:focus { border-color: #7c3aed; }
+
+.sc-line-total {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #1e293b;
+    min-width: 50px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.sc-remove {
+    background: none;
+    border: none;
+    color: #f87171;
+    cursor: pointer;
+    padding: 0.2rem;
+    font-size: 0.8rem;
+    opacity: 0.75;
+    transition: opacity 0.1s, color 0.1s;
+    line-height: 1;
+}
+.sc-remove:hover { opacity: 1; color: #ef4444; }
+
+/* ── Totals ────────────────────────────────────────────────── */
+.sc-totals {
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 0.9rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sc-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sc-total-label {
+    font-size: 0.8rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.sc-total-val {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.sc-cost { color: #ef4444; }
+
+.sc-profit-row {
+    padding-top: 0.5rem;
+    border-top: 1.5px solid #e2e8f0;
+    margin-top: 0.2rem;
+}
+
+.sc-profit { font-size: 1rem; }
+.sc-profit--pos { color: #059669; }
+.sc-profit--neg { color: #ef4444; }
+
+/* ── Footer ────────────────────────────────────────────────── */
+.sc-form-footer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-top: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.sc-submit { flex: 1; justify-content: center; }
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .sc-shell {
+        flex-direction: column;
+        height: auto;
+        min-height: 0;
+        padding: 16px;
+    }
+
+    .sc-picker {
+        height: 420px;
+    }
+
+    .sc-order {
+        width: 100%;
+    }
+}
+
+@media (max-width: 560px) {
+    .sc-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+
+    .sc-ci-controls {
+        gap: 0.3rem;
+    }
+}

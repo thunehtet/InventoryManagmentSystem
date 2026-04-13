@@ -1,0 +1,50 @@
+@{
+    ViewData["Title"] = "Access Denied";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Access Denied — StockEasy</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="auth-body-modern">
+
+    <div class="auth-bg-shape auth-bg-shape-1"></div>
+    <div class="auth-bg-shape auth-bg-shape-2"></div>
+
+    <div class="auth-page" style="justify-content:center">
+        <div class="auth-panel" style="max-width:440px;width:100%">
+            <div class="auth-card-modern">
+                <div class="auth-card-header">
+                    <div class="auth-card-avatar" style="background:#fee2e2;color:#dc2626">
+                        <i class="bi bi-shield-lock-fill"></i>
+                    </div>
+                    <h2>Access Denied</h2>
+                    <p>You don't have permission to access this page. Contact your administrator if you think this is a mistake.</p>
+                </div>
+
+                <div class="d-flex flex-column gap-3 mt-2">
+                    <a href="/Home/Index" class="auth-submit-btn" style="text-decoration:none">
+                        <i class="bi bi-house-fill"></i> Back to Home
+                    </a>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="auth-submit-btn"
+                                style="background:linear-gradient(135deg,#475569,#64748b);box-shadow:0 14px 30px rgba(71,85,105,0.22)">
+                            <i class="bi bi-box-arrow-right"></i> Sign in as a different user
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

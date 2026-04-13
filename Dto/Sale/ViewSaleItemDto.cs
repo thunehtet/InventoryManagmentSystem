@@ -9,5 +9,6 @@
         public int UnitPrice { get; set; }
         public int CostPrice { get; set; }
         public int LineTotal { get; set; }
+        public int LineProfit { get; set; }
     }
 }

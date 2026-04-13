@@ -1,0 +1,104 @@
+@model IEnumerable<ClothInventoryApp.Models.Plan>
+@{
+    ViewData["Title"] = "Plans";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/superadmin.css" asp-append-version="true" />
+}
+
+<div class="superadmin-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title"><i class="bi bi-layers-fill"></i> Plans</h1>
+            <p class="product-hero-sub">Available subscription plans on the platform</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Create" class="sa-btn-add">
+                <i class="bi bi-plus-lg"></i> New Plan
+            </a>
+            <a asp-controller="SuperAdmin" asp-action="Index" class="sa-btn-back">
+                <i class="bi bi-arrow-left"></i> Dashboard
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @{ var planpg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel; }
+    <div class="product-table-card">
+        <div class="table-responsive">
+            <table class="superadmin-table">
+                <thead>
+                    <tr>
+                        <th>Plan</th>
+                        <th>Code</th>
+                        <th>Monthly</th>
+                        <th>Yearly</th>
+                        <th>Max Users</th>
+                        <th>Max Products</th>
+                        <th>Active Subs</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model)
+                    {
+                        var activeSubs = p.TenantSubscriptions.Count(s => s.IsActive);
+                        <tr>
+                            <td>
+                                <div class="fw-semibold text-dark">@p.Name</div>
+                                @if (!string.IsNullOrEmpty(p.Description))
+                                {
+                                    <div class="text-muted small">@p.Description</div>
+                                }
+                            </td>
+                            <td class="text-muted small">@p.Code</td>
+                            <td class="fw-semibold">@p.PriceMonthly.ToString("N0")</td>
+                            <td class="text-muted">@(p.PriceYearly.HasValue ? p.PriceYearly.Value.ToString("N0") : "—")</td>
+                            <td class="text-muted">@(p.MaxUsers.HasValue ? p.MaxUsers.Value.ToString() : "Unlimited")</td>
+                            <td class="text-muted">@(p.MaxProducts.HasValue ? p.MaxProducts.Value.ToString() : "Unlimited")</td>
+                            <td><span class="fw-bold text-dark">@activeSubs</span></td>
+                            <td>
+                                <span class="status-badge @(p.IsActive ? "active" : "inactive")">
+                                    @(p.IsActive ? "Active" : "Inactive")
+                                </span>
+                            </td>
+                            <td>
+                                <div class="table-actions">
+                                    <a asp-action="Edit" asp-route-id="@p.Id" class="action-btn action-btn-edit" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@p.Id" class="action-btn action-btn-delete" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="9" class="text-center text-muted py-4">No plans configured.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (planpg != null) { @await Html.PartialAsync("_Pagination", planpg) }
+    </div>
+</div>

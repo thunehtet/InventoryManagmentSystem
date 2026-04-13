@@ -1,0 +1,152 @@
+@model IEnumerable<ClothInventoryApp.Models.PastSubscription>
+@{
+    ViewData["Title"] = "Subscription History";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/superadmin.css" asp-append-version="true" />
+}
+
+<div class="superadmin-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title">
+                <i class="bi bi-clock-history"></i> Subscription History
+            </h1>
+            <p class="product-hero-sub">
+                Archived records of all expired, replaced, and cancelled subscriptions.
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Index" class="sa-btn-back">
+                <i class="bi bi-arrow-left"></i> Active Subscriptions
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    @{ var histTotalCount = (ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel)?.TotalCount ?? Model.Count(); }
+    <div class="d-flex gap-3 mb-4 flex-wrap">
+        <div class="hero-stat-card" style="min-width:160px">
+            <div class="hero-stat-icon"><i class="bi bi-archive-fill"></i></div>
+            <div class="hero-stat-title">Total Archived</div>
+            <div class="hero-stat-text">@histTotalCount records</div>
+        </div>
+        <div class="hero-stat-card" style="min-width:160px">
+            <div class="hero-stat-icon"><i class="bi bi-calendar-x-fill"></i></div>
+            <div class="hero-stat-title">Expired</div>
+            <div class="hero-stat-text">@Model.Count(r => r.Reason == "Expired") (this page)</div>
+        </div>
+        <div class="hero-stat-card" style="min-width:160px">
+            <div class="hero-stat-icon"><i class="bi bi-arrow-repeat"></i></div>
+            <div class="hero-stat-title">Replaced</div>
+            <div class="hero-stat-text">@Model.Count(r => r.Reason == "Replaced") (this page)</div>
+        </div>
+        <div class="hero-stat-card" style="min-width:160px">
+            <div class="hero-stat-icon"><i class="bi bi-x-circle-fill"></i></div>
+            <div class="hero-stat-title">Cancelled</div>
+            <div class="hero-stat-text">@Model.Count(r => r.Reason == "Cancelled") (this page)</div>
+        </div>
+    </div>
+
+    <!-- Search -->
+    @{ var histpg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel; }
+    <form method="get" asp-action="History" class="sa-search-bar">
+        @if (histpg != null) { <input type="hidden" name="size" value="@histpg.PageSize" /> }
+        <div class="sa-search-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" name="search" value="@ViewBag.Search"
+                   class="sa-search-input" placeholder="Search by tenant, plan, or reason…" />
+        </div>
+        <button type="submit" class="sa-search-btn">
+            <i class="bi bi-search"></i> Search
+        </button>
+        @if (!string.IsNullOrWhiteSpace(ViewBag.Search as string))
+        {
+            <a asp-action="History" asp-route-size="@(histpg?.PageSize ?? 10)" class="sa-btn-back" style="height:40px;padding:0 14px">Clear</a>
+        }
+    </form>
+
+    <div class="product-table-card">
+        <div class="table-responsive">
+            <table class="superadmin-table">
+                <thead>
+                    <tr>
+                        <th>Tenant</th>
+                        <th>Plan</th>
+                        <th>Billing</th>
+                        <th>Price</th>
+                        <th>Period</th>
+                        <th>Archived</th>
+                        <th>Reason</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">
+                                <i class="bi bi-inbox" style="font-size:2rem;opacity:.3"></i>
+                                <div class="mt-2">No archived subscriptions yet.</div>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var r in Model)
+                        {
+                            <tr>
+                                <td class="fw-semibold text-dark">@r.TenantName</td>
+                                <td>
+                                    @r.PlanName
+                                    @if (r.IsTrial)
+                                    {
+                                        <span class="status-badge trial ms-1" style="font-size:10px">Trial</span>
+                                    }
+                                </td>
+                                <td class="text-muted small">@r.BillingCycle</td>
+                                <td class="fw-semibold">
+                                    @if (r.Price == 0)
+                                    {
+                                        <span class="text-muted">Free</span>
+                                    }
+                                    else
+                                    {
+                                        @r.Price.ToString("N0")
+                                    }
+                                </td>
+                                <td class="text-muted small" style="white-space:nowrap">
+                                    @r.StartDate.ToString("dd MMM yyyy")
+                                    <span style="color:#cbd5e1">→</span>
+                                    @r.EndDate.ToString("dd MMM yyyy")
+                                </td>
+                                <td class="text-muted small" style="white-space:nowrap">
+                                    @r.ArchivedAt.ToString("dd MMM yyyy HH:mm")
+                                </td>
+                                <td>
+                                    @{
+                                        var (badgeClass, icon) = r.Reason switch
+                                        {
+                                            "Expired"   => ("inactive", "bi-calendar-x-fill"),
+                                            "Replaced"  => ("trial",    "bi-arrow-repeat"),
+                                            "Cancelled" => ("inactive", "bi-x-circle-fill"),
+                                            _           => ("inactive", "bi-question-circle")
+                                        };
+                                    }
+                                    <span class="status-badge @badgeClass">
+                                        <i class="bi @icon me-1"></i>@r.Reason
+                                    </span>
+                                </td>
+                                <td class="text-muted small" style="max-width:220px;white-space:normal">
+                                    @(r.Notes ?? "—")
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (histpg != null) { @await Html.PartialAsync("_Pagination", histpg) }
+    </div>
+</div>

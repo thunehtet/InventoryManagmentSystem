@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Delete Sale";
+    var currency = ViewData["Currency"] as string ?? "";
 }
 
 <div class="create-product-shell">
@@ -13,6 +14,11 @@
             </div>
         </div>
 
+        <div class="alert alert-warning d-flex align-items-center gap-2 mb-3" style="border-radius:12px;">
+            <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+            <span>Deleting this sale will <strong>restore stock</strong> for all items and <strong>remove</strong> the linked cash transaction. This cannot be undone.</span>
+        </div>
+
         <div class="form-grid-modern">
             <div class="form-group-modern">
                 <label class="form-label-modern">Sale Date</label>
@@ -20,8 +26,21 @@
             </div>
 
             <div class="form-group-modern">
-                <label class="form-label-modern">Total Amount</label>
-                <input value="@Model.TotalAmount" class="input-modern" readonly />
+                <label class="form-label-modern">Total Revenue</label>
+                <input value="@(Model.TotalAmount.ToString("N0") + " " + currency)" class="input-modern" readonly />
+            </div>
+
+            @if (Model.Discount > 0)
+            {
+                <div class="form-group-modern">
+                    <label class="form-label-modern">Discount</label>
+                    <input value="@(Model.Discount.ToString("N0") + " " + currency)" class="input-modern text-danger" readonly />
+                </div>
+            }
+
+            <div class="form-group-modern">
+                <label class="form-label-modern">Total Profit</label>
+                <input value="@(Model.TotalProfit.ToString("N0") + " " + currency)" class="input-modern" readonly />
             </div>
         </div>
 
@@ -31,10 +50,11 @@
                 <thead>
                     <tr>
                         <th>Variant</th>
-                        <th>Quantity</th>
+                        <th>Qty</th>
                         <th>Unit Price</th>
                         <th>Cost Price</th>
-                        <th>Line Total</th>
+                        <th>Revenue</th>
+                        <th>Profit</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,9 +63,12 @@
                         <tr>
                             <td>@item.ProductVariantName</td>
                             <td>@item.Quantity</td>
-                            <td>@item.UnitPrice</td>
-                            <td>@item.CostPrice</td>
-                            <td>@item.LineTotal</td>
+                            <td>@item.UnitPrice.ToString("N0") @currency</td>
+                            <td>@item.CostPrice.ToString("N0") @currency</td>
+                            <td>@item.LineTotal.ToString("N0") @currency</td>
+                            <td class="@(item.LineProfit >= 0 ? "text-success" : "text-danger") fw-semibold">
+                                @item.LineProfit.ToString("N0") @currency
+                            </td>
                         </tr>
                     }
                 </tbody>
