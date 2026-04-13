@@ -21,6 +21,7 @@ namespace ClothInventoryApp.Models
 
         //  Status
         public bool IsActive { get; set; } = true;
+        public bool MustChangePassword { get; set; } = false;
 
         //  Audit Fields
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

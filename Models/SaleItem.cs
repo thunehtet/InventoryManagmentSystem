@@ -16,5 +16,6 @@
         public int Quantity { get; set; }
         public int UnitPrice { get; set; }
         public int CostPrice { get; set; }
+        public int Profit { get; set; }
     }
 }

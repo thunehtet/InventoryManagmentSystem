@@ -14,4 +14,6 @@ public class StockMovement
     public int Quantity { get; set; }
     public DateTime MovementDate { get; set; } = DateTime.UtcNow;
     public string? Remarks { get; set; }
+    // Nullable link back to the sale that generated this movement (for cascade delete)
+    public Guid? SaleId { get; set; }
 }

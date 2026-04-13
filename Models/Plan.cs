@@ -17,8 +17,8 @@ namespace ClothInventoryApp.Models
         [MaxLength(500)]
         public string? Description { get; set; }
 
-        public decimal PriceMonthly { get; set; }
-        public decimal? PriceYearly { get; set; }
+        public int PriceMonthly { get; set; }
+        public int? PriceYearly { get; set; }
 
         public int? MaxUsers { get; set; }
         public int? MaxProducts { get; set; }

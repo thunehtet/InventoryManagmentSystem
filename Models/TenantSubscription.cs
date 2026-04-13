@@ -19,7 +19,7 @@ namespace ClothInventoryApp.Models
         [MaxLength(20)]
         public string BillingCycle { get; set; } = "Monthly";
 
-        public decimal Price { get; set; }
+        public int Price { get; set; }
 
         public bool IsTrial { get; set; } = false;
         public bool IsActive { get; set; } = true;

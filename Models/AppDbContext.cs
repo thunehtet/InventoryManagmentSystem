@@ -39,6 +39,8 @@ namespace ClothInventoryApp.Data
         public DbSet<Textile> Textile => Set<Textile>();
         public DbSet<CashTransaction> CashTransactions => Set<CashTransaction>();
 
+        public DbSet<Customer> Customers => Set<Customer>();
+
         public DbSet<Tenant> Tenants => Set<Tenant>();
         public DbSet<TenantSetting> TenantSettings => Set<TenantSetting>();
         public DbSet<Plan> Plans => Set<Plan>();
@@ -46,6 +48,8 @@ namespace ClothInventoryApp.Data
         public DbSet<PlanFeature> PlanFeatures => Set<PlanFeature>();
         public DbSet<TenantSubscription> TenantSubscriptions => Set<TenantSubscription>();
         public DbSet<TenantFeatureOverride> TenantFeatureOverrides => Set<TenantFeatureOverride>();
+        public DbSet<ContactInquiry> ContactInquiries => Set<ContactInquiry>();
+        public DbSet<PastSubscription> PastSubscriptions => Set<PastSubscription>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -71,6 +75,21 @@ namespace ClothInventoryApp.Data
 
             modelBuilder.Entity<CashTransaction>()
                 .HasQueryFilter(x => x.TenantId == CurrentTenantId);
+
+            modelBuilder.Entity<Customer>()
+                .HasQueryFilter(x => x.TenantId == CurrentTenantId);
+
+            modelBuilder.Entity<Customer>()
+                .HasOne(c => c.Tenant)
+                .WithMany()
+                .HasForeignKey(c => c.TenantId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Sale>()
+                .HasOne(s => s.Customer)
+                .WithMany(c => c.Sales)
+                .HasForeignKey(s => s.CustomerId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<ProductVariant>()
                 .HasIndex(v => v.SKU)
@@ -147,6 +166,25 @@ namespace ClothInventoryApp.Data
                 .WithMany(t => t.Users)
                 .HasForeignKey(u => u.TenantId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // PastSubscription — no query filter (SuperAdmin-only table)
+            modelBuilder.Entity<PastSubscription>()
+                .HasOne(p => p.Tenant)
+                .WithMany()
+                .HasForeignKey(p => p.TenantId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<PastSubscription>()
+                .HasOne(p => p.Plan)
+                .WithMany()
+                .HasForeignKey(p => p.PlanId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<PastSubscription>()
+                .HasIndex(p => p.TenantId);
+
+            modelBuilder.Entity<PastSubscription>()
+                .HasIndex(p => p.ArchivedAt);
         }
     }
 }
