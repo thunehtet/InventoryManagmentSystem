@@ -57,5 +57,18 @@ namespace ClothInventoryApp.Services.Subscription
             var (current, max) = await GetProductLimitAsync(tenantId);
             return max == null || current < max;
         }
+
+        public async Task<(int Current, int? Max)> GetVariantLimitAsync(Guid tenantId)
+        {
+            var plan = await GetActivePlanAsync(tenantId);
+            var current = await _context.ProductVariants.CountAsync(); // query filter scopes to tenant
+            return (current, plan?.MaxVariants);
+        }
+
+        public async Task<bool> CanAddVariantAsync(Guid tenantId)
+        {
+            var (current, max) = await GetVariantLimitAsync(tenantId);
+            return max == null || current < max;
+        }
     }
 }

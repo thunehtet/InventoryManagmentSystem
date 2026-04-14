@@ -22,6 +22,7 @@ namespace ClothInventoryApp.Models
 
         public int? MaxUsers { get; set; }
         public int? MaxProducts { get; set; }
+        public int? MaxVariants { get; set; }
         public int? MaxStorageMb { get; set; }
 
         public bool IsActive { get; set; } = true;

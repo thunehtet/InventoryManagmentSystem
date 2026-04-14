@@ -1,5 +1,6 @@
 using ClothInventoryApp.Data;
 using ClothInventoryApp.Dto.Dashboard;
+using ClothInventoryApp.Filters;
 using ClothInventoryApp.Services.Tenant;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ClothInventoryApp.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [FeatureRequired("dashboard")]
     public class DashboardController : TenantAwareController
     {
         public DashboardController(AppDbContext context, ITenantProvider tenantProvider)

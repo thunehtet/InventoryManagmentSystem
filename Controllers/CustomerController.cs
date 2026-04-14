@@ -1,5 +1,6 @@
 using ClothInventoryApp.Data;
 using ClothInventoryApp.Dto.Customer;
+using ClothInventoryApp.Filters;
 using ClothInventoryApp.Models;
 using ClothInventoryApp.Services.Tenant;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ClothInventoryApp.Controllers
 {
     [Authorize]
+    [FeatureRequired("customers")]
     public class CustomerController : TenantAwareController
     {
         public CustomerController(AppDbContext context, ITenantProvider tenantProvider)

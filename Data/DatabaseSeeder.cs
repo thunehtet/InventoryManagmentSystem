@@ -18,6 +18,7 @@ namespace ClothInventoryApp.Data
             var env         = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
 
             await SeedSuperAdminAsync(context, userManager);
+            await SeedPlansAndFeaturesAsync(context);   // always runs — idempotent
 
             // Demo data only in development
             if (env.IsDevelopment())
@@ -66,6 +67,73 @@ namespace ClothInventoryApp.Data
                     string.Join(", ", result.Errors.Select(e => e.Description)));
         }
 
+        // ── Always runs — idempotent plan + feature catalogue ────────
+        private static async Task SeedPlansAndFeaturesAsync(AppDbContext context)
+        {
+            // Skip entirely if plans already exist
+            if (await context.Plans.IgnoreQueryFilters().AnyAsync())
+                return;
+
+            // ── Plans ────────────────────────────────────────────────────
+            var planFree = new Plan
+            {
+                Name = "Free", Code = "FREE",
+                Description = "Get started at no cost — products, variants and basic sales included.",
+                PriceMonthly = 0,
+                MaxUsers = 1, MaxProducts = 5, MaxVariants = 10,
+                IsActive = true
+            };
+            var planStarter = new Plan
+            {
+                Name = "Starter", Code = "STARTER",
+                Description = "For small shops — full sales with profit tracking and customer management.",
+                PriceMonthly = 9, PriceYearly = 90,
+                MaxUsers = 3, MaxProducts = 10, MaxVariants = 50,
+                IsActive = true
+            };
+            var planPro = new Plan
+            {
+                Name = "Pro", Code = "PRO",
+                Description = "Full features for growing businesses — dashboard, finance and textiles.",
+                PriceMonthly = 25, PriceYearly = 249,
+                MaxUsers = 10, MaxProducts = 100, MaxVariants = 300,
+                IsActive = true
+            };
+            context.Plans.AddRange(planFree, planStarter, planPro);
+
+            // ── Features ─────────────────────────────────────────────────
+            var featSales      = new Feature { Code = "sales",       Name = "Sales",               Description = "Record and view sales transactions",                      IsActive = true };
+            var featSaleProfit = new Feature { Code = "sale_profit",  Name = "Sale Profit & Customer", Description = "Profit, discount, cost columns + customer assignment in sales", IsActive = true };
+            var featCustomers  = new Feature { Code = "customers",    Name = "Customer Management", Description = "Manage customers and link them to sales",                IsActive = true };
+            var featDashboard  = new Feature { Code = "dashboard",    Name = "Dashboard & Analytics", Description = "Sales trends, profit charts and stock analytics",      IsActive = true };
+            var featFinance    = new Feature { Code = "finance",      Name = "Finance Dashboard",   Description = "Cash flow, profit charts, expense tracking",             IsActive = true };
+            var featTextiles   = new Feature { Code = "textiles",     Name = "Textile / Materials", Description = "Raw material purchase tracking",                        IsActive = true };
+            context.Features.AddRange(featSales, featSaleProfit, featCustomers, featDashboard, featFinance, featTextiles);
+            await context.SaveChangesAsync();
+
+            // ── Plan → Feature mapping ────────────────────────────────────
+            // Free: sales only (basic — no profit/customer columns)
+            context.PlanFeatures.Add(new PlanFeature { PlanId = planFree.Id, FeatureId = featSales.Id, IsEnabled = true });
+
+            // Starter: sales + profit columns + customers
+            context.PlanFeatures.AddRange(
+                new PlanFeature { PlanId = planStarter.Id, FeatureId = featSales.Id,      IsEnabled = true },
+                new PlanFeature { PlanId = planStarter.Id, FeatureId = featSaleProfit.Id, IsEnabled = true },
+                new PlanFeature { PlanId = planStarter.Id, FeatureId = featCustomers.Id,  IsEnabled = true }
+            );
+
+            // Pro: everything
+            context.PlanFeatures.AddRange(
+                new PlanFeature { PlanId = planPro.Id, FeatureId = featSales.Id,      IsEnabled = true },
+                new PlanFeature { PlanId = planPro.Id, FeatureId = featSaleProfit.Id, IsEnabled = true },
+                new PlanFeature { PlanId = planPro.Id, FeatureId = featCustomers.Id,  IsEnabled = true },
+                new PlanFeature { PlanId = planPro.Id, FeatureId = featDashboard.Id,  IsEnabled = true },
+                new PlanFeature { PlanId = planPro.Id, FeatureId = featFinance.Id,    IsEnabled = true },
+                new PlanFeature { PlanId = planPro.Id, FeatureId = featTextiles.Id,   IsEnabled = true }
+            );
+            await context.SaveChangesAsync();
+        }
+
         // ── Runs once — demo business tenants (dev only) ─────────────
         private static async Task SeedDemoDataAsync(
             AppDbContext context,
@@ -76,63 +144,11 @@ namespace ClothInventoryApp.Data
                     .AnyAsync(t => t.Code != "SYSTEM"))
                 return;
 
-            // ── Plans ────────────────────────────────────────────────────
-            // Free    — $0/mo  · 1 user  · 50 products  · Products + Stock only
-            // Starter — $9/mo  · 3 users · 200 products · + Sales + Expenses
-            // Pro     — $25/mo · 10 users · 1 000 products · + Finance + Textiles
-            // Enterprise — $79/mo · unlimited · + everything
-            var planFree = new Plan
-            {
-                Name = "Free", Code = "FREE",
-                Description = "Get started at no cost — products and stock tracking included.",
-                PriceMonthly = 0, MaxUsers = 1, MaxProducts = 50, IsActive = true
-            };
-            var planStarter = new Plan
-            {
-                Name = "Starter", Code = "STARTER",
-                Description = "For small shops ready to record sales and expenses.",
-                PriceMonthly = 9, PriceYearly = 90, MaxUsers = 3, MaxProducts = 200, IsActive = true
-            };
-            var planPro = new Plan
-            {
-                Name = "Pro", Code = "PRO",
-                Description = "Full features for growing businesses.",
-                PriceMonthly = 25, PriceYearly = 249, MaxUsers = 10, MaxProducts = 1000, IsActive = true
-            };
-            var planEnterprise = new Plan
-            {
-                Name = "Enterprise", Code = "ENTERPRISE",
-                Description = "Unlimited users, products, and priority support.",
-                PriceMonthly = 79, PriceYearly = 790, MaxUsers = null, MaxProducts = null, IsActive = true
-            };
-            context.Plans.AddRange(planFree, planStarter, planPro, planEnterprise);
-
-            // ── Features ─────────────────────────────────────────────────
-            // Feature codes must match the string passed to [FeatureRequired("...")]
-            var featSales    = new Feature { Code = "sales",    Name = "Sales",              Description = "Record and view sales transactions",         IsActive = true };
-            var featFinance  = new Feature { Code = "finance",  Name = "Finance Dashboard",  Description = "Cash flow, profit charts, expense tracking", IsActive = true };
-            var featTextiles = new Feature { Code = "textiles", Name = "Textile / Materials", Description = "Raw material purchase tracking",            IsActive = true };
-            context.Features.AddRange(featSales, featFinance, featTextiles);
-
-            await context.SaveChangesAsync();
-
-            // ── PlanFeatures ─────────────────────────────────────────────
-            // Free: no gated features (products + stock are always accessible — no filter applied)
-            // Starter: sales
-            context.PlanFeatures.Add(new PlanFeature { PlanId = planStarter.Id, FeatureId = featSales.Id, IsEnabled = true });
-            // Pro: sales + finance + textiles
-            context.PlanFeatures.AddRange(
-                new PlanFeature { PlanId = planPro.Id, FeatureId = featSales.Id,    IsEnabled = true },
-                new PlanFeature { PlanId = planPro.Id, FeatureId = featFinance.Id,  IsEnabled = true },
-                new PlanFeature { PlanId = planPro.Id, FeatureId = featTextiles.Id, IsEnabled = true }
-            );
-            // Enterprise: all
-            context.PlanFeatures.AddRange(
-                new PlanFeature { PlanId = planEnterprise.Id, FeatureId = featSales.Id,    IsEnabled = true },
-                new PlanFeature { PlanId = planEnterprise.Id, FeatureId = featFinance.Id,  IsEnabled = true },
-                new PlanFeature { PlanId = planEnterprise.Id, FeatureId = featTextiles.Id, IsEnabled = true }
-            );
-            await context.SaveChangesAsync();
+            // Plans and features already seeded by SeedPlansAndFeaturesAsync —
+            // look them up by code for use in demo tenant subscriptions.
+            var planFree    = await context.Plans.IgnoreQueryFilters().FirstAsync(p => p.Code == "FREE");
+            var planStarter = await context.Plans.IgnoreQueryFilters().FirstAsync(p => p.Code == "STARTER");
+            var planPro     = await context.Plans.IgnoreQueryFilters().FirstAsync(p => p.Code == "PRO");
 
             // ════════════════════════════════════════════════════════════
             //  TENANT 1 — ThreadCo (Pro plan)

@@ -2,6 +2,7 @@
 using ClothInventoryApp.Dto.Sale;
 using ClothInventoryApp.Filters;
 using ClothInventoryApp.Models;
+using ClothInventoryApp.Services.Feature;
 using ClothInventoryApp.Services.Tenant;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,9 +16,12 @@ namespace ClothInventoryApp.Controllers
     [FeatureRequired("sales")]
     public class SalesController : TenantAwareController
     {
-        public SalesController(AppDbContext context, ITenantProvider tenantProvider)
+        private readonly IFeatureService _featureService;
+
+        public SalesController(AppDbContext context, ITenantProvider tenantProvider, IFeatureService featureService)
             : base(context, tenantProvider)
         {
+            _featureService = featureService;
         }
        
 
@@ -47,6 +51,9 @@ namespace ClothInventoryApp.Controllers
                 })
                 .ToListAsync();
 
+            var tid = _tenantProvider.GetTenantId();
+            ViewBag.HasSaleProfit = await _featureService.HasFeatureAsync(tid, "sale_profit");
+            ViewBag.HasCustomers  = await _featureService.HasFeatureAsync(tid, "customers");
             ViewBag.Search = search;
             ViewBag.Pagination = new PaginationViewModel
             {
@@ -59,8 +66,12 @@ namespace ClothInventoryApp.Controllers
 
         public async Task<IActionResult> Create()
         {
+            var tid = _tenantProvider.GetTenantId();
+            var hasCustomers = await _featureService.HasFeatureAsync(tid, "customers");
+            ViewBag.HasCustomers = hasCustomers;
+
             await LoadVariantDropDown();
-            await LoadCustomerDropDown();
+            if (hasCustomers) await LoadCustomerDropDown();
             return View(new CreateSaleDto());
         }
 
