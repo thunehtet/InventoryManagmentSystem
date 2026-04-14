@@ -6,10 +6,12 @@
     'use strict';
 
     // ── State ──────────────────────────────────────────────────
-    var allVariants = [];
-    var cart = {}; // { [variantId]: { ...variant, qty, unitPrice } }
+    var allVariants  = [];
+    var cart         = {}; // { [variantId]: { ...variant, qty, unitPrice } }
+    var activeFilter = 'All'; // active product-name tab
 
     // ── DOM refs (safe — page-specific) ───────────────────────
+    var filterTabs    = document.getElementById('filterTabs');
     var variantGrid   = document.getElementById('variantGrid');
     var variantSearch = document.getElementById('variantSearch');
     var variantCount  = document.getElementById('variantCount');
@@ -39,6 +41,7 @@
             .then(function (data) {
                 allVariants = data;
                 if (variantCount) variantCount.textContent = data.length;
+                renderTabs();
                 renderGrid(data);
             })
             .catch(function () {
@@ -48,6 +51,33 @@
                         '<span>Failed to load products. Please refresh.</span></div>';
                 }
             });
+    }
+
+    // ── Render product filter tabs ─────────────────────────────
+    function renderTabs() {
+        if (!filterTabs) return;
+        // Unique product names, sorted alphabetically
+        var names = allVariants
+            .map(function (v) { return v.productName; })
+            .filter(function (n, i, arr) { return arr.indexOf(n) === i; })
+            .sort();
+
+        filterTabs.innerHTML = ['All'].concat(names).map(function (name) {
+            return '<button type="button" class="sc-filter-tab' +
+                   (name === activeFilter ? ' active' : '') +
+                   '" data-filter="' + escAttr(name) + '">' +
+                   escHtml(name) + '</button>';
+        }).join('');
+
+        filterTabs.querySelectorAll('.sc-filter-tab').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                activeFilter = this.getAttribute('data-filter');
+                filterTabs.querySelectorAll('.sc-filter-tab').forEach(function (b) {
+                    b.classList.toggle('active', b.getAttribute('data-filter') === activeFilter);
+                });
+                renderGrid(filtered());
+            });
+        });
     }
 
     // ── Render variant card grid ───────────────────────────────
@@ -239,14 +269,17 @@
         renderGrid(filtered());
     }
 
-    // ── Search filter ──────────────────────────────────────────
+    // ── Combined filter: active tab + search text ─────────────
     function filtered() {
-        var q = variantSearch ? variantSearch.value.toLowerCase().trim() : '';
-        if (!q) return allVariants;
-        return allVariants.filter(function (v) {
-            return v.productName.toLowerCase().includes(q) ||
-                   v.sku.toLowerCase().includes(q)         ||
-                   v.color.toLowerCase().includes(q)       ||
+        var q    = variantSearch ? variantSearch.value.toLowerCase().trim() : '';
+        var list = activeFilter === 'All'
+            ? allVariants
+            : allVariants.filter(function (v) { return v.productName === activeFilter; });
+
+        if (!q) return list;
+        return list.filter(function (v) {
+            return v.sku.toLowerCase().includes(q)   ||
+                   v.color.toLowerCase().includes(q) ||
                    v.size.toLowerCase().includes(q);
         });
     }

@@ -200,6 +200,18 @@
     flex-wrap: nowrap;
 }
 
+/* topbar-left always grows → pushes profile to far right at every viewport */
+.topbar-left {
+    flex: 1;
+    min-width: 0;
+}
+
+/* topbar-right never shrinks → profile button stays intact at far right */
+.topbar-right {
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
 .menu-btn {
     width: 44px;
     height: 44px;
@@ -542,6 +554,10 @@
         flex: 1;
         max-width: 100%;
     }
+
+    .topbar-right {
+        gap: 8px;
+    }
 }
 
 /* ── Large phone (≤768px) — show bottom nav ────────────────── */
@@ -576,13 +592,10 @@
     }
 
     .topbar-left {
-        flex: 1;
-        min-width: 0;
         gap: 8px;
     }
 
     .topbar-right {
-        flex-shrink: 0;
         gap: 8px;
     }
 

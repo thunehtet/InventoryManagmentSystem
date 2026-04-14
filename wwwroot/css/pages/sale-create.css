@@ -57,6 +57,44 @@
     border-radius: 20px;
 }
 
+/* ── Product filter tabs ───────────────────────────────────── */
+.sc-filter-tabs {
+    display: flex;
+    gap: 0.4rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+}
+
+.sc-filter-tabs::-webkit-scrollbar { display: none; }
+
+.sc-filter-tab {
+    flex-shrink: 0;
+    padding: 0.3rem 0.85rem;
+    border-radius: 20px;
+    border: 1.5px solid #e2e8f0;
+    background: #fff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    transition: background 0.14s, border-color 0.14s, color 0.14s;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.sc-filter-tab:hover {
+    border-color: #7c3aed;
+    color: #7c3aed;
+}
+
+.sc-filter-tab.active {
+    background: #7c3aed;
+    border-color: #7c3aed;
+    color: #fff;
+}
+
 /* Search */
 .sc-search-wrap {
     position: relative;

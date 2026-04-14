@@ -15,10 +15,13 @@
                 <span>Products</span>
                 <span class="sc-chip" id="variantCount">—</span>
             </div>
+            <!-- Product filter tabs (populated by JS) -->
+            <div class="sc-filter-tabs" id="filterTabs"></div>
+
             <div class="sc-search-wrap">
                 <i class="bi bi-search sc-search-icon"></i>
                 <input type="text" id="variantSearch"
-                       placeholder="Search name, SKU, color, size…"
+                       placeholder="Search SKU, color, size…"
                        class="sc-search-input" autocomplete="off" />
             </div>
         </div>
@@ -51,7 +54,9 @@
                        value="@DateTime.Today.ToString("yyyy-MM-dd")" required />
             </div>
 
-            <!-- Customer (optional) -->
+            <!-- Customer (Starter+ only) -->
+            @if ((bool)(ViewBag.HasCustomers ?? false))
+            {
             <div class="sc-field-group">
                 <label class="sc-label">Customer <span class="text-muted small">(optional)</span></label>
                 <select name="CustomerId" class="sc-input">
@@ -68,6 +73,7 @@
                     </a>
                 </div>
             </div>
+            }
 
             <!-- Cart -->
             <div class="sc-cart-wrap">
