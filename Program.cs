@@ -34,7 +34,7 @@ if (string.IsNullOrWhiteSpace(connectionString))
 }
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(connectionString, new MySqlServerVersion(new Version(9, 4, 0))));
+    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 36))));
 
 // ── Identity ────────────────────────────────────────────────────
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
@@ -203,13 +203,13 @@ app.MapControllerRoute(
 // Always seed SuperAdmin; only seed demo data in development
 using (var scope = app.Services.CreateScope())
 {
-    await DatabaseSeeder.SeedAsync(scope.ServiceProvider);
-}
-
-using (var scope = app.Services.CreateScope())
-{
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    // ✅ FIRST create tables
     db.Database.Migrate();
+
+    // ✅ THEN seed data
+    await DatabaseSeeder.SeedAsync(scope.ServiceProvider);
 }
 
 app.Run();
