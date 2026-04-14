@@ -30,11 +30,11 @@ var connectionString =
 if (string.IsNullOrWhiteSpace(connectionString))
 {
     throw new InvalidOperationException(
-        "Database connection string not found. Set MYSQLCONNSTR_DefaultConnection in Railway or DefaultConnection in appsettings.json.");
+        "Database connection string not found.");
 }
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+    options.UseMySql(connectionString, new MySqlServerVersion(new Version(9, 4, 0))));
 
 // ── Identity ────────────────────────────────────────────────────
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
