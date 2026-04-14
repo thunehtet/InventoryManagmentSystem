@@ -7,7 +7,6 @@ using ClothInventoryApp.Services.Subscription;
 using ClothInventoryApp.Services.Tenant;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.RateLimiting;
 
@@ -22,19 +21,9 @@ builder.Services.AddControllersWithViews()
     .AddViewLocalization();
 
 // ── Database ───────────────────────────────────────────────────
-// Railway: first try env var, otherwise use local appsettings.json
-var connectionString =
-    Environment.GetEnvironmentVariable("MYSQLCONNSTR_DefaultConnection")
-    ?? builder.Configuration.GetConnectionString("DefaultConnection");
-
-if (string.IsNullOrWhiteSpace(connectionString))
-{
-    throw new InvalidOperationException(
-        "Database connection string not found.");
-}
-
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 36))));
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 // ── Identity ────────────────────────────────────────────────────
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
@@ -50,7 +39,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequiredLength = 8;
 
-    // Account lockout
+    // Account lockout — block after 5 failed attempts for 15 minutes
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
     options.Lockout.AllowedForNewUsers = true;
@@ -68,9 +57,9 @@ builder.Services.ConfigureApplicationCookie(options =>
 
     options.Cookie.HttpOnly = true;
     options.Cookie.Name = ".StockEasy.Session";
-    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SameSite = SameSiteMode.Strict;
 
-    // Railway is behind proxy / HTTPS at edge
+    // Secure in production, allow HTTP only in development
     options.Cookie.SecurePolicy = env.IsDevelopment()
         ? CookieSecurePolicy.SameAsRequest
         : CookieSecurePolicy.Always;
@@ -79,21 +68,10 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
-// ── Forwarded headers for Railway proxy ────────────────────────
-builder.Services.Configure<ForwardedHeadersOptions>(options =>
-{
-    options.ForwardedHeaders =
-        ForwardedHeaders.XForwardedFor |
-        ForwardedHeaders.XForwardedProto;
-
-    // Railway proxy can vary, so clear known networks/proxies
-    options.KnownNetworks.Clear();
-    options.KnownProxies.Clear();
-});
-
-// ── Rate limiting ──────────────────────────────────────────────
+// ── Rate limiting (login endpoint) ──────────────────────────────
 builder.Services.AddRateLimiter(options =>
 {
+    // Max 5 login attempts per minute per IP
     options.AddFixedWindowLimiter("login", limiter =>
     {
         limiter.PermitLimit = 5;
@@ -102,6 +80,7 @@ builder.Services.AddRateLimiter(options =>
         limiter.QueueLimit = 0;
     });
 
+    // Max 10 customer registrations per 10 minutes per IP (prevents spam)
     options.AddFixedWindowLimiter("public-registration", limiter =>
     {
         limiter.PermitLimit = 10;
@@ -123,30 +102,25 @@ builder.Services.AddHostedService<ClothInventoryApp.Services.Subscription.Subscr
 
 var app = builder.Build();
 
-// ── Railway port binding ────────────────────────────────────────
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-app.Urls.Add($"http://0.0.0.0:{port}");
-
-// ── Security response headers ───────────────────────────────────
+// ── Security response headers ────────────────────────────────────
 app.Use(async (context, next) =>
 {
     var headers = context.Response.Headers;
-    headers["X-Frame-Options"] = "DENY";
-    headers["X-Content-Type-Options"] = "nosniff";
-    headers["X-XSS-Protection"] = "1; mode=block";
-    headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
-    headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()";
+    headers.Append("X-Frame-Options", "DENY");
+    headers.Append("X-Content-Type-Options", "nosniff");
+    headers.Append("X-XSS-Protection", "1; mode=block");
+    headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
+    headers.Append("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
     await next();
 });
 
-// ── HTTP pipeline ───────────────────────────────────────────────
+// ── HTTP pipeline ────────────────────────────────────────────────
 if (!env.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
-app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 
 var supportedCultures = new[] { "en", "my-MM" };
@@ -154,24 +128,21 @@ var localizationOptions = new RequestLocalizationOptions()
     .SetDefaultCulture("en")
     .AddSupportedCultures(supportedCultures)
     .AddSupportedUICultures(supportedCultures);
-
-localizationOptions.RequestCultureProviders.Insert(
-    0,
-    new Microsoft.AspNetCore.Localization.CookieRequestCultureProvider());
-
+// Ensure cookie provider is first so it takes precedence over Accept-Language header
+localizationOptions.RequestCultureProviders.Insert(0, new Microsoft.AspNetCore.Localization.CookieRequestCultureProvider());
 app.UseRequestLocalization(localizationOptions);
 
-app.UseStaticFiles();
-app.UseRouting();
 app.UseRateLimiter();
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// ── Force password change on first login ────────────────────────
+// ── Force password change on first login ─────────────────────────
 app.Use(async (context, next) =>
 {
     var path = context.Request.Path.Value ?? "";
 
+    // Only intercept authenticated users on non-exempt paths
     if (context.User.Identity?.IsAuthenticated == true &&
         !path.StartsWith("/Account/ChangePassword", StringComparison.OrdinalIgnoreCase) &&
         !path.StartsWith("/Account/Logout", StringComparison.OrdinalIgnoreCase) &&
@@ -183,9 +154,7 @@ app.Use(async (context, next) =>
     {
         var userManager = context.RequestServices
             .GetRequiredService<UserManager<ApplicationUser>>();
-
         var user = await userManager.GetUserAsync(context.User);
-
         if (user?.MustChangePassword == true)
         {
             context.Response.Redirect("/Account/ChangePassword");
@@ -195,21 +164,14 @@ app.Use(async (context, next) =>
 
     await next();
 });
+app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Landing}/{action=Index}/{id?}");
+    pattern: "{controller=Landing}/{action=Index}/{id?}")
+    .WithStaticAssets();
 
 // Always seed SuperAdmin; only seed demo data in development
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-    // ✅ FIRST create tables
-    db.Database.Migrate();
-
-    // ✅ THEN seed data
-    await DatabaseSeeder.SeedAsync(scope.ServiceProvider);
-}
+await DatabaseSeeder.SeedAsync(app.Services);
 
 app.Run();
