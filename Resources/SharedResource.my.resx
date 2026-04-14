@@ -1,16 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
                 <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" />
-              <xsd:attribute name="xml:space" msdata:IsReadOnly="true" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
@@ -29,7 +109,7 @@
     <value>text/microsoft-resx</value>
   </resheader>
   <resheader name="version">
-    <value>1.3</value>
+    <value>2.0</value>
   </resheader>
   <resheader name="reader">
     <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -37,13 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-
-  <!-- ── Brand ─────────────────────────────────────────── -->
   <data name="Inventory Manager" xml:space="preserve">
     <value>ကုန်ပစ္စည်းစာရင်းစီမံခန့်ခွဲမှု</value>
   </data>
-
-  <!-- ── Nav section titles ─────────────────────────────── -->
   <data name="Main" xml:space="preserve">
     <value>အဓိက</value>
   </data>
@@ -53,8 +129,6 @@
   <data name="Business" xml:space="preserve">
     <value>စီးပွားရေး</value>
   </data>
-
-  <!-- ── Nav links ──────────────────────────────────────── -->
   <data name="Overview" xml:space="preserve">
     <value>မျှော်ကြည့်ချက်</value>
   </data>
@@ -88,8 +162,6 @@
   <data name="Reports" xml:space="preserve">
     <value>အစီရင်ခံစာများ</value>
   </data>
-
-  <!-- ── Topbar ─────────────────────────────────────────── -->
   <data name="Smart Inventory" xml:space="preserve">
     <value>ဉာဏ်ရည်ကုန်ပစ္စည်းစာရင်း</value>
   </data>
@@ -105,20 +177,307 @@
   <data name="Logout" xml:space="preserve">
     <value>ထွက်မည်</value>
   </data>
-
-  <!-- ── User management ──────────────────────────────────── -->
   <data name="Manage Users" xml:space="preserve">
     <value>အသုံးပြုသူများ စီမံခန့်ခွဲမှု</value>
   </data>
   <data name="Change Password" xml:space="preserve">
     <value>စကားဝှက် ပြောင်းရန်</value>
   </data>
-
-  <!-- ── Mobile bottom nav ──────────────────────────────── -->
   <data name="New Sale" xml:space="preserve">
     <value>ရောင်းချမှုသစ်</value>
   </data>
   <data name="Finance" xml:space="preserve">
     <value>ဘဏ္ဍာရေး</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>ရှာဖွေ</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>လုပ်ဆောင်ချက်</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>ပယ်ဖျက်</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>အသုံးပြု</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>အသုံးပြုမှုမရှိ</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>အခြေအနေ</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>နာမည်</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>ရက်စွဲ</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>အရေအတွက်</value>
+  </data>
+  <data name="Remarks" xml:space="preserve">
+    <value>မှတ်ချက်</value>
+  </data>
+  <data name="optional" xml:space="preserve">
+    <value>ရွေးချယ်နိုင်</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>ကြည့်ရန်</value>
+  </data>
+  <data name="See all" xml:space="preserve">
+    <value>အားလုံး ကြည့်</value>
+  </data>
+  <data name="Upgrade Plan" xml:space="preserve">
+    <value>အစီအစဉ် အဆင့်မြှင့်ရန်</value>
+  </data>
+  <data name="Welcome back — here's your overview" xml:space="preserve">
+    <value>ကြိုဆိုပါသည် — သင်၏ ခြုံငုံသုံးသပ်ချက်</value>
+  </data>
+  <data name="Stock In" xml:space="preserve">
+    <value>ကုန်ပစ္စည်းသွင်း</value>
+  </data>
+  <data name="Stock Out" xml:space="preserve">
+    <value>ကုန်ပစ္စည်းထုတ်</value>
+  </data>
+  <data name="Low Stock" xml:space="preserve">
+    <value>ကုန်ပစ္စည်းနည်းပါး</value>
+  </data>
+  <data name="Current Plan" xml:space="preserve">
+    <value>လက်ရှိ အစီအစဉ်</value>
+  </data>
+  <data name="Trial" xml:space="preserve">
+    <value>စမ်းသပ်</value>
+  </data>
+  <data name="No active plan" xml:space="preserve">
+    <value>လက်ရှိသုံးသော အစီအစဉ် မရှိ</value>
+  </data>
+  <data name="Expires today" xml:space="preserve">
+    <value>ယနေ့ သက်တမ်းကုန်</value>
+  </data>
+  <data name="days left" xml:space="preserve">
+    <value>ရက် ကျန်</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>အသုံးပြုသူများ</value>
+  </data>
+  <data name="Quick Actions" xml:space="preserve">
+    <value>မြန်ဆန်သောလုပ်ဆောင်ချက်</value>
+  </data>
+  <data name="Add Product" xml:space="preserve">
+    <value>ကုန်ပစ္စည်း ထည့်</value>
+  </data>
+  <data name="Add Variant" xml:space="preserve">
+    <value>မျိုးကွဲ ထည့်</value>
+  </data>
+  <data name="Add Expense" xml:space="preserve">
+    <value>ကုန်ကျစရိတ် ထည့်</value>
+  </data>
+  <data name="Upgrade Available" xml:space="preserve">
+    <value>အဆင့်မြှင့်တင်ရန် ရနိုင်</value>
+  </data>
+  <data name="Unlock more with" xml:space="preserve">
+    <value>ပိုမိုဖွင့်ရန်</value>
+  </data>
+  <data name="Recent Inventory Activity" xml:space="preserve">
+    <value>မကြာသေးမီ ကုန်ပစ္စည်းလှုပ်ရှားမှု</value>
+  </data>
+  <data name="No stock movements yet. Start by adding stock in." xml:space="preserve">
+    <value>ကုန်ပစ္စည်းလှုပ်ရှားမှု မရှိသေး</value>
+  </data>
+  <data name="Product Catalog" xml:space="preserve">
+    <value>ကုန်ပစ္စည်းစာရင်း</value>
+  </data>
+  <data name="Create Product" xml:space="preserve">
+    <value>ကုန်ပစ္စည်း ဖန်တီး</value>
+  </data>
+  <data name="Total Products" xml:space="preserve">
+    <value>ကုန်ပစ္စည်း စုစုပေါင်း</value>
+  </data>
+  <data name="items in your catalog" xml:space="preserve">
+    <value>ပစ္စည်းများ</value>
+  </data>
+  <data name="Search name, category, brand…" xml:space="preserve">
+    <value>နာမည်၊ အမျိုးအစား၊ အမှတ်တံဆိပ် ရှာ…</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>အမျိုးအစား</value>
+  </data>
+  <data name="Brand" xml:space="preserve">
+    <value>အမှတ်တံဆိပ်</value>
+  </data>
+  <data name="No products yet" xml:space="preserve">
+    <value>ကုန်ပစ္စည်း မရှိသေး</value>
+  </data>
+  <data name="No products match your search" xml:space="preserve">
+    <value>ရှာဖွေမှုနှင့် ကိုက်ညီသော ကုန်ပစ္စည်း မရှိ</value>
+  </data>
+  <data name="Create your first product" xml:space="preserve">
+    <value>ပထမဆုံး ကုန်ပစ္စည်း ဖန်တီးပါ</value>
+  </data>
+  <data name="Product Variants" xml:space="preserve">
+    <value>ကုန်ပစ္စည်း မျိုးကွဲများ</value>
+  </data>
+  <data name="Create Variant" xml:space="preserve">
+    <value>မျိုးကွဲ ဖန်တီး</value>
+  </data>
+  <data name="Total Variants" xml:space="preserve">
+    <value>မျိုးကွဲ စုစုပေါင်း</value>
+  </data>
+  <data name="variants in your catalog" xml:space="preserve">
+    <value>မျိုးကွဲများ</value>
+  </data>
+  <data name="Search product, SKU, color, size…" xml:space="preserve">
+    <value>ကုန်ပစ္စည်း၊ SKU၊ အရောင်၊ အရွယ်အစား ရှာ…</value>
+  </data>
+  <data name="Product" xml:space="preserve">
+    <value>ကုန်ပစ္စည်း</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>အရွယ်အစား</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>အရောင်</value>
+  </data>
+  <data name="Cost Price" xml:space="preserve">
+    <value>ဝယ်ရစျေးနှုန်း</value>
+  </data>
+  <data name="Selling Price" xml:space="preserve">
+    <value>ရောင်းစျေးနှုန်း</value>
+  </data>
+  <data name="No variants yet" xml:space="preserve">
+    <value>မျိုးကွဲ မရှိသေး</value>
+  </data>
+  <data name="No variants match your search" xml:space="preserve">
+    <value>ရှာဖွေမှုနှင့် ကိုက်ညီသော မျိုးကွဲ မရှိ</value>
+  </data>
+  <data name="Create your first variant" xml:space="preserve">
+    <value>ပထမဆုံး မျိုးကွဲ ဖန်တီးပါ</value>
+  </data>
+  <data name="Stock" xml:space="preserve">
+    <value>ကုန်ပစ္စည်းစတော့</value>
+  </data>
+  <data name="Stock Movements" xml:space="preserve">
+    <value>ကုန်ပစ္စည်းရွှေ့လျားမှုများ</value>
+  </data>
+  <data name="Create Stock Movement" xml:space="preserve">
+    <value>ကုန်ပစ္စည်းရွှေ့လျားမှု ဖန်တီး</value>
+  </data>
+  <data name="Total Records" xml:space="preserve">
+    <value>မှတ်တမ်း စုစုပေါင်း</value>
+  </data>
+  <data name="Search variant, SKU, type, remarks…" xml:space="preserve">
+    <value>မျိုးကွဲ၊ SKU၊ အမျိုးအစား ရှာ…</value>
+  </data>
+  <data name="Variant" xml:space="preserve">
+    <value>မျိုးကွဲ</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>အမျိုးအစား</value>
+  </data>
+  <data name="No stock movements yet" xml:space="preserve">
+    <value>ကုန်ပစ္စည်းရွှေ့လျားမှု မရှိသေး</value>
+  </data>
+  <data name="No movements match your search" xml:space="preserve">
+    <value>ရှာဖွေမှုနှင့် ကိုက်ညီသော ရွှေ့လျားမှု မရှိ</value>
+  </data>
+  <data name="Create your first stock movement" xml:space="preserve">
+    <value>ပထမဆုံး ကုန်ပစ္စည်းအရွှေ့ဖန်တီးပါ</value>
+  </data>
+  <data name="Sales List" xml:space="preserve">
+    <value>ရောင်းချမှု စာရင်း</value>
+  </data>
+  <data name="Manage sales transactions and item details." xml:space="preserve">
+    <value>ရောင်းချမှု မှတ်တမ်းများ စီမံခန့်ခွဲပါ</value>
+  </data>
+  <data name="Create Sale" xml:space="preserve">
+    <value>ရောင်းချမှု ဖန်တီး</value>
+  </data>
+  <data name="Total Sales" xml:space="preserve">
+    <value>ရောင်းချမှု စုစုပေါင်း</value>
+  </data>
+  <data name="transactions" xml:space="preserve">
+    <value>မှတ်တမ်းများ</value>
+  </data>
+  <data name="Search by customer name…" xml:space="preserve">
+    <value>ဖောက်သည်နာမည်ဖြင့် ရှာ…</value>
+  </data>
+  <data name="Sale Date" xml:space="preserve">
+    <value>ရောင်းချသည့် ရက်စွဲ</value>
+  </data>
+  <data name="Customer" xml:space="preserve">
+    <value>ဖောက်သည်</value>
+  </data>
+  <data name="Revenue" xml:space="preserve">
+    <value>ဝင်ငွေ</value>
+  </data>
+  <data name="Discount" xml:space="preserve">
+    <value>လျှော့စျေး</value>
+  </data>
+  <data name="Profit" xml:space="preserve">
+    <value>အမြတ်</value>
+  </data>
+  <data name="Walk-in" xml:space="preserve">
+    <value>လမ်းဝင်</value>
+  </data>
+  <data name="No sales yet" xml:space="preserve">
+    <value>ရောင်းချမှု မရှိသေး</value>
+  </data>
+  <data name="No sales match your search" xml:space="preserve">
+    <value>ရှာဖွေမှုနှင့် ကိုက်ညီသော ရောင်းချမှု မရှိ</value>
+  </data>
+  <data name="Search SKU, color, size…" xml:space="preserve">
+    <value>SKU၊ အရောင်၊ အရွယ်အစား ရှာ…</value>
+  </data>
+  <data name="Loading products…" xml:space="preserve">
+    <value>ကုန်ပစ္စည်းများ တင်နေသည်…</value>
+  </data>
+  <data name="Failed to load products. Please refresh." xml:space="preserve">
+    <value>ကုန်ပစ္စည်း တင်မရပါ။ ဒေါင်းလုတ်ပြန်ပါ</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>အားလုံး</value>
+  </data>
+  <data name="No products found" xml:space="preserve">
+    <value>ကုန်ပစ္စည်း မတွေ့ပါ</value>
+  </data>
+  <data name="Out of stock" xml:space="preserve">
+    <value>ကုန်ပစ္စည်း မရှိ</value>
+  </data>
+  <data name="left" xml:space="preserve">
+    <value>ကျန်</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>စျေးနှုန်း</value>
+  </data>
+  <data name="— Walk-in / No customer —" xml:space="preserve">
+    <value>— စာရင်းမသွင်း / ဖောက်သည် မရှိ —</value>
+  </data>
+  <data name="Add new customer" xml:space="preserve">
+    <value>ဖောက်သည်သစ် ထည့်ရန်</value>
+  </data>
+  <data name="Items" xml:space="preserve">
+    <value>ပစ္စည်းများ</value>
+  </data>
+  <data name="Click a product card to add items" xml:space="preserve">
+    <value>ပစ္စည်းကတ်ကို နှိပ်၍ ထည့်ပါ</value>
+  </data>
+  <data name="Enter discount amount (0 = no discount)" xml:space="preserve">
+    <value>လျှော့စျေး ထည့်ပါ (0 = မရှိ)</value>
+  </data>
+  <data name="Subtotal" xml:space="preserve">
+    <value>ကြိုစုစုပေါင်း</value>
+  </data>
+  <data name="Cost" xml:space="preserve">
+    <value>ကုန်ကျစရိတ်</value>
+  </data>
+  <data name="Save Sale" xml:space="preserve">
+    <value>ရောင်းချမှု သိမ်းဆည်း</value>
+  </data>
+  <data name="Please add at least one product to the sale." xml:space="preserve">
+    <value>ကုန်ပစ္စည်း တစ်ခုနေ့မဆို ထည့်ပါ</value>
+  </data>
+  <data name="Customers" xml:space="preserve">
+    <value>ဖောက်သည်များ</value>
   </data>
 </root>

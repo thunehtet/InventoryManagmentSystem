@@ -2,6 +2,7 @@ using ClothInventoryApp.Data;
 using ClothInventoryApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClothInventoryApp.Controllers
 {
@@ -15,7 +16,18 @@ namespace ClothInventoryApp.Controllers
             _db = db;
         }
 
-        public IActionResult Index() => View();
+        public async Task<IActionResult> Index()
+        {
+            var plans = await _db.Plans
+                .Where(p => p.IsActive)
+                .Include(p => p.PlanFeatures.Where(pf => pf.IsEnabled))
+                    .ThenInclude(pf => pf.Feature)
+                .OrderBy(p => p.PriceMonthly)
+                .ToListAsync();
+
+            ViewBag.Plans = plans;
+            return View();
+        }
 
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> ContactSubmit(

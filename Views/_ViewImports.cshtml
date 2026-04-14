@@ -1,3 +1,7 @@
-﻿@using ClothInventoryApp
+@using ClothInventoryApp
 @using ClothInventoryApp.Models
+@using Microsoft.Extensions.Localization
+@using ClothInventoryApp.Resources
+@using System.Globalization
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@inject IStringLocalizer<SharedResource> Localizer

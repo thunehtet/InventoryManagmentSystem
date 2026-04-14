@@ -311,10 +311,16 @@
     user-select: none;
 }
 
-/* Hide lang-switcher on very small phones — too cramped */
+/* Lang-switcher: compact on small phones instead of hidden */
 @media (max-width: 480px) {
     .lang-switcher {
-        display: none;
+        padding: 5px 7px;
+        gap: 1px;
+    }
+
+    .lang-btn {
+        font-size: 0.7rem;
+        padding: 1px 3px;
     }
 }
 
@@ -399,6 +405,45 @@
 
 .logout-btn {
     color: #dc2626;
+}
+
+/* ── Language row inside user dropdown ─────────────────────── */
+.user-menu-lang-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px 6px;
+    font-size: 0.83rem;
+    color: #64748b;
+}
+
+.user-menu-lang-row > i { font-size: 0.9rem; flex-shrink: 0; }
+.user-menu-lang-row > span { flex: 1; }
+
+.user-menu-lang-btns {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    flex-shrink: 0;
+}
+
+.umenu-lang {
+    font-size: 0.73rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-decoration: none;
+    padding: 2px 6px;
+    border-radius: 5px;
+    transition: color 0.12s, background 0.12s;
+}
+
+.umenu-lang:hover { color: #4f46e5; background: #f3f4f6; }
+.umenu-lang--active { color: #4f46e5; }
+
+.user-menu-lang-sep {
+    color: #e2e8f0;
+    font-size: 0.65rem;
+    user-select: none;
 }
 
 /* ── Page content ──────────────────────────────────────────── */

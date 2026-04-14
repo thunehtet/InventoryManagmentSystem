@@ -11,7 +11,7 @@
     {
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
             <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["LimitError"]
-            <a asp-controller="Account" asp-action="FeatureRequired" asp-route-feature="products" class="alert-link ms-2">Upgrade Plan</a>
+            <a asp-controller="Account" asp-action="FeatureRequired" asp-route-feature="products" class="alert-link ms-2">@Localizer["Upgrade Plan"]</a>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
@@ -21,15 +21,14 @@
         <div class="product-hero-content">
             <div class="hero-kicker">
                 <i class="bi bi-box-seam-fill"></i>
-                <span>Inventory</span>
+                <span>@Localizer["Inventory"]</span>
             </div>
-            <h1>Product Catalog</h1>
-            <p>Manage your clothing products. Create, organize, and maintain your inventory in one place.</p>
+            <h1>@Localizer["Product Catalog"]</h1>
             <div class="hero-actions">
                 @if (User.IsInRole("Admin"))
                 {
                     <a asp-controller="Products" asp-action="Create" class="btn-modern-primary">
-                        <i class="bi bi-plus-circle"></i> Create Product
+                        <i class="bi bi-plus-circle"></i> @Localizer["Create Product"]
                     </a>
                 }
             </div>
@@ -37,8 +36,8 @@
         <div class="product-hero-side">
             <div class="hero-stat-card">
                 <div class="hero-stat-icon"><i class="bi bi-collection"></i></div>
-                <div class="hero-stat-title">Total Products</div>
-                <div class="hero-stat-text">@(pg?.TotalCount ?? 0) items in your catalog</div>
+                <div class="hero-stat-title">@Localizer["Total Products"]</div>
+                <div class="hero-stat-text">@(pg?.TotalCount ?? 0) @Localizer["items in your catalog"]</div>
             </div>
         </div>
     </div>
@@ -50,7 +49,7 @@
             <div class="filter-search-wrap">
                 <i class="bi bi-search filter-search-icon"></i>
                 <input type="text" name="search" value="@ViewBag.Search"
-                       class="filter-search-input" placeholder="Search name, category, brand…" autocomplete="off" />
+                       class="filter-search-input" placeholder="@Localizer["Search name, category, brand…"]" autocomplete="off" />
                 @if (!string.IsNullOrWhiteSpace(ViewBag.Search as string))
                 {
                     <a href="@Url.Action("Index", new { size = pg?.PageSize ?? 10 })" class="filter-clear-btn" title="Clear">
@@ -59,7 +58,7 @@
                 }
             </div>
             <button type="submit" class="filter-search-btn">
-                <i class="bi bi-search"></i> Search
+                <i class="bi bi-search"></i> @Localizer["Search"]
             </button>
         </form>
     </div>
@@ -70,11 +69,11 @@
             <table class="table-modern">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Category</th>
-                        <th>Brand</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th>@Localizer["Name"]</th>
+                        <th>@Localizer["Category"]</th>
+                        <th>@Localizer["Brand"]</th>
+                        <th>@Localizer["Status"]</th>
+                        <th>@Localizer["Actions"]</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -83,10 +82,10 @@
                         <tr>
                             <td colspan="5" class="empty-state">
                                 <i class="bi bi-inbox"></i>
-                                <div>@(string.IsNullOrWhiteSpace(ViewBag.Search as string) ? "No products yet" : "No products match your search")</div>
+                                <div>@(string.IsNullOrWhiteSpace(ViewBag.Search as string) ? Localizer["No products yet"].Value : Localizer["No products match your search"].Value)</div>
                                 @if (User.IsInRole("Admin") && string.IsNullOrWhiteSpace(ViewBag.Search as string))
                                 {
-                                    <a asp-action="Create" class="btn-modern-primary mt-2">Create your first product</a>
+                                    <a asp-action="Create" class="btn-modern-primary mt-2">@Localizer["Create your first product"]</a>
                                 }
                             </td>
                         </tr>
@@ -101,7 +100,7 @@
                                 <td>@item.Brand</td>
                                 <td>
                                     <span class="badge-modern @(item.IsActive ? "badge-success" : "badge-muted")">
-                                        @(item.IsActive ? "Active" : "Inactive")
+                                        @(item.IsActive ? Localizer["Active"].Value : Localizer["Inactive"].Value)
                                     </span>
                                 </td>
                                 <td>

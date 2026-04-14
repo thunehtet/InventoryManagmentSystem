@@ -10,15 +10,14 @@
         <div class="product-hero-content">
             <div class="hero-kicker">
                 <i class="bi bi-arrow-left-right"></i>
-                <span>Stock</span>
+                <span>@Localizer["Stock"]</span>
             </div>
-            <h1>Stock Movements</h1>
-            <p>Manage stock in, stock out, and adjustment records for your product variants.</p>
+            <h1>@Localizer["Stock Movements"]</h1>
             <div class="hero-actions">
                 @if (User.IsInRole("Admin"))
                 {
                     <a asp-action="Create" class="btn-modern-primary">
-                        <i class="bi bi-plus-circle"></i> Create Stock Movement
+                        <i class="bi bi-plus-circle"></i> @Localizer["Create Stock Movement"]
                     </a>
                 }
             </div>
@@ -26,8 +25,8 @@
         <div class="product-hero-side">
             <div class="hero-stat-card">
                 <div class="hero-stat-icon"><i class="bi bi-boxes"></i></div>
-                <div class="hero-stat-title">Total Records</div>
-                <div class="hero-stat-text">@(pg?.TotalCount ?? 0) stock movements</div>
+                <div class="hero-stat-title">@Localizer["Total Records"]</div>
+                <div class="hero-stat-text">@(pg?.TotalCount ?? 0) @Localizer["Stock Movements"]</div>
             </div>
         </div>
     </div>
@@ -39,7 +38,7 @@
             <div class="filter-search-wrap">
                 <i class="bi bi-search filter-search-icon"></i>
                 <input type="text" name="search" value="@ViewBag.Search"
-                       class="filter-search-input" placeholder="Search variant, SKU, type, remarks…" autocomplete="off" />
+                       class="filter-search-input" placeholder="@Localizer["Search variant, SKU, type, remarks…"]" autocomplete="off" />
                 @if (!string.IsNullOrWhiteSpace(ViewBag.Search as string))
                 {
                     <a href="@Url.Action("Index", new { size = pg?.PageSize ?? 10 })" class="filter-clear-btn" title="Clear">
@@ -48,7 +47,7 @@
                 }
             </div>
             <button type="submit" class="filter-search-btn">
-                <i class="bi bi-search"></i> Search
+                <i class="bi bi-search"></i> @Localizer["Search"]
             </button>
         </form>
     </div>
@@ -59,12 +58,12 @@
             <table class="table-modern">
                 <thead>
                     <tr>
-                        <th>Variant</th>
-                        <th>Type</th>
-                        <th>Quantity</th>
-                        <th>Date</th>
-                        <th>Remarks</th>
-                        <th>Actions</th>
+                        <th>@Localizer["Variant"]</th>
+                        <th>@Localizer["Type"]</th>
+                        <th>@Localizer["Quantity"]</th>
+                        <th>@Localizer["Date"]</th>
+                        <th>@Localizer["Remarks"]</th>
+                        <th>@Localizer["Actions"]</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -73,10 +72,10 @@
                         <tr>
                             <td colspan="6" class="empty-state">
                                 <i class="bi bi-inbox"></i>
-                                <div>@(string.IsNullOrWhiteSpace(ViewBag.Search as string) ? "No stock movements yet" : "No movements match your search")</div>
+                                <div>@(string.IsNullOrWhiteSpace(ViewBag.Search as string) ? Localizer["No stock movements yet"].Value : Localizer["No movements match your search"].Value)</div>
                                 @if (User.IsInRole("Admin") && string.IsNullOrWhiteSpace(ViewBag.Search as string))
                                 {
-                                    <a asp-action="Create" class="btn-modern-primary mt-2">Create your first stock movement</a>
+                                    <a asp-action="Create" class="btn-modern-primary mt-2">@Localizer["Create your first stock movement"]</a>
                                 }
                             </td>
                         </tr>

@@ -613,7 +613,8 @@
     }
 
     .sc-picker {
-        height: 420px;
+        height: 55vh;
+        min-height: 380px;
     }
 
     .sc-order {
@@ -622,8 +623,35 @@
 }
 
 @media (max-width: 560px) {
+    .sc-picker {
+        height: 52vh;
+        min-height: 340px;
+    }
+
+    .sc-picker-head {
+        padding: 0.7rem 0.9rem;
+        gap: 0.45rem;
+    }
+
     .sc-grid {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        padding: 0.65rem;
+        gap: 0.5rem;
+    }
+
+    .sc-card {
+        padding: 0.65rem 0.6rem;
+        gap: 0.4rem;
+    }
+
+    .sc-avatar {
+        width: 38px;
+        height: 38px;
+        font-size: 1rem;
+    }
+
+    .sc-card-name {
+        font-size: 0.78rem;
     }
 
     .sc-ci-controls {

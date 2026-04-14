@@ -5,10 +5,15 @@
 (function () {
     'use strict';
 
+    // ── Page config (set by Razor before this script loads) ───
+    var cfg     = window.salePageConfig || {};
+    var str     = cfg.strings || {};
+    var isStaff = cfg.isStaff === true;
+
     // ── State ──────────────────────────────────────────────────
     var allVariants  = [];
     var cart         = {}; // { [variantId]: { ...variant, qty, unitPrice } }
-    var activeFilter = 'All'; // active product-name tab
+    var activeFilter = str.all || 'All'; // active product-name tab
 
     // ── DOM refs (safe — page-specific) ───────────────────────
     var filterTabs    = document.getElementById('filterTabs');
@@ -20,12 +25,12 @@
     var cartBadge     = document.getElementById('cartBadge');
     var hiddenInputs  = document.getElementById('hiddenInputs');
     var sumRevenue    = document.getElementById('sumRevenue');
-    var sumFinal      = document.getElementById('sumFinal');
+    var sumFinal      = document.getElementById('sumFinal');   // null for Staff
     var sumDiscount   = document.getElementById('sumDiscount');
     var discountRow   = document.getElementById('discountRow');
     var discountInput = document.getElementById('discountInput');
     var sumCost       = document.getElementById('sumCost');
-    var sumProfit     = document.getElementById('sumProfit');
+    var sumProfit     = document.getElementById('sumProfit');  // null for Staff
     var clientError   = document.getElementById('clientError');
     var saleForm      = document.getElementById('saleForm');
 
@@ -48,7 +53,7 @@
                 if (variantGrid) {
                     variantGrid.innerHTML =
                         '<div class="sc-loading"><i class="bi bi-exclamation-circle text-danger"></i>' +
-                        '<span>Failed to load products. Please refresh.</span></div>';
+                        '<span>' + escHtml(str.loadFailed || 'Failed to load products. Please refresh.') + '</span></div>';
                 }
             });
     }
@@ -56,13 +61,14 @@
     // ── Render product filter tabs ─────────────────────────────
     function renderTabs() {
         if (!filterTabs) return;
+        var allLabel = str.all || 'All';
         // Unique product names, sorted alphabetically
         var names = allVariants
             .map(function (v) { return v.productName; })
             .filter(function (n, i, arr) { return arr.indexOf(n) === i; })
             .sort();
 
-        filterTabs.innerHTML = ['All'].concat(names).map(function (name) {
+        filterTabs.innerHTML = [allLabel].concat(names).map(function (name) {
             return '<button type="button" class="sc-filter-tab' +
                    (name === activeFilter ? ' active' : '') +
                    '" data-filter="' + escAttr(name) + '">' +
@@ -85,7 +91,8 @@
         if (!variantGrid) return;
         if (!variants.length) {
             variantGrid.innerHTML =
-                '<div class="sc-loading"><i class="bi bi-search"></i><span>No products found</span></div>';
+                '<div class="sc-loading"><i class="bi bi-search"></i><span>' +
+                escHtml(str.noProducts || 'No products found') + '</span></div>';
             return;
         }
         variantGrid.innerHTML = variants.map(function (v) {
@@ -95,7 +102,9 @@
             var accent   = colorToHex(v.color);
             var qtyBadge = inCart ? '<span class="sc-qty-badge">' + inCart.qty + '</span>' : '';
             var stockCls = noStock ? 'sc-stock-none' : v.stock <= 5 ? 'sc-stock-low' : 'sc-stock-ok';
-            var stockTxt = noStock ? 'Out of stock' : v.stock + ' left';
+            var stockTxt = noStock
+                ? escHtml(str.outOfStock || 'Out of stock')
+                : v.stock + ' ' + escHtml(str.left || 'left');
             var cardCls  = 'sc-card' +
                            (inCart  ? ' sc-card--selected' : '') +
                            (noStock ? ' sc-card--disabled'  : '');
@@ -183,6 +192,7 @@
 
         if (emptyCart) emptyCart.style.display = 'none';
         if (cartList) {
+            var priceLbl = escHtml(str.price || 'Price');
             cartList.innerHTML = items.map(function (item) {
                 return '<div class="sc-cart-item">' +
                     '<div class="sc-ci-info">' +
@@ -196,7 +206,7 @@
                             '<button type="button" class="sc-qty-btn" data-qty-inc="' + item.id + '"><i class="bi bi-plus"></i></button>' +
                         '</div>' +
                         '<div class="sc-price-wrap">' +
-                            '<span class="sc-price-lbl">Price</span>' +
+                            '<span class="sc-price-lbl">' + priceLbl + '</span>' +
                             '<input type="number" class="sc-price-inp" value="' + item.unitPrice + '" min="0" data-price-inp="' + item.id + '" />' +
                         '</div>' +
                         '<span class="sc-line-total">' + fmt(item.qty * item.unitPrice) + '</span>' +
@@ -236,7 +246,7 @@
         var profit   = revenue - cost;
 
         if (sumRevenue) sumRevenue.textContent = fmt(subtotal);
-        if (sumFinal)   sumFinal.textContent   = fmt(revenue);
+        if (sumFinal)   sumFinal.textContent   = fmt(revenue);   // only rendered for non-Staff
         if (sumCost)    sumCost.textContent     = fmt(cost);
 
         if (discountRow && sumDiscount) {
@@ -248,7 +258,7 @@
             }
         }
 
-        if (sumProfit) {
+        if (sumProfit) {                                          // only rendered for non-Staff
             sumProfit.textContent = fmt(profit);
             sumProfit.className   = 'sc-total-val sc-profit ' +
                                     (profit >= 0 ? 'sc-profit--pos' : 'sc-profit--neg');
@@ -271,8 +281,9 @@
 
     // ── Combined filter: active tab + search text ─────────────
     function filtered() {
-        var q    = variantSearch ? variantSearch.value.toLowerCase().trim() : '';
-        var list = activeFilter === 'All'
+        var allLabel = str.all || 'All';
+        var q        = variantSearch ? variantSearch.value.toLowerCase().trim() : '';
+        var list     = activeFilter === allLabel
             ? allVariants
             : allVariants.filter(function (v) { return v.productName === activeFilter; });
 
@@ -297,7 +308,7 @@
         if (!Object.keys(cart).length) {
             e.preventDefault();
             if (clientError) {
-                clientError.textContent = 'Please add at least one product to the sale.';
+                clientError.textContent = str.cartRequired || 'Please add at least one product to the sale.';
                 clientError.style.display = 'block';
                 clientError.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }

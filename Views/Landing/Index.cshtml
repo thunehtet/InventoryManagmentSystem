@@ -327,55 +327,148 @@
             </p>
         </div>
 
+        @{
+            var landingPlans = ViewBag.Plans as List<ClothInventoryApp.Models.Plan>
+                               ?? new List<ClothInventoryApp.Models.Plan>();
+            // Feature the second plan (index 1) when ≥2 plans exist, otherwise first
+            int featuredPlanIdx = landingPlans.Count >= 2 ? 1 : 0;
+        }
+
         <div class="pricing-grid">
 
-            <div class="price-card fade-up">
-                <div class="price-plan"><span class="en">Starter</span><span class="my">စတင်သူ</span></div>
-                <div class="price-amount"><span class="price-value"><span class="en">Free</span><span class="my">အခမဲ့</span></span></div>
-                <div class="price-period"><span class="en">Forever free</span><span class="my">အမြဲအခမဲ့</span></div>
-                <ul class="price-features">
-                    <li><i class="bi bi-check2"></i> <span class="en">Up to 2 users</span><span class="my">အသုံးပြုသူ ၂ ယောက်</span></li>
-                    <li><i class="bi bi-check2"></i> <span class="en">100 products</span><span class="my">ကုန်ပစ္စည်း ၁၀၀</span></li>
-                    <li><i class="bi bi-check2"></i> <span class="en">Sales tracking</span><span class="my">အရောင်းမှတ်တမ်း</span></li>
-                    <li><i class="bi bi-check2"></i> <span class="en">Basic reports</span><span class="my">အခြေခံ အစီရင်ခံစာ</span></li>
-                    <li class="disabled"><i class="bi bi-x"></i> <span class="en">Finance dashboard</span><span class="my">ငွေကြေး dashboard</span></li>
-                    <li class="disabled"><i class="bi bi-x"></i> <span class="en">Priority support</span><span class="my">ဦးစားပေး ပံ့ပိုးမှု</span></li>
-                </ul>
-                <a href="#contact" class="btn-price"><span class="en">Get Started</span><span class="my">စတင်ပါ</span></a>
+        @if (!landingPlans.Any())
+        {
+            <!-- Fallback: no plans configured yet -->
+            <div class="price-card fade-up" style="grid-column:1/-1;text-align:center;padding:3rem 2rem;color:#94a3b8;">
+                <i class="bi bi-info-circle" style="font-size:2rem;display:block;margin-bottom:1rem;"></i>
+                <span class="en">Pricing plans coming soon. Contact us for details.</span>
+                <span class="my">စျေးနှုန်းအစီအစဉ်များ မကြာမီ ရောက်ရှိမည်။ ဆက်သွယ်ပါ။</span>
             </div>
+        }
+        else
+        {
+            for (int pi = 0; pi < landingPlans.Count; pi++)
+            {
+                var lp          = landingPlans[pi];
+                bool isFeatured = (pi == featuredPlanIdx && landingPlans.Count > 1);
+                bool isFree     = lp.PriceMonthly == 0;
+                bool isCustom   = !isFree && lp.MaxUsers == null && lp.MaxProducts == null
+                                  && lp.PriceMonthly == 0;
+                var  planFeats  = lp.PlanFeatures
+                                    .Where(pf => pf.IsEnabled && pf.Feature != null)
+                                    .OrderBy(pf => pf.Feature.Name)
+                                    .ToList();
 
-            <div class="price-card featured fade-up">
-                <div class="price-ribbon"><span class="en">Most Popular</span><span class="my">အကြိုက်ဆုံး</span></div>
-                <div class="price-plan"><span class="en">Growth</span><span class="my">တိုးတက်မှု</span></div>
-                <div class="price-amount">
-                    <span class="price-currency">K </span><span class="price-value">49,000</span>
+                <div class="price-card @(isFeatured ? "featured" : "") fade-up">
+
+                    @if (isFeatured)
+                    {
+                        <div class="price-ribbon">
+                            <span class="en">Most Popular</span>
+                            <span class="my">အကြိုက်ဆုံး</span>
+                        </div>
+                    }
+
+                    <!-- Plan name -->
+                    <div class="price-plan @(isFeatured ? "featured" : "")">@lp.Name</div>
+
+                    <!-- Price -->
+                    <div class="price-amount">
+                        @if (isFree)
+                        {
+                            <span class="price-value">
+                                <span class="en">Free</span>
+                                <span class="my">အခမဲ့</span>
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="price-currency">K </span>
+                            <span class="price-value">@lp.PriceMonthly.ToString("N0")</span>
+                        }
+                    </div>
+
+                    <!-- Period / subtitle -->
+                    <div class="price-period">
+                        @if (!string.IsNullOrWhiteSpace(lp.Description))
+                        {
+                            @lp.Description
+                        }
+                        else if (isFree)
+                        {
+                            <span class="en">Forever free</span>
+                            <span class="my">အမြဲအခမဲ့</span>
+                        }
+                        else
+                        {
+                            <span class="en">per month</span>
+                            <span class="my">တစ်လ</span>
+                        }
+                    </div>
+
+                    <!-- Feature list -->
+                    <ul class="price-features">
+                        <!-- Users -->
+                        <li>
+                            <i class="bi bi-check2"></i>
+                            @if (lp.MaxUsers.HasValue)
+                            {
+                                <span class="en">Up to @lp.MaxUsers users</span>
+                                <span class="my">အသုံးပြုသူ @lp.MaxUsers ယောက်</span>
+                            }
+                            else
+                            {
+                                <span class="en">Unlimited users</span>
+                                <span class="my">အသုံးပြုသူ အကန့်အသတ်မဲ့</span>
+                            }
+                        </li>
+                        <!-- Products -->
+                        <li>
+                            <i class="bi bi-check2"></i>
+                            @if (lp.MaxProducts.HasValue)
+                            {
+                                <span class="en">@lp.MaxProducts products</span>
+                                <span class="my">ကုန်ပစ္စည်း @lp.MaxProducts</span>
+                            }
+                            else
+                            {
+                                <span class="en">Unlimited products</span>
+                                <span class="my">ကုန်ပစ္စည်း အကန့်အသတ်မဲ့</span>
+                            }
+                        </li>
+                        <!-- Variants (if capped) -->
+                        @if (lp.MaxVariants.HasValue)
+                        {
+                            <li>
+                                <i class="bi bi-check2"></i>
+                                <span class="en">@lp.MaxVariants variants</span>
+                                <span class="my">မျိုးကွဲ @lp.MaxVariants</span>
+                            </li>
+                        }
+                        <!-- Enabled features from DB -->
+                        @foreach (var pf in planFeats)
+                        {
+                            <li><i class="bi bi-check2"></i> <span>@pf.Feature.Name</span></li>
+                        }
+                    </ul>
+
+                    <!-- CTA button -->
+                    <a href="#contact" class="btn-price @(isFeatured ? "featured" : "")">
+                        @if (isFree)
+                        {
+                            <span class="en">Get Started Free</span>
+                            <span class="my">အခမဲ့ စတင်ပါ</span>
+                        }
+                        else
+                        {
+                            <span class="en">Get Started</span>
+                            <span class="my">စတင်ပါ</span>
+                        }
+                    </a>
+
                 </div>
-                <div class="price-period"><span class="en">per month</span><span class="my">တစ်လ</span></div>
-                <ul class="price-features">
-                    <li><i class="bi bi-check2"></i> <span class="en">Up to 10 users</span><span class="my">အသုံးပြုသူ ၁၀ ယောက်</span></li>
-                    <li><i class="bi bi-check2"></i> <span class="en">Unlimited products</span><span class="my">ကုန်ပစ္စည်း အကန့်အသတ်မဲ့</span></li>
-                    <li><i class="bi bi-check2"></i> <span class="en">Full sales management</span><span class="my">အရောင်းစီမံခန့်ခွဲမှု အပြည့်</span></li>
-                    <li><i class="bi bi-check2"></i> <span class="en">Finance dashboard</span><span class="my">ငွေကြေး dashboard</span></li>
-                    <li><i class="bi bi-check2"></i> <span class="en">Stock movement history</span><span class="my">ကုန်ရွေ့လျားမှု မှတ်တမ်း</span></li>
-                    <li><i class="bi bi-check2"></i> <span class="en">Priority support</span><span class="my">ဦးစားပေး ပံ့ပိုးမှု</span></li>
-                </ul>
-                <a href="#contact" class="btn-price featured"><span class="en">Get Started</span><span class="my">စတင်ပါ</span></a>
-            </div>
-
-            <div class="price-card fade-up">
-                <div class="price-plan"><span class="en">Enterprise</span><span class="my">လုပ်ငန်းကြီး</span></div>
-                <div class="price-amount"><span class="price-value"><span class="en">Custom</span><span class="my">သတ်မှတ်</span></span></div>
-                <div class="price-period"><span class="en">Contact for pricing</span><span class="my">စျေးနှုန်းအတွက် ဆက်သွယ်ပါ</span></div>
-                <ul class="price-features">
-                    <li><i class="bi bi-check2"></i> <span class="en">Unlimited users</span><span class="my">အသုံးပြုသူ အကန့်အသတ်မဲ့</span></li>
-                    <li><i class="bi bi-check2"></i> <span class="en">Unlimited products</span><span class="my">ကုန်ပစ္စည်း အကန့်အသတ်မဲ့</span></li>
-                    <li><i class="bi bi-check2"></i> <span class="en">All Growth features</span><span class="my">Growth အင်္ဂါရပ်အားလုံး</span></li>
-                    <li><i class="bi bi-check2"></i> <span class="en">Dedicated workspace</span><span class="my">သီးသန့် workspace</span></li>
-                    <li><i class="bi bi-check2"></i> <span class="en">Custom onboarding</span><span class="my">သတ်မှတ် onboarding</span></li>
-                    <li><i class="bi bi-check2"></i> <span class="en">SLA guarantee</span><span class="my">SLA အာမခံ</span></li>
-                </ul>
-                <a href="#contact" class="btn-price"><span class="en">Contact Us</span><span class="my">ဆက်သွယ်ပါ</span></a>
-            </div>
+            }
+        }
 
         </div>
     </div>

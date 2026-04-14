@@ -2,7 +2,6 @@
 @{
     ViewData["Title"] = "Overview";
 
-    // Plan badge colour
     var planBadgeClass = Model.PlanCode switch
     {
         "FREE"    => "ov-plan-badge--free",
@@ -11,7 +10,6 @@
         _         => "ov-plan-badge--free"
     };
 
-    // Days-left urgency
     var daysClass = Model.DaysLeft <= 7  ? "ov-days--urgent"
                   : Model.DaysLeft <= 30 ? "ov-days--warning"
                   : "ov-days--ok";
@@ -24,21 +22,21 @@
             <i class="bi bi-stars"></i>
             <span>@Model.TenantName workspace</span>
         </div>
-        <h1 class="ov-banner-title">Welcome back — here's your overview</h1>
+        <h1 class="ov-banner-title">@Localizer["Welcome back — here's your overview"]</h1>
         <div class="ov-banner-actions">
             <a asp-controller="Stock" asp-action="StockIn" class="ov-btn-primary">
-                <i class="bi bi-plus-circle-fill"></i> Stock In
+                <i class="bi bi-plus-circle-fill"></i> @Localizer["Stock In"]
             </a>
             @if (Model.HasSales)
             {
             <a asp-controller="Sales" asp-action="Create" class="ov-btn-ghost">
-                <i class="bi bi-bag-plus-fill"></i> New Sale
+                <i class="bi bi-bag-plus-fill"></i> @Localizer["New Sale"]
             </a>
             }
             @if (Model.HasDashboard)
             {
             <a asp-controller="Dashboard" asp-action="Index" class="ov-btn-ghost">
-                <i class="bi bi-bar-chart-line-fill"></i> Dashboard
+                <i class="bi bi-bar-chart-line-fill"></i> @Localizer["Dashboard"]
             </a>
             }
         </div>
@@ -56,7 +54,7 @@
             </div>
             <div class="ov-metric-body">
                 <div class="ov-metric-val">@Model.TotalProducts</div>
-                <div class="ov-metric-lbl">Products</div>
+                <div class="ov-metric-lbl">@Localizer["Products"]</div>
             </div>
         </div>
 
@@ -66,7 +64,7 @@
             </div>
             <div class="ov-metric-body">
                 <div class="ov-metric-val">@Model.TotalVariants</div>
-                <div class="ov-metric-lbl">Variants</div>
+                <div class="ov-metric-lbl">@Localizer["Variants"]</div>
             </div>
         </div>
 
@@ -76,11 +74,11 @@
             </div>
             <div class="ov-metric-body">
                 <div class="ov-metric-val">@Model.LowStockCount</div>
-                <div class="ov-metric-lbl">Low Stock</div>
+                <div class="ov-metric-lbl">@Localizer["Low Stock"]</div>
             </div>
             @if (Model.LowStockCount > 0)
             {
-            <a asp-controller="Stock" asp-action="Inventory" class="ov-metric-action">View <i class="bi bi-arrow-right"></i></a>
+            <a asp-controller="Stock" asp-action="Inventory" class="ov-metric-action">@Localizer["View"] <i class="bi bi-arrow-right"></i></a>
             }
         </div>
     </div>
@@ -89,12 +87,12 @@
     <div class="ov-sub-card">
         <div class="ov-sub-head">
             <div>
-                <div class="ov-sub-label">Current Plan</div>
+                <div class="ov-sub-label">@Localizer["Current Plan"]</div>
                 <div class="ov-sub-name">
                     <span class="ov-plan-badge @planBadgeClass">@Model.PlanName</span>
                     @if (Model.IsTrial)
                     {
-                    <span class="ov-trial-badge">Trial</span>
+                    <span class="ov-trial-badge">@Localizer["Trial"]</span>
                     }
                 </div>
             </div>
@@ -103,11 +101,11 @@
                 <span>
                     @if (Model.IsSubscriptionActive)
                     {
-                        @(Model.DaysLeft == 0 ? "Expires today" : $"{Model.DaysLeft} days left")
+                        @(Model.DaysLeft == 0 ? Localizer["Expires today"].Value : $"{Model.DaysLeft} {Localizer["days left"].Value}")
                     }
                     else
                     {
-                        <text>No active plan</text>
+                        @Localizer["No active plan"]
                     }
                 </span>
             </div>
@@ -116,7 +114,7 @@
         <!-- Usage bars -->
         <div class="ov-usage-list">
             <div class="ov-usage-row">
-                <span class="ov-usage-lbl">Products</span>
+                <span class="ov-usage-lbl">@Localizer["Products"]</span>
                 <div class="ov-usage-bar-wrap">
                     <div class="ov-usage-bar" style="width:@(Model.ProductUsagePct)%"
                          data-pct="@Model.ProductUsagePct"></div>
@@ -124,7 +122,7 @@
                 <span class="ov-usage-num">@Model.ProductsCurrent / @(Model.ProductsMax?.ToString() ?? "∞")</span>
             </div>
             <div class="ov-usage-row">
-                <span class="ov-usage-lbl">Variants</span>
+                <span class="ov-usage-lbl">@Localizer["Variants"]</span>
                 <div class="ov-usage-bar-wrap">
                     <div class="ov-usage-bar" style="width:@(Model.VariantUsagePct)%"
                          data-pct="@Model.VariantUsagePct"></div>
@@ -132,7 +130,7 @@
                 <span class="ov-usage-num">@Model.VariantsCurrent / @(Model.VariantsMax?.ToString() ?? "∞")</span>
             </div>
             <div class="ov-usage-row">
-                <span class="ov-usage-lbl">Users</span>
+                <span class="ov-usage-lbl">@Localizer["Users"]</span>
                 <div class="ov-usage-bar-wrap">
                     <div class="ov-usage-bar" style="width:@(Model.UserUsagePct)%"
                          data-pct="@Model.UserUsagePct"></div>
@@ -145,43 +143,43 @@
 
 <!-- ══════════ QUICK ACTIONS ══════════ -->
 <div class="ov-section">
-    <div class="ov-section-title">Quick Actions</div>
+    <div class="ov-section-title">@Localizer["Quick Actions"]</div>
     <div class="ov-quick-grid">
         <a asp-controller="Products" asp-action="Create" class="ov-quick-btn">
             <i class="bi bi-plus-square-fill"></i>
-            <span>Add Product</span>
+            <span>@Localizer["Add Product"]</span>
         </a>
         <a asp-controller="ProductVariants" asp-action="Create" class="ov-quick-btn">
             <i class="bi bi-palette-fill"></i>
-            <span>Add Variant</span>
+            <span>@Localizer["Add Variant"]</span>
         </a>
         <a asp-controller="Stock" asp-action="StockIn" class="ov-quick-btn">
             <i class="bi bi-arrow-down-circle-fill"></i>
-            <span>Stock In</span>
+            <span>@Localizer["Stock In"]</span>
         </a>
         <a asp-controller="Stock" asp-action="StockOut" class="ov-quick-btn">
             <i class="bi bi-arrow-up-circle-fill"></i>
-            <span>Stock Out</span>
+            <span>@Localizer["Stock Out"]</span>
         </a>
         @if (Model.HasSales)
         {
         <a asp-controller="Sales" asp-action="Create" class="ov-quick-btn ov-quick-btn--accent">
             <i class="bi bi-bag-plus-fill"></i>
-            <span>New Sale</span>
+            <span>@Localizer["New Sale"]</span>
         </a>
         }
         @if (Model.HasCustomers)
         {
         <a asp-controller="Customer" asp-action="Index" class="ov-quick-btn">
             <i class="bi bi-people-fill"></i>
-            <span>Customers</span>
+            <span>@Localizer["Customers"]</span>
         </a>
         }
         @if (Model.HasFinance)
         {
         <a asp-controller="CashTransaction" asp-action="Create" class="ov-quick-btn">
             <i class="bi bi-wallet2"></i>
-            <span>Add Expense</span>
+            <span>@Localizer["Add Expense"]</span>
         </a>
         }
     </div>
@@ -193,10 +191,10 @@
 <div class="ov-upgrade-card">
     <div class="ov-upgrade-left">
         <div class="ov-upgrade-kicker">
-            <i class="bi bi-rocket-takeoff-fill"></i> Upgrade Available
+            <i class="bi bi-rocket-takeoff-fill"></i> @Localizer["Upgrade Available"]
         </div>
         <div class="ov-upgrade-title">
-            Unlock more with <strong>@Model.NextPlanName</strong>
+            @Localizer["Unlock more with"] <strong>@Model.NextPlanName</strong>
             @if (Model.NextPlanPrice.HasValue)
             {
             <span class="ov-upgrade-price">from $@Model.NextPlanPrice/mo</span>
@@ -216,7 +214,7 @@
         <a asp-controller="Account" asp-action="FeatureRequired"
            asp-route-feature="upgrade"
            class="ov-upgrade-btn">
-            Upgrade to @Model.NextPlanName
+            @Localizer["Upgrade Plan"]
             <i class="bi bi-arrow-right"></i>
         </a>
     </div>
@@ -226,9 +224,9 @@
 <!-- ══════════ RECENT ACTIVITY ══════════ -->
 <div class="ov-section">
     <div class="ov-section-header">
-        <div class="ov-section-title">Recent Inventory Activity</div>
+        <div class="ov-section-title">@Localizer["Recent Inventory Activity"]</div>
         <a asp-controller="Stock" asp-action="Inventory" class="ov-see-all">
-            See all <i class="bi bi-arrow-right"></i>
+            @Localizer["See all"] <i class="bi bi-arrow-right"></i>
         </a>
     </div>
 
@@ -236,7 +234,7 @@
     {
     <div class="ov-empty">
         <i class="bi bi-inbox"></i>
-        <p>No stock movements yet. Start by adding stock in.</p>
+        <p>@Localizer["No stock movements yet. Start by adding stock in."]</p>
     </div>
     }
     else

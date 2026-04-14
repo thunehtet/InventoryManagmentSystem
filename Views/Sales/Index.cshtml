@@ -4,9 +4,9 @@
     ViewData["Title"] = "Sales";
     var currency       = ViewData["Currency"] as string ?? "";
     var pg             = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel;
-    var hasSaleProfit  = (bool)(ViewBag.HasSaleProfit ?? false);
+    var hasSaleProfit  = (bool)(ViewBag.HasSaleProfit ?? false) && !User.IsInRole("Staff");
     var hasCustomers   = (bool)(ViewBag.HasCustomers  ?? false);
-    var colSpan        = 3 + (hasCustomers ? 1 : 0) + (hasSaleProfit ? 2 : 0); // Date + Revenue + Actions always
+    var colSpan        = 3 + (hasCustomers ? 1 : 0) + (hasSaleProfit ? 2 : 0);
 }
 
 <div class="product-index-shell">
@@ -14,21 +14,21 @@
         <div class="product-hero-content">
             <div class="hero-kicker">
                 <i class="bi bi-receipt"></i>
-                <span>Sales</span>
+                <span>@Localizer["Sales"]</span>
             </div>
-            <h1>Sales List</h1>
-            <p>Manage sales transactions and item details.</p>
+            <h1>@Localizer["Sales List"]</h1>
+            <p>@Localizer["Manage sales transactions and item details."]</p>
             <div class="hero-actions">
                 <a asp-action="Create" class="btn-modern-primary">
-                    <i class="bi bi-plus-circle"></i> Create Sale
+                    <i class="bi bi-plus-circle"></i> @Localizer["Create Sale"]
                 </a>
             </div>
         </div>
         <div class="product-hero-side">
             <div class="hero-stat-card">
                 <div class="hero-stat-icon"><i class="bi bi-bag-check-fill"></i></div>
-                <div class="hero-stat-title">Total Sales</div>
-                <div class="hero-stat-text">@(pg?.TotalCount ?? 0) transactions</div>
+                <div class="hero-stat-title">@Localizer["Total Sales"]</div>
+                <div class="hero-stat-text">@(pg?.TotalCount ?? 0) @Localizer["transactions"]</div>
             </div>
         </div>
     </div>
@@ -40,7 +40,7 @@
             <div class="filter-search-wrap">
                 <i class="bi bi-search filter-search-icon"></i>
                 <input type="text" name="search" value="@ViewBag.Search"
-                       class="filter-search-input" placeholder="Search by customer name…" autocomplete="off" />
+                       class="filter-search-input" placeholder="@Localizer["Search by customer name…"]" autocomplete="off" />
                 @if (!string.IsNullOrWhiteSpace(ViewBag.Search as string))
                 {
                     <a href="@Url.Action("Index", new { size = pg?.PageSize ?? 10 })" class="filter-clear-btn" title="Clear">
@@ -49,7 +49,7 @@
                 }
             </div>
             <button type="submit" class="filter-search-btn">
-                <i class="bi bi-search"></i> Search
+                <i class="bi bi-search"></i> @Localizer["Search"]
             </button>
         </form>
     </div>
@@ -60,15 +60,15 @@
             <table class="table-modern">
                 <thead>
                     <tr>
-                        <th>Sale Date</th>
-                        @if (hasCustomers) { <th>Customer</th> }
-                        <th>Revenue</th>
+                        <th>@Localizer["Sale Date"]</th>
+                        @if (hasCustomers) { <th>@Localizer["Customer"]</th> }
+                        <th>@Localizer["Revenue"]</th>
                         @if (hasSaleProfit)
                         {
-                            <th>Discount</th>
-                            <th>Profit</th>
+                            <th>@Localizer["Discount"]</th>
+                            <th>@Localizer["Profit"]</th>
                         }
-                        <th>Actions</th>
+                        <th>@Localizer["Actions"]</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -77,7 +77,7 @@
                         <tr>
                             <td colspan="@colSpan" class="empty-state">
                                 <i class="bi bi-inbox"></i>
-                                <div>@(string.IsNullOrWhiteSpace(ViewBag.Search as string) ? "No sales yet" : "No sales match your search")</div>
+                                <div>@(string.IsNullOrWhiteSpace(ViewBag.Search as string) ? Localizer["No sales yet"].Value : Localizer["No sales match your search"].Value)</div>
                             </td>
                         </tr>
                     }
@@ -99,7 +99,7 @@
                                         }
                                         else
                                         {
-                                            <span class="text-muted">Walk-in</span>
+                                            <span class="text-muted">@Localizer["Walk-in"]</span>
                                         }
                                     </td>
                                 }

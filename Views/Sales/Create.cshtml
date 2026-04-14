@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "New Sale";
+    bool isStaff = User.IsInRole("Staff");
 }
 
 <div class="sc-shell">
@@ -12,7 +13,7 @@
         <div class="sc-picker-head">
             <div class="sc-picker-title">
                 <i class="bi bi-grid-3x3-gap-fill"></i>
-                <span>Products</span>
+                <span>@Localizer["Products"]</span>
                 <span class="sc-chip" id="variantCount">—</span>
             </div>
             <!-- Product filter tabs (populated by JS) -->
@@ -21,7 +22,7 @@
             <div class="sc-search-wrap">
                 <i class="bi bi-search sc-search-icon"></i>
                 <input type="text" id="variantSearch"
-                       placeholder="Search SKU, color, size…"
+                       placeholder="@Localizer["Search SKU, color, size…"]"
                        class="sc-search-input" autocomplete="off" />
             </div>
         </div>
@@ -29,7 +30,7 @@
         <div class="sc-grid" id="variantGrid">
             <div class="sc-loading">
                 <div class="spinner-border spinner-border-sm" role="status"></div>
-                <span>Loading products…</span>
+                <span>@Localizer["Loading products…"]</span>
             </div>
         </div>
     </div>
@@ -39,7 +40,7 @@
 
         <div class="sc-order-head">
             <i class="bi bi-receipt-cutoff"></i>
-            <span>New Sale</span>
+            <span>@Localizer["New Sale"]</span>
         </div>
 
         <form asp-action="Create" method="post" id="saleForm" class="sc-form">
@@ -49,7 +50,7 @@
 
             <!-- Sale Date -->
             <div class="sc-field-group">
-                <label class="sc-label">Sale Date</label>
+                <label class="sc-label">@Localizer["Sale Date"]</label>
                 <input name="SaleDate" type="date" class="sc-input"
                        value="@DateTime.Today.ToString("yyyy-MM-dd")" required />
             </div>
@@ -58,9 +59,9 @@
             @if ((bool)(ViewBag.HasCustomers ?? false))
             {
             <div class="sc-field-group">
-                <label class="sc-label">Customer <span class="text-muted small">(optional)</span></label>
+                <label class="sc-label">@Localizer["Customer"] <span class="text-muted small">(@Localizer["optional"])</span></label>
                 <select name="CustomerId" class="sc-input">
-                    <option value="">— Walk-in / No customer —</option>
+                    <option value="">@Localizer["— Walk-in / No customer —"]</option>
                     @foreach (var c in (ViewBag.Customers as Microsoft.AspNetCore.Mvc.Rendering.SelectList ?? new Microsoft.AspNetCore.Mvc.Rendering.SelectList(Enumerable.Empty<object>())))
                     {
                         <option value="@c.Value">@c.Text</option>
@@ -69,7 +70,7 @@
                 <div style="margin-top:4px">
                     <a asp-controller="Customer" asp-action="Create" target="_blank"
                        style="font-size:12px;color:#6366f1;text-decoration:none">
-                        <i class="bi bi-person-plus-fill"></i> Add new customer
+                        <i class="bi bi-person-plus-fill"></i> @Localizer["Add new customer"]
                     </a>
                 </div>
             </div>
@@ -78,13 +79,13 @@
             <!-- Cart -->
             <div class="sc-cart-wrap">
                 <div class="sc-cart-head">
-                    <span class="sc-cart-title"><i class="bi bi-cart3"></i> Items</span>
+                    <span class="sc-cart-title"><i class="bi bi-cart3"></i> @Localizer["Items"]</span>
                     <span class="sc-cart-badge" id="cartBadge">0</span>
                 </div>
 
                 <div id="emptyCart" class="sc-empty">
                     <i class="bi bi-cart-dash"></i>
-                    <p>Click a product card to add items</p>
+                    <p>@Localizer["Click a product card to add items"]</p>
                 </div>
 
                 <div id="cartList" class="sc-cart-list"></div>
@@ -95,41 +96,43 @@
 
             <!-- Discount (optional) -->
             <div class="sc-field-group">
-                <label class="sc-label">Discount <span class="text-muted small">(optional)</span></label>
+                <label class="sc-label">@Localizer["Discount"] <span class="text-muted small">(@Localizer["optional"])</span></label>
                 <input name="Discount" id="discountInput" type="number" min="0" class="sc-input"
-                       placeholder="Enter discount amount (0 = no discount)" value="0" />
+                       placeholder="@Localizer["Enter discount amount (0 = no discount)"]" value="0" />
             </div>
 
             <!-- Totals -->
             <div class="sc-totals">
                 <div class="sc-total-row">
-                    <span class="sc-total-label">Subtotal</span>
+                    <span class="sc-total-label">@Localizer["Subtotal"]</span>
                     <span class="sc-total-val" id="sumRevenue">0</span>
                 </div>
                 <div class="sc-total-row" id="discountRow" style="display:none">
-                    <span class="sc-total-label">Discount</span>
+                    <span class="sc-total-label">@Localizer["Discount"]</span>
                     <span class="sc-total-val sc-cost" id="sumDiscount">0</span>
                 </div>
-                <div class="sc-total-row">
-                    <span class="sc-total-label">Revenue</span>
-                    <span class="sc-total-val" id="sumFinal">0</span>
-                </div>
-                <div class="sc-total-row">
-                    <span class="sc-total-label">Cost</span>
-                    <span class="sc-total-val sc-cost" id="sumCost">0</span>
-                </div>
+                @if (!isStaff)
+                {
+                    <div class="sc-total-row">
+                        <span class="sc-total-label">@Localizer["Cost"]</span>
+                        <span class="sc-total-val sc-cost" id="sumCost">0</span>
+                    </div>
+                }
+                @if (!isStaff)
+                {
                 <div class="sc-total-row sc-profit-row">
-                    <span class="sc-total-label">Profit</span>
+                    <span class="sc-total-label">@Localizer["Profit"]</span>
                     <span class="sc-total-val sc-profit" id="sumProfit">0</span>
                 </div>
+                }
             </div>
 
             <!-- Actions -->
             <div class="sc-form-footer">
                 <button type="submit" class="btn-modern-primary btn-modern-lg sc-submit">
-                    <i class="bi bi-check-circle-fill"></i> Save Sale
+                    <i class="bi bi-check-circle-fill"></i> @Localizer["Save Sale"]
                 </button>
-                <a asp-action="Index" class="btn-modern-outline btn-modern-lg">Cancel</a>
+                <a asp-action="Index" class="btn-modern-outline btn-modern-lg">@Localizer["Cancel"]</a>
             </div>
 
         </form>
@@ -138,6 +141,20 @@
 </div>
 
 @section Scripts {
+    <script>
+    window.salePageConfig = {
+        isStaff: @(isStaff ? "true" : "false"),
+        strings: {
+            loadFailed:   @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["Failed to load products. Please refresh."].Value)),
+            all:          @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["All"].Value)),
+            noProducts:   @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["No products found"].Value)),
+            outOfStock:   @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["Out of stock"].Value)),
+            left:         @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["left"].Value)),
+            price:        @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["Price"].Value)),
+            cartRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["Please add at least one product to the sale."].Value))
+        }
+    };
+    </script>
     <script src="~/js/sale-create.js" asp-append-version="true"></script>
 }
 

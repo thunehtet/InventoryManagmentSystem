@@ -1,9 +1,5 @@
-@using Microsoft.Extensions.Localization
-@using ClothInventoryApp.Resources
 @using ClothInventoryApp.Services.Feature
 @using ClothInventoryApp.Services.Tenant
-@using System.Globalization
-@inject IStringLocalizer<SharedResource> Localizer
 @inject IFeatureService FeatureService
 @inject ITenantProvider TenantProvider
 @{
@@ -324,6 +320,23 @@
                                 <i class="bi bi-gear"></i>
                                 @Localizer["Settings"]
                             </a>
+                            <div class="user-menu-divider"></div>
+                            <!-- Language switch — always accessible, including on mobile -->
+                            <div class="user-menu-lang-row">
+                                <i class="bi bi-translate"></i>
+                                <span>Language</span>
+                                <div class="user-menu-lang-btns">
+                                    <a asp-controller="Language" asp-action="Set"
+                                       asp-route-culture="en"
+                                       asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)"
+                                       class="umenu-lang @(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "en" ? "umenu-lang--active" : "")">EN</a>
+                                    <span class="user-menu-lang-sep">|</span>
+                                    <a asp-controller="Language" asp-action="Set"
+                                       asp-route-culture="my"
+                                       asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)"
+                                       class="umenu-lang @(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "my" ? "umenu-lang--active" : "")">MY</a>
+                                </div>
+                            </div>
                             <div class="user-menu-divider"></div>
                             <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
                                 @Html.AntiForgeryToken()
