@@ -15,5 +15,11 @@ namespace ClothInventoryApp.Services.Subscription
 
         /// <summary>True if tenant can add one more product under their active plan.</summary>
         Task<bool> CanAddProductAsync(Guid tenantId);
+
+        /// <summary>Returns (currentCount, planMax) for variants. planMax=null means unlimited.</summary>
+        Task<(int Current, int? Max)> GetVariantLimitAsync(Guid tenantId);
+
+        /// <summary>True if tenant can add one more variant under their active plan.</summary>
+        Task<bool> CanAddVariantAsync(Guid tenantId);
     }
 }

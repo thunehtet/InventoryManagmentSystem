@@ -1,6 +1,7 @@
 ﻿using ClothInventoryApp.Data;
 using ClothInventoryApp.Dto.ProductVariant;
 using ClothInventoryApp.Models;
+using ClothInventoryApp.Services.Subscription;
 using ClothInventoryApp.Services.Tenant;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +13,12 @@ namespace ClothInventoryApp.Controllers
     [Authorize]
     public class ProductVariantsController : TenantAwareController
     {
-        public ProductVariantsController(AppDbContext context, ITenantProvider tenantProvider)
+        private readonly ISubscriptionService _subscriptionService;
+
+        public ProductVariantsController(AppDbContext context, ITenantProvider tenantProvider, ISubscriptionService subscriptionService)
             : base(context, tenantProvider)
         {
+            _subscriptionService = subscriptionService;
         }
 
         public async Task<IActionResult> Index(string? search, int page = 1, int size = 10)
@@ -75,6 +79,14 @@ namespace ClothInventoryApp.Controllers
                 return View(dto);
             }
             var tenantId = _tenantProvider.GetTenantId();
+
+            if (!await _subscriptionService.CanAddVariantAsync(tenantId))
+            {
+                var (current, max) = await _subscriptionService.GetVariantLimitAsync(tenantId);
+                TempData["LimitError"] = $"Variant limit reached ({current}/{max}). Upgrade your plan to add more variants.";
+                return RedirectToAction(nameof(Index));
+            }
+
             var variant = new ProductVariant
             {
                 ProductId = dto.ProductId,

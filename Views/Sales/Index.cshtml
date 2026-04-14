@@ -2,8 +2,11 @@
 @model IEnumerable<ViewSaleDto>
 @{
     ViewData["Title"] = "Sales";
-    var currency = ViewData["Currency"] as string ?? "";
-    var pg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel;
+    var currency       = ViewData["Currency"] as string ?? "";
+    var pg             = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel;
+    var hasSaleProfit  = (bool)(ViewBag.HasSaleProfit ?? false);
+    var hasCustomers   = (bool)(ViewBag.HasCustomers  ?? false);
+    var colSpan        = 3 + (hasCustomers ? 1 : 0) + (hasSaleProfit ? 2 : 0); // Date + Revenue + Actions always
 }
 
 <div class="product-index-shell">
@@ -58,10 +61,13 @@
                 <thead>
                     <tr>
                         <th>Sale Date</th>
-                        <th>Customer</th>
+                        @if (hasCustomers) { <th>Customer</th> }
                         <th>Revenue</th>
-                        <th>Discount</th>
-                        <th>Profit</th>
+                        @if (hasSaleProfit)
+                        {
+                            <th>Discount</th>
+                            <th>Profit</th>
+                        }
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -69,7 +75,7 @@
                     @if (!Model.Any())
                     {
                         <tr>
-                            <td colspan="6" class="empty-state">
+                            <td colspan="@colSpan" class="empty-state">
                                 <i class="bi bi-inbox"></i>
                                 <div>@(string.IsNullOrWhiteSpace(ViewBag.Search as string) ? "No sales yet" : "No sales match your search")</div>
                             </td>
@@ -81,26 +87,32 @@
                         {
                             <tr>
                                 <td class="text-muted" style="font-size:0.875rem">@item.SaleDate.ToString("dd MMM yyyy")</td>
-                                <td>
-                                    @if (item.CustomerId.HasValue)
-                                    {
-                                        <a asp-controller="Customer" asp-action="Details" asp-route-id="@item.CustomerId"
-                                           style="color:#6366f1;text-decoration:none;font-weight:600">
-                                            <i class="bi bi-person-fill me-1"></i>@item.CustomerName
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">Walk-in</span>
-                                    }
-                                </td>
+                                @if (hasCustomers)
+                                {
+                                    <td>
+                                        @if (item.CustomerId.HasValue)
+                                        {
+                                            <a asp-controller="Customer" asp-action="Details" asp-route-id="@item.CustomerId"
+                                               style="color:#6366f1;text-decoration:none;font-weight:600">
+                                                <i class="bi bi-person-fill me-1"></i>@item.CustomerName
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Walk-in</span>
+                                        }
+                                    </td>
+                                }
                                 <td class="fw-semibold">@item.TotalAmount.ToString("N0") @currency</td>
-                                <td class="@(item.Discount > 0 ? "text-danger fw-semibold" : "text-muted")">
-                                    @(item.Discount > 0 ? "- " + item.Discount.ToString("N0") + " " + currency : "—")
-                                </td>
-                                <td class="@(item.TotalProfit >= 0 ? "qty-positive" : "qty-negative") fw-semibold">
-                                    @item.TotalProfit.ToString("N0") @currency
-                                </td>
+                                @if (hasSaleProfit)
+                                {
+                                    <td class="@(item.Discount > 0 ? "text-danger fw-semibold" : "text-muted")">
+                                        @(item.Discount > 0 ? "- " + item.Discount.ToString("N0") + " " + currency : "—")
+                                    </td>
+                                    <td class="@(item.TotalProfit >= 0 ? "qty-positive" : "qty-negative") fw-semibold">
+                                        @item.TotalProfit.ToString("N0") @currency
+                                    </td>
+                                }
                                 <td>
                                     <div class="table-actions">
                                         <a asp-action="Details" asp-route-id="@item.Id" class="action-btn action-btn-view" title="Details"><i class="bi bi-eye-fill"></i></a>

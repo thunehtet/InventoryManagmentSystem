@@ -1,131 +1,269 @@
-﻿@model ClothInventoryApp.Models.ViewModels.HomeOverviewViewModel
+@model ClothInventoryApp.Models.ViewModels.HomeOverviewViewModel
 @{
     ViewData["Title"] = "Overview";
+
+    // Plan badge colour
+    var planBadgeClass = Model.PlanCode switch
+    {
+        "FREE"    => "ov-plan-badge--free",
+        "STARTER" => "ov-plan-badge--starter",
+        "PRO"     => "ov-plan-badge--pro",
+        _         => "ov-plan-badge--free"
+    };
+
+    // Days-left urgency
+    var daysClass = Model.DaysLeft <= 7  ? "ov-days--urgent"
+                  : Model.DaysLeft <= 30 ? "ov-days--warning"
+                  : "ov-days--ok";
 }
 
-<div class="hero-modern">
-    <div class="hero-badge">
-        <i class="bi bi-stars"></i>
-        <span>@Model.TenantName workspace</span>
-    </div>
-
-    <h1 class="hero-title">Manage your clothing inventory in a cleaner, smarter way.</h1>
-
-    <p class="hero-text">
-        Track products, size and color variants, stock in and stock out, inventory movement,
-        and business reports from one beautiful dashboard.
-    </p>
-
-    <div class="hero-actions">
-        <a asp-controller="Dashboard" asp-action="Index" class="btn-modern-light">
-            Open Dashboard
-        </a>
-        <a asp-controller="Stock" asp-action="Inventory" class="btn-modern-glass">
-            View Inventory Log
-        </a>
+<!-- ══════════ WELCOME BANNER ══════════ -->
+<div class="ov-banner">
+    <div class="ov-banner-content">
+        <div class="ov-banner-greeting">
+            <i class="bi bi-stars"></i>
+            <span>@Model.TenantName workspace</span>
+        </div>
+        <h1 class="ov-banner-title">Welcome back — here's your overview</h1>
+        <div class="ov-banner-actions">
+            <a asp-controller="Stock" asp-action="StockIn" class="ov-btn-primary">
+                <i class="bi bi-plus-circle-fill"></i> Stock In
+            </a>
+            @if (Model.HasSales)
+            {
+            <a asp-controller="Sales" asp-action="Create" class="ov-btn-ghost">
+                <i class="bi bi-bag-plus-fill"></i> New Sale
+            </a>
+            }
+            @if (Model.HasDashboard)
+            {
+            <a asp-controller="Dashboard" asp-action="Index" class="ov-btn-ghost">
+                <i class="bi bi-bar-chart-line-fill"></i> Dashboard
+            </a>
+            }
+        </div>
     </div>
 </div>
 
-<div class="section-grid">
-    <div class="card-modern card-span-4 metric-card">
-        <div class="metric-icon">
-            <i class="bi bi-box-seam-fill"></i>
+<!-- ══════════ TOP ROW: Metrics + Subscription ══════════ -->
+<div class="ov-top-row">
+
+    <!-- Metric cards -->
+    <div class="ov-metrics">
+        <div class="ov-metric-card">
+            <div class="ov-metric-icon ov-icon--indigo">
+                <i class="bi bi-box-seam-fill"></i>
+            </div>
+            <div class="ov-metric-body">
+                <div class="ov-metric-val">@Model.TotalProducts</div>
+                <div class="ov-metric-lbl">Products</div>
+            </div>
         </div>
-        <div class="metric-label">Total Products</div>
-        <div class="metric-value">@Model.TotalProducts</div>
-        <div class="metric-sub">Across all categories</div>
-    </div>
 
-    <div class="card-modern card-span-4 metric-card">
-        <div class="metric-icon">
-            <i class="bi bi-palette-fill"></i>
+        <div class="ov-metric-card">
+            <div class="ov-metric-icon ov-icon--violet">
+                <i class="bi bi-palette-fill"></i>
+            </div>
+            <div class="ov-metric-body">
+                <div class="ov-metric-val">@Model.TotalVariants</div>
+                <div class="ov-metric-lbl">Variants</div>
+            </div>
         </div>
-        <div class="metric-label">Variants</div>
-        <div class="metric-value">@Model.TotalVariants</div>
-        <div class="metric-sub">Sizes and colors tracked</div>
-    </div>
 
-    <div class="card-modern card-span-4 metric-card">
-        <div class="metric-icon">
-            <i class="bi bi-exclamation-circle-fill"></i>
-        </div>
-        <div class="metric-label">Low Stock</div>
-        <div class="metric-value">@Model.LowStockCount</div>
-        <div class="metric-sub">Need replenishment soon</div>
-    </div>
-
-    <div class="card-modern card-span-8">
-        <h4 class="mb-3 fw-bold">Inventory trend</h4>
-        <div class="placeholder-chart"></div>
-    </div>
-
-    <div class="card-modern card-span-4">
-        <h4 class="mb-3 fw-bold">Quick actions</h4>
-
-        <div class="quick-links">
-            <a asp-controller="Products" asp-action="Create" class="quick-link-modern">
-                <i class="bi bi-plus-square-fill"></i>
-                <span>Add Product</span>
-            </a>
-
-            <a asp-controller="Stock" asp-action="StockIn" class="quick-link-modern">
-                <i class="bi bi-plus-circle-fill"></i>
-                <span>Stock In</span>
-            </a>
-
-            <a asp-controller="Stock" asp-action="StockOut" class="quick-link-modern">
-                <i class="bi bi-dash-circle-fill"></i>
-                <span>Stock Out</span>
-            </a>
-
-            <a asp-controller="Reports" asp-action="Index" class="quick-link-modern">
-                <i class="bi bi-file-earmark-bar-graph-fill"></i>
-                <span>Reports</span>
-            </a>
+        <div class="ov-metric-card @(Model.LowStockCount > 0 ? "ov-metric-card--alert" : "")">
+            <div class="ov-metric-icon @(Model.LowStockCount > 0 ? "ov-icon--red" : "ov-icon--green")">
+                <i class="bi bi-@(Model.LowStockCount > 0 ? "exclamation-circle-fill" : "check-circle-fill")"></i>
+            </div>
+            <div class="ov-metric-body">
+                <div class="ov-metric-val">@Model.LowStockCount</div>
+                <div class="ov-metric-lbl">Low Stock</div>
+            </div>
+            @if (Model.LowStockCount > 0)
+            {
+            <a asp-controller="Stock" asp-action="Inventory" class="ov-metric-action">View <i class="bi bi-arrow-right"></i></a>
+            }
         </div>
     </div>
 
-    <div class="card-modern card-span-12">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0 fw-bold">Recent inventory activity</h4>
-            <span class="text-secondary">Latest updates</span>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table-modern">
-                <thead>
-                    <tr>
-                        <th>SKU</th>
-                        <th>Product</th>
-                        <th>Action</th>
-                        <th>Qty</th>
-                        <th>Date</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.RecentActivities)
+    <!-- Subscription card -->
+    <div class="ov-sub-card">
+        <div class="ov-sub-head">
+            <div>
+                <div class="ov-sub-label">Current Plan</div>
+                <div class="ov-sub-name">
+                    <span class="ov-plan-badge @planBadgeClass">@Model.PlanName</span>
+                    @if (Model.IsTrial)
                     {
-                        <tr>
-                            <td>@item.SKU</td>
-                            <td>@item.ProductName</td>
-                            <td>@item.Action</td>
-                            <td>@item.QtyText</td>
-                            <td>@item.MovementDate.ToString("yyyy-MM-dd")</td>
-                            <td>
-                                @if (item.Status == "Completed")
-                                {
-                                    <span class="badge-soft success">@item.Status</span>
-                                }
-                                else
-                                {
-                                    <span class="badge-soft warning">@item.Status</span>
-                                }
-                            </td>
-                        </tr>
+                    <span class="ov-trial-badge">Trial</span>
                     }
-                </tbody>
-            </table>
+                </div>
+            </div>
+            <div class="ov-sub-days @daysClass">
+                <i class="bi bi-clock-fill"></i>
+                <span>
+                    @if (Model.IsSubscriptionActive)
+                    {
+                        @(Model.DaysLeft == 0 ? "Expires today" : $"{Model.DaysLeft} days left")
+                    }
+                    else
+                    {
+                        <text>No active plan</text>
+                    }
+                </span>
+            </div>
+        </div>
+
+        <!-- Usage bars -->
+        <div class="ov-usage-list">
+            <div class="ov-usage-row">
+                <span class="ov-usage-lbl">Products</span>
+                <div class="ov-usage-bar-wrap">
+                    <div class="ov-usage-bar" style="width:@(Model.ProductUsagePct)%"
+                         data-pct="@Model.ProductUsagePct"></div>
+                </div>
+                <span class="ov-usage-num">@Model.ProductsCurrent / @(Model.ProductsMax?.ToString() ?? "∞")</span>
+            </div>
+            <div class="ov-usage-row">
+                <span class="ov-usage-lbl">Variants</span>
+                <div class="ov-usage-bar-wrap">
+                    <div class="ov-usage-bar" style="width:@(Model.VariantUsagePct)%"
+                         data-pct="@Model.VariantUsagePct"></div>
+                </div>
+                <span class="ov-usage-num">@Model.VariantsCurrent / @(Model.VariantsMax?.ToString() ?? "∞")</span>
+            </div>
+            <div class="ov-usage-row">
+                <span class="ov-usage-lbl">Users</span>
+                <div class="ov-usage-bar-wrap">
+                    <div class="ov-usage-bar" style="width:@(Model.UserUsagePct)%"
+                         data-pct="@Model.UserUsagePct"></div>
+                </div>
+                <span class="ov-usage-num">@Model.UsersCurrent / @(Model.UsersMax?.ToString() ?? "∞")</span>
+            </div>
         </div>
     </div>
 </div>
+
+<!-- ══════════ QUICK ACTIONS ══════════ -->
+<div class="ov-section">
+    <div class="ov-section-title">Quick Actions</div>
+    <div class="ov-quick-grid">
+        <a asp-controller="Products" asp-action="Create" class="ov-quick-btn">
+            <i class="bi bi-plus-square-fill"></i>
+            <span>Add Product</span>
+        </a>
+        <a asp-controller="ProductVariants" asp-action="Create" class="ov-quick-btn">
+            <i class="bi bi-palette-fill"></i>
+            <span>Add Variant</span>
+        </a>
+        <a asp-controller="Stock" asp-action="StockIn" class="ov-quick-btn">
+            <i class="bi bi-arrow-down-circle-fill"></i>
+            <span>Stock In</span>
+        </a>
+        <a asp-controller="Stock" asp-action="StockOut" class="ov-quick-btn">
+            <i class="bi bi-arrow-up-circle-fill"></i>
+            <span>Stock Out</span>
+        </a>
+        @if (Model.HasSales)
+        {
+        <a asp-controller="Sales" asp-action="Create" class="ov-quick-btn ov-quick-btn--accent">
+            <i class="bi bi-bag-plus-fill"></i>
+            <span>New Sale</span>
+        </a>
+        }
+        @if (Model.HasCustomers)
+        {
+        <a asp-controller="Customer" asp-action="Index" class="ov-quick-btn">
+            <i class="bi bi-people-fill"></i>
+            <span>Customers</span>
+        </a>
+        }
+        @if (Model.HasFinance)
+        {
+        <a asp-controller="CashTransaction" asp-action="Create" class="ov-quick-btn">
+            <i class="bi bi-wallet2"></i>
+            <span>Add Expense</span>
+        </a>
+        }
+    </div>
+</div>
+
+<!-- ══════════ UPGRADE CTA ══════════ -->
+@if (Model.NextPlanName != null && Model.UpgradeFeatures.Any())
+{
+<div class="ov-upgrade-card">
+    <div class="ov-upgrade-left">
+        <div class="ov-upgrade-kicker">
+            <i class="bi bi-rocket-takeoff-fill"></i> Upgrade Available
+        </div>
+        <div class="ov-upgrade-title">
+            Unlock more with <strong>@Model.NextPlanName</strong>
+            @if (Model.NextPlanPrice.HasValue)
+            {
+            <span class="ov-upgrade-price">from $@Model.NextPlanPrice/mo</span>
+            }
+        </div>
+        <div class="ov-upgrade-features">
+            @foreach (var f in Model.UpgradeFeatures)
+            {
+            <div class="ov-upgrade-feat">
+                <i class="bi @f.Icon"></i>
+                <span>@f.Label</span>
+            </div>
+            }
+        </div>
+    </div>
+    <div class="ov-upgrade-right">
+        <a asp-controller="Account" asp-action="FeatureRequired"
+           asp-route-feature="upgrade"
+           class="ov-upgrade-btn">
+            Upgrade to @Model.NextPlanName
+            <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+</div>
+}
+
+<!-- ══════════ RECENT ACTIVITY ══════════ -->
+<div class="ov-section">
+    <div class="ov-section-header">
+        <div class="ov-section-title">Recent Inventory Activity</div>
+        <a asp-controller="Stock" asp-action="Inventory" class="ov-see-all">
+            See all <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+
+    @if (!Model.RecentActivities.Any())
+    {
+    <div class="ov-empty">
+        <i class="bi bi-inbox"></i>
+        <p>No stock movements yet. Start by adding stock in.</p>
+    </div>
+    }
+    else
+    {
+    <div class="ov-activity-list">
+        @foreach (var item in Model.RecentActivities)
+        {
+        var isIn  = item.Action == "IN";
+        var isOut = item.Action == "OUT";
+        <div class="ov-activity-row">
+            <div class="ov-act-icon @(isIn ? "ov-act--in" : isOut ? "ov-act--out" : "ov-act--adj")">
+                <i class="bi bi-@(isIn ? "arrow-down-circle-fill" : isOut ? "arrow-up-circle-fill" : "pencil-fill")"></i>
+            </div>
+            <div class="ov-act-body">
+                <div class="ov-act-name">@item.ProductName</div>
+                <div class="ov-act-sku">@item.SKU</div>
+            </div>
+            <div class="ov-act-right">
+                <div class="ov-act-qty @(isIn ? "ov-qty--in" : "ov-qty--out")">@item.QtyText</div>
+                <div class="ov-act-date">@item.MovementDate.ToString("dd MMM")</div>
+            </div>
+        </div>
+        }
+    </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/overview.css" asp-append-version="true" />
+}

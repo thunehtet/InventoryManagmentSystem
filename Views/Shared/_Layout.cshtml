@@ -7,15 +7,19 @@
 @inject IFeatureService FeatureService
 @inject ITenantProvider TenantProvider
 @{
-    bool hasSales = false, hasFinance = false, hasTextiles = false;
+    bool hasSales = false, hasFinance = false, hasTextiles = false,
+         hasCustomers = false, hasDashboard = false, hasSaleProfit = false;
     if (!User.IsInRole("SuperAdmin") && User.Identity?.IsAuthenticated == true)
     {
         try
         {
-            var _tid = TenantProvider.GetTenantId();
-            hasSales    = await FeatureService.HasFeatureAsync(_tid, "sales");
-            hasFinance  = await FeatureService.HasFeatureAsync(_tid, "finance");
-            hasTextiles = await FeatureService.HasFeatureAsync(_tid, "textiles");
+            var _tid    = TenantProvider.GetTenantId();
+            hasSales      = await FeatureService.HasFeatureAsync(_tid, "sales");
+            hasSaleProfit = await FeatureService.HasFeatureAsync(_tid, "sale_profit");
+            hasCustomers  = await FeatureService.HasFeatureAsync(_tid, "customers");
+            hasDashboard  = await FeatureService.HasFeatureAsync(_tid, "dashboard");
+            hasFinance    = await FeatureService.HasFeatureAsync(_tid, "finance");
+            hasTextiles   = await FeatureService.HasFeatureAsync(_tid, "textiles");
         }
         catch { }
     }
@@ -126,10 +130,21 @@
 
                 @if (User.IsInRole("Admin"))
                 {
+                @if (hasDashboard)
+                {
                 <a asp-controller="Dashboard" asp-action="Index" class="nav-link-modern">
                     <i class="bi bi-bar-chart-line-fill"></i>
                     <span>@Localizer["Dashboard"]</span>
                 </a>
+                }
+                else
+                {
+                <span class="nav-link-modern nav-link-locked" title="Upgrade to Pro">
+                    <i class="bi bi-bar-chart-line-fill"></i>
+                    <span>@Localizer["Dashboard"]</span>
+                    <i class="bi bi-lock-fill ms-auto nav-lock-icon"></i>
+                </span>
+                }
 
                 @if (hasFinance)
                 {
@@ -204,10 +219,21 @@
                 </span>
                 }
 
+                @if (hasCustomers)
+                {
                 <a asp-controller="Customer" asp-action="Index" class="nav-link-modern">
                     <i class="bi bi-people-fill"></i>
                     <span>@Localizer["Customers"]</span>
                 </a>
+                }
+                else
+                {
+                <span class="nav-link-modern nav-link-locked" title="Upgrade to Starter">
+                    <i class="bi bi-people-fill"></i>
+                    <span>@Localizer["Customers"]</span>
+                    <i class="bi bi-lock-fill ms-auto nav-lock-icon"></i>
+                </span>
+                }
 
                 @if (User.IsInRole("Admin"))
                 {
