@@ -1,4 +1,4 @@
-/* ═══════════════════════════════════════════════════════════════
+﻿/* ═══════════════════════════════════════════════════════════════
    StockEasy — Landing Page Styles
    ═══════════════════════════════════════════════════════════════ */
 
@@ -274,6 +274,49 @@ a  { text-decoration: none; color: inherit; }
     font-weight: 600;
     color: #a5b4fc;
     margin-bottom: 24px;
+}
+
+.promo-marquee {
+    position: relative;
+    max-width: 680px;
+    overflow: hidden;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.16);
+    background: rgba(255,255,255,.08);
+    box-shadow: 0 12px 36px rgba(15,23,42,.16);
+    margin: 0 0 22px;
+}
+
+.promo-marquee-track {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    width: max-content;
+    min-width: 100%;
+    padding: 10px 14px;
+    animation: promo-slide 24s linear infinite;
+}
+
+.promo-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: rgba(15,23,42,.28);
+    color: rgba(255,255,255,.92);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.promo-pill i {
+    color: #fbbf24;
+}
+
+@keyframes promo-slide {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
 }
 
 .hero-badge-dot {
@@ -1531,4 +1574,5 @@ textarea.form-input { resize: vertical; min-height: 110px; }
 }
 
 .footer-col { }
+
 
