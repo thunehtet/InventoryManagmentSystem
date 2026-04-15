@@ -4,6 +4,7 @@ using ClothInventoryApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClothInventoryApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260415033906_MakeVariantSkuUniquePerTenant")]
+    partial class MakeVariantSkuUniquePerTenant
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -242,47 +245,6 @@ namespace ClothInventoryApp.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("ClothInventoryApp.Models.CustomerInviteLink", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<Guid?>("CustomerId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("varchar(64)");
-
-                    b.Property<DateTime?>("UsedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("Token")
-                        .IsUnique();
-
-                    b.HasIndex("TenantId", "ExpiresAt");
-
-                    b.ToTable("CustomerInviteLinks");
-                });
-
             modelBuilder.Entity("ClothInventoryApp.Models.Feature", b =>
                 {
                     b.Property<Guid>("Id")
@@ -468,9 +430,6 @@ namespace ClothInventoryApp.Migrations
                     b.Property<int>("Discount")
                         .HasColumnType("int");
 
-                    b.Property<string>("PublicReceiptToken")
-                        .HasColumnType("varchar(255)");
-
                     b.Property<DateTime>("SaleDate")
                         .HasColumnType("datetime(6)");
 
@@ -486,9 +445,6 @@ namespace ClothInventoryApp.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
-
-                    b.HasIndex("PublicReceiptToken")
-                        .IsUnique();
 
                     b.HasIndex("TenantId");
 
@@ -1025,24 +981,6 @@ namespace ClothInventoryApp.Migrations
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Tenant");
-                });
-
-            modelBuilder.Entity("ClothInventoryApp.Models.CustomerInviteLink", b =>
-                {
-                    b.HasOne("ClothInventoryApp.Models.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("ClothInventoryApp.Models.Tenant", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
 
                     b.Navigation("Tenant");
                 });

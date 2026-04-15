@@ -7,48 +7,27 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Registered! — @tenantName</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #f1f5f9;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-        }
-        .card {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0,0,0,.08);
-            padding: 48px 40px;
-            text-align: center;
-            max-width: 400px;
-            width: 100%;
-        }
-        .check {
-            width: 64px;
-            height: 64px;
-            background: #d1fae5;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 28px;
-        }
-        h1 { font-size: 22px; font-weight: 700; color: #0f172a; margin-bottom: 10px; }
-        p  { font-size: 14px; color: #64748b; line-height: 1.6; }
-    </style>
+    <title>Registered! - @tenantName</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/public-shared.css" asp-append-version="true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Myanmar:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="card">
-        <div class="check">&#10003;</div>
-        <h1>You're registered!</h1>
-        <p>Thanks for registering with <strong>@tenantName</strong>.<br>Your details have been saved.</p>
+<body class="public-page public-page--success">
+    <div class="public-shell public-shell--centered">
+        <div class="public-card public-card--compact public-card--centered">
+            <div class="public-check-icon">
+                <i class="bi bi-check-lg"></i>
+            </div>
+            <h1 class="public-card-title">You're registered!</h1>
+            <p class="public-card-subtitle">
+                Thanks for registering with <strong>@tenantName</strong>.<br />
+                Your details have been saved.
+            </p>
+        </div>
     </div>
 </body>
 </html>

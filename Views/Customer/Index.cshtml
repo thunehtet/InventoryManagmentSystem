@@ -4,9 +4,10 @@
     ViewData["Title"] = "Customers";
     var currency = ViewData["Currency"] as string ?? "";
     var pg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel;
+    var inviteLinks = ViewBag.InviteLinks as List<CustomerInviteLinkDto> ?? new();
 }
 
-<div class="product-index-shell">
+<div class="product-index-shell customer-page-shell">
     <div class="product-hero">
         <div class="product-hero-content">
             <div class="hero-kicker">
@@ -14,13 +15,19 @@
                 <span>Customers</span>
             </div>
             <h1>Customer List</h1>
-            <p>Manage your customer records and purchase history.</p>
+            <p>Manage your customer records, purchase history, and one-time registration links.</p>
             <div class="hero-actions">
                 @if (User.IsInRole("Admin"))
                 {
                     <a asp-action="Create" class="btn-modern-primary">
                         <i class="bi bi-person-plus-fill"></i> Add Customer
                     </a>
+                    <form asp-action="CreateInviteLink" method="post" class="customer-inline-form">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn-modern-outline">
+                            <i class="bi bi-link-45deg"></i> Create Share Link
+                        </button>
+                    </form>
                 }
             </div>
         </div>
@@ -41,14 +48,67 @@
         </div>
     }
 
-    <!-- FILTER BAR -->
+    <section class="customer-share-card">
+        <div class="customer-share-card__header">
+            <div>
+                <h2>Customer Share Links</h2>
+                <p>Each link is tenant-isolated, expires after 7 days, and becomes invalid after one registration.</p>
+            </div>
+        </div>
+
+        @if (!inviteLinks.Any())
+        {
+            <div class="customer-share-empty">
+                <i class="bi bi-link-45deg"></i>
+                <div>No share links created yet.</div>
+            </div>
+        }
+        else
+        {
+            <div class="customer-share-list">
+                @foreach (var link in inviteLinks)
+                {
+                    var statusClass = link.IsUsed ? "used" : link.IsExpired ? "expired" : link.IsActive ? "active" : "revoked";
+                    var statusText = link.IsUsed ? $"Used by {link.CustomerName ?? "customer"}" :
+                        link.IsExpired ? "Expired" :
+                        link.IsActive ? "Active" : "Revoked";
+
+                    <article class="customer-share-item">
+                        <div class="customer-share-item__main">
+                            <div class="customer-share-item__meta">
+                                <span class="customer-share-status customer-share-status--@statusClass">@statusText</span>
+                                <span>Expires @link.ExpiresAt.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")</span>
+                            </div>
+                            <div class="customer-share-item__url">@link.Url</div>
+                        </div>
+                        <div class="customer-share-item__actions">
+                            <button type="button" class="action-btn action-btn-view" title="Copy link" data-copy-text="@link.Url">
+                                <i class="bi bi-copy"></i>
+                            </button>
+                            @if (!link.IsUsed && !link.IsExpired && link.IsActive)
+                            {
+                                <form asp-action="RevokeInviteLink" method="post" class="customer-inline-form">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@link.Id" />
+                                    <button type="submit" class="action-btn action-btn-delete" title="Revoke">
+                                        <i class="bi bi-slash-circle"></i>
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+    </section>
+
     <div class="list-filter-bar">
         <form method="get" asp-action="Index" class="filter-form">
             @if (pg != null) { <input type="hidden" name="size" value="@pg.PageSize" /> }
             <div class="filter-search-wrap">
                 <i class="bi bi-search filter-search-icon"></i>
                 <input type="text" name="search" value="@ViewBag.Search"
-                       class="filter-search-input" placeholder="Search name, phone, Facebook, email…" autocomplete="off" />
+                       class="filter-search-input" placeholder="Search name, phone, Facebook, email..." autocomplete="off" />
                 @if (!string.IsNullOrWhiteSpace(ViewBag.Search as string))
                 {
                     <a href="@Url.Action("Index", new { size = pg?.PageSize ?? 10 })" class="filter-clear-btn" title="Clear">
@@ -62,7 +122,6 @@
         </form>
     </div>
 
-    <!-- TABLE CARD -->
     <div class="product-table-card">
         <div class="table-responsive-modern">
             <table class="table-modern">
@@ -97,21 +156,21 @@
                         {
                             <tr>
                                 <td>
-                                    <div class="fw-semibold" style="color:#0f172a">@c.Name</div>
+                                    <div class="customer-name">@c.Name</div>
                                     @if (!string.IsNullOrEmpty(c.Email))
                                     {
-                                        <div style="font-size:12px;color:#94a3b8">@c.Email</div>
+                                        <div class="customer-email">@c.Email</div>
                                     }
                                 </td>
-                                <td class="text-muted">@(c.Phone ?? "—")</td>
+                                <td class="text-muted">@(c.Phone ?? "-")</td>
                                 <td>
                                     @if (!string.IsNullOrEmpty(c.FacebookAccount))
                                     {
-                                        <span class="sc-tag" style="background:#e8f0fe;color:#1a56db;padding:3px 8px;border-radius:6px;font-size:0.8rem">
+                                        <span class="customer-social-tag">
                                             <i class="bi bi-facebook me-1"></i>@c.FacebookAccount
                                         </span>
                                     }
-                                    else { <span class="text-muted">—</span> }
+                                    else { <span class="text-muted">-</span> }
                                 </td>
                                 <td class="fw-semibold">@c.TotalSales</td>
                                 <td class="fw-semibold">@c.TotalRevenue.ToString("N0") @currency</td>
@@ -148,5 +207,9 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/pages/product-index.css" />
-    <link rel="stylesheet" href="~/css/pages/sale-create.css" />
+    <link rel="stylesheet" href="~/css/pages/customer-share.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script src="~/js/public-share.js" asp-append-version="true"></script>
 }

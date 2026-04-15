@@ -50,6 +50,7 @@ namespace ClothInventoryApp.Data
         public DbSet<TenantFeatureOverride> TenantFeatureOverrides => Set<TenantFeatureOverride>();
         public DbSet<ContactInquiry> ContactInquiries => Set<ContactInquiry>();
         public DbSet<PastSubscription> PastSubscriptions => Set<PastSubscription>();
+        public DbSet<CustomerInviteLink> CustomerInviteLinks => Set<CustomerInviteLink>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -79,11 +80,26 @@ namespace ClothInventoryApp.Data
             modelBuilder.Entity<Customer>()
                 .HasQueryFilter(x => x.TenantId == CurrentTenantId);
 
+            modelBuilder.Entity<CustomerInviteLink>()
+                .HasQueryFilter(x => x.TenantId == CurrentTenantId);
+
             modelBuilder.Entity<Customer>()
                 .HasOne(c => c.Tenant)
                 .WithMany()
                 .HasForeignKey(c => c.TenantId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<CustomerInviteLink>()
+                .HasOne(x => x.Tenant)
+                .WithMany()
+                .HasForeignKey(x => x.TenantId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CustomerInviteLink>()
+                .HasOne(x => x.Customer)
+                .WithMany()
+                .HasForeignKey(x => x.CustomerId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Sale>()
                 .HasOne(s => s.Customer)
@@ -92,8 +108,19 @@ namespace ClothInventoryApp.Data
                 .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<ProductVariant>()
-                .HasIndex(v => v.SKU)
+                .HasIndex(v => new { v.TenantId, v.SKU })
                 .IsUnique();
+
+            modelBuilder.Entity<Sale>()
+                .HasIndex(x => x.PublicReceiptToken)
+                .IsUnique();
+
+            modelBuilder.Entity<CustomerInviteLink>()
+                .HasIndex(x => x.Token)
+                .IsUnique();
+
+            modelBuilder.Entity<CustomerInviteLink>()
+                .HasIndex(x => new { x.TenantId, x.ExpiresAt });
 
             modelBuilder.Entity<StockMovement>()
                 .Property(x => x.MovementType)

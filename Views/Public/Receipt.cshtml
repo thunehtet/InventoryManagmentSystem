@@ -1,0 +1,111 @@
+@using ClothInventoryApp.Dto.Sale
+@model ViewSaleDto
+@{
+    Layout = null;
+    var tenantName = ViewBag.TenantName as string ?? "Shop";
+    var tenantPhone = ViewBag.TenantPhone as string;
+    var tenantEmail = ViewBag.TenantEmail as string;
+    var currency = ViewBag.Currency as string ?? "";
+    var receiptUrl = ViewBag.ReceiptUrl as string ?? "";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Receipt - @tenantName</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/public-shared.css" asp-append-version="true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Myanmar:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="public-page public-page--receipt">
+    <div class="public-shell">
+        <article class="receipt-card">
+            <header class="receipt-header">
+                <div>
+                    <div class="receipt-kicker">Shared Receipt</div>
+                    <h1 class="receipt-title">@tenantName</h1>
+                    <div class="receipt-meta">
+                        @if (!string.IsNullOrWhiteSpace(tenantPhone))
+                        {
+                            <span><i class="bi bi-telephone"></i> @tenantPhone</span>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(tenantEmail))
+                        {
+                            <span><i class="bi bi-envelope"></i> @tenantEmail</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="receipt-date-block">
+                    <div class="receipt-label">Date</div>
+                    <div class="receipt-date">@Model.SaleDate.ToString("dd MMM yyyy")</div>
+                </div>
+            </header>
+
+            <section class="receipt-share">
+                <button type="button" class="public-btn public-btn--primary" data-share-url="@receiptUrl" data-share-title="Receipt from @tenantName">
+                    <i class="bi bi-share-fill"></i>
+                    <span>Share Receipt</span>
+                </button>
+                <button type="button" class="public-btn public-btn--ghost" data-copy-text="@receiptUrl">
+                    <i class="bi bi-link-45deg"></i>
+                    <span>Copy Link</span>
+                </button>
+                <a class="public-btn public-btn--ghost" href="https://www.facebook.com/sharer/sharer.php?u=@Uri.EscapeDataString(receiptUrl)" target="_blank" rel="noopener noreferrer">
+                    <i class="bi bi-messenger"></i>
+                    <span>Messenger</span>
+                </a>
+                <a class="public-btn public-btn--ghost" href="viber://forward?text=@Uri.EscapeDataString(receiptUrl)" target="_blank" rel="noopener noreferrer">
+                    <i class="bi bi-chat-dots-fill"></i>
+                    <span>Viber</span>
+                </a>
+            </section>
+
+            <section class="receipt-table-wrap">
+                <table class="receipt-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th class="receipt-num">Qty</th>
+                            <th class="receipt-num">Price</th>
+                            <th class="receipt-num">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td class="receipt-product-name">@item.ProductVariantName</td>
+                                <td class="receipt-num">@item.Quantity</td>
+                                <td class="receipt-num">@item.UnitPrice.ToString("N0") @currency</td>
+                                <td class="receipt-num">@item.LineTotal.ToString("N0") @currency</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="receipt-total-box">
+                @if (Model.Discount > 0)
+                {
+                    <div class="receipt-total-row">
+                        <span>Discount</span>
+                        <span>- @Model.Discount.ToString("N0") @currency</span>
+                    </div>
+                }
+                <div class="receipt-total-row receipt-total-row--final">
+                    <span>Total</span>
+                    <span>@Model.TotalAmount.ToString("N0") @currency</span>
+                </div>
+            </section>
+        </article>
+    </div>
+
+    <script src="~/js/public-share.js" asp-append-version="true"></script>
+</body>
+</html>

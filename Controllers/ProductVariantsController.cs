@@ -80,6 +80,15 @@ namespace ClothInventoryApp.Controllers
             }
             var tenantId = _tenantProvider.GetTenantId();
 
+            var skuExists = await _context.ProductVariants
+                .AnyAsync(v => v.TenantId == tenantId && v.SKU == dto.SKU);
+            if (skuExists)
+            {
+                ModelState.AddModelError(nameof(dto.SKU), "This SKU already exists in your workspace.");
+                await LoadProductsDropDown();
+                return View(dto);
+            }
+
             if (!await _subscriptionService.CanAddVariantAsync(tenantId))
             {
                 var (current, max) = await _subscriptionService.GetVariantLimitAsync(tenantId);
@@ -137,6 +146,16 @@ namespace ClothInventoryApp.Controllers
         {
             if (!ModelState.IsValid)
             {
+                await LoadProductsDropDown();
+                return View(dto);
+            }
+
+            var tenantId = _tenantProvider.GetTenantId();
+            var skuExists = await _context.ProductVariants
+                .AnyAsync(v => v.TenantId == tenantId && v.SKU == dto.SKU && v.Id != dto.Id);
+            if (skuExists)
+            {
+                ModelState.AddModelError(nameof(dto.SKU), "This SKU already exists in your workspace.");
                 await LoadProductsDropDown();
                 return View(dto);
             }

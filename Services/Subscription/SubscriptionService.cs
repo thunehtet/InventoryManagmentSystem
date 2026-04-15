@@ -42,7 +42,9 @@ namespace ClothInventoryApp.Services.Subscription
         public async Task<(int Current, int? Max)> GetProductLimitAsync(Guid tenantId)
         {
             var plan = await GetActivePlanAsync(tenantId);
-            var current = await _context.Products.CountAsync();  // query filter scopes to tenant
+            var current = await _context.Products
+                .Where(p => p.TenantId == tenantId)
+                .CountAsync();
             return (current, plan?.MaxProducts);
         }
 
@@ -61,7 +63,9 @@ namespace ClothInventoryApp.Services.Subscription
         public async Task<(int Current, int? Max)> GetVariantLimitAsync(Guid tenantId)
         {
             var plan = await GetActivePlanAsync(tenantId);
-            var current = await _context.ProductVariants.CountAsync(); // query filter scopes to tenant
+            var current = await _context.ProductVariants
+                .Where(v => v.TenantId == tenantId)
+                .CountAsync();
             return (current, plan?.MaxVariants);
         }
 

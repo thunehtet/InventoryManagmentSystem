@@ -11,6 +11,7 @@
         public string? CustomerName { get; set; }
         public string? CustomerPhone { get; set; }
         public string? CustomerAddress { get; set; }
+        public string? PublicReceiptUrl { get; set; }
         public List<ViewSaleItemDto> Items { get; set; } = new();
     }
 }

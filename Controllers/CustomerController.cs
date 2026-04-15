@@ -6,6 +6,7 @@ using ClothInventoryApp.Services.Tenant;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 
 namespace ClothInventoryApp.Controllers
 {
@@ -60,6 +61,31 @@ namespace ClothInventoryApp.Controllers
                 Action = nameof(Index),
                 Extra = new() { ["search"] = search }
             };
+
+            ViewBag.InviteLinks = await _context.CustomerInviteLinks
+                .AsNoTracking()
+                .Include(x => x.Customer)
+                .OrderByDescending(x => x.CreatedAt)
+                .Take(5)
+                .Select(x => new CustomerInviteLinkDto
+                {
+                    Id = x.Id,
+                    Token = x.Token,
+                    Url = Url.Action(
+                        "RegisterByInvite",
+                        "Public",
+                        new { token = x.Token },
+                        Request.Scheme)!,
+                    ExpiresAt = x.ExpiresAt,
+                    IsActive = x.IsActive,
+                    IsExpired = x.ExpiresAt <= DateTime.UtcNow,
+                    IsUsed = x.UsedAt != null,
+                    CreatedAt = x.CreatedAt,
+                    UsedAt = x.UsedAt,
+                    CustomerName = x.Customer != null ? x.Customer.Name : null
+                })
+                .ToListAsync();
+
             return View(customers);
         }
 
@@ -177,6 +203,48 @@ namespace ClothInventoryApp.Controllers
             await _context.SaveChangesAsync();
             TempData["Success"] = $"Customer '{c.Name}' deleted.";
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CreateInviteLink()
+        {
+            var tenantId = _tenantProvider.GetTenantId();
+
+            var link = new CustomerInviteLink
+            {
+                TenantId = tenantId,
+                Token = GenerateToken(),
+                ExpiresAt = DateTime.UtcNow.AddDays(7),
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.CustomerInviteLinks.Add(link);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Customer invite link created.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RevokeInviteLink(Guid id)
+        {
+            var link = await _context.CustomerInviteLinks.FirstOrDefaultAsync(x => x.Id == id);
+            if (link == null)
+                return NotFound();
+
+            link.IsActive = false;
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Customer invite link revoked.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        private static string GenerateToken()
+        {
+            return Convert.ToHexString(RandomNumberGenerator.GetBytes(24)).ToLowerInvariant();
         }
     }
 }

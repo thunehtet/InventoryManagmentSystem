@@ -3,11 +3,12 @@ using ClothInventoryApp.Models;
 using QuestPDF.Infrastructure;
 using ClothInventoryApp.Services.Feature;
 using ClothInventoryApp.Services.Identity;
+using ClothInventoryApp.Services.Stock;
 using ClothInventoryApp.Services.Subscription;
 using ClothInventoryApp.Services.Tenant;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.RateLimiting;
 
@@ -16,15 +17,16 @@ QuestPDF.Settings.License = LicenseType.Community;
 var builder = WebApplication.CreateBuilder(args);
 var env = builder.Environment;
 
-// ── MVC + Localization ─────────────────────────────────────────
+// MVC + Localization
 builder.Services.AddLocalization(options => options.ResourcesPath = "");
 builder.Services.AddControllersWithViews()
     .AddViewLocalization();
 
-// ── Database ───────────────────────────────────────────────────
-// Railway: first try env var, otherwise use local appsettings.json
-var connectionString =
-    Environment.GetEnvironmentVariable("MYSQLCONNSTR_DefaultConnection")
+// Database
+// Railway provides MYSQLCONNSTR_DefaultConnection.
+// Local development falls back to appsettings.json / user secrets.
+var railwayConnectionString = builder.Configuration["MYSQLCONNSTR_DefaultConnection"];
+var connectionString = railwayConnectionString
     ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
 if (string.IsNullOrWhiteSpace(connectionString))
@@ -34,9 +36,9 @@ if (string.IsNullOrWhiteSpace(connectionString))
 }
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 36))));
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
-// ── Identity ────────────────────────────────────────────────────
+// Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
@@ -59,7 +61,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.User.RequireUniqueEmail = false;
 });
 
-// ── Cookie security ─────────────────────────────────────────────
+// Cookie security
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";
@@ -79,7 +81,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
-// ── Forwarded headers for Railway proxy ────────────────────────
+// Forwarded headers for Railway proxy
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders =
@@ -91,7 +93,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.KnownProxies.Clear();
 });
 
-// ── Rate limiting ──────────────────────────────────────────────
+// Rate limiting
 builder.Services.AddRateLimiter(options =>
 {
     options.AddFixedWindowLimiter("login", limiter =>
@@ -113,21 +115,27 @@ builder.Services.AddRateLimiter(options =>
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 });
 
-// ── App services ────────────────────────────────────────────────
+// App services
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ITenantProvider, TenantProvider>();
 builder.Services.AddScoped<IFeatureService, FeatureService>();
+builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AppClaimsPrincipalFactory>();
 builder.Services.AddHostedService<ClothInventoryApp.Services.Subscription.SubscriptionExpiryService>();
 
 var app = builder.Build();
 
-// ── Railway port binding ────────────────────────────────────────
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-app.Urls.Add($"http://0.0.0.0:{port}");
+// Railway port binding
+// Only bind explicitly when Railway injects PORT.
+// In local development, let launchSettings.json or dotnet run control the URLs.
+var port = builder.Configuration["PORT"];
+if (!string.IsNullOrWhiteSpace(port))
+{
+    app.Urls.Add($"http://0.0.0.0:{port}");
+}
 
-// ── Security response headers ───────────────────────────────────
+// Security response headers
 app.Use(async (context, next) =>
 {
     var headers = context.Response.Headers;
@@ -139,7 +147,7 @@ app.Use(async (context, next) =>
     await next();
 });
 
-// ── HTTP pipeline ───────────────────────────────────────────────
+// HTTP pipeline
 if (!env.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -167,7 +175,7 @@ app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// ── Force password change on first login ────────────────────────
+// Force password change on first login
 app.Use(async (context, next) =>
 {
     var path = context.Request.Path.Value ?? "";
@@ -205,10 +213,10 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-    // ✅ FIRST create tables
+    // FIRST create tables
     db.Database.Migrate();
 
-    // ✅ THEN seed data
+    // THEN seed data
     await DatabaseSeeder.SeedAsync(scope.ServiceProvider);
 }
 

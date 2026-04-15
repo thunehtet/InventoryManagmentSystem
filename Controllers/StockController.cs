@@ -2,6 +2,7 @@
 using ClothInventoryApp.Dto;
 using ClothInventoryApp.Dto.Stock;
 using ClothInventoryApp.Models;
+using ClothInventoryApp.Services.Stock;
 using ClothInventoryApp.Services.Tenant;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +16,16 @@ namespace ClothInventoryApp.Controllers
     {
         private readonly AppDbContext _context;
         private readonly ITenantProvider _tenantProvider;
+        private readonly IStockService _stockService;
 
-        public StockController(AppDbContext context, ITenantProvider tenantProvider)
+        public StockController(
+            AppDbContext context,
+            ITenantProvider tenantProvider,
+            IStockService stockService)
         {
             _context = context;
             _tenantProvider = tenantProvider;
+            _stockService = stockService;
         }
         
 
@@ -88,6 +94,19 @@ namespace ClothInventoryApp.Controllers
                 return View(dto);
             }
             var tenantId = _tenantProvider.GetTenantId();
+            dto.MovementType = NormalizeMovementType(dto.MovementType);
+
+            if (!await _stockService.CanApplyMovementAsync(
+                tenantId,
+                dto.ProductVariantId,
+                dto.MovementType,
+                dto.Quantity))
+            {
+                ModelState.AddModelError(nameof(dto.Quantity), "Not enough stock for this stock-out movement.");
+                await LoadVariantDropDown();
+                ViewBag.MovementTypes = GetMovementTypes();
+                return View(dto);
+            }
 
             var stockMovement = new StockMovement
             {
@@ -144,6 +163,21 @@ namespace ClothInventoryApp.Controllers
 
             if (stockMovement == null)
                 return NotFound();
+
+            dto.MovementType = NormalizeMovementType(dto.MovementType);
+            var tenantId = _tenantProvider.GetTenantId();
+            if (!await _stockService.CanApplyMovementAsync(
+                tenantId,
+                dto.ProductVariantId,
+                dto.MovementType,
+                dto.Quantity,
+                dto.Id))
+            {
+                ModelState.AddModelError(nameof(dto.Quantity), "This change would make stock go below zero.");
+                await LoadVariantDropDown();
+                ViewBag.MovementTypes = GetMovementTypes();
+                return View(dto);
+            }
 
             stockMovement.ProductVariantId = dto.ProductVariantId;
             stockMovement.MovementType = dto.MovementType;
@@ -248,8 +282,7 @@ namespace ClothInventoryApp.Controllers
             return new List<SelectListItem>
             {
                 new SelectListItem { Value = "IN", Text = "IN" },
-                new SelectListItem { Value = "OUT", Text = "OUT" },
-                new SelectListItem { Value = "ADJUST", Text = "ADJUST" }
+                new SelectListItem { Value = "OUT", Text = "OUT" }
             };
         }
        
@@ -270,9 +303,12 @@ namespace ClothInventoryApp.Controllers
                 return View(vm);
             }
 
+            var tenantId = _tenantProvider.GetTenantId();
+
             var movement = new StockMovement
             {
                 ProductVariantId = vm.ProductVariantId,
+                TenantId = tenantId,
                 Quantity = vm.Quantity,
                 MovementType = "IN",
                 MovementDate = DateTime.UtcNow,
@@ -301,9 +337,22 @@ namespace ClothInventoryApp.Controllers
                 return View(vm);
             }
 
+            var tenantId = _tenantProvider.GetTenantId();
+            if (!await _stockService.CanApplyMovementAsync(
+                tenantId,
+                vm.ProductVariantId,
+                "OUT",
+                vm.Quantity))
+            {
+                ModelState.AddModelError(nameof(vm.Quantity), "Not enough stock for this stock-out movement.");
+                await LoadProductVariants();
+                return View(vm);
+            }
+
             var movement = new StockMovement
             {
                 ProductVariantId = vm.ProductVariantId,
+                TenantId = tenantId,
                 Quantity = vm.Quantity,
                 MovementType = "OUT",
                 MovementDate = DateTime.UtcNow,
@@ -316,8 +365,10 @@ namespace ClothInventoryApp.Controllers
             return RedirectToAction(nameof(Inventory));
         }
 
-        public async Task<IActionResult> Inventory(string? search, bool lowstock = false)
+        public async Task<IActionResult> Inventory(string? search, bool lowstock = false, int page = 1, int size = 10)
         {
+            size = PaginationViewModel.Clamp(size);
+            var tenantId = _tenantProvider.GetTenantId();
             var query = _context.ProductVariants
                 .Include(v => v.Product)
                 .AsQueryable();
@@ -329,25 +380,97 @@ namespace ClothInventoryApp.Controllers
                     v.Color.Contains(search) ||
                     v.Size.Contains(search));
 
-            var inventory = await query
-                .Select(v => new InventoryViewModel
-                {
-                    ProductVariantId = v.Id,
-                    ProductName = v.Product.Name,
-                    SKU = v.SKU,
-                    Size = v.Size,
-                    Color = v.Color,
-                    CurrentStock =
-                        (v.StockMovements.Where(m => m.MovementType == "IN").Sum(m => (int?)m.Quantity) ?? 0)
-                        - (v.StockMovements.Where(m => m.MovementType == "OUT").Sum(m => (int?)m.Quantity) ?? 0)
-                })
-                .ToListAsync();
+            List<InventoryViewModel> inventory;
+            var total = 0;
 
             if (lowstock)
-                inventory = inventory.Where(x => x.CurrentStock < 10).ToList();
+            {
+                var variants = await query
+                    .Select(v => new
+                    {
+                        v.Id,
+                        ProductName = v.Product.Name,
+                        v.SKU,
+                        v.Size,
+                        v.Color
+                    })
+                    .ToListAsync();
+
+                var stockMap = await _stockService.GetCurrentStockMapAsync(
+                    tenantId,
+                    variants.Select(v => v.Id));
+
+                var lowStockInventory = variants
+                    .Select(v => new InventoryViewModel
+                    {
+                        ProductVariantId = v.Id,
+                        ProductName = v.ProductName,
+                        SKU = v.SKU,
+                        Size = v.Size,
+                        Color = v.Color,
+                        CurrentStock = stockMap.TryGetValue(v.Id, out var stock) ? stock : 0
+                    })
+                    .Where(x => x.CurrentStock < 10)
+                    .OrderBy(x => x.CurrentStock)
+                    .ThenBy(x => x.ProductName)
+                    .ThenBy(x => x.SKU)
+                    .ToList();
+
+                total = lowStockInventory.Count;
+                inventory = lowStockInventory
+                    .Skip((page - 1) * size)
+                    .Take(size)
+                    .ToList();
+            }
+            else
+            {
+                total = await query.CountAsync();
+                var variants = await query
+                    .OrderBy(v => v.Product.Name)
+                    .ThenBy(v => v.SKU)
+                    .Skip((page - 1) * size)
+                    .Take(size)
+                    .Select(v => new
+                    {
+                        v.Id,
+                        ProductName = v.Product.Name,
+                        v.SKU,
+                        v.Size,
+                        v.Color
+                    })
+                    .ToListAsync();
+
+                var stockMap = await _stockService.GetCurrentStockMapAsync(
+                    tenantId,
+                    variants.Select(v => v.Id));
+
+                inventory = variants
+                    .Select(v => new InventoryViewModel
+                    {
+                        ProductVariantId = v.Id,
+                        ProductName = v.ProductName,
+                        SKU = v.SKU,
+                        Size = v.Size,
+                        Color = v.Color,
+                        CurrentStock = stockMap.TryGetValue(v.Id, out var stock) ? stock : 0
+                    })
+                    .ToList();
+            }
 
             ViewBag.Search = search;
             ViewBag.LowStock = lowstock;
+            ViewBag.Pagination = new PaginationViewModel
+            {
+                Page = page,
+                PageSize = size,
+                TotalCount = total,
+                Action = nameof(Inventory),
+                Extra = new()
+                {
+                    ["search"] = search,
+                    ["lowstock"] = lowstock ? "true" : null
+                }
+            };
             return View(inventory);
         }
 
@@ -363,6 +486,11 @@ namespace ClothInventoryApp.Controllers
                 .ToListAsync();
 
             ViewBag.ProductVariants = new SelectList(variants, "Id", "DisplayText");
+        }
+
+        private static string NormalizeMovementType(string? movementType)
+        {
+            return movementType?.Trim().ToUpperInvariant() ?? string.Empty;
         }
     }
 }
