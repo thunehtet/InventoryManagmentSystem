@@ -3,12 +3,15 @@ using ClothInventoryApp.Dto.Sale;
 using ClothInventoryApp.Filters;
 using ClothInventoryApp.Models;
 using ClothInventoryApp.Services.Feature;
+using ClothInventoryApp.Services.Stock;
 using ClothInventoryApp.Services.Tenant;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QuestPDF.Fluent;
+using System.Data;
+using System.Security.Cryptography;
 
 namespace ClothInventoryApp.Controllers
 {
@@ -17,11 +20,17 @@ namespace ClothInventoryApp.Controllers
     public class SalesController : TenantAwareController
     {
         private readonly IFeatureService _featureService;
+        private readonly IStockService _stockService;
 
-        public SalesController(AppDbContext context, ITenantProvider tenantProvider, IFeatureService featureService)
+        public SalesController(
+            AppDbContext context,
+            ITenantProvider tenantProvider,
+            IFeatureService featureService,
+            IStockService stockService)
             : base(context, tenantProvider)
         {
             _featureService = featureService;
+            _stockService = stockService;
         }
        
 
@@ -99,15 +108,22 @@ namespace ClothInventoryApp.Controllers
                 return View(dto);
             }
 
-            foreach (var item in dto.Items)
-            {
-                var currentStock = await _context.StockMovements
-                    .Where(x => x.ProductVariantId == item.ProductVariantId)
-                    .SumAsync(x => x.MovementType == "IN" ? x.Quantity :
-                                   x.MovementType == "OUT" ? -x.Quantity :
-                                   0);
+            var requestedQuantities = dto.Items
+                .GroupBy(x => x.ProductVariantId)
+                .Select(g => new
+                {
+                    ProductVariantId = g.Key,
+                    Quantity = g.Sum(x => x.Quantity)
+                })
+                .ToList();
 
-                if (currentStock < item.Quantity)
+            foreach (var item in requestedQuantities)
+            {
+                if (!await _stockService.CanApplyMovementAsync(
+                    tenantId,
+                    item.ProductVariantId,
+                    "OUT",
+                    item.Quantity))
                 {
                     ModelState.AddModelError("", $"Not enough stock for variant ID {item.ProductVariantId}.");
                     await LoadVariantDropDown();
@@ -116,10 +132,23 @@ namespace ClothInventoryApp.Controllers
                 }
             }
 
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
 
             try
             {
+                foreach (var item in requestedQuantities)
+                {
+                    if (!await _stockService.CanApplyMovementAsync(
+                        tenantId,
+                        item.ProductVariantId,
+                        "OUT",
+                        item.Quantity))
+                    {
+                        throw new InvalidOperationException(
+                            $"Not enough stock for variant ID {item.ProductVariantId}.");
+                    }
+                }
+
                 var discount = Math.Max(0, dto.Discount);
 
                 var sale = new Sale
@@ -176,11 +205,20 @@ namespace ClothInventoryApp.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
+            catch (InvalidOperationException ex)
+            {
+                await transaction.RollbackAsync();
+                ModelState.AddModelError("", ex.Message);
+                await LoadVariantDropDown();
+                await LoadCustomerDropDown();
+                return View(dto);
+            }
             catch
             {
                 await transaction.RollbackAsync();
                 ModelState.AddModelError("", "An error occurred while saving the sale.");
                 await LoadVariantDropDown();
+                await LoadCustomerDropDown();
                 return View(dto);
             }
         }
@@ -207,6 +245,11 @@ namespace ClothInventoryApp.Controllers
                 CustomerName = sale.Customer?.Name,
                 CustomerPhone = sale.Customer?.Phone,
                 CustomerAddress = sale.Customer?.Address,
+                PublicReceiptUrl = Url.Action(
+                    "Receipt",
+                    "Public",
+                    new { token = await EnsurePublicReceiptTokenAsync(sale) },
+                    Request.Scheme),
                 Items = sale.Items.Select(i => new ViewSaleItemDto
                 {
                     Id = i.Id,
@@ -351,20 +394,15 @@ namespace ClothInventoryApp.Controllers
         [HttpGet]
         public async Task<IActionResult> GetVariants()
         {
+            var tenantId = _tenantProvider.GetTenantId();
             var variants = await _context.ProductVariants
                 .Include(v => v.Product)
                 .OrderBy(v => v.Product.Name).ThenBy(v => v.SKU)
                 .ToListAsync();
 
-            var stockMap = await _context.StockMovements
-                .GroupBy(s => s.ProductVariantId)
-                .Select(g => new
-                {
-                    VariantId = g.Key,
-                    Stock = g.Sum(s => s.MovementType == "IN" ? s.Quantity :
-                                       s.MovementType == "OUT" ? -s.Quantity : 0)
-                })
-                .ToDictionaryAsync(x => x.VariantId, x => x.Stock);
+            var stockMap = await _stockService.GetCurrentStockMapAsync(
+                tenantId,
+                variants.Select(v => v.Id));
 
             var result = variants.Select(v => new
             {
@@ -405,6 +443,35 @@ namespace ClothInventoryApp.Controllers
                 .ToListAsync();
 
             ViewBag.Customers = new SelectList(customers, "Id", "Name");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RefreshReceiptLink(Guid id)
+        {
+            var sale = await _context.Sales.FirstOrDefaultAsync(s => s.Id == id);
+            if (sale == null)
+                return NotFound();
+
+            sale.PublicReceiptToken = GeneratePublicToken();
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        private async Task<string> EnsurePublicReceiptTokenAsync(Sale sale)
+        {
+            if (!string.IsNullOrWhiteSpace(sale.PublicReceiptToken))
+                return sale.PublicReceiptToken;
+
+            sale.PublicReceiptToken = GeneratePublicToken();
+            await _context.SaveChangesAsync();
+            return sale.PublicReceiptToken;
+        }
+
+        private static string GeneratePublicToken()
+        {
+            return Convert.ToHexString(RandomNumberGenerator.GetBytes(24)).ToLowerInvariant();
         }
     }
 }

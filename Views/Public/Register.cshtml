@@ -4,171 +4,101 @@
     Layout = null;
     var tenantName = ViewBag.TenantName as string ?? "the shop";
     var tenantCode = ViewBag.TenantCode as string ?? "";
+    var inviteToken = ViewBag.InviteToken as string;
+    var formAction = !string.IsNullOrWhiteSpace(inviteToken)
+        ? Url.Action("RegisterByInvite", "Public", new { token = inviteToken })
+        : $"/p/{tenantCode}/join";
 }
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Register — @tenantName</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #f1f5f9;
-            min-height: 100vh;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            padding: 40px 16px;
-        }
-
-        .card {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0,0,0,.08);
-            padding: 40px;
-            width: 100%;
-            max-width: 480px;
-        }
-
-        .card-header {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        .card-icon {
-            width: 56px;
-            height: 56px;
-            background: #ede9fe;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 16px;
-            font-size: 24px;
-        }
-
-        h1 { font-size: 22px; font-weight: 700; color: #0f172a; }
-
-        .subtitle { font-size: 14px; color: #64748b; margin-top: 6px; }
-
-        .field { margin-bottom: 20px; }
-
-        label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 6px;
-        }
-
-        .optional { font-weight: 400; color: #94a3b8; }
-
-        input, textarea {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 14px;
-            font-family: inherit;
-            color: #0f172a;
-            outline: none;
-            transition: border-color .15s;
-        }
-
-        input:focus, textarea:focus { border-color: #6366f1; }
-
-        textarea { resize: vertical; min-height: 80px; }
-
-        .error {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            border-radius: 8px;
-            padding: 12px 16px;
-            font-size: 13px;
-            color: #dc2626;
-            margin-bottom: 20px;
-        }
-
-        .field-error { font-size: 12px; color: #dc2626; margin-top: 4px; }
-
-        .btn {
-            width: 100%;
-            padding: 13px;
-            background: #6366f1;
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 8px;
-            transition: background .15s;
-        }
-
-        .btn:hover { background: #4f46e5; }
-
-        .privacy {
-            text-align: center;
-            font-size: 12px;
-            color: #94a3b8;
-            margin-top: 20px;
-        }
-    </style>
+    <title>Register - @tenantName</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/public-shared.css" asp-append-version="true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Myanmar:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="card">
-        <div class="card-header">
-            <div class="card-icon">&#128100;</div>
-            <h1>Join @tenantName</h1>
-            <p class="subtitle">Fill in your details to register as a customer.</p>
+<body class="public-page public-page--form">
+    <div class="public-shell">
+        <div class="public-card">
+            <div class="public-card-header">
+                <div class="public-card-icon">
+                    <i class="bi bi-person-plus-fill"></i>
+                </div>
+                <h1 class="public-card-title">Join @tenantName</h1>
+                <p class="public-card-subtitle">Fill in your details to register as a customer.</p>
+
+                @if (!string.IsNullOrWhiteSpace(inviteToken))
+                {
+                    <div class="public-info-chip">
+                        <i class="bi bi-shield-check"></i>
+                        <span>Secure one-time link</span>
+                    </div>
+                }
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="public-alert public-alert--error">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <span>Please fix the errors below and try again.</span>
+                </div>
+            }
+
+            <form method="post" action="@formAction" class="public-form">
+                @Html.AntiForgeryToken()
+
+                <div class="public-field">
+                    <label asp-for="Name" class="public-label"></label>
+                    <input asp-for="Name" class="public-input" placeholder="Your full name" autocomplete="name" />
+                    <span asp-validation-for="Name" class="field-validation-error"></span>
+                </div>
+
+                <div class="public-field">
+                    <label asp-for="Phone" class="public-label">
+                        Phone <span class="public-optional">(optional)</span>
+                    </label>
+                    <input asp-for="Phone" class="public-input" placeholder="09 xxx xxx xxx" autocomplete="tel" />
+                    <span asp-validation-for="Phone" class="field-validation-error"></span>
+                </div>
+
+                <div class="public-field">
+                    <label asp-for="Email" class="public-label">
+                        Email <span class="public-optional">(optional)</span>
+                    </label>
+                    <input asp-for="Email" type="email" class="public-input" placeholder="you@example.com" autocomplete="email" />
+                    <span asp-validation-for="Email" class="field-validation-error"></span>
+                </div>
+
+                <div class="public-field">
+                    <label asp-for="FacebookAccount" class="public-label">
+                        Facebook <span class="public-optional">(optional)</span>
+                    </label>
+                    <input asp-for="FacebookAccount" class="public-input" placeholder="Facebook name or profile link" />
+                    <span asp-validation-for="FacebookAccount" class="field-validation-error"></span>
+                </div>
+
+                <div class="public-field">
+                    <label asp-for="Address" class="public-label">
+                        Address <span class="public-optional">(optional)</span>
+                    </label>
+                    <input asp-for="Address" class="public-input" placeholder="Street, township, city..." autocomplete="street-address" />
+                    <span asp-validation-for="Address" class="field-validation-error"></span>
+                </div>
+
+                <button type="submit" class="public-btn public-btn--primary">Register</button>
+            </form>
+
+            <p class="public-privacy">Your information is only shared with @tenantName.</p>
         </div>
-
-        @if (!ViewData.ModelState.IsValid)
-        {
-            <div class="error">Please fix the errors below and try again.</div>
-        }
-
-        <form method="post" action="/p/@tenantCode/join">
-            @Html.AntiForgeryToken()
-
-            <div class="field">
-                <label>Full Name <span style="color:#ef4444">*</span></label>
-                <input asp-for="Name" placeholder="Your full name" autocomplete="name" />
-                <span asp-validation-for="Name" class="field-error"></span>
-            </div>
-
-            <div class="field">
-                <label>Phone <span class="optional">(optional)</span></label>
-                <input asp-for="Phone" placeholder="09 xxx xxx xxx" autocomplete="tel" />
-                <span asp-validation-for="Phone" class="field-error"></span>
-            </div>
-
-            <div class="field">
-                <label>Email <span class="optional">(optional)</span></label>
-                <input asp-for="Email" type="email" placeholder="you@example.com" autocomplete="email" />
-                <span asp-validation-for="Email" class="field-error"></span>
-            </div>
-
-            <div class="field">
-                <label>Facebook <span class="optional">(optional)</span></label>
-                <input asp-for="FacebookAccount" placeholder="Facebook name or profile link" />
-                <span asp-validation-for="FacebookAccount" class="field-error"></span>
-            </div>
-
-            <div class="field">
-                <label>Address <span class="optional">(optional)</span></label>
-                <input asp-for="Address" placeholder="Street, township, city…" autocomplete="street-address" />
-                <span asp-validation-for="Address" class="field-error"></span>
-            </div>
-
-            <button type="submit" class="btn">Register</button>
-        </form>
-
-        <p class="privacy">Your information is only shared with @tenantName.</p>
     </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <partial name="_ValidationScriptsPartial" />
 </body>
 </html>

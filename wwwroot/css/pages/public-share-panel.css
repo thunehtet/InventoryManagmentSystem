@@ -1,0 +1,88 @@
+.sale-details-shell .sale-details-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+}
+
+.sale-details-btn {
+    height: 40px;
+    padding: 0 16px;
+    font-size: .85rem;
+}
+
+.sale-share-panel {
+    display: grid;
+    gap: 1rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 22px;
+    border: 1px solid #dbe4ff;
+    background: linear-gradient(135deg, #f8fbff 0%, #eef2ff 100%);
+}
+
+.sale-share-panel__copy h4 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.sale-share-panel__copy p {
+    margin: .45rem 0 0;
+    color: #64748b;
+}
+
+.sale-share-panel__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+}
+
+.sale-share-link {
+    overflow-wrap: anywhere;
+    padding: .85rem 1rem;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px dashed #c7d2fe;
+    color: #312e81;
+    font-size: .92rem;
+    font-weight: 600;
+}
+
+.sale-customer-box {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    background: #f8fafc;
+    cursor: default;
+}
+
+.sale-customer-box__icon {
+    color: #6366f1;
+}
+
+.sale-customer-box__link {
+    color: #0f172a;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.sale-customer-box__phone {
+    font-size: 13px;
+    color: #64748b;
+}
+
+@media (max-width: 767.98px) {
+    .sale-details-shell .section-header {
+        gap: 1rem;
+    }
+
+    .sale-details-shell .sale-details-actions {
+        width: 100%;
+    }
+
+    .sale-share-panel__actions > * {
+        flex: 1 1 calc(50% - .5rem);
+        min-width: 0;
+    }
+}

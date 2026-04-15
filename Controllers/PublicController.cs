@@ -84,6 +84,58 @@ namespace ClothInventoryApp.Controllers
             return RedirectToAction(nameof(RegisterSuccess), new { tenantCode });
         }
 
+        [HttpGet("/c/{token}")]
+        public async Task<IActionResult> RegisterByInvite(string token)
+        {
+            var invite = await GetActiveInviteAsync(token);
+            if (invite == null)
+                return NotFound();
+
+            ViewBag.TenantName = invite.Tenant.Name;
+            ViewBag.InviteToken = invite.Token;
+            ViewBag.InviteExpiresAt = invite.ExpiresAt;
+            return View("Register", new CreateCustomerDto());
+        }
+
+        [HttpPost("/c/{token}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegisterByInvite(string token, CreateCustomerDto dto)
+        {
+            var invite = await GetActiveInviteAsync(token);
+            if (invite == null)
+                return NotFound();
+
+            ViewBag.TenantName = invite.Tenant.Name;
+            ViewBag.InviteToken = invite.Token;
+            ViewBag.InviteExpiresAt = invite.ExpiresAt;
+
+            if (!ModelState.IsValid)
+                return View("Register", dto);
+
+            var customer = new Customer
+            {
+                TenantId = invite.TenantId,
+                Name = dto.Name.Trim(),
+                Phone = dto.Phone?.Trim(),
+                Email = dto.Email?.Trim().ToLowerInvariant(),
+                FacebookAccount = dto.FacebookAccount?.Trim(),
+                Address = dto.Address?.Trim(),
+                Notes = null,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Customers.Add(customer);
+            invite.IsActive = false;
+            invite.UsedAt = DateTime.UtcNow;
+            invite.Customer = customer;
+
+            await _context.SaveChangesAsync();
+
+            ViewBag.TenantName = invite.Tenant.Name;
+            return View("RegisterSuccess");
+        }
+
         /// GET /p/{tenantCode}/join/success
         [HttpGet("/p/{tenantCode}/join/success")]
         public async Task<IActionResult> RegisterSuccess(string tenantCode)
@@ -94,6 +146,48 @@ namespace ClothInventoryApp.Controllers
             return View();
         }
 
+        [HttpGet("/r/{token}")]
+        public async Task<IActionResult> Receipt(string token)
+        {
+            var sale = await _context.Sales
+                .IgnoreQueryFilters()
+                .Include(s => s.Tenant)
+                .Include(s => s.Items)
+                .ThenInclude(i => i.ProductVariant)
+                .ThenInclude(v => v.Product)
+                .FirstOrDefaultAsync(s => s.PublicReceiptToken == token);
+
+            if (sale == null)
+                return NotFound();
+
+            var dto = new Dto.Sale.ViewSaleDto
+            {
+                Id = sale.Id,
+                SaleDate = sale.SaleDate,
+                TotalAmount = sale.TotalAmount,
+                Discount = sale.Discount,
+                Items = sale.Items.Select(i => new Dto.Sale.ViewSaleItemDto
+                {
+                    Id = i.Id,
+                    ProductVariantId = i.ProductVariantId,
+                    ProductVariantName = i.ProductVariant.Product.Name + " / " + i.ProductVariant.SKU,
+                    Quantity = i.Quantity,
+                    UnitPrice = i.UnitPrice,
+                    CostPrice = 0,
+                    LineTotal = i.Quantity * i.UnitPrice,
+                    LineProfit = 0
+                }).ToList()
+            };
+
+            ViewBag.TenantName = sale.Tenant.Name;
+            ViewBag.TenantPhone = sale.Tenant.ContactPhone;
+            ViewBag.TenantEmail = sale.Tenant.ContactEmail;
+            ViewBag.Currency = sale.Tenant.CurrencyCode ?? string.Empty;
+            ViewBag.ReceiptUrl = Url.Action(nameof(Receipt), "Public", new { token }, Request.Scheme);
+
+            return View(dto);
+        }
+
         // ─── Helpers ─────────────────────────────────────────────────
 
         /// Looks up a tenant by Code. The Tenants table has no query filter,
@@ -102,5 +196,16 @@ namespace ClothInventoryApp.Controllers
             _context.Tenants
                 .AsNoTracking()
                 .FirstOrDefaultAsync(t => t.Code == code && t.IsActive);
+
+        private Task<CustomerInviteLink?> GetActiveInviteAsync(string token) =>
+            _context.CustomerInviteLinks
+                .IgnoreQueryFilters()
+                .Include(x => x.Tenant)
+                .FirstOrDefaultAsync(x =>
+                    x.Token == token &&
+                    x.IsActive &&
+                    x.UsedAt == null &&
+                    x.ExpiresAt > DateTime.UtcNow &&
+                    x.Tenant.IsActive);
     }
 }

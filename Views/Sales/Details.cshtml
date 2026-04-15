@@ -6,22 +6,47 @@
     var currency = ViewData["Currency"] as string ?? "";
 }
 
-<div class="create-product-shell">
+<div class="create-product-shell sale-details-shell">
     <div class="create-main-card">
         <div class="section-header">
             <div>
                 <h3>Sale Details</h3>
             </div>
-            <div class="d-flex gap-2">
-                <a asp-action="InvoicePdf" asp-route-id="@Model.Id"
-                   class="btn-modern-primary" style="height:40px;padding:0 16px;font-size:.85rem">
+            <div class="sale-details-actions">
+                <a asp-action="InvoicePdf" asp-route-id="@Model.Id" class="btn-modern-primary sale-details-btn">
                     <i class="bi bi-file-earmark-pdf-fill me-1"></i> Download Invoice
                 </a>
-                <a asp-action="Index" class="btn-modern-outline" style="height:40px;padding:0 16px;font-size:.85rem">
+                <a asp-action="Index" class="btn-modern-outline sale-details-btn">
                     <i class="bi bi-arrow-left me-1"></i> Back
                 </a>
             </div>
         </div>
+
+        <section class="sale-share-panel">
+            <div class="sale-share-panel__copy">
+                <h4>Receipt Sharing</h4>
+                <p>Share a permanent receipt link that is safe for customers and works well on mobile apps like Messenger and Viber.</p>
+            </div>
+            <div class="sale-share-panel__actions">
+                <button type="button" class="btn-modern-primary" data-share-url="@Model.PublicReceiptUrl" data-share-title="Receipt link">
+                    <i class="bi bi-share-fill"></i> Share Receipt
+                </button>
+                <button type="button" class="btn-modern-outline" data-copy-text="@Model.PublicReceiptUrl">
+                    <i class="bi bi-copy"></i> Copy Link
+                </button>
+                <form asp-action="RefreshReceiptLink" method="post" class="customer-inline-form">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button type="submit" class="btn-modern-outline">
+                        <i class="bi bi-arrow-repeat"></i> Refresh Link
+                    </button>
+                </form>
+                <a href="@Model.PublicReceiptUrl" target="_blank" rel="noopener noreferrer" class="btn-modern-outline">
+                    <i class="bi bi-box-arrow-up-right"></i> Open Receipt
+                </a>
+            </div>
+            <div class="sale-share-link">@Model.PublicReceiptUrl</div>
+        </section>
 
         <div class="form-grid-modern">
             <div class="form-group-modern">
@@ -33,13 +58,12 @@
             {
                 <div class="form-group-modern">
                     <label class="form-label-modern">Customer</label>
-                    <div class="input-modern d-flex align-items-center gap-2" style="background:#f8fafc;cursor:default">
-                        <i class="bi bi-person-fill" style="color:#6366f1"></i>
-                        <a asp-controller="Customer" asp-action="Details" asp-route-id="@Model.CustomerId"
-                           style="color:#0f172a;text-decoration:none;font-weight:600">@Model.CustomerName</a>
+                    <div class="input-modern sale-customer-box">
+                        <i class="bi bi-person-fill sale-customer-box__icon"></i>
+                        <a asp-controller="Customer" asp-action="Details" asp-route-id="@Model.CustomerId" class="sale-customer-box__link">@Model.CustomerName</a>
                         @if (!string.IsNullOrEmpty(Model.CustomerPhone))
                         {
-                            <span class="text-muted" style="font-size:13px">· @Model.CustomerPhone</span>
+                            <span class="sale-customer-box__phone">· @Model.CustomerPhone</span>
                         }
                     </div>
                 </div>
@@ -96,15 +120,15 @@
             </table>
         </div>
 
-        <div class="form-footer-modern">
-            <a asp-action="InvoicePdf" asp-route-id="@Model.Id" class="btn-modern-primary btn-modern-lg">
-                <i class="bi bi-file-earmark-pdf-fill"></i> Download Invoice PDF
-            </a>
-            <a asp-action="Index" class="btn-modern-outline btn-modern-lg">Back</a>
-        </div>
+        
     </div>
 </div>
 
 @section Styles {
     <link rel="stylesheet" href="~/css/pages/create-product.css" />
+    <link rel="stylesheet" href="~/css/pages/public-share-panel.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script src="~/js/public-share.js" asp-append-version="true"></script>
 }
