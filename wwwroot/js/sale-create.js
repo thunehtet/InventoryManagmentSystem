@@ -39,6 +39,7 @@
     var variantMap = {};
     var cart = {};
     var searchDebounce = null;
+    var lastActiveCartItemId = null;
 
     function loadVariants(reset) {
         if (isLoading) return;
@@ -209,6 +210,7 @@
             };
         }
 
+        lastActiveCartItemId = String(variantId);
         refresh();
     }
 
@@ -257,7 +259,8 @@
         if (cartList) {
             var priceLbl = escHtml(str.price || 'Price');
             cartList.innerHTML = items.map(function (item) {
-                return '<div class="sc-cart-item">' +
+                var isActive = lastActiveCartItemId === String(item.id);
+                return '<div class="sc-cart-item' + (isActive ? ' sc-cart-item--active' : '') + '" data-cart-item="' + escAttr(item.id) + '">' +
                     '<div class="sc-ci-info">' +
                     '<span class="sc-ci-name">' + escHtml(item.productName) + '</span>' +
                     '<span class="sc-ci-meta">' + escHtml(item.sku) + ' · ' + escHtml(item.size) + ' · ' + escHtml(item.color) + '</span>' +
@@ -293,6 +296,14 @@
             cartList.querySelectorAll('[data-remove]').forEach(function (btn) {
                 btn.addEventListener('click', function () { removeFromCart(this.dataset.remove); });
             });
+
+            if (lastActiveCartItemId) {
+                var activeItem = cartList.querySelector('[data-cart-item="' + cssEscape(lastActiveCartItemId) + '"]');
+                if (activeItem) {
+                    activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+                lastActiveCartItemId = null;
+            }
         }
 
         syncTotalsAndInputs();
@@ -377,6 +388,14 @@
 
     function escAttr(value) {
         return String(value).replace(/"/g, '&quot;');
+    }
+
+    function cssEscape(value) {
+        if (window.CSS && typeof window.CSS.escape === 'function') {
+            return window.CSS.escape(String(value));
+        }
+
+        return String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
     }
 
     function colorToHex(name) {
