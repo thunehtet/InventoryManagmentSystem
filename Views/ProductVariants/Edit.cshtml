@@ -3,7 +3,7 @@
 
 
 @{
-    ViewData["Title"] = "Edit Variant";
+    ViewData["Title"] = Localizer["Edit Variant"];
 }
 
 <div class="create-product-shell">
@@ -11,18 +11,18 @@
         <div class="create-product-hero-content">
             <div class="hero-kicker">
                 <i class="bi bi-pencil-square"></i>
-                <span>Variant Update</span>
+                <span>@Localizer["Variant Update"]</span>
             </div>
 
-            <h1>Edit variant</h1>
+            <h1>@Localizer["Edit Variant"]</h1>
             <p>
-                Update the product variant details and keep your inventory accurate.
+                @Localizer["Update the product variant details and keep your inventory accurate."]
             </p>
 
             <div class="hero-actions">
                 <a asp-action="Index" class="btn-soft-light">
                     <i class="bi bi-arrow-left"></i>
-                    Back to Variants
+                    @Localizer["Back to Variants"]
                 </a>
             </div>
         </div>
@@ -32,8 +32,8 @@
         <div class="create-main-card">
             <div class="section-header">
                 <div>
-                    <h3>Variant details</h3>
-                    <p>Update the selected product variant.</p>
+                    <h3>@Localizer["Variant details"]</h3>
+                    <p>@Localizer["Update the selected product variant."]</p>
                 </div>
             </div>
 
@@ -45,8 +45,8 @@
                 <div class="form-grid-modern">
                     <div class="form-group-modern form-group-full">
                         <label asp-for="ProductId" class="form-label-modern"></label>
-                        <select asp-for="ProductId" asp-items="ViewBag.Products" class="input-modern input-modern-lg">
-                            <option value="">-- Select Product --</option>
+                        <select asp-for="ProductId" asp-items="ViewBag.Products" class="input-modern input-modern-lg" data-searchable-picker="true" data-placeholder="Select a product" data-search-placeholder="Search product name">
+                            <option value="">@Localizer["-- Select Product --"]</option>
                         </select>
                         <span asp-validation-for="ProductId" class="field-validation-modern"></span>
                     </div>
@@ -85,7 +85,7 @@
                 <div class="form-footer-modern">
                     <button type="submit" class="btn-modern-primary btn-modern-lg">
                         <i class="bi bi-check2-circle"></i>
-                        Update Variant
+                        @Localizer["Update Variant"]
                     </button>
 
                     <a asp-action="Index" class="btn-modern-outline btn-modern-lg">
@@ -101,6 +101,7 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script src="~/js/searchable-picker.js" asp-append-version="true"></script>
 }
 
 @section Styles {

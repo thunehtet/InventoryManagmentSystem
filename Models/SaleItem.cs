@@ -13,6 +13,11 @@
         public Guid ProductVariantId { get; set; }
         public ProductVariant ProductVariant { get; set; } = null!;
 
+        public string ProductNameSnapshot { get; set; } = string.Empty;
+        public string ProductSkuSnapshot { get; set; } = string.Empty;
+        public string ProductColorSnapshot { get; set; } = string.Empty;
+        public string ProductSizeSnapshot { get; set; } = string.Empty;
+
         public int Quantity { get; set; }
         public int UnitPrice { get; set; }
         public int CostPrice { get; set; }

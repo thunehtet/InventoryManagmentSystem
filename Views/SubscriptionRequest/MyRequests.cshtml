@@ -1,0 +1,90 @@
+@model IEnumerable<ClothInventoryApp.Models.SubscriptionPaymentRequest>
+@{
+    ViewData["Title"] = "My Payment Requests";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/product-index.css" asp-append-version="true" />
+}
+
+<div class="product-index-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title"><i class="bi bi-clock-history"></i> My Payment Requests</h1>
+            <p class="product-hero-sub">Track your upgrade submissions and review status.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Plans" class="btn-modern-primary">
+                <i class="bi bi-plus-circle"></i> New Request
+            </a>
+            <a asp-controller="Home" asp-action="Index" class="btn-modern-secondary">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <div class="product-table-card">
+        <div class="table-responsive-modern">
+            <table class="table-modern">
+                <thead>
+                    <tr>
+                        <th>Submitted</th>
+                        <th>Plan</th>
+                        <th>Billing</th>
+                        <th>Price</th>
+                        <th>Txn Last 6</th>
+                        <th>Status</th>
+                        <th>Proof</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <i class="bi bi-inbox"></i>
+                                <div>No payment requests submitted yet.</div>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.SubmittedAt.ToString("dd MMM yyyy HH:mm")</td>
+                                <td>@item.PlanNameSnapshot</td>
+                                <td>@item.BillingCycle</td>
+                                <td>@item.ExpectedPrice.ToString("N0")</td>
+                                <td>@item.Last6TransactionId</td>
+                                <td>
+                                    <span class="badge-modern @(item.Status == "Approved" ? "badge-success" : item.Status == "Rejected" ? "badge-muted" : "badge-warning")">
+                                        @item.Status
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="/@item.PaymentProofFile.RelativePath" target="_blank" rel="noopener noreferrer" class="action-btn action-btn-view" title="Open proof">
+                                        <i class="bi bi-image-fill"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            @if (!string.IsNullOrWhiteSpace(item.ReviewRemarks))
+                            {
+                                <tr>
+                                    <td colspan="7" class="text-muted small">
+                                        <strong>Review note:</strong> @item.ReviewRemarks
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,121 @@
+@model ClothInventoryApp.Dto.SubscriptionRequest.SubscriptionPaymentPageDto
+@{
+    ViewData["Title"] = "Plan Payment";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/create-product.css" asp-append-version="true" />
+}
+
+<div class="create-product-shell">
+    <div class="create-product-hero">
+        <div class="create-product-hero-content">
+            <div class="hero-kicker">
+                <i class="bi bi-qr-code-scan"></i>
+                <span>Subscription Payment</span>
+            </div>
+            <h1>@Model.PlanName (@Model.BillingCycle)</h1>
+            <p>Pay first, then submit the last 6 transaction digits together with your payment screenshot.</p>
+            <div class="hero-actions">
+                <a asp-action="Plans" class="btn-soft-light">
+                    <i class="bi bi-arrow-left"></i>
+                    Back to Plans
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="create-product-grid">
+        <div class="create-main-card">
+            <div class="section-header">
+                <div>
+                    <h3>Payment Details</h3>
+                    <p>Submit proof after completing the wallet transfer.</p>
+                </div>
+            </div>
+
+            <div class="form-grid-modern mb-4">
+                <div class="form-group-modern">
+                    <label class="form-label-modern">Plan</label>
+                    <input class="input-modern" value="@Model.PlanName" readonly />
+                </div>
+                <div class="form-group-modern">
+                    <label class="form-label-modern">Billing Cycle</label>
+                    <input class="input-modern" value="@Model.BillingCycle" readonly />
+                </div>
+                <div class="form-group-modern">
+                    <label class="form-label-modern">Price</label>
+                    <input class="input-modern" value="@Model.Price.ToString("N0") @(string.IsNullOrWhiteSpace(Model.CurrencyCode) ? "MMK" : Model.CurrencyCode)" readonly />
+                </div>
+                <div class="form-group-modern">
+                    <label class="form-label-modern">Wallet</label>
+                    <input class="input-modern" value="@Model.WalletDisplayName" readonly />
+                </div>
+            </div>
+
+            <div class="product-table-card mb-4">
+                <div class="row g-4 align-items-center">
+                    <div class="col-12 col-md-5">
+                        @if (!string.IsNullOrWhiteSpace(Model.QrImageUrl))
+                        {
+                            <img src="@Model.QrImageUrl" alt="Wallet QR" style="width:100%;max-width:280px;border-radius:18px;border:1px solid #e5e7eb;" />
+                        }
+                        else
+                        {
+                            <div class="d-flex align-items-center justify-content-center text-muted" style="width:100%;max-width:280px;aspect-ratio:1/1;border:1px dashed #cbd5e1;border-radius:18px;">
+                                QR image not configured
+                            </div>
+                        }
+                    </div>
+                    <div class="col-12 col-md-7">
+                        <div class="mb-3">
+                            <div class="fw-semibold">Wallet Account Name</div>
+                            <div class="text-muted">@(string.IsNullOrWhiteSpace(Model.WalletAccountName) ? "Not configured yet" : Model.WalletAccountName)</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="fw-semibold">Wallet Account No</div>
+                            <div class="text-muted">@(string.IsNullOrWhiteSpace(Model.WalletAccountNo) ? "Not configured yet" : Model.WalletAccountNo)</div>
+                        </div>
+                        <div>
+                            <div class="fw-semibold">Instructions</div>
+                            <div class="text-muted">@Model.Instructions</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form asp-action="Payment" method="post" enctype="multipart/form-data" class="modern-product-form">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="validation-summary-modern"></div>
+                <input name="PlanId" type="hidden" value="@Model.Form.PlanId" />
+                <input name="BillingCycle" type="hidden" value="@Model.Form.BillingCycle" />
+
+                <div class="form-grid-modern">
+                    <div class="form-group-modern">
+                        <label class="form-label-modern" for="Last6TransactionId">Last 6 Transaction ID</label>
+                        <input id="Last6TransactionId" name="Last6TransactionId" class="input-modern" maxlength="6" placeholder="e.g. 482913" value="@Model.Form.Last6TransactionId" />
+                        <span class="text-danger small field-validation-valid" data-valmsg-for="Last6TransactionId" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="form-group-modern">
+                        <label class="form-label-modern" for="PaymentProof">Payment Screenshot</label>
+                        <input id="PaymentProof" name="PaymentProof" class="input-modern" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" />
+                        <span class="text-danger small field-validation-valid" data-valmsg-for="PaymentProof" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+
+                <div class="form-footer-modern">
+                    <button type="submit" class="btn-modern-primary btn-modern-lg">
+                        <i class="bi bi-cloud-upload-fill"></i>
+                        Submit Payment Proof
+                    </button>
+                    <a asp-action="MyRequests" class="btn-modern-outline btn-modern-lg">My Requests</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

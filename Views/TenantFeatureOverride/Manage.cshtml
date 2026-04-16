@@ -1,0 +1,105 @@
+@model ClothInventoryApp.Dto.SuperAdmin.TenantFeatureOverrideManageDto
+@{
+    ViewData["Title"] = "Manage Tenant Feature Overrides";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/superadmin.css" asp-append-version="true" />
+}
+
+<div class="superadmin-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title"><i class="bi bi-sliders"></i> @Model.TenantName</h1>
+            <p class="product-hero-sub">Plan: @Model.ActivePlanName · Code: @Model.TenantCode</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-controller="Tenant" asp-action="Details" asp-route-id="@Model.TenantId" class="sa-btn-add">
+                <i class="bi bi-building"></i> Tenant Details
+            </a>
+            <a asp-action="Index" class="sa-btn-back">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <form asp-action="Manage" method="post" class="sa-form-card">
+        @Html.AntiForgeryToken()
+        <input asp-for="TenantId" type="hidden" />
+
+        <div class="sa-form-section">
+            <div class="sa-section-header">
+                <span class="sa-section-dot"></span>
+                <div class="sa-section-title">Override Rules</div>
+            </div>
+            <p class="text-muted mb-0">
+                `Plan Default` follows the tenant's active plan. `Force Enabled` and `Force Disabled` override the plan-level feature setting.
+            </p>
+        </div>
+
+        <div class="sa-form-section p-0">
+            <div class="table-responsive">
+                <table class="superadmin-table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Plan Default</th>
+                            <th>Effective</th>
+                            <th>Override</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (var i = 0; i < Model.Items.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    <input asp-for="Items[i].FeatureId" type="hidden" />
+                                    <div class="fw-semibold text-dark">@Model.Items[i].FeatureName</div>
+                                    <div class="text-muted small">@Model.Items[i].FeatureCode</div>
+                                    @if (!string.IsNullOrWhiteSpace(Model.Items[i].Description))
+                                    {
+                                        <div class="text-muted small mt-1">@Model.Items[i].Description</div>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="status-badge @(Model.Items[i].PlanEnabled ? "active" : "inactive")">
+                                        @(Model.Items[i].PlanEnabled ? "Enabled" : "Disabled")
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-badge @(Model.Items[i].EffectiveEnabled ? "active" : "inactive")">
+                                        @(Model.Items[i].EffectiveEnabled ? "Enabled" : "Disabled")
+                                    </span>
+                                </td>
+                                <td style="min-width:220px;">
+                                    <select asp-for="Items[i].OverrideMode" class="sa-search-input">
+                                        <option value="Default">Plan Default</option>
+                                        <option value="Enabled">Force Enabled</option>
+                                        <option value="Disabled">Force Disabled</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="sa-form-actions">
+            <a asp-action="Index" class="sa-btn-cancel">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+            <button type="submit" class="sa-btn-save">
+                <i class="bi bi-check-circle-fill"></i> Save Overrides
+            </button>
+        </div>
+    </form>
+</div>

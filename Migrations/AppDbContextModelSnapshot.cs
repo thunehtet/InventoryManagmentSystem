@@ -166,6 +166,19 @@ namespace ClothInventoryApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<Guid?>("ApprovedTenantId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("BusinessName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("BusinessType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -187,10 +200,32 @@ namespace ClothInventoryApp.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
+                    b.Property<string>("ReviewRemarks")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<DateTime?>("ReviewedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("ReviewedByUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("varchar(450)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
                     b.Property<DateTime>("SubmittedAt")
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApprovedTenantId");
+
+                    b.HasIndex("ReviewedByUserId");
+
+                    b.HasIndex("Status", "SubmittedAt");
 
                     b.ToTable("ContactInquiries");
                 });
@@ -504,6 +539,26 @@ namespace ClothInventoryApp.Migrations
                     b.Property<int>("CostPrice")
                         .HasColumnType("int");
 
+                    b.Property<string>("ProductColorSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ProductNameSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ProductSizeSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ProductSkuSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
                     b.Property<Guid>("ProductVariantId")
                         .HasColumnType("char(36)");
 
@@ -533,11 +588,92 @@ namespace ClothInventoryApp.Migrations
                     b.ToTable("SaleItems");
                 });
 
+            modelBuilder.Entity("ClothInventoryApp.Models.SubscriptionPaymentRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("ApprovedSubscriptionId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("BillingCycle")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<int>("ExpectedPrice")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Last6TransactionId")
+                        .IsRequired()
+                        .HasMaxLength(6)
+                        .HasColumnType("varchar(6)");
+
+                    b.Property<Guid>("PaymentProofFileId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("PlanId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("PlanNameSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("RequestedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("varchar(450)");
+
+                    b.Property<string>("ReviewRemarks")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<DateTime?>("ReviewedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("ReviewedByUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("varchar(450)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<DateTime>("SubmittedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApprovedSubscriptionId");
+
+                    b.HasIndex("PaymentProofFileId");
+
+                    b.HasIndex("PlanId");
+
+                    b.HasIndex("RequestedByUserId");
+
+                    b.HasIndex("ReviewedByUserId");
+
+                    b.HasIndex("TenantId", "Status", "SubmittedAt");
+
+                    b.ToTable("SubscriptionPaymentRequests");
+                });
+
             modelBuilder.Entity("ClothInventoryApp.Models.Tenant", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
+
+                    b.Property<string>("BusinessType")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -753,6 +889,66 @@ namespace ClothInventoryApp.Migrations
                     b.HasIndex("TenantId");
 
                     b.ToTable("Textile");
+                });
+
+            modelBuilder.Entity("ClothInventoryApp.Models.UploadedFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Extension")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<string>("OriginalFileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("RelativePath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<long>("SizeBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("StoredFileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("UploadedByUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("varchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("UploadedByUserId");
+
+                    b.HasIndex("Category", "CreatedAt");
+
+                    b.ToTable("UploadedFiles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1018,6 +1214,23 @@ namespace ClothInventoryApp.Migrations
                     b.Navigation("Tenant");
                 });
 
+            modelBuilder.Entity("ClothInventoryApp.Models.ContactInquiry", b =>
+                {
+                    b.HasOne("ClothInventoryApp.Models.Tenant", "ApprovedTenant")
+                        .WithMany()
+                        .HasForeignKey("ApprovedTenantId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ClothInventoryApp.Models.ApplicationUser", "ReviewedByUser")
+                        .WithMany()
+                        .HasForeignKey("ReviewedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("ApprovedTenant");
+
+                    b.Navigation("ReviewedByUser");
+                });
+
             modelBuilder.Entity("ClothInventoryApp.Models.Customer", b =>
                 {
                     b.HasOne("ClothInventoryApp.Models.Tenant", "Tenant")
@@ -1108,7 +1321,7 @@ namespace ClothInventoryApp.Migrations
                     b.HasOne("ProductVariant", "ProductVariant")
                         .WithMany("SaleItems")
                         .HasForeignKey("ProductVariantId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ClothInventoryApp.Models.Sale", "Sale")
@@ -1126,6 +1339,55 @@ namespace ClothInventoryApp.Migrations
                     b.Navigation("ProductVariant");
 
                     b.Navigation("Sale");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("ClothInventoryApp.Models.SubscriptionPaymentRequest", b =>
+                {
+                    b.HasOne("ClothInventoryApp.Models.TenantSubscription", "ApprovedSubscription")
+                        .WithMany()
+                        .HasForeignKey("ApprovedSubscriptionId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ClothInventoryApp.Models.UploadedFile", "PaymentProofFile")
+                        .WithMany()
+                        .HasForeignKey("PaymentProofFileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ClothInventoryApp.Models.Plan", "Plan")
+                        .WithMany()
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ClothInventoryApp.Models.ApplicationUser", "RequestedByUser")
+                        .WithMany()
+                        .HasForeignKey("RequestedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ClothInventoryApp.Models.ApplicationUser", "ReviewedByUser")
+                        .WithMany()
+                        .HasForeignKey("ReviewedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ClothInventoryApp.Models.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApprovedSubscription");
+
+                    b.Navigation("PaymentProofFile");
+
+                    b.Navigation("Plan");
+
+                    b.Navigation("RequestedByUser");
+
+                    b.Navigation("ReviewedByUser");
 
                     b.Navigation("Tenant");
                 });
@@ -1188,6 +1450,23 @@ namespace ClothInventoryApp.Migrations
                         .IsRequired();
 
                     b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("ClothInventoryApp.Models.UploadedFile", b =>
+                {
+                    b.HasOne("ClothInventoryApp.Models.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ClothInventoryApp.Models.ApplicationUser", "UploadedByUser")
+                        .WithMany()
+                        .HasForeignKey("UploadedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Tenant");
+
+                    b.Navigation("UploadedByUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1257,7 +1536,7 @@ namespace ClothInventoryApp.Migrations
                     b.HasOne("Product", "Product")
                         .WithMany("Variants")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ClothInventoryApp.Models.Tenant", "Tenant")
@@ -1276,7 +1555,7 @@ namespace ClothInventoryApp.Migrations
                     b.HasOne("ProductVariant", "ProductVariant")
                         .WithMany("StockMovements")
                         .HasForeignKey("ProductVariantId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ClothInventoryApp.Models.Tenant", "Tenant")

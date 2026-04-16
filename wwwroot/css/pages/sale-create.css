@@ -151,6 +151,35 @@
     font-size: 0.9rem;
 }
 
+.sc-grid-footer {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    padding-top: 0.35rem;
+}
+
+.sc-load-more {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 1rem;
+    border-radius: 12px;
+    border: 1.5px solid #ddd6fe;
+    background: #faf5ff;
+    color: #6d28d9;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.16s ease;
+}
+
+.sc-load-more:hover {
+    border-color: #7c3aed;
+    background: #f5f3ff;
+    color: #5b21b6;
+}
+
 /* ── Variant Card ──────────────────────────────────────────── */
 .sc-card {
     border: 2px solid #e2e8f0;
@@ -281,7 +310,9 @@
    RIGHT PANEL — order form
 ══════════════════════════════════════════════════════════════ */
 .sc-order {
-    width: 370px;
+    width: clamp(410px, 31vw, 500px);
+    min-width: 410px;
+    max-width: 46%;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
@@ -421,7 +452,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    max-height: 260px;
+    max-height: 320px;
     overflow-y: auto;
     padding-right: 2px;
 }
@@ -451,10 +482,10 @@
 }
 
 .sc-ci-controls {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto minmax(140px, 1fr) auto auto;
     align-items: center;
-    gap: 0.45rem;
-    flex-wrap: wrap;
+    gap: 0.55rem;
 }
 
 /* Qty control */
@@ -499,8 +530,8 @@
     display: flex;
     align-items: center;
     gap: 0.3rem;
-    flex: 1;
-    min-width: 0;
+    min-width: 140px;
+    width: 100%;
 }
 
 .sc-price-lbl {
@@ -512,7 +543,7 @@
 
 .sc-price-inp {
     flex: 1;
-    min-width: 0;
+    min-width: 90px;
     border: 1.5px solid #e2e8f0;
     border-radius: 7px;
     padding: 0.3rem 0.45rem;
@@ -533,7 +564,7 @@
     font-size: 0.82rem;
     font-weight: 800;
     color: #1e293b;
-    min-width: 50px;
+    min-width: 72px;
     text-align: right;
     flex-shrink: 0;
 }
@@ -560,6 +591,10 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+}
+
+.sc-discount-group {
+    margin-top: 0.15rem;
 }
 
 .sc-total-row {
@@ -619,6 +654,8 @@
 
     .sc-order {
         width: 100%;
+        min-width: 0;
+        max-width: 100%;
     }
 }
 
@@ -655,6 +692,17 @@
     }
 
     .sc-ci-controls {
-        gap: 0.3rem;
+        grid-template-columns: 1fr auto;
+        gap: 0.45rem;
+        align-items: start;
+    }
+
+    .sc-price-wrap {
+        grid-column: 1 / -1;
+        min-width: 0;
+    }
+
+    .sc-line-total {
+        min-width: 64px;
     }
 }

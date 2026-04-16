@@ -9,20 +9,29 @@
     const sidebar      = document.getElementById('sidebar');
     const sidebarBrand = document.getElementById('sidebarBrand');
     const overlay      = document.getElementById('sidebarOverlay');
+    const body         = document.body;
     const MOBILE_BP    = 900;
 
     if (!sidebar) return; // guard if layout element missing
 
     function isMobile() { return window.innerWidth <= MOBILE_BP; }
 
+    function syncMobileChrome() {
+        if (!body) return;
+        const isDrawerOpen = isMobile() && !sidebar.classList.contains('collapsed');
+        body.classList.toggle('sidebar-open-mobile', isDrawerOpen);
+    }
+
     function openSidebar() {
         sidebar.classList.remove('collapsed');
         if (isMobile() && overlay) overlay.classList.add('active');
+        syncMobileChrome();
     }
 
     function closeSidebar() {
         sidebar.classList.add('collapsed');
         if (overlay) overlay.classList.remove('active');
+        syncMobileChrome();
     }
 
     function toggleSidebar() {
@@ -56,6 +65,7 @@
         } else {
             sidebar.classList.remove('collapsed');
             if (overlay) overlay.classList.remove('active');
+            if (body) body.classList.remove('sidebar-open-mobile');
         }
     }
 

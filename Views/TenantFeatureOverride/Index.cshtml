@@ -1,0 +1,98 @@
+@model IEnumerable<ClothInventoryApp.Dto.SuperAdmin.TenantFeatureOverrideIndexItemDto>
+@{
+    ViewData["Title"] = "Tenant Feature Overrides";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/superadmin.css" asp-append-version="true" />
+}
+
+<div class="superadmin-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title"><i class="bi bi-sliders"></i> Tenant Feature Overrides</h1>
+            <p class="product-hero-sub">Force-enable or force-disable features per tenant beyond the assigned plan.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-controller="Tenant" asp-action="Index" class="sa-btn-add">
+                <i class="bi bi-building"></i> Tenants
+            </a>
+            <a asp-controller="SuperAdmin" asp-action="Index" class="sa-btn-back">
+                <i class="bi bi-arrow-left"></i> Dashboard
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @{ var pg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel; }
+    <form method="get" asp-action="Index" class="sa-search-bar">
+        @if (pg != null) { <input type="hidden" name="size" value="@pg.PageSize" /> }
+        <div class="sa-search-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" name="search" value="@ViewBag.Search"
+                   class="sa-search-input" placeholder="Search tenant by name, code, or email..." />
+        </div>
+        <button type="submit" class="sa-search-btn">
+            <i class="bi bi-search"></i> Search
+        </button>
+    </form>
+
+    <div class="product-table-card">
+        <div class="table-responsive">
+            <table class="superadmin-table">
+                <thead>
+                    <tr>
+                        <th>Tenant</th>
+                        <th>Plan</th>
+                        <th>Overrides</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">No tenants found.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="fw-semibold text-dark">@item.TenantName</div>
+                                    <div class="text-muted small">@item.TenantCode</div>
+                                    <div class="text-muted small">@(item.ContactEmail ?? "-")</div>
+                                </td>
+                                <td>@item.ActivePlanName</td>
+                                <td>
+                                    <span class="sa-count-badge">@item.OverrideCount</span>
+                                </td>
+                                <td>
+                                    <span class="status-badge @(item.IsActive ? "active" : "inactive")">
+                                        @(item.IsActive ? "Active" : "Inactive")
+                                    </span>
+                                </td>
+                                <td>
+                                    <a asp-action="Manage" asp-route-tenantId="@item.TenantId" class="sa-btn-save">
+                                        <i class="bi bi-sliders"></i> Manage
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (pg != null) { @await Html.PartialAsync("_Pagination", pg) }
+    </div>
+</div>

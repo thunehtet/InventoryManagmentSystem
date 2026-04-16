@@ -1,7 +1,7 @@
 ﻿@model ClothInventoryApp.Dto.Dashboard.DashboardViewModel
 
 @{
-    ViewData["Title"] = "Dashboard";
+    ViewData["Title"] = Localizer["Dashboard"];
     var currency = ViewData["Currency"] as string ?? "";
 }
 
@@ -10,26 +10,26 @@
         <div class="dashboard-hero-content">
             <div class="hero-badge-modern">
                 <i class="bi bi-stars"></i>
-                <span>Inventory control center</span>
+                <span>@Localizer["Inventory control center"]</span>
             </div>
 
             <h1 class="dashboard-title">
-                Manage your clothing inventory with a cleaner and smarter dashboard.
+                @Localizer["Manage your inventory with a cleaner and smarter dashboard."]
             </h1>
 
             <p class="dashboard-subtitle">
-                Monitor products, variants, stock movement, and recent activity in one place.
+                @Localizer["Monitor products, variants, stock movement, and recent activity in one place."]
             </p>
 
             <div class="dashboard-hero-actions">
                 <a asp-controller="Products" asp-action="Index" class="btn-dashboard-primary">
                     <i class="bi bi-box-seam"></i>
-                    Manage Products
+                    @Localizer["Manage Products"]
                 </a>
 
                 <a asp-controller="Stock" asp-action="Inventory" class="btn-dashboard-secondary">
                     <i class="bi bi-boxes"></i>
-                    View Inventory
+                    @Localizer["View Inventory"]
                 </a>
             </div>
         </div>
@@ -37,23 +37,23 @@
         <div class="dashboard-hero-side">
             <div class="hero-summary-card">
                 <div class="hero-summary-top">
-                    <span class="summary-label">System overview</span>
+                    <span class="summary-label">@Localizer["System overview"]</span>
                     <i class="bi bi-graph-up-arrow"></i>
                 </div>
 
                 <div class="hero-summary-metrics">
                     <div class="mini-metric">
-                        <span class="mini-metric-label">Products</span>
+                        <span class="mini-metric-label">@Localizer["Products"]</span>
                         <span class="mini-metric-value">@Model.TotalProducts</span>
                     </div>
 
                     <div class="mini-metric">
-                        <span class="mini-metric-label">Variants</span>
+                        <span class="mini-metric-label">@Localizer["Variants"]</span>
                         <span class="mini-metric-value">@Model.TotalVariants</span>
                     </div>
 
                     <div class="mini-metric">
-                        <span class="mini-metric-label">Low Stock</span>
+                        <span class="mini-metric-label">@Localizer["Low Stock"]</span>
                         <span class="mini-metric-value">@Model.LowStockCount</span>
                     </div>
                 </div>
@@ -67,9 +67,9 @@
                 <i class="bi bi-box-seam-fill"></i>
             </div>
             <div class="stat-card-content">
-                <div class="stat-card-label">Total Products</div>
+                <div class="stat-card-label">@Localizer["Total Products"]</div>
                 <div class="stat-card-value">@Model.TotalProducts</div>
-                <div class="stat-card-note">All master products in catalog</div>
+                <div class="stat-card-note">@Localizer["All master products in catalog"]</div>
             </div>
         </div>
 
@@ -78,9 +78,9 @@
                 <i class="bi bi-grid-3x3-gap-fill"></i>
             </div>
             <div class="stat-card-content">
-                <div class="stat-card-label">Total Variants</div>
+                <div class="stat-card-label">@Localizer["Total Variants"]</div>
                 <div class="stat-card-value">@Model.TotalVariants</div>
-                <div class="stat-card-note">Color and size combinations tracked</div>
+                <div class="stat-card-note">@Localizer["Color and size combinations tracked"]</div>
             </div>
         </div>
 
@@ -89,9 +89,9 @@
                 <i class="bi bi-exclamation-triangle-fill"></i>
             </div>
             <div class="stat-card-content">
-                <div class="stat-card-label">Low Stock Items</div>
+                <div class="stat-card-label">@Localizer["Low Stock Items"]</div>
                 <div class="stat-card-value">@Model.LowStockCount</div>
-                <div class="stat-card-note">Items that may need replenishment</div>
+                <div class="stat-card-note">@Localizer["Items that may need replenishment"]</div>
             </div>
         </div>
     </section>
@@ -100,8 +100,8 @@
         <div class="dashboard-panel dashboard-panel-large">
             <div class="panel-header">
                 <div>
-                    <h3>Quick Actions</h3>
-                    <p>Access common tasks quickly from the dashboard.</p>
+                    <h3>@Localizer["Quick Actions"]</h3>
+                    <p>@Localizer["Access common tasks quickly from the dashboard."]</p>
                 </div>
             </div>
 
@@ -111,8 +111,8 @@
                         <i class="bi bi-plus-square-fill"></i>
                     </div>
                     <div class="quick-action-body">
-                        <h4>Add Product</h4>
-                        <p>Create a new master product in your catalog.</p>
+                        <h4>@Localizer["Add Product"]</h4>
+                        <p>@Localizer["Create a new master product in your catalog."]</p>
                     </div>
                     <i class="bi bi-arrow-right-short quick-action-arrow"></i>
                 </a>
@@ -122,8 +122,8 @@
                         <i class="bi bi-diagram-3-fill"></i>
                     </div>
                     <div class="quick-action-body">
-                        <h4>Add Variant</h4>
-                        <p>Create size and color combinations for products.</p>
+                        <h4>@Localizer["Add Variant"]</h4>
+                        <p>@Localizer["Create size and color combinations for products."]</p>
                     </div>
                     <i class="bi bi-arrow-right-short quick-action-arrow"></i>
                 </a>
@@ -133,8 +133,8 @@
                         <i class="bi bi-box-arrow-in-down"></i>
                     </div>
                     <div class="quick-action-body">
-                        <h4>Stock In</h4>
-                        <p>Record incoming inventory for a product variant.</p>
+                        <h4>@Localizer["Stock In"]</h4>
+                        <p>@Localizer["Record incoming inventory for a product variant."]</p>
                     </div>
                     <i class="bi bi-arrow-right-short quick-action-arrow"></i>
                 </a>
@@ -144,8 +144,8 @@
                         <i class="bi bi-box-arrow-up"></i>
                     </div>
                     <div class="quick-action-body">
-                        <h4>Stock Out</h4>
-                        <p>Record outgoing inventory movement accurately.</p>
+                        <h4>@Localizer["Stock Out"]</h4>
+                        <p>@Localizer["Record outgoing inventory movement accurately."]</p>
                     </div>
                     <i class="bi bi-arrow-right-short quick-action-arrow"></i>
                 </a>
@@ -155,8 +155,8 @@
                         <i class="bi bi-receipt-cutoff"></i>
                     </div>
                     <div class="quick-action-body">
-                        <h4>Create Sale</h4>
-                        <p>Record a new sale and update item movement.</p>
+                        <h4>@Localizer["Create Sale"]</h4>
+                        <p>@Localizer["Record a new sale and update item movement."]</p>
                     </div>
                     <i class="bi bi-arrow-right-short quick-action-arrow"></i>
                 </a>
@@ -166,8 +166,8 @@
                         <i class="bi bi-bar-chart-line-fill"></i>
                     </div>
                     <div class="quick-action-body">
-                        <h4>Inventory Report</h4>
-                        <p>Review available stock and movement summary.</p>
+                        <h4>@Localizer["Inventory Report"]</h4>
+                        <p>@Localizer["Review available stock and movement summary."]</p>
                     </div>
                     <i class="bi bi-arrow-right-short quick-action-arrow"></i>
                 </a>
@@ -177,8 +177,8 @@
         <div class="dashboard-panel dashboard-panel-side">
             <div class="panel-header">
                 <div>
-                    <h3>Inventory Health</h3>
-                    <p>Quick inventory summary.</p>
+                    <h3>@Localizer["Inventory Health"]</h3>
+                    <p>@Localizer["Quick inventory summary."]</p>
                 </div>
             </div>
 
@@ -186,7 +186,7 @@
                 <a asp-controller="Products" asp-action="Index" class="health-row health-row-link">
                     <div class="health-label-wrap">
                         <span class="health-dot blue"></span>
-                        <span class="health-label">Products</span>
+                        <span class="health-label">@Localizer["Products"]</span>
                     </div>
                     <div class="health-value-wrap">
                         <span class="health-value">@Model.TotalProducts</span>
@@ -197,7 +197,7 @@
                 <a asp-controller="ProductVariants" asp-action="Index" class="health-row health-row-link">
                     <div class="health-label-wrap">
                         <span class="health-dot purple"></span>
-                        <span class="health-label">Variants</span>
+                        <span class="health-label">@Localizer["Variants"]</span>
                     </div>
                     <div class="health-value-wrap">
                         <span class="health-value">@Model.TotalVariants</span>
@@ -208,7 +208,7 @@
                 <a asp-controller="Stock" asp-action="Inventory" asp-route-lowstock="true" class="health-row health-row-link @(Model.LowStockCount > 0 ? "health-row-warning" : "")">
                     <div class="health-label-wrap">
                         <span class="health-dot orange"></span>
-                        <span class="health-label">Low Stock</span>
+                        <span class="health-label">@Localizer["Low Stock"]</span>
                     </div>
                     <div class="health-value-wrap">
                         <span class="health-value">@Model.LowStockCount</span>
@@ -222,14 +222,14 @@
                 {
                     <div class="alert-soft warning">
                         <i class="bi bi-exclamation-circle-fill"></i>
-                        <span>@Model.LowStockCount item(s) may need replenishment soon.</span>
+                        <span>@Localizer["{0} item(s) may need replenishment soon.", Model.LowStockCount]</span>
                     </div>
                 }
                 else
                 {
                     <div class="alert-soft success">
                         <i class="bi bi-check-circle-fill"></i>
-                        <span>No low stock alert at the moment.</span>
+                        <span>@Localizer["No low stock alert at the moment."]</span>
                     </div>
                 }
             </div>
@@ -240,19 +240,19 @@
     <section class="dashboard-panel chart-panel">
         <div class="panel-header panel-header-with-action">
             <div>
-                <h3>Sales &amp; Profit Trend</h3>
-                <p id="chartSubtitle">Daily revenue and profit for the last 30 days</p>
+                <h3>@Localizer["Sales & Profit Trend"]</h3>
+                <p id="chartSubtitle">@Localizer["Daily revenue and profit for the last 30 days"]</p>
             </div>
             <div class="chart-legend-row">
                 <div class="chart-legend-item">
-                    <span class="chart-legend-dot legend-sales"></span> Sales
+                    <span class="chart-legend-dot legend-sales"></span> @Localizer["Sales"]
                 </div>
                 <div class="chart-legend-item">
-                    <span class="chart-legend-dot legend-profit"></span> Profit
+                    <span class="chart-legend-dot legend-profit"></span> @Localizer["Profit"]
                 </div>
                 <div class="trend-filter-group">
-                    <button id="btnDaily"  class="trend-filter-btn trend-filter-active" type="button">Daily</button>
-                    <button id="btnMonthly" class="trend-filter-btn" type="button">Monthly</button>
+                    <button id="btnDaily"  class="trend-filter-btn trend-filter-active" type="button">@Localizer["Daily"]</button>
+                    <button id="btnMonthly" class="trend-filter-btn" type="button">@Localizer["Monthly"]</button>
                 </div>
             </div>
         </div>
@@ -264,12 +264,12 @@
     <section class="dashboard-panel recent-activity-panel">
         <div class="panel-header panel-header-with-action">
             <div>
-                <h3>Recent Inventory Activity</h3>
-                <p>Latest stock movement records from the system.</p>
+                <h3>@Localizer["Recent Inventory Activity"]</h3>
+                <p>@Localizer["Latest stock movement records from the system."]</p>
             </div>
 
             <a asp-controller="Stock" asp-action="Index" class="panel-link-action">
-                View all
+                @Localizer["View all"]
                 <i class="bi bi-arrow-right"></i>
             </a>
         </div>
@@ -278,12 +278,12 @@
             <table class="table-modern dashboard-table">
                 <thead>
                     <tr>
-                        <th>SKU</th>
-                        <th>Product</th>
-                        <th>Action</th>
-                        <th>Quantity</th>
-                        <th>Date</th>
-                        <th>Status</th>
+                        <th>@Localizer["SKU"]</th>
+                        <th>@Localizer["Product"]</th>
+                        <th>@Localizer["Action"]</th>
+                        <th>@Localizer["Quantity"]</th>
+                        <th>@Localizer["Date"]</th>
+                        <th>@Localizer["Status"]</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -293,7 +293,7 @@
                             <td colspan="6" class="empty-state-cell">
                                 <div class="empty-state-wrap">
                                     <i class="bi bi-inbox"></i>
-                                    <p>No recent activity found.</p>
+                                    <p>@Localizer["No recent activity found."]</p>
                                 </div>
                             </td>
                         </tr>
@@ -367,7 +367,7 @@
                 labels: daily.labels,
                 datasets: [
                     {
-                        label: 'Sales',
+                        label: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["Sales"].Value)),
                         data: daily.sales,
                         borderColor: '#6366f1',
                         backgroundColor: 'rgba(99,102,241,0.08)',
@@ -378,7 +378,7 @@
                         fill: true
                     },
                     {
-                        label: 'Profit',
+                        label: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["Profit"].Value)),
                         data: daily.profit,
                         borderColor: '#10b981',
                         backgroundColor: 'rgba(16,185,129,0.07)',
@@ -434,8 +434,8 @@
             chart.update();
 
             subtitle.textContent = mode === 'month'
-                ? 'Monthly revenue and profit for the last 12 months'
-                : 'Daily revenue and profit for the last 30 days';
+                ? @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["Monthly revenue and profit for the last 12 months"].Value))
+                : @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["Daily revenue and profit for the last 30 days"].Value));
 
             btnDaily.classList.toggle('trend-filter-active',   mode === 'day');
             btnMonthly.classList.toggle('trend-filter-active', mode === 'month');

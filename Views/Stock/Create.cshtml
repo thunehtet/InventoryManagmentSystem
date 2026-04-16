@@ -2,7 +2,7 @@
 @model CreateStockDto
 
 @{
-    ViewData["Title"] = "Create Stock Movement";
+    ViewData["Title"] = Localizer["Create Stock Movement"];
 }
 
 <div class="create-product-shell">
@@ -10,16 +10,16 @@
         <div class="create-product-hero-content">
             <div class="hero-kicker">
                 <i class="bi bi-plus-circle-fill"></i>
-                <span>Stock Setup</span>
+                <span>@Localizer["Stock Setup"]</span>
             </div>
 
-            <h1>Create stock movement</h1>
-            <p>Add a new stock in, stock out, or adjustment record for a product variant.</p>
+            <h1>@Localizer["Create Stock Movement"]</h1>
+            <p>@Localizer["Add a new stock in, stock out, or adjustment record for a product variant."]</p>
 
             <div class="hero-actions">
                 <a asp-action="Index" class="btn-soft-light">
                     <i class="bi bi-arrow-left"></i>
-                    Back to Stock
+                    @Localizer["Back to Stock"]
                 </a>
             </div>
         </div>
@@ -29,8 +29,8 @@
         <div class="create-main-card">
             <div class="section-header">
                 <div>
-                    <h3>Stock movement details</h3>
-                    <p>Fill in the stock transaction information.</p>
+                    <h3>@Localizer["Stock movement details"]</h3>
+                    <p>@Localizer["Fill in the stock transaction information."]</p>
                 </div>
             </div>
 
@@ -40,8 +40,8 @@
                 <div class="form-grid-modern">
                     <div class="form-group-modern form-group-full">
                         <label asp-for="ProductVariantId" class="form-label-modern"></label>
-                        <select asp-for="ProductVariantId" asp-items="ViewBag.ProductVariants" class="input-modern input-modern-lg">
-                            <option value="">-- Select Variant --</option>
+                        <select asp-for="ProductVariantId" asp-items="ViewBag.ProductVariants" class="input-modern input-modern-lg" data-searchable-picker="true" data-placeholder="Select a variant" data-search-placeholder="Search variant by name, SKU, color, or size">
+                            <option value="">@Localizer["-- Select Variant --"]</option>
                         </select>
                         <span asp-validation-for="ProductVariantId" class="field-validation-modern"></span>
                     </div>
@@ -49,7 +49,7 @@
                     <div class="form-group-modern">
                         <label asp-for="MovementType" class="form-label-modern"></label>
                         <select asp-for="MovementType" asp-items="ViewBag.MovementTypes" class="input-modern">
-                            <option value="">-- Select Type --</option>
+                            <option value="">@Localizer["-- Select Type --"]</option>
                         </select>
                         <span asp-validation-for="MovementType" class="field-validation-modern"></span>
                     </div>
@@ -68,7 +68,7 @@
 
                     <div class="form-group-modern form-group-full">
                         <label asp-for="Remarks" class="form-label-modern"></label>
-                        <textarea asp-for="Remarks" class="input-modern" rows="4" placeholder="Optional remarks"></textarea>
+                        <textarea asp-for="Remarks" class="input-modern" rows="4" placeholder="@Localizer["Optional remarks"]"></textarea>
                         <span asp-validation-for="Remarks" class="field-validation-modern"></span>
                     </div>
                 </div>
@@ -76,7 +76,7 @@
                 <div class="form-footer-modern">
                     <button type="submit" class="btn-modern-primary btn-modern-lg">
                         <i class="bi bi-check2-circle"></i>
-                        Save Stock Movement
+                        @Localizer["Save Stock Movement"]
                     </button>
 
                     <a asp-action="Index" class="btn-modern-outline btn-modern-lg">
@@ -92,6 +92,7 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script src="~/js/searchable-picker.js" asp-append-version="true"></script>
 }
 
 @section Styles {

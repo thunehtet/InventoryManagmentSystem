@@ -80,6 +80,13 @@ namespace ClothInventoryApp.Controllers
             }
             var tenantId = _tenantProvider.GetTenantId();
 
+            if (!await ProductExistsForTenantAsync(dto.ProductId))
+            {
+                ModelState.AddModelError(nameof(dto.ProductId), "Please select a valid active product in your workspace.");
+                await LoadProductsDropDown();
+                return View(dto);
+            }
+
             var skuExists = await _context.ProductVariants
                 .AnyAsync(v => v.TenantId == tenantId && v.SKU == dto.SKU);
             if (skuExists)
@@ -165,6 +172,13 @@ namespace ClothInventoryApp.Controllers
             if (variant == null)
                 return NotFound();
 
+            if (!await ProductExistsForTenantAsync(dto.ProductId))
+            {
+                ModelState.AddModelError(nameof(dto.ProductId), "Please select a valid active product in your workspace.");
+                await LoadProductsDropDown();
+                return View(dto);
+            }
+
             variant.ProductId = dto.ProductId;
             variant.SKU = dto.SKU;
             variant.Size = dto.Size;
@@ -199,6 +213,7 @@ namespace ClothInventoryApp.Controllers
             if (variant == null)
                 return NotFound();
 
+            await PopulateDeleteStateAsync(id);
             return View(variant);
         }
 
@@ -237,6 +252,13 @@ namespace ClothInventoryApp.Controllers
             if (variant == null)
                 return NotFound();
 
+            var deleteState = await GetDeleteStateAsync(id);
+            if (!deleteState.CanDelete)
+            {
+                TempData["Error"] = deleteState.Message;
+                return RedirectToAction(nameof(Delete), new { id });
+            }
+
             _context.ProductVariants.Remove(variant);
             await _context.SaveChangesAsync();
 
@@ -246,10 +268,52 @@ namespace ClothInventoryApp.Controllers
         private async Task LoadProductsDropDown()
         {
             var products = await _context.Products
+                .Where(p => p.IsActive)
                 .OrderBy(p => p.Name)
                 .ToListAsync();
 
             ViewBag.Products = new SelectList(products, "Id", "Name");
+        }
+
+        private async Task<bool> ProductExistsForTenantAsync(Guid productId)
+        {
+            var tenantId = _tenantProvider.GetTenantId();
+            return await _context.Products
+                .AnyAsync(p => p.Id == productId && p.TenantId == tenantId && p.IsActive);
+        }
+
+        private async Task PopulateDeleteStateAsync(Guid variantId)
+        {
+            var deleteState = await GetDeleteStateAsync(variantId);
+            ViewBag.CanDelete = deleteState.CanDelete;
+            ViewBag.DeleteMessage = deleteState.Message;
+        }
+
+        private async Task<(bool CanDelete, string? Message)> GetDeleteStateAsync(Guid variantId)
+        {
+            var hasSaleHistory = await _context.SaleItems
+                .AnyAsync(i => i.ProductVariantId == variantId);
+            if (hasSaleHistory)
+            {
+                return (false, "This variant cannot be deleted because it is used in sales history.");
+            }
+
+            var stockDelta = await _context.StockMovements
+                .Where(m => m.ProductVariantId == variantId)
+                .SumAsync(m => m.MovementType == "IN" ? m.Quantity : m.MovementType == "OUT" ? -m.Quantity : 0);
+            if (stockDelta != 0)
+            {
+                return (false, "This variant cannot be deleted because it still has stock on hand.");
+            }
+
+            var hasStockHistory = await _context.StockMovements
+                .AnyAsync(m => m.ProductVariantId == variantId);
+            if (hasStockHistory)
+            {
+                return (false, "This variant cannot be deleted because it already has stock movement history.");
+            }
+
+            return (true, null);
         }
     }
 }

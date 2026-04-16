@@ -3,7 +3,9 @@ using ClothInventoryApp.Models;
 using QuestPDF.Drawing;
 using QuestPDF.Infrastructure;
 using ClothInventoryApp.Services.Feature;
+using ClothInventoryApp.Services.Files;
 using ClothInventoryApp.Services.Identity;
+using ClothInventoryApp.Options;
 using ClothInventoryApp.Services.Stock;
 using ClothInventoryApp.Services.Subscription;
 using ClothInventoryApp.Services.Tenant;
@@ -122,6 +124,8 @@ builder.Services.AddRateLimiter(options =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ITenantProvider, TenantProvider>();
 builder.Services.AddScoped<IFeatureService, FeatureService>();
+builder.Services.Configure<SubscriptionPaymentSettings>(builder.Configuration.GetSection("SubscriptionPayments"));
+builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AppClaimsPrincipalFactory>();

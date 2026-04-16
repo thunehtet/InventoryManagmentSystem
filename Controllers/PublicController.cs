@@ -159,8 +159,6 @@ namespace ClothInventoryApp.Controllers
                 .IgnoreQueryFilters()
                 .Include(s => s.Tenant)
                 .Include(s => s.Items)
-                .ThenInclude(i => i.ProductVariant)
-                .ThenInclude(v => v.Product)
                 .FirstOrDefaultAsync(s => s.PublicReceiptToken == token);
 
             if (sale == null)
@@ -176,7 +174,13 @@ namespace ClothInventoryApp.Controllers
                 {
                     Id = i.Id,
                     ProductVariantId = i.ProductVariantId,
-                    ProductVariantName = i.ProductVariant.Product.Name + " / " + i.ProductVariant.SKU,
+                    ProductVariantName = string.Join(" / ", new[]
+                    {
+                        i.ProductNameSnapshot,
+                        i.ProductSkuSnapshot,
+                        i.ProductColorSnapshot,
+                        i.ProductSizeSnapshot
+                    }.Where(x => !string.IsNullOrWhiteSpace(x))),
                     Quantity = i.Quantity,
                     UnitPrice = i.UnitPrice,
                     CostPrice = 0,

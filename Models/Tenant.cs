@@ -14,6 +14,9 @@ namespace ClothInventoryApp.Models
         [MaxLength(200)]
         public string Name { get; set; } = string.Empty;
 
+        [MaxLength(100)]
+        public string? BusinessType { get; set; }
+
         [MaxLength(500)]
         public string? LogoUrl { get; set; }
 

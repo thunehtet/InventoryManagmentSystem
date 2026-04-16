@@ -51,6 +51,8 @@ namespace ClothInventoryApp.Data
         public DbSet<ContactInquiry> ContactInquiries => Set<ContactInquiry>();
         public DbSet<PastSubscription> PastSubscriptions => Set<PastSubscription>();
         public DbSet<CustomerInviteLink> CustomerInviteLinks => Set<CustomerInviteLink>();
+        public DbSet<UploadedFile> UploadedFiles => Set<UploadedFile>();
+        public DbSet<SubscriptionPaymentRequest> SubscriptionPaymentRequests => Set<SubscriptionPaymentRequest>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -108,8 +110,48 @@ namespace ClothInventoryApp.Data
                 .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<ProductVariant>()
+                .HasOne(v => v.Product)
+                .WithMany(p => p.Variants)
+                .HasForeignKey(v => v.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<SaleItem>()
+                .HasOne(i => i.ProductVariant)
+                .WithMany(v => v.SaleItems)
+                .HasForeignKey(i => i.ProductVariantId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<SaleItem>()
+                .HasOne(i => i.Sale)
+                .WithMany(s => s.Items)
+                .HasForeignKey(i => i.SaleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<StockMovement>()
+                .HasOne(m => m.ProductVariant)
+                .WithMany(v => v.StockMovements)
+                .HasForeignKey(m => m.ProductVariantId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ProductVariant>()
                 .HasIndex(v => new { v.TenantId, v.SKU })
                 .IsUnique();
+
+            modelBuilder.Entity<SaleItem>()
+                .Property(i => i.ProductNameSnapshot)
+                .HasMaxLength(255);
+
+            modelBuilder.Entity<SaleItem>()
+                .Property(i => i.ProductSkuSnapshot)
+                .HasMaxLength(255);
+
+            modelBuilder.Entity<SaleItem>()
+                .Property(i => i.ProductColorSnapshot)
+                .HasMaxLength(255);
+
+            modelBuilder.Entity<SaleItem>()
+                .Property(i => i.ProductSizeSnapshot)
+                .HasMaxLength(255);
 
             modelBuilder.Entity<Sale>()
                 .HasIndex(x => x.PublicReceiptToken)
@@ -193,6 +235,79 @@ namespace ClothInventoryApp.Data
                 .WithMany(t => t.Users)
                 .HasForeignKey(u => u.TenantId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UploadedFile>()
+                .HasOne(x => x.Tenant)
+                .WithMany()
+                .HasForeignKey(x => x.TenantId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<UploadedFile>()
+                .HasOne(x => x.UploadedByUser)
+                .WithMany()
+                .HasForeignKey(x => x.UploadedByUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<UploadedFile>()
+                .HasIndex(x => new { x.Category, x.CreatedAt });
+
+            modelBuilder.Entity<SubscriptionPaymentRequest>()
+                .HasOne(x => x.Tenant)
+                .WithMany()
+                .HasForeignKey(x => x.TenantId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<SubscriptionPaymentRequest>()
+                .HasOne(x => x.RequestedByUser)
+                .WithMany()
+                .HasForeignKey(x => x.RequestedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<SubscriptionPaymentRequest>()
+                .HasOne(x => x.ReviewedByUser)
+                .WithMany()
+                .HasForeignKey(x => x.ReviewedByUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<SubscriptionPaymentRequest>()
+                .HasOne(x => x.Plan)
+                .WithMany()
+                .HasForeignKey(x => x.PlanId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<SubscriptionPaymentRequest>()
+                .HasOne(x => x.PaymentProofFile)
+                .WithMany()
+                .HasForeignKey(x => x.PaymentProofFileId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<SubscriptionPaymentRequest>()
+                .HasOne(x => x.ApprovedSubscription)
+                .WithMany()
+                .HasForeignKey(x => x.ApprovedSubscriptionId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<SubscriptionPaymentRequest>()
+                .HasIndex(x => new { x.TenantId, x.Status, x.SubmittedAt });
+
+            modelBuilder.Entity<ContactInquiry>()
+                .Property(x => x.Status)
+                .HasMaxLength(20);
+
+            modelBuilder.Entity<ContactInquiry>()
+                .HasOne(x => x.ReviewedByUser)
+                .WithMany()
+                .HasForeignKey(x => x.ReviewedByUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<ContactInquiry>()
+                .HasOne(x => x.ApprovedTenant)
+                .WithMany()
+                .HasForeignKey(x => x.ApprovedTenantId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<ContactInquiry>()
+                .HasIndex(x => new { x.Status, x.SubmittedAt });
 
             // PastSubscription — no query filter (SuperAdmin-only table)
             modelBuilder.Entity<PastSubscription>()

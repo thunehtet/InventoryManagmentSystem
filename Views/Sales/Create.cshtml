@@ -94,13 +94,6 @@
             <!-- Hidden inputs populated by JS before submit -->
             <div id="hiddenInputs"></div>
 
-            <!-- Discount (optional) -->
-            <div class="sc-field-group">
-                <label class="sc-label">@Localizer["Discount"] <span class="text-muted small">(@Localizer["optional"])</span></label>
-                <input name="Discount" id="discountInput" type="number" min="0" class="sc-input"
-                       placeholder="@Localizer["Enter discount amount (0 = no discount)"]" value="0" />
-            </div>
-
             <!-- Totals -->
             <div class="sc-totals">
                 <div class="sc-total-row">
@@ -125,6 +118,13 @@
                     <span class="sc-total-val sc-profit" id="sumProfit">0</span>
                 </div>
                 }
+            </div>
+
+            <!-- Discount (optional) -->
+            <div class="sc-field-group sc-discount-group">
+                <label class="sc-label">@Localizer["Discount"] <span class="text-muted small">(@Localizer["optional"])</span></label>
+                <input name="Discount" id="discountInput" type="number" min="0" class="sc-input"
+                       placeholder="@Localizer["Enter discount amount (0 = no discount)"]" value="0" />
             </div>
 
             <!-- Actions -->

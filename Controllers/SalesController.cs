@@ -100,9 +100,41 @@ namespace ClothInventoryApp.Controllers
                 .Where(x =>  x.Quantity > 0)
                 .ToList();
 
+            if (dto.CustomerId.HasValue &&
+                !await _context.Customers.AnyAsync(c => c.Id == dto.CustomerId.Value && c.TenantId == tenantId && c.IsActive))
+            {
+                ModelState.AddModelError(nameof(dto.CustomerId), "Please select a valid active customer in your workspace.");
+                await LoadVariantDropDown();
+                await LoadCustomerDropDown();
+                return View(dto);
+            }
+
             if (!dto.Items.Any())
             {
                 ModelState.AddModelError("", "Please add at least one sale item.");
+                await LoadVariantDropDown();
+                await LoadCustomerDropDown();
+                return View(dto);
+            }
+
+            var variantIds = dto.Items
+                .Select(x => x.ProductVariantId)
+                .Distinct()
+                .ToList();
+
+            var variantMap = await _context.ProductVariants
+                .Include(v => v.Product)
+                .Where(v => variantIds.Contains(v.Id))
+                .ToDictionaryAsync(v => v.Id);
+
+            var invalidVariantExists = dto.Items.Any(i =>
+                !variantMap.TryGetValue(i.ProductVariantId, out var variant) ||
+                variant.TenantId != tenantId ||
+                !variant.Product.IsActive);
+
+            if (invalidVariantExists)
+            {
+                ModelState.AddModelError("", "One or more selected variants are invalid or inactive.");
                 await LoadVariantDropDown();
                 await LoadCustomerDropDown();
                 return View(dto);
@@ -150,6 +182,9 @@ namespace ClothInventoryApp.Controllers
                 }
 
                 var discount = Math.Max(0, dto.Discount);
+                var subtotal = dto.Items.Sum(i => i.Quantity * i.UnitPrice);
+                if (discount > subtotal)
+                    throw new InvalidOperationException("Discount cannot exceed the sale subtotal.");
 
                 var sale = new Sale
                 {
@@ -161,10 +196,14 @@ namespace ClothInventoryApp.Controllers
                     {
                         ProductVariantId = i.ProductVariantId,
                         TenantId = tenantId,
+                        ProductNameSnapshot = variantMap[i.ProductVariantId].Product.Name,
+                        ProductSkuSnapshot = variantMap[i.ProductVariantId].SKU,
+                        ProductColorSnapshot = variantMap[i.ProductVariantId].Color,
+                        ProductSizeSnapshot = variantMap[i.ProductVariantId].Size,
                         Quantity = i.Quantity,
                         UnitPrice = i.UnitPrice,
-                        CostPrice = i.CostPrice,
-                        Profit = (i.UnitPrice - i.CostPrice) * i.Quantity
+                        CostPrice = variantMap[i.ProductVariantId].CostPrice,
+                        Profit = (i.UnitPrice - variantMap[i.ProductVariantId].CostPrice) * i.Quantity
                     }).ToList()
                 };
 
@@ -228,7 +267,6 @@ namespace ClothInventoryApp.Controllers
             var sale = await _context.Sales
                 .Include(s => s.Customer)
                 .Include(s => s.Items)
-                .ThenInclude(i => i.ProductVariant)
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (sale == null)
@@ -254,7 +292,7 @@ namespace ClothInventoryApp.Controllers
                 {
                     Id = i.Id,
                     ProductVariantId = i.ProductVariantId,
-                    ProductVariantName = i.ProductVariant.SKU + " / " + i.ProductVariant.Color + " / " + i.ProductVariant.Size,
+                    ProductVariantName = FormatSaleItemName(i),
                     Quantity = i.Quantity,
                     UnitPrice = i.UnitPrice,
                     CostPrice = i.CostPrice,
@@ -271,8 +309,6 @@ namespace ClothInventoryApp.Controllers
             var sale = await _context.Sales
                 .Include(s => s.Customer)
                 .Include(s => s.Items)
-                .ThenInclude(i => i.ProductVariant)
-                .ThenInclude(v => v.Product)
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (sale == null) return NotFound();
@@ -295,7 +331,7 @@ namespace ClothInventoryApp.Controllers
                 {
                     Id = i.Id,
                     ProductVariantId = i.ProductVariantId,
-                    ProductVariantName = i.ProductVariant.Product.Name + " — " + i.ProductVariant.SKU + " / " + i.ProductVariant.Color + " / " + i.ProductVariant.Size,
+                    ProductVariantName = FormatSaleItemName(i),
                     Quantity = i.Quantity,
                     UnitPrice = i.UnitPrice,
                     CostPrice = i.CostPrice,
@@ -316,7 +352,6 @@ namespace ClothInventoryApp.Controllers
             var sale = await _context.Sales
                 .Include(s => s.Customer)
                 .Include(s => s.Items)
-                .ThenInclude(i => i.ProductVariant)
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (sale == null)
@@ -335,7 +370,7 @@ namespace ClothInventoryApp.Controllers
                 {
                     Id = i.Id,
                     ProductVariantId = i.ProductVariantId,
-                    ProductVariantName = i.ProductVariant.SKU + " / " + i.ProductVariant.Color + " / " + i.ProductVariant.Size,
+                    ProductVariantName = FormatSaleItemName(i),
                     Quantity = i.Quantity,
                     UnitPrice = i.UnitPrice,
                     CostPrice = i.CostPrice,
@@ -392,22 +427,62 @@ namespace ClothInventoryApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetVariants()
+        public async Task<IActionResult> GetVariants(string? q = null, string? category = null, int page = 1, int pageSize = 48)
         {
             var tenantId = _tenantProvider.GetTenantId();
-            var variants = await _context.ProductVariants
+            page = Math.Max(1, page);
+            pageSize = Math.Clamp(pageSize, 12, 80);
+
+            var query = _context.ProductVariants
+                .AsNoTracking()
                 .Include(v => v.Product)
-                .OrderBy(v => v.Product.Name).ThenBy(v => v.SKU)
+                .Where(v => v.Product.IsActive)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(category) &&
+                !string.Equals(category, "All", StringComparison.OrdinalIgnoreCase))
+            {
+                query = query.Where(v => v.Product.Category == category);
+            }
+
+            if (!string.IsNullOrWhiteSpace(q))
+            {
+                var keyword = q.Trim();
+                query = query.Where(v =>
+                    v.Product.Name.Contains(keyword) ||
+                    v.SKU.Contains(keyword) ||
+                    v.Color.Contains(keyword) ||
+                    v.Size.Contains(keyword) ||
+                    (v.Product.Category != null && v.Product.Category.Contains(keyword)));
+            }
+
+            var total = await query.CountAsync();
+
+            var variants = await query
+                .OrderBy(v => v.Product.Category)
+                .ThenBy(v => v.Product.Name)
+                .ThenBy(v => v.SKU)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
 
             var stockMap = await _stockService.GetCurrentStockMapAsync(
                 tenantId,
                 variants.Select(v => v.Id));
 
-            var result = variants.Select(v => new
+            var categories = await _context.Products
+                .AsNoTracking()
+                .Where(p => p.IsActive && !string.IsNullOrWhiteSpace(p.Category))
+                .Select(p => p.Category!)
+                .Distinct()
+                .OrderBy(c => c)
+                .ToListAsync();
+
+            var items = variants.Select(v => new
             {
                 id = v.Id,
                 productName = v.Product.Name,
+                category = v.Product.Category,
                 sku = v.SKU,
                 size = v.Size,
                 color = v.Color,
@@ -416,13 +491,22 @@ namespace ClothInventoryApp.Controllers
                 stock = stockMap.TryGetValue(v.Id, out var s) ? s : 0
             });
 
-            return Json(result);
+            return Json(new
+            {
+                total,
+                page,
+                pageSize,
+                hasMore = page * pageSize < total,
+                categories,
+                items
+            });
         }
 
         private async Task LoadVariantDropDown()
         {
             var variants = await _context.ProductVariants
                 .Include(v => v.Product)
+                .Where(v => v.Product.IsActive)
                 .OrderBy(v => v.SKU)
                 .Select(v => new
                 {
@@ -472,6 +556,17 @@ namespace ClothInventoryApp.Controllers
         private static string GeneratePublicToken()
         {
             return Convert.ToHexString(RandomNumberGenerator.GetBytes(24)).ToLowerInvariant();
+        }
+
+        private static string FormatSaleItemName(SaleItem item)
+        {
+            return string.Join(" / ", new[]
+            {
+                item.ProductNameSnapshot,
+                item.ProductSkuSnapshot,
+                item.ProductColorSnapshot,
+                item.ProductSizeSnapshot
+            }.Where(x => !string.IsNullOrWhiteSpace(x)));
         }
     }
 }

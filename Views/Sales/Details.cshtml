@@ -2,7 +2,7 @@
 @model ViewSaleDto
 
 @{
-    ViewData["Title"] = "Sale Details";
+    ViewData["Title"] = Localizer["Sale Details"];
     var currency = ViewData["Currency"] as string ?? "";
 }
 
@@ -10,39 +10,39 @@
     <div class="create-main-card">
         <div class="section-header">
             <div>
-                <h3>Sale Details</h3>
+                <h3>@Localizer["Sale Details"]</h3>
             </div>
             <div class="sale-details-actions">
                 <a asp-action="InvoicePdf" asp-route-id="@Model.Id" class="btn-modern-primary sale-details-btn">
-                    <i class="bi bi-file-earmark-pdf-fill me-1"></i> Download Invoice
+                    <i class="bi bi-file-earmark-pdf-fill me-1"></i> @Localizer["Download Invoice"]
                 </a>
                 <a asp-action="Index" class="btn-modern-outline sale-details-btn">
-                    <i class="bi bi-arrow-left me-1"></i> Back
+                    <i class="bi bi-arrow-left me-1"></i> @Localizer["Back"]
                 </a>
             </div>
         </div>
 
         <section class="sale-share-panel">
             <div class="sale-share-panel__copy">
-                <h4>Receipt Sharing</h4>
-                <p>Share a permanent receipt link that is safe for customers and works well on mobile apps like Messenger and Viber.</p>
+                <h4>@Localizer["Receipt Sharing"]</h4>
+                <p>@Localizer["Share a permanent receipt link that is safe for customers and works well on mobile apps like Messenger and Viber."]</p>
             </div>
             <div class="sale-share-panel__actions">
-                <button type="button" class="btn-modern-primary" data-share-url="@Model.PublicReceiptUrl" data-share-title="Receipt link">
-                    <i class="bi bi-share-fill"></i> Share Receipt
+                <button type="button" class="btn-modern-primary" data-share-url="@Model.PublicReceiptUrl" data-share-title="@Localizer["Receipt link"]">
+                    <i class="bi bi-share-fill"></i> @Localizer["Share Receipt"]
                 </button>
                 <button type="button" class="btn-modern-outline" data-copy-text="@Model.PublicReceiptUrl">
-                    <i class="bi bi-copy"></i> Copy Link
+                    <i class="bi bi-copy"></i> @Localizer["Copy Link"]
                 </button>
                 <form asp-action="RefreshReceiptLink" method="post" class="customer-inline-form">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="id" value="@Model.Id" />
                     <button type="submit" class="btn-modern-outline">
-                        <i class="bi bi-arrow-repeat"></i> Refresh Link
+                        <i class="bi bi-arrow-repeat"></i> @Localizer["Refresh Link"]
                     </button>
                 </form>
                 <a href="@Model.PublicReceiptUrl" target="_blank" rel="noopener noreferrer" class="btn-modern-outline">
-                    <i class="bi bi-box-arrow-up-right"></i> Open Receipt
+                    <i class="bi bi-box-arrow-up-right"></i> @Localizer["Open Receipt"]
                 </a>
             </div>
             <div class="sale-share-link">@Model.PublicReceiptUrl</div>
@@ -50,14 +50,14 @@
 
         <div class="form-grid-modern">
             <div class="form-group-modern">
-                <label class="form-label-modern">Sale Date</label>
+                <label class="form-label-modern">@Localizer["Sale Date"]</label>
                 <input value="@Model.SaleDate.ToString("yyyy-MM-dd")" class="input-modern" readonly />
             </div>
 
             @if (Model.CustomerId.HasValue)
             {
                 <div class="form-group-modern">
-                    <label class="form-label-modern">Customer</label>
+                    <label class="form-label-modern">@Localizer["Customer"]</label>
                     <div class="input-modern sale-customer-box">
                         <i class="bi bi-person-fill sale-customer-box__icon"></i>
                         <a asp-controller="Customer" asp-action="Details" asp-route-id="@Model.CustomerId" class="sale-customer-box__link">@Model.CustomerName</a>
@@ -70,20 +70,20 @@
             }
 
             <div class="form-group-modern">
-                <label class="form-label-modern">Total Revenue</label>
+                <label class="form-label-modern">@Localizer["Total Revenue"]</label>
                 <input value="@(Model.TotalAmount.ToString("N0") + " " + currency)" class="input-modern" readonly />
             </div>
 
             @if (Model.Discount > 0)
             {
                 <div class="form-group-modern">
-                    <label class="form-label-modern">Discount</label>
+                    <label class="form-label-modern">@Localizer["Discount"]</label>
                     <input value="@(Model.Discount.ToString("N0") + " " + currency)" class="input-modern text-danger" readonly />
                 </div>
             }
 
             <div class="form-group-modern">
-                <label class="form-label-modern">Total Profit</label>
+                <label class="form-label-modern">@Localizer["Total Profit"]</label>
                 <input value="@(Model.TotalProfit.ToString("N0") + " " + currency)"
                        class="input-modern @(Model.TotalProfit >= 0 ? "text-success" : "text-danger") fw-bold" readonly />
             </div>
@@ -94,12 +94,12 @@
             <table class="table-modern">
                 <thead>
                     <tr>
-                        <th>Variant</th>
-                        <th>Qty</th>
-                        <th>Unit Price</th>
-                        <th>Cost Price</th>
-                        <th>Revenue</th>
-                        <th>Profit</th>
+                        <th>@Localizer["Variant"]</th>
+                        <th>@Localizer["Qty"]</th>
+                        <th>@Localizer["Unit Price"]</th>
+                        <th>@Localizer["Cost Price"]</th>
+                        <th>@Localizer["Revenue"]</th>
+                        <th>@Localizer["Profit"]</th>
                     </tr>
                 </thead>
                 <tbody>

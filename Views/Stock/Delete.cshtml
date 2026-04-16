@@ -2,42 +2,53 @@
 @model ViewStockDto
 
 @{
-    ViewData["Title"] = "Delete Stock Movement";
+    ViewData["Title"] = Localizer["Delete Stock Movement"];
+    var canDelete = !(ViewBag.CanDelete is bool deleteAllowed) || deleteAllowed;
 }
 
 <div class="create-product-shell">
     <div class="create-product-grid">
         <div class="create-main-card">
+            @if (TempData["Error"] is string errorMessage)
+            {
+                <div class="alert alert-danger mb-3">@errorMessage</div>
+            }
+
+            @if (ViewBag.DeleteMessage is string deleteMessage)
+            {
+                <div class="alert alert-warning mb-3">@deleteMessage</div>
+            }
+
             <div class="section-header">
                 <div>
-                    <h3>Delete stock movement</h3>
-                    <p>Please confirm before deleting this stock record.</p>
+                    <h3>@Localizer["Delete Stock Movement"]</h3>
+                    <p>@Localizer["Please confirm before deleting this stock record."]</p>
                 </div>
             </div>
 
             <div class="form-grid-modern">
                 <div class="form-group-modern form-group-full">
-                    <label class="form-label-modern">Product Variant</label>
+                    <label class="form-label-modern">@Localizer["Product Variant"]</label>
                     <input value="@Model.ProductVariantName" class="input-modern input-modern-lg" readonly />
                 </div>
 
                 <div class="form-group-modern">
-                    <label class="form-label-modern">Movement Type</label>
+                    <label class="form-label-modern">@Localizer["Movement Type"]</label>
                     <input value="@Model.MovementType" class="input-modern" readonly />
                 </div>
 
                 <div class="form-group-modern">
-                    <label class="form-label-modern">Quantity</label>
+                    <label class="form-label-modern">@Localizer["Quantity"]</label>
                     <input value="@Model.Quantity" class="input-modern" readonly />
                 </div>
 
                 <div class="form-group-modern">
-                    <label class="form-label-modern">Movement Date</label>
+                    <label class="form-label-modern">@Localizer["Movement Date"]</label>
                     <input value="@Model.MovementDate.ToString("yyyy-MM-dd")" class="input-modern" readonly />
                 </div>
 
                 <div class="form-group-modern form-group-full">
-                    <label class="form-label-modern">Remarks</label>
+                    <label class="form-label-modern">@Localizer["Remarks"]</label>
                     <textarea class="input-modern" rows="4" readonly>@Model.Remarks</textarea>
                 </div>
             </div>
@@ -46,9 +57,9 @@
                 <input type="hidden" asp-for="Id" />
 
                 <div class="form-footer-modern">
-                    <button type="submit" class="btn-modern-danger btn-modern-lg">
+                    <button type="submit" class="btn-modern-danger btn-modern-lg" disabled="@(!canDelete ? "disabled" : null)">
                         <i class="bi bi-trash"></i>
-                        Delete
+                        @Localizer["Delete"]
                     </button>
 
                     <a asp-action="Index" class="btn-modern-outline btn-modern-lg">

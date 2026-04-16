@@ -633,6 +633,18 @@
 
     .mob-bottom-nav {
         display: flex;
+        transition: transform 0.2s ease, opacity 0.2s ease, visibility 0.2s ease;
+    }
+
+    body.sidebar-open-mobile .mob-bottom-nav {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translateY(120%);
+    }
+
+    body.sidebar-open-mobile .main-panel {
+        padding-bottom: 0;
     }
 
     .topbar {

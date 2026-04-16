@@ -3,6 +3,10 @@
     ViewData["Title"] = "Inquiry Box";
     var filter = (string)(ViewBag.Filter ?? "all");
     int unread = (int)(ViewBag.UnreadCount ?? 0);
+    int pending = (int)(ViewBag.PendingCount ?? 0);
+    int approved = (int)(ViewBag.ApprovedCount ?? 0);
+    int rejected = (int)(ViewBag.RejectedCount ?? 0);
+    var ibpg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel;
 }
 
 @section Styles {
@@ -19,7 +23,7 @@
                     <span class="ib-unread-badge">@unread new</span>
                 }
             </h1>
-            <p class="product-hero-sub">Contact form submissions from the landing page</p>
+            <p class="product-hero-sub">Review free-account inquiries before creating tenant accounts.</p>
         </div>
         <a asp-controller="SuperAdmin" asp-action="Index" class="sa-btn-back">
             <i class="bi bi-arrow-left"></i> Dashboard
@@ -33,21 +37,34 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
 
-    <!-- Filter tabs -->
-    @{ var ibpg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel; }
     <div class="ib-filter-tabs">
         <a asp-action="Index" asp-route-filter="all" asp-route-size="@(ibpg?.PageSize ?? 10)"
            class="ib-tab @(filter == "all" ? "active" : "")">
             All <span class="ib-tab-count">@(ibpg?.TotalCount ?? Model.Count())</span>
         </a>
+        <a asp-action="Index" asp-route-filter="pending" asp-route-size="@(ibpg?.PageSize ?? 10)"
+           class="ib-tab @(filter == "pending" ? "active" : "")">
+            Pending <span class="ib-tab-count">@pending</span>
+        </a>
+        <a asp-action="Index" asp-route-filter="approved" asp-route-size="@(ibpg?.PageSize ?? 10)"
+           class="ib-tab @(filter == "approved" ? "active" : "")">
+            Approved <span class="ib-tab-count">@approved</span>
+        </a>
+        <a asp-action="Index" asp-route-filter="rejected" asp-route-size="@(ibpg?.PageSize ?? 10)"
+           class="ib-tab @(filter == "rejected" ? "active" : "")">
+            Rejected <span class="ib-tab-count">@rejected</span>
+        </a>
         <a asp-action="Index" asp-route-filter="unread" asp-route-size="@(ibpg?.PageSize ?? 10)"
            class="ib-tab @(filter == "unread" ? "active" : "")">
             Unread <span class="ib-tab-count">@unread</span>
-        </a>
-        <a asp-action="Index" asp-route-filter="read" asp-route-size="@(ibpg?.PageSize ?? 10)"
-           class="ib-tab @(filter == "read" ? "active" : "")">
-            Read
         </a>
     </div>
 
@@ -66,10 +83,9 @@
                     <thead>
                         <tr>
                             <th style="width:60px;"></th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Message</th>
+                            <th>Contact</th>
+                            <th>Business</th>
+                            <th>Status</th>
                             <th>Received</th>
                             <th style="width:100px;"></th>
                         </tr>
@@ -88,15 +104,19 @@
                                         <i class="bi bi-check2 text-muted"></i>
                                     }
                                 </td>
-                                <td class="@(!item.IsRead ? "fw-semibold" : "")">@item.Name</td>
                                 <td>
-                                    <a href="mailto:@item.Email" class="ib-email-link">@item.Email</a>
+                                    <div class="fw-semibold text-dark">@item.Name</div>
+                                    <div class="text-muted small">@item.Email</div>
+                                    <div class="text-muted small">@(item.Phone ?? "-")</div>
                                 </td>
-                                <td class="text-muted small">@(item.Phone ?? "—")</td>
-                                <td class="ib-msg-cell">
-                                    @(item.Message != null && item.Message.Length > 60
-                                        ? item.Message[..60] + "…"
-                                        : (item.Message ?? "—"))
+                                <td>
+                                    <div class="fw-semibold text-dark">@item.BusinessName</div>
+                                    <div class="text-muted small">@item.BusinessType</div>
+                                </td>
+                                <td>
+                                    <span class="status-badge @(item.Status == "Approved" ? "active" : item.Status == "Rejected" ? "inactive" : "trial")">
+                                        @item.Status
+                                    </span>
                                 </td>
                                 <td class="text-muted small" style="white-space:nowrap;">
                                     @item.SubmittedAt.ToString("dd MMM yyyy HH:mm")

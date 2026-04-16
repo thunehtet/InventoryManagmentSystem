@@ -32,7 +32,7 @@
     }
 }
 <!DOCTYPE html>
-<html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
+<html lang="@CultureInfo.CurrentUICulture.Name">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -51,7 +51,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Myanmar:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="modern-body @(User.IsInRole("SuperAdmin") && User.Identity?.IsAuthenticated == true ? "sa-body" : "")"
+<body class="modern-body @(User.IsInRole("SuperAdmin") && User.Identity?.IsAuthenticated == true ? "sa-body" : "") @(CultureInfo.CurrentUICulture.Name.StartsWith("my", StringComparison.OrdinalIgnoreCase) ? "culture-my" : "")"
       data-controller="@ViewContext.RouteData.Values["controller"]"
       data-action="@ViewContext.RouteData.Values["action"]">
 
@@ -81,50 +81,55 @@
             {
             <!-- ── SuperAdmin navigation ── -->
             <nav class="sidebar-nav">
-                <div class="nav-section-title">System</div>
+                <div class="nav-section-title">@Localizer["System"]</div>
 
                 <a asp-controller="SuperAdmin" asp-action="Index" class="nav-link-modern">
                     <i class="bi bi-speedometer2"></i>
-                    <span>Dashboard</span>
+                    <span>@Localizer["Dashboard"]</span>
                 </a>
 
-                <div class="nav-section-title">Management</div>
+                <div class="nav-section-title">@Localizer["Management"]</div>
 
                 <a asp-controller="Tenant" asp-action="Index" class="nav-link-modern">
                     <i class="bi bi-building"></i>
-                    <span>Tenants</span>
+                    <span>@Localizer["Tenants"]</span>
                 </a>
 
                 <a asp-controller="Plan" asp-action="Index" class="nav-link-modern">
                     <i class="bi bi-layers-fill"></i>
-                    <span>Plans</span>
+                    <span>@Localizer["Plans"]</span>
                 </a>
 
                 <a asp-controller="Feature" asp-action="Index" class="nav-link-modern">
                     <i class="bi bi-toggles"></i>
-                    <span>Features</span>
+                    <span>@Localizer["Features"]</span>
                 </a>
 
                 <a asp-controller="PlanFeature" asp-action="Index" class="nav-link-modern">
                     <i class="bi bi-diagram-3-fill"></i>
-                    <span>Plan Features</span>
+                    <span>@Localizer["Plan Features"]</span>
+                </a>
+
+                <a asp-controller="TenantFeatureOverride" asp-action="Index" class="nav-link-modern">
+                    <i class="bi bi-sliders"></i>
+                    <span>@Localizer["Tenant Overrides"]</span>
                 </a>
 
                 <a asp-controller="Subscription" asp-action="Index" class="nav-link-modern">
                     <i class="bi bi-credit-card-fill"></i>
-                    <span>Subscriptions</span>
+                    <span>@Localizer["Subscriptions"]</span>
                 </a>
 
                 <a asp-controller="Subscription" asp-action="History" class="nav-link-modern">
                     <i class="bi bi-clock-history"></i>
-                    <span>Sub History</span>
+                    <span>@Localizer["Sub History"]</span>
                 </a>
 
-                <div class="nav-section-title">Inbox</div>
+                <div class="nav-section-title">@Localizer["Inbox"]</div>
 
                 <a asp-controller="InquiryBox" asp-action="Index" class="nav-link-modern">
                     <i class="bi bi-envelope-fill"></i>
-                    <span>Inquiry Box</span>
+                    <span>@Localizer["Inquiry Box"]</span>
                     @if ((int)(ViewBag.InquiryUnread ?? 0) > 0)
                     {
                         <span class="badge bg-danger ms-auto">@ViewBag.InquiryUnread</span>
@@ -343,7 +348,7 @@
                             <!-- Language switch — always accessible, including on mobile -->
                             <div class="user-menu-lang-row">
                                 <i class="bi bi-translate"></i>
-                                <span>Language</span>
+                                <span>@Localizer["Language"]</span>
                                 <div class="user-menu-lang-btns">
                                     <a asp-controller="Language" asp-action="Set"
                                        asp-route-culture="en"
@@ -379,23 +384,27 @@
             <nav class="mob-bottom-nav" id="mobBottomNav">
                 <a href="/SuperAdmin/Index" class="mob-nav-item">
                     <i class="bi bi-speedometer2"></i>
-                    <span>Dashboard</span>
+                    <span>@Localizer["Dashboard"]</span>
                 </a>
                 <a href="/Tenant/Index" class="mob-nav-item">
                     <i class="bi bi-building"></i>
-                    <span>Tenants</span>
+                    <span>@Localizer["Tenants"]</span>
                 </a>
                 <a href="/Plan/Index" class="mob-nav-item mob-nav-center mob-nav-sa-center">
                     <i class="bi bi-layers-fill"></i>
-                    <span>Plans</span>
+                    <span>@Localizer["Plans"]</span>
                 </a>
                 <a href="/Subscription/Index" class="mob-nav-item">
                     <i class="bi bi-credit-card-fill"></i>
-                    <span>Subs</span>
+                    <span>@Localizer["Subs"]</span>
                 </a>
                 <a href="/InquiryBox/Index" class="mob-nav-item">
                     <i class="bi bi-envelope-fill"></i>
-                    <span>Inbox</span>
+                    <span>@Localizer["Inbox"]</span>
+                </a>
+                <a href="/TenantFeatureOverride/Index" class="mob-nav-item">
+                    <i class="bi bi-sliders"></i>
+                    <span>@Localizer["Overrides"]</span>
                 </a>
             </nav>
             }

@@ -2,7 +2,7 @@
 @model CreateProductVariantDto
 
 @{
-    ViewData["Title"] = "Create Variant";
+    ViewData["Title"] = Localizer["Create Variant"];
 }
 
 <div class="create-product-shell">
@@ -10,18 +10,18 @@
         <div class="create-product-hero-content">
             <div class="hero-kicker">
                 <i class="bi bi-diagram-3-fill"></i>
-                <span>Variant Setup</span>
+                <span>@Localizer["Variant Setup"]</span>
             </div>
 
-            <h1>Create new variant</h1>
+            <h1>@Localizer["Create new variant"]</h1>
             <p>
-                Add a new product variant with SKU, size, color, and pricing information.
+                @Localizer["Add a new product variant with SKU, size, color, and pricing information."]
             </p>
 
             <div class="hero-actions">
                 <a asp-action="Index" class="btn-soft-light">
                     <i class="bi bi-arrow-left"></i>
-                    Back to Variants
+                    @Localizer["Back to Variants"]
                 </a>
             </div>
         </div>
@@ -31,8 +31,8 @@
         <div class="create-main-card">
             <div class="section-header">
                 <div>
-                    <h3>Variant details</h3>
-                    <p>Fill in the basic fields for this product variant.</p>
+                    <h3>@Localizer["Variant details"]</h3>
+                    <p>@Localizer["Fill in the basic fields for this product variant."]</p>
                 </div>
             </div>
 
@@ -42,27 +42,27 @@
                 <div class="form-grid-modern">
                     <div class="form-group-modern form-group-full">
                         <label asp-for="ProductId" class="form-label-modern"></label>
-                        <select asp-for="ProductId" asp-items="ViewBag.Products" class="input-modern input-modern-lg">
-                            <option value="">-- Select Product --</option>
+                        <select asp-for="ProductId" asp-items="ViewBag.Products" class="input-modern input-modern-lg" data-searchable-picker="true" data-placeholder="Select a product" data-search-placeholder="Search product name">
+                            <option value="">@Localizer["-- Select Product --"]</option>
                         </select>
                         <span asp-validation-for="ProductId" class="field-validation-modern"></span>
                     </div>
 
                     <div class="form-group-modern form-group-full">
                         <label asp-for="SKU" class="form-label-modern"></label>
-                        <input asp-for="SKU" class="input-modern input-modern-lg" placeholder="e.g. TEE-BLK-M-001" />
+                        <input asp-for="SKU" class="input-modern input-modern-lg" placeholder="@Localizer["e.g. TEE-BLK-M-001"]" />
                         <span asp-validation-for="SKU" class="field-validation-modern"></span>
                     </div>
 
                     <div class="form-group-modern">
                         <label asp-for="Size" class="form-label-modern"></label>
-                        <input asp-for="Size" class="input-modern" placeholder="e.g. M" />
+                        <input asp-for="Size" class="input-modern" placeholder="@Localizer["e.g. M"]" />
                         <span asp-validation-for="Size" class="field-validation-modern"></span>
                     </div>
 
                     <div class="form-group-modern">
                         <label asp-for="Color" class="form-label-modern"></label>
-                        <input asp-for="Color" class="input-modern" placeholder="e.g. Black" />
+                        <input asp-for="Color" class="input-modern" placeholder="@Localizer["e.g. Black"]" />
                         <span asp-validation-for="Color" class="field-validation-modern"></span>
                     </div>
 
@@ -82,7 +82,7 @@
                 <div class="form-footer-modern">
                     <button type="submit" class="btn-modern-primary btn-modern-lg">
                         <i class="bi bi-check2-circle"></i>
-                        Save Variant
+                        @Localizer["Save Variant"]
                     </button>
 
                     <a asp-action="Index" class="btn-modern-outline btn-modern-lg">
@@ -98,6 +98,7 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script src="~/js/searchable-picker.js" asp-append-version="true"></script>
 }
 
 @section Styles {

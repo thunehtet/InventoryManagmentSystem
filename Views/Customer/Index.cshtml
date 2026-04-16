@@ -1,7 +1,7 @@
 @using ClothInventoryApp.Dto.Customer
 @model IEnumerable<ViewCustomerDto>
 @{
-    ViewData["Title"] = "Customers";
+    ViewData["Title"] = Localizer["Customers"];
     var currency = ViewData["Currency"] as string ?? "";
     var pg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel;
     var inviteLinks = ViewBag.InviteLinks as List<CustomerInviteLinkDto> ?? new();
@@ -12,20 +12,20 @@
         <div class="product-hero-content">
             <div class="hero-kicker">
                 <i class="bi bi-people-fill"></i>
-                <span>Customers</span>
+                <span>@Localizer["Customers"]</span>
             </div>
-            <h1>Customer List</h1>
-            <p>Manage your customer records, purchase history, and one-time registration links.</p>
+            <h1>@Localizer["Customer List"]</h1>
+            <p>@Localizer["Manage your customer records, purchase history, and one-time registration links."]</p>
             <div class="hero-actions">
                 @if (User.IsInRole("Admin"))
                 {
                     <a asp-action="Create" class="btn-modern-primary">
-                        <i class="bi bi-person-plus-fill"></i> Add Customer
+                        <i class="bi bi-person-plus-fill"></i> @Localizer["Add Customer"]
                     </a>
                     <form asp-action="CreateInviteLink" method="post" class="customer-inline-form">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="btn-modern-outline">
-                            <i class="bi bi-link-45deg"></i> Create Share Link
+                            <i class="bi bi-link-45deg"></i> @Localizer["Create Share Link"]
                         </button>
                     </form>
                 }
@@ -34,8 +34,8 @@
         <div class="product-hero-side">
             <div class="hero-stat-card">
                 <div class="hero-stat-icon"><i class="bi bi-people"></i></div>
-                <div class="hero-stat-title">Total Customers</div>
-                <div class="hero-stat-text">@(pg?.TotalCount ?? 0) customers total</div>
+                <div class="hero-stat-title">@Localizer["Total Customers"]</div>
+                <div class="hero-stat-text">@(pg?.TotalCount ?? 0) @Localizer["customers total"]</div>
             </div>
         </div>
     </div>
@@ -51,8 +51,8 @@
     <section class="customer-share-card">
         <div class="customer-share-card__header">
             <div>
-                <h2>Customer Share Links</h2>
-                <p>Each link is tenant-isolated, expires after 7 days, and becomes invalid after one registration.</p>
+                <h2>@Localizer["Customer Share Links"]</h2>
+                <p>@Localizer["Each link is tenant-isolated, expires after 7 days, and becomes invalid after one registration."]</p>
             </div>
         </div>
 
@@ -60,7 +60,7 @@
         {
             <div class="customer-share-empty">
                 <i class="bi bi-link-45deg"></i>
-                <div>No share links created yet.</div>
+                <div>@Localizer["No share links created yet."]</div>
             </div>
         }
         else
@@ -69,20 +69,20 @@
                 @foreach (var link in inviteLinks)
                 {
                     var statusClass = link.IsUsed ? "used" : link.IsExpired ? "expired" : link.IsActive ? "active" : "revoked";
-                    var statusText = link.IsUsed ? $"Used by {link.CustomerName ?? "customer"}" :
-                        link.IsExpired ? "Expired" :
-                        link.IsActive ? "Active" : "Revoked";
+                    var statusText = link.IsUsed ? string.Format(Localizer["Used by {0}"].Value, link.CustomerName ?? Localizer["customer"].Value) :
+                        link.IsExpired ? Localizer["Expired"].Value :
+                        link.IsActive ? Localizer["Active"].Value : Localizer["Revoked"].Value;
 
                     <article class="customer-share-item">
                         <div class="customer-share-item__main">
                             <div class="customer-share-item__meta">
                                 <span class="customer-share-status customer-share-status--@statusClass">@statusText</span>
-                                <span>Expires @link.ExpiresAt.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")</span>
+                                <span>@Localizer["Expires"] @link.ExpiresAt.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")</span>
                             </div>
                             <div class="customer-share-item__url">@link.Url</div>
                         </div>
                         <div class="customer-share-item__actions">
-                            <button type="button" class="action-btn action-btn-view" title="Copy link" data-copy-text="@link.Url">
+                            <button type="button" class="action-btn action-btn-view" title="@Localizer["Copy link"]" data-copy-text="@link.Url">
                                 <i class="bi bi-copy"></i>
                             </button>
                             @if (!link.IsUsed && !link.IsExpired && link.IsActive)
@@ -90,7 +90,7 @@
                                 <form asp-action="RevokeInviteLink" method="post" class="customer-inline-form">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="id" value="@link.Id" />
-                                    <button type="submit" class="action-btn action-btn-delete" title="Revoke">
+                                    <button type="submit" class="action-btn action-btn-delete" title="@Localizer["Revoke"]">
                                         <i class="bi bi-slash-circle"></i>
                                     </button>
                                 </form>
@@ -108,16 +108,16 @@
             <div class="filter-search-wrap">
                 <i class="bi bi-search filter-search-icon"></i>
                 <input type="text" name="search" value="@ViewBag.Search"
-                       class="filter-search-input" placeholder="Search name, phone, Facebook, email..." autocomplete="off" />
+                       class="filter-search-input" placeholder="@Localizer["Search name, phone, Facebook, email..."]" autocomplete="off" />
                 @if (!string.IsNullOrWhiteSpace(ViewBag.Search as string))
                 {
-                    <a href="@Url.Action("Index", new { size = pg?.PageSize ?? 10 })" class="filter-clear-btn" title="Clear">
+                    <a href="@Url.Action("Index", new { size = pg?.PageSize ?? 10 })" class="filter-clear-btn" title="@Localizer["Clear"]">
                         <i class="bi bi-x-circle-fill"></i>
                     </a>
                 }
             </div>
             <button type="submit" class="filter-search-btn">
-                <i class="bi bi-search"></i> Search
+                <i class="bi bi-search"></i> @Localizer["Search"]
             </button>
         </form>
     </div>
@@ -127,13 +127,13 @@
             <table class="table-modern">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Phone</th>
+                        <th>@Localizer["Name"]</th>
+                        <th>@Localizer["Phone"]</th>
                         <th>Facebook</th>
-                        <th>Sales</th>
-                        <th>Revenue</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th>@Localizer["Sales"]</th>
+                        <th>@Localizer["Revenue"]</th>
+                        <th>@Localizer["Status"]</th>
+                        <th>@Localizer["Actions"]</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -142,10 +142,10 @@
                         <tr>
                             <td colspan="7" class="empty-state">
                                 <i class="bi bi-people"></i>
-                                <div>@(string.IsNullOrWhiteSpace(ViewBag.Search as string) ? "No customers yet" : "No customers match your search")</div>
+                                <div>@(string.IsNullOrWhiteSpace(ViewBag.Search as string) ? Localizer["No customers yet"].Value : Localizer["No customers match your search"].Value)</div>
                                 @if (User.IsInRole("Admin") && string.IsNullOrWhiteSpace(ViewBag.Search as string))
                                 {
-                                    <a asp-action="Create" class="btn-modern-primary mt-2">Add first customer</a>
+                                    <a asp-action="Create" class="btn-modern-primary mt-2">@Localizer["Add first customer"]</a>
                                 }
                             </td>
                         </tr>
@@ -176,20 +176,20 @@
                                 <td class="fw-semibold">@c.TotalRevenue.ToString("N0") @currency</td>
                                 <td>
                                     <span class="badge-modern @(c.IsActive ? "badge-success" : "badge-muted")">
-                                        @(c.IsActive ? "Active" : "Inactive")
+                                        @(c.IsActive ? Localizer["Active"].Value : Localizer["Inactive"].Value)
                                     </span>
                                 </td>
                                 <td>
                                     <div class="table-actions">
-                                        <a asp-action="Details" asp-route-id="@c.Id" class="action-btn action-btn-view" title="Details">
+                                        <a asp-action="Details" asp-route-id="@c.Id" class="action-btn action-btn-view" title="@Localizer["Details"]">
                                             <i class="bi bi-eye-fill"></i>
                                         </a>
                                         @if (User.IsInRole("Admin"))
                                         {
-                                            <a asp-action="Edit" asp-route-id="@c.Id" class="action-btn action-btn-edit" title="Edit">
+                                            <a asp-action="Edit" asp-route-id="@c.Id" class="action-btn action-btn-edit" title="@Localizer["Edit"]">
                                                 <i class="bi bi-pencil-fill"></i>
                                             </a>
-                                            <a asp-action="Delete" asp-route-id="@c.Id" class="action-btn action-btn-delete" title="Delete">
+                                            <a asp-action="Delete" asp-route-id="@c.Id" class="action-btn action-btn-delete" title="@Localizer["Delete"]">
                                                 <i class="bi bi-trash-fill"></i>
                                             </a>
                                         }

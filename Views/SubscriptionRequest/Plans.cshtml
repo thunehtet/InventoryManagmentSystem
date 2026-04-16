@@ -1,0 +1,111 @@
+@model IEnumerable<ClothInventoryApp.Dto.SubscriptionRequest.SubscriptionRequestPlanCardDto>
+@{
+    ViewData["Title"] = "Upgrade Plans";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/product-index.css" asp-append-version="true" />
+}
+
+<div class="product-index-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title"><i class="bi bi-rocket-takeoff-fill"></i> Upgrade Plans</h1>
+            <p class="product-hero-sub">Choose a plan, pay the fee, then submit payment proof for SuperAdmin review.</p>
+        </div>
+        <a asp-controller="Home" asp-action="Index" class="btn-modern-secondary">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <div class="row g-4">
+        @foreach (var plan in Model)
+        {
+            <div class="col-12 col-lg-4">
+                <div class="product-table-card h-100">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h3 class="mb-1">@plan.Name</h3>
+                            <div class="text-muted small">@plan.Code</div>
+                        </div>
+                        @if (plan.IsCurrent)
+                        {
+                            <span class="badge bg-success">Current</span>
+                        }
+                        else if (plan.HasPendingRequest)
+                        {
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        }
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(plan.Description))
+                    {
+                        <p class="text-muted">@plan.Description</p>
+                    }
+
+                    <div class="mb-3">
+                        <div class="fs-3 fw-bold">@plan.PriceMonthly.ToString("N0") MMK</div>
+                        <div class="text-muted small">Monthly</div>
+                    </div>
+
+                    @if (plan.PriceYearly.HasValue)
+                    {
+                        <div class="mb-3">
+                            <div class="fs-5 fw-semibold">@plan.PriceYearly.Value.ToString("N0") MMK</div>
+                            <div class="text-muted small">Yearly</div>
+                        </div>
+                    }
+
+                    <ul class="list-unstyled text-muted small mb-4">
+                        <li class="mb-2"><i class="bi bi-check2 me-2 text-success"></i>Users: @(plan.MaxUsers?.ToString() ?? "Unlimited")</li>
+                        <li class="mb-2"><i class="bi bi-check2 me-2 text-success"></i>Products: @(plan.MaxProducts?.ToString() ?? "Unlimited")</li>
+                        <li class="mb-2"><i class="bi bi-check2 me-2 text-success"></i>Variants: @(plan.MaxVariants?.ToString() ?? "Unlimited")</li>
+                    </ul>
+
+                    <div class="plan-card-actions">
+                        @if (plan.IsCurrent || plan.HasPendingRequest)
+                        {
+                            <span class="btn-modern-primary disabled">Monthly Payment</span>
+                        }
+                        else
+                        {
+                            <a asp-action="Payment" asp-route-planId="@plan.PlanId" asp-route-billingCycle="Monthly"
+                               class="btn-modern-primary">
+                                Monthly Payment
+                            </a>
+                        }
+                        @if (plan.PriceYearly.HasValue)
+                        {
+                            @if (plan.IsCurrent || plan.HasPendingRequest)
+                            {
+                                <span class="btn-modern-outline disabled">Yearly Payment</span>
+                            }
+                            else
+                            {
+                                <a asp-action="Payment" asp-route-planId="@plan.PlanId" asp-route-billingCycle="Yearly"
+                                   class="btn-modern-outline">
+                                    Yearly Payment
+                                </a>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="product-table-card mt-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-1">Submitted Requests</h4>
+                <p class="text-muted mb-0">See your submitted payment proofs and review status.</p>
+            </div>
+            <a asp-action="MyRequests" class="btn-modern-secondary">My Requests</a>
+        </div>
+    </div>
+</div>

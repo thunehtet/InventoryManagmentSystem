@@ -88,6 +88,9 @@
                                     <a asp-action="Details" asp-route-id="@t.Id" class="action-btn action-btn-view" title="View">
                                         <i class="bi bi-eye"></i>
                                     </a>
+                                    <a asp-controller="TenantFeatureOverride" asp-action="Manage" asp-route-tenantId="@t.Id" class="action-btn action-btn-edit" title="Feature Overrides">
+                                        <i class="bi bi-sliders"></i>
+                                    </a>
                                     <a asp-action="Edit" asp-route-id="@t.Id" class="action-btn action-btn-edit" title="Edit">
                                         <i class="bi bi-pencil"></i>
                                     </a>

@@ -1,0 +1,116 @@
+@model ClothInventoryApp.Dto.SuperAdmin.SubscriptionPaymentRequestReviewDto
+@{
+    ViewData["Title"] = "Review Payment Request";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/create-product.css" asp-append-version="true" />
+}
+
+<div class="create-product-shell">
+    <div class="create-main-card">
+        <div class="section-header">
+            <div>
+                <h3>Review Payment Request</h3>
+                <p>@Model.TenantName requested @Model.PlanName.</p>
+            </div>
+            <a asp-action="Index" class="btn-modern-outline">Back</a>
+        </div>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        <div class="form-grid-modern mb-4">
+            <div class="form-group-modern">
+                <label class="form-label-modern">Tenant</label>
+                <input class="input-modern" value="@Model.TenantName" readonly />
+            </div>
+            <div class="form-group-modern">
+                <label class="form-label-modern">Requested By</label>
+                <input class="input-modern" value="@Model.RequestedByName (@Model.RequestedByEmail)" readonly />
+            </div>
+            <div class="form-group-modern">
+                <label class="form-label-modern">Plan</label>
+                <input class="input-modern" value="@Model.PlanName" readonly />
+            </div>
+            <div class="form-group-modern">
+                <label class="form-label-modern">Billing Cycle</label>
+                <input class="input-modern" value="@Model.BillingCycle" readonly />
+            </div>
+            <div class="form-group-modern">
+                <label class="form-label-modern">Expected Price</label>
+                <input class="input-modern" value="@Model.ExpectedPrice.ToString("N0")" readonly />
+            </div>
+            <div class="form-group-modern">
+                <label class="form-label-modern">Last 6 Transaction ID</label>
+                <input class="input-modern" value="@Model.Last6TransactionId" readonly />
+            </div>
+            <div class="form-group-modern">
+                <label class="form-label-modern">Status</label>
+                <input class="input-modern" value="@Model.Status" readonly />
+            </div>
+            <div class="form-group-modern">
+                <label class="form-label-modern">Submitted</label>
+                <input class="input-modern" value="@Model.SubmittedAt.ToString("dd MMM yyyy HH:mm")" readonly />
+            </div>
+        </div>
+
+        <div class="product-table-card mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h4 class="mb-1">Payment Proof</h4>
+                    <p class="text-muted mb-0">@Model.PaymentProofName</p>
+                </div>
+                <a href="@Model.PaymentProofUrl" target="_blank" rel="noopener noreferrer" class="btn-modern-secondary">
+                    <i class="bi bi-box-arrow-up-right"></i> Open Full Image
+                </a>
+            </div>
+            <img src="@Model.PaymentProofUrl" alt="Payment proof" style="width:100%;max-width:720px;border-radius:16px;border:1px solid #e5e7eb;" />
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.ReviewRemarks))
+        {
+            <div class="alert alert-secondary mb-4">
+                <strong>Review Note:</strong> @Model.ReviewRemarks
+                @if (Model.ReviewedAt.HasValue)
+                {
+                    <span class="text-muted">(@Model.ReviewedAt.Value.ToString("dd MMM yyyy HH:mm"))</span>
+                }
+            </div>
+        }
+
+        @if (Model.Status == "Pending")
+        {
+            <div class="row g-4">
+                <div class="col-12 col-lg-6">
+                    <form asp-action="Approve" method="post" class="product-table-card h-100">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <h4 class="mb-3">Approve</h4>
+                        <textarea name="remarks" class="form-control mb-3" rows="4" placeholder="Optional approval note..."></textarea>
+                        <button type="submit" class="btn-modern-primary">
+                            <i class="bi bi-check-circle-fill"></i> Approve and Activate Subscription
+                        </button>
+                    </form>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <form asp-action="Reject" method="post" class="product-table-card h-100">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <h4 class="mb-3">Reject</h4>
+                        <textarea name="remarks" class="form-control mb-3" rows="4" placeholder="Reason for rejection..."></textarea>
+                        <button type="submit" class="btn-modern-danger">
+                            <i class="bi bi-x-circle-fill"></i> Reject Request
+                        </button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+</div>

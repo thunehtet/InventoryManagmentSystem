@@ -96,6 +96,14 @@ namespace ClothInventoryApp.Controllers
             var tenantId = _tenantProvider.GetTenantId();
             dto.MovementType = NormalizeMovementType(dto.MovementType);
 
+            if (!await VariantAvailableForManualMovementAsync(dto.ProductVariantId))
+            {
+                ModelState.AddModelError(nameof(dto.ProductVariantId), "Please select a valid active product variant in your workspace.");
+                await LoadVariantDropDown();
+                ViewBag.MovementTypes = GetMovementTypes();
+                return View(dto);
+            }
+
             if (!await _stockService.CanApplyMovementAsync(
                 tenantId,
                 dto.ProductVariantId,
@@ -132,6 +140,12 @@ namespace ClothInventoryApp.Controllers
             if (stockMovement == null)
                 return NotFound();
 
+            if (stockMovement.SaleId != null)
+            {
+                TempData["Error"] = "This stock movement was created by a sale and cannot be edited here. Update the sale instead.";
+                return RedirectToAction(nameof(Index));
+            }
+
             var dto = new ViewStockDto
             {
                 Id = stockMovement.Id,
@@ -164,14 +178,22 @@ namespace ClothInventoryApp.Controllers
             if (stockMovement == null)
                 return NotFound();
 
+            if (stockMovement.SaleId != null)
+            {
+                TempData["Error"] = "This stock movement was created by a sale and cannot be edited here. Update the sale instead.";
+                return RedirectToAction(nameof(Index));
+            }
+
             dto.MovementType = NormalizeMovementType(dto.MovementType);
-            var tenantId = _tenantProvider.GetTenantId();
-            if (!await _stockService.CanApplyMovementAsync(
-                tenantId,
-                dto.ProductVariantId,
-                dto.MovementType,
-                dto.Quantity,
-                dto.Id))
+            if (!await VariantAvailableForManualMovementAsync(dto.ProductVariantId))
+            {
+                ModelState.AddModelError(nameof(dto.ProductVariantId), "Please select a valid active product variant in your workspace.");
+                await LoadVariantDropDown();
+                ViewBag.MovementTypes = GetMovementTypes();
+                return View(dto);
+            }
+
+            if (!await CanReplaceMovementAsync(stockMovement, dto.ProductVariantId, dto.MovementType, dto.Quantity))
             {
                 ModelState.AddModelError(nameof(dto.Quantity), "This change would make stock go below zero.");
                 await LoadVariantDropDown();
@@ -221,6 +243,11 @@ namespace ClothInventoryApp.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
+            var isSaleLinked = await _context.StockMovements
+                .Where(s => s.Id == id)
+                .Select(s => s.SaleId != null)
+                .FirstOrDefaultAsync();
+
             var stockMovement = await _context.StockMovements
                 .Include(s => s.ProductVariant)
                 .ThenInclude(v => v.Product)
@@ -243,6 +270,10 @@ namespace ClothInventoryApp.Controllers
             if (stockMovement == null)
                 return NotFound();
 
+            ViewBag.CanDelete = !isSaleLinked;
+            ViewBag.DeleteMessage = !isSaleLinked
+                ? null
+                : "This stock movement was created by a sale and cannot be deleted here. Delete or void the sale instead.";
             return View(stockMovement);
         }
 
@@ -256,6 +287,18 @@ namespace ClothInventoryApp.Controllers
             if (stockMovement == null)
                 return NotFound();
 
+            if (stockMovement.SaleId != null)
+            {
+                TempData["Error"] = "This stock movement was created by a sale and cannot be deleted here. Delete or void the sale instead.";
+                return RedirectToAction(nameof(Delete), new { id });
+            }
+
+            if (!await CanDeleteMovementAsync(stockMovement))
+            {
+                TempData["Error"] = "This stock movement cannot be deleted because doing so would make stock go below zero.";
+                return RedirectToAction(nameof(Delete), new { id });
+            }
+
             _context.StockMovements.Remove(stockMovement);
             await _context.SaveChangesAsync();
 
@@ -266,6 +309,7 @@ namespace ClothInventoryApp.Controllers
         {
             var variants = await _context.ProductVariants
                 .Include(v => v.Product)
+                .Where(v => v.Product.IsActive)
                 .OrderBy(v => v.SKU)
                 .Select(v => new
                 {
@@ -305,6 +349,13 @@ namespace ClothInventoryApp.Controllers
 
             var tenantId = _tenantProvider.GetTenantId();
 
+            if (!await VariantAvailableForManualMovementAsync(vm.ProductVariantId))
+            {
+                ModelState.AddModelError(nameof(vm.ProductVariantId), "Please select a valid active product variant in your workspace.");
+                await LoadProductVariants();
+                return View(vm);
+            }
+
             var movement = new StockMovement
             {
                 ProductVariantId = vm.ProductVariantId,
@@ -338,6 +389,13 @@ namespace ClothInventoryApp.Controllers
             }
 
             var tenantId = _tenantProvider.GetTenantId();
+            if (!await VariantAvailableForManualMovementAsync(vm.ProductVariantId))
+            {
+                ModelState.AddModelError(nameof(vm.ProductVariantId), "Please select a valid active product variant in your workspace.");
+                await LoadProductVariants();
+                return View(vm);
+            }
+
             if (!await _stockService.CanApplyMovementAsync(
                 tenantId,
                 vm.ProductVariantId,
@@ -478,6 +536,7 @@ namespace ClothInventoryApp.Controllers
         {
             var variants = await _context.ProductVariants
                 .Include(v => v.Product)
+                .Where(v => v.Product.IsActive)
                 .Select(v => new
                 {
                     v.Id,
@@ -491,6 +550,58 @@ namespace ClothInventoryApp.Controllers
         private static string NormalizeMovementType(string? movementType)
         {
             return movementType?.Trim().ToUpperInvariant() ?? string.Empty;
+        }
+
+        private async Task<bool> VariantAvailableForManualMovementAsync(Guid variantId)
+        {
+            var tenantId = _tenantProvider.GetTenantId();
+            return await _context.ProductVariants
+                .Include(v => v.Product)
+                .AnyAsync(v => v.Id == variantId && v.TenantId == tenantId && v.Product.IsActive);
+        }
+
+        private async Task<bool> CanDeleteMovementAsync(StockMovement movement)
+        {
+            var currentStock = await _stockService.GetCurrentStockAsync(movement.TenantId, movement.ProductVariantId);
+            return currentStock - GetStockDelta(movement.MovementType, movement.Quantity) >= 0;
+        }
+
+        private async Task<bool> CanReplaceMovementAsync(
+            StockMovement existingMovement,
+            Guid newVariantId,
+            string newMovementType,
+            int newQuantity)
+        {
+            var affectedVariantIds = new[] { existingMovement.ProductVariantId, newVariantId }
+                .Distinct()
+                .ToList();
+
+            foreach (var variantId in affectedVariantIds)
+            {
+                var currentStock = await _stockService.GetCurrentStockAsync(existingMovement.TenantId, variantId);
+                var adjustedStock = currentStock;
+
+                if (variantId == existingMovement.ProductVariantId)
+                    adjustedStock -= GetStockDelta(existingMovement.MovementType, existingMovement.Quantity);
+
+                if (variantId == newVariantId)
+                    adjustedStock += GetStockDelta(newMovementType, newQuantity);
+
+                if (adjustedStock < 0)
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static int GetStockDelta(string movementType, int quantity)
+        {
+            var normalizedType = NormalizeMovementType(movementType);
+            return normalizedType == "IN"
+                ? quantity
+                : normalizedType == "OUT"
+                    ? -quantity
+                    : 0;
         }
     }
 }

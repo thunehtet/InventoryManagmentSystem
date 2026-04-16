@@ -480,4 +480,739 @@
   <data name="Customers" xml:space="preserve">
     <value>ဖောက်သည်များ</value>
   </data>
+  <data name="System" xml:space="preserve">
+    <value>စနစ်</value>
+  </data>
+  <data name="Management" xml:space="preserve">
+    <value>စီမံခန့်ခွဲမှု</value>
+  </data>
+  <data name="Tenants" xml:space="preserve">
+    <value>လုပ်ငန်းခွဲများ</value>
+  </data>
+  <data name="Plans" xml:space="preserve">
+    <value>ပလန်များ</value>
+  </data>
+  <data name="Features" xml:space="preserve">
+    <value>လုပ်ဆောင်ချက်များ</value>
+  </data>
+  <data name="Plan Features" xml:space="preserve">
+    <value>ပလန် လုပ်ဆောင်ချက်များ</value>
+  </data>
+  <data name="Subscriptions" xml:space="preserve">
+    <value>စာရင်းသွင်းမှုများ</value>
+  </data>
+  <data name="Sub History" xml:space="preserve">
+    <value>စာရင်းသွင်းမှု မှတ်တမ်း</value>
+  </data>
+  <data name="Inbox" xml:space="preserve">
+    <value>စာဝင်ပုံး</value>
+  </data>
+  <data name="Inquiry Box" xml:space="preserve">
+    <value>စုံစမ်းစာပုံး</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>ဘာသာစကား</value>
+  </data>
+  <data name="Subs" xml:space="preserve">
+    <value>စာရင်းသွင်း</value>
+  </data>
+  <data name="Showing" xml:space="preserve">
+    <value>ဖော်ပြထားသည်</value>
+  </data>
+  <data name="of" xml:space="preserve">
+    <value>စုစုပေါင်း</value>
+  </data>
+  <data name="Prev" xml:space="preserve">
+    <value>ရှေ့</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>ရှေ့စာမျက်နှာ</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>နောက်</value>
+  </data>
+  <data name="Rows" xml:space="preserve">
+    <value>တစ်မျက်နှာပြ</value>
+  </data>
+  <data name="Product Setup" xml:space="preserve">
+    <value>ကုန်ပစ္စည်း သတ်မှတ်ခြင်း</value>
+  </data>
+  <data name="Create new product" xml:space="preserve">
+    <value>ကုန်ပစ္စည်းအသစ် ဖန်တီးရန်</value>
+  </data>
+  <data name="Add a new clothing product to your catalog. Keep the core information clean first, then you can add size, color, and stock variants later." xml:space="preserve">
+    <value>သင့်ကုန်ပစ္စည်းစာရင်းထဲသို့ အဝတ်အထည်ကုန်ပစ္စည်းအသစ် ထည့်သွင်းပါ။ အခြေခံအချက်အလက်များကို သေချာစွာဖြည့်ပြီးနောက် အရွယ်အစား၊ အရောင်နှင့် မျိုးကွဲများကို ဆက်ထည့်နိုင်ပါသည်။</value>
+  </data>
+  <data name="Back to Products" xml:space="preserve">
+    <value>ကုန်ပစ္စည်းများသို့ ပြန်ရန်</value>
+  </data>
+  <data name="Catalog quality" xml:space="preserve">
+    <value>စာရင်းအရည်အသွေး</value>
+  </data>
+  <data name="Use clear product name, category, and brand so your inventory stays organized." xml:space="preserve">
+    <value>ကုန်ပစ္စည်းအမည်၊ အမျိုးအစားနှင့် အမှတ်တံဆိပ်ကို ရှင်းလင်းစွာ သတ်မှတ်ထားပါက စာရင်းစနစ်က ပိုစနစ်တကျ ဖြစ်စေပါသည်။</value>
+  </data>
+  <data name="Product details" xml:space="preserve">
+    <value>ကုန်ပစ္စည်း အသေးစိတ်</value>
+  </data>
+  <data name="Fill in the basic fields from your product table." xml:space="preserve">
+    <value>ကုန်ပစ္စည်းအတွက် အခြေခံအချက်အလက်များကို ဖြည့်သွင်းပါ။</value>
+  </data>
+  <data name="e.g. Basic Oversized Tee" xml:space="preserve">
+    <value>ဥပမာ - Basic Oversized Tee</value>
+  </data>
+  <data name="e.g. T-Shirt" xml:space="preserve">
+    <value>ဥပမာ - တီရှပ်</value>
+  </data>
+  <data name="e.g. ClothCo" xml:space="preserve">
+    <value>ဥပမာ - ClothCo</value>
+  </data>
+  <data name="Product status" xml:space="preserve">
+    <value>ကုန်ပစ္စည်း အခြေအနေ</value>
+  </data>
+  <data name="Active product" xml:space="preserve">
+    <value>အသုံးပြုနိုင်သော ကုန်ပစ္စည်း</value>
+  </data>
+  <data name="When enabled, this product can be used for variants, stock movement, and future sales records." xml:space="preserve">
+    <value>ဖွင့်ထားပါက ဤကုန်ပစ္စည်းကို မျိုးကွဲ၊ စတော့လှုပ်ရှားမှုနှင့် နောက်လာမည့် အရောင်းမှတ်တမ်းများတွင် အသုံးပြုနိုင်ပါသည်။</value>
+  </data>
+  <data name="Save Product" xml:space="preserve">
+    <value>ကုန်ပစ္စည်း သိမ်းဆည်းရန်</value>
+  </data>
+  <data name="Recommended format" xml:space="preserve">
+    <value>အကြံပြု ဖော်မတ်</value>
+  </data>
+  <data name="Main catalog product name" xml:space="preserve">
+    <value>အဓိက စာရင်းတင် ကုန်ပစ္စည်းအမည်</value>
+  </data>
+  <data name="T-Shirt, Dress, Jacket" xml:space="preserve">
+    <value>တီရှပ်၊ ဂါဝန်၊ ဂျာကင်</value>
+  </data>
+  <data name="Your own or supplier brand" xml:space="preserve">
+    <value>သင့်အမှတ်တံဆိပ် သို့မဟုတ် ပေးသွင်းသူ အမှတ်တံဆိပ်</value>
+  </data>
+  <data name="Active / Inactive" xml:space="preserve">
+    <value>အသုံးပြု / မအသုံးပြု</value>
+  </data>
+  <data name="Next step" xml:space="preserve">
+    <value>နောက်တစ်ဆင့်</value>
+  </data>
+  <data name="After saving the product, create its variants for size and color, then start stock in and stock out transactions." xml:space="preserve">
+    <value>ကုန်ပစ္စည်းကို သိမ်းပြီးပါက အရွယ်အစားနှင့် အရောင်အလိုက် မျိုးကွဲများဖန်တီးပြီး စတော့အဝင်၊ အထွက် လုပ်ငန်းများကို စတင်နိုင်ပါသည်။</value>
+  </data>
+  <data name="Delete Product" xml:space="preserve">
+    <value>ကုန်ပစ္စည်း ဖျက်ရန်</value>
+  </data>
+  <data name="This action cannot be undone" xml:space="preserve">
+    <value>ဤလုပ်ဆောင်ချက်ကို နောက်ပြန်မလှည့်နိုင်ပါ</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>ပြန်ရန်</value>
+  </data>
+  <data name="Are you sure you want to delete this product?" xml:space="preserve">
+    <value>ဤကုန်ပစ္စည်းကို ဖျက်လိုသည်မှာ သေချာပါသလား။</value>
+  </data>
+  <data name="Yes, Delete" xml:space="preserve">
+    <value>ဖျက်မည်</value>
+  </data>
+  <data name="Variant Setup" xml:space="preserve">
+    <value>မျိုးကွဲ သတ်မှတ်ခြင်း</value>
+  </data>
+  <data name="Create new variant" xml:space="preserve">
+    <value>မျိုးကွဲအသစ် ဖန်တီးရန်</value>
+  </data>
+  <data name="Add a new product variant with SKU, size, color, and pricing information." xml:space="preserve">
+    <value>SKU၊ အရွယ်အစား၊ အရောင်နှင့် စျေးနှုန်းအချက်အလက်များဖြင့် မျိုးကွဲအသစ် ထည့်သွင်းပါ။</value>
+  </data>
+  <data name="Back to Variants" xml:space="preserve">
+    <value>မျိုးကွဲများသို့ ပြန်ရန်</value>
+  </data>
+  <data name="Variant details" xml:space="preserve">
+    <value>မျိုးကွဲ အသေးစိတ်</value>
+  </data>
+  <data name="Fill in the basic fields for this product variant." xml:space="preserve">
+    <value>ဤမျိုးကွဲအတွက် အခြေခံအချက်အလက်များကို ဖြည့်သွင်းပါ။</value>
+  </data>
+  <data name="-- Select Product --" xml:space="preserve">
+    <value>-- ကုန်ပစ္စည်း ရွေးပါ --</value>
+  </data>
+  <data name="e.g. TEE-BLK-M-001" xml:space="preserve">
+    <value>ဥပမာ - TEE-BLK-M-001</value>
+  </data>
+  <data name="e.g. M" xml:space="preserve">
+    <value>ဥပမာ - M</value>
+  </data>
+  <data name="e.g. Black" xml:space="preserve">
+    <value>ဥပမာ - အနက်</value>
+  </data>
+  <data name="Save Variant" xml:space="preserve">
+    <value>မျိုးကွဲ သိမ်းဆည်းရန်</value>
+  </data>
+  <data name="Edit Variant" xml:space="preserve">
+    <value>မျိုးကွဲ ပြင်ရန်</value>
+  </data>
+  <data name="Variant Update" xml:space="preserve">
+    <value>မျိုးကွဲ ပြင်ဆင်ခြင်း</value>
+  </data>
+  <data name="Update the product variant details and keep your inventory accurate." xml:space="preserve">
+    <value>မျိုးကွဲအသေးစိတ်ကို ပြင်ဆင်ပြီး စာရင်းအချက်အလက်များကို တိကျစေပါ။</value>
+  </data>
+  <data name="Update the selected product variant." xml:space="preserve">
+    <value>ရွေးချယ်ထားသော မျိုးကွဲကို ပြင်ဆင်ပါ။</value>
+  </data>
+  <data name="Update Variant" xml:space="preserve">
+    <value>မျိုးကွဲ ပြင်ဆင်ရန်</value>
+  </data>
+  <data name="Delete Variant" xml:space="preserve">
+    <value>မျိုးကွဲ ဖျက်ရန်</value>
+  </data>
+  <data name="Please review the variant details below before deleting it." xml:space="preserve">
+    <value>မဖျက်မီ အောက်ပါမျိုးကွဲအသေးစိတ်ကို စစ်ဆေးပါ။</value>
+  </data>
+  <data name="Confirm before deleting this product variant." xml:space="preserve">
+    <value>ဤမျိုးကွဲကို မဖျက်မီ အတည်ပြုပါ။</value>
+  </data>
+  <data name="SKU" xml:space="preserve">
+    <value>SKU</value>
+  </data>
+  <data name="Stock Setup" xml:space="preserve">
+    <value>စတော့ သတ်မှတ်ခြင်း</value>
+  </data>
+  <data name="Add a new stock in, stock out, or adjustment record for a product variant." xml:space="preserve">
+    <value>မျိုးကွဲအတွက် စတော့အဝင်၊ အထွက် သို့မဟုတ် ပြင်ဆင်မှု မှတ်တမ်းအသစ် ထည့်သွင်းပါ။</value>
+  </data>
+  <data name="Back to Stock" xml:space="preserve">
+    <value>စတော့သို့ ပြန်ရန်</value>
+  </data>
+  <data name="Stock movement details" xml:space="preserve">
+    <value>စတော့လှုပ်ရှားမှု အသေးစိတ်</value>
+  </data>
+  <data name="Fill in the stock transaction information." xml:space="preserve">
+    <value>စတော့လှုပ်ရှားမှုအချက်အလက်များကို ဖြည့်သွင်းပါ။</value>
+  </data>
+  <data name="-- Select Variant --" xml:space="preserve">
+    <value>-- မျိုးကွဲ ရွေးပါ --</value>
+  </data>
+  <data name="-- Select Type --" xml:space="preserve">
+    <value>-- အမျိုးအစား ရွေးပါ --</value>
+  </data>
+  <data name="Optional remarks" xml:space="preserve">
+    <value>မှတ်ချက် (မဖြည့်လည်းရ)</value>
+  </data>
+  <data name="Save Stock Movement" xml:space="preserve">
+    <value>စတော့လှုပ်ရှားမှု သိမ်းဆည်းရန်</value>
+  </data>
+  <data name="Edit Stock Movement" xml:space="preserve">
+    <value>စတော့လှုပ်ရှားမှု ပြင်ရန်</value>
+  </data>
+  <data name="Stock Update" xml:space="preserve">
+    <value>စတော့ ပြင်ဆင်ခြင်း</value>
+  </data>
+  <data name="Update the stock movement information for this product variant." xml:space="preserve">
+    <value>ဤမျိုးကွဲအတွက် စတော့လှုပ်ရှားမှုအချက်အလက်ကို ပြင်ဆင်ပါ။</value>
+  </data>
+  <data name="Update the selected stock transaction." xml:space="preserve">
+    <value>ရွေးချယ်ထားသော စတော့မှတ်တမ်းကို ပြင်ဆင်ပါ။</value>
+  </data>
+  <data name="Update Stock Movement" xml:space="preserve">
+    <value>စတော့လှုပ်ရှားမှု ပြင်ဆင်ရန်</value>
+  </data>
+  <data name="Add stock" xml:space="preserve">
+    <value>စတော့ထည့်ရန်</value>
+  </data>
+  <data name="Record incoming stock for a product variant." xml:space="preserve">
+    <value>မျိုးကွဲအတွက် ဝင်လာသော စတော့ကို မှတ်တမ်းတင်ပါ။</value>
+  </data>
+  <data name="Back to Inventory" xml:space="preserve">
+    <value>စာရင်းသို့ ပြန်ရန်</value>
+  </data>
+  <data name="Stock in details" xml:space="preserve">
+    <value>စတော့အဝင် အသေးစိတ်</value>
+  </data>
+  <data name="Fill in the product variant and quantity received." xml:space="preserve">
+    <value>လက်ခံရရှိသော မျိုးကွဲနှင့် အရေအတွက်ကို ဖြည့်သွင်းပါ။</value>
+  </data>
+  <data name="Save Stock In" xml:space="preserve">
+    <value>စတော့အဝင် သိမ်းဆည်းရန်</value>
+  </data>
+  <data name="Remove stock" xml:space="preserve">
+    <value>စတော့ထုတ်ရန်</value>
+  </data>
+  <data name="Record outgoing stock for a product variant." xml:space="preserve">
+    <value>မျိုးကွဲအတွက် ထွက်သွားသော စတော့ကို မှတ်တမ်းတင်ပါ။</value>
+  </data>
+  <data name="Stock out details" xml:space="preserve">
+    <value>စတော့အထွက် အသေးစိတ်</value>
+  </data>
+  <data name="Fill in the product variant and quantity issued." xml:space="preserve">
+    <value>ထုတ်ပေးသော မျိုးကွဲနှင့် အရေအတွက်ကို ဖြည့်သွင်းပါ။</value>
+  </data>
+  <data name="Save Stock Out" xml:space="preserve">
+    <value>စတော့အထွက် သိမ်းဆည်းရန်</value>
+  </data>
+  <data name="Delete Stock Movement" xml:space="preserve">
+    <value>စတော့လှုပ်ရှားမှု ဖျက်ရန်</value>
+  </data>
+  <data name="Please confirm before deleting this stock record." xml:space="preserve">
+    <value>ဤစတော့မှတ်တမ်းကို မဖျက်မီ အတည်ပြုပါ။</value>
+  </data>
+  <data name="Product Variant" xml:space="preserve">
+    <value>ကုန်ပစ္စည်း မျိုးကွဲ</value>
+  </data>
+  <data name="Movement Type" xml:space="preserve">
+    <value>လှုပ်ရှားမှု အမျိုးအစား</value>
+  </data>
+  <data name="Movement Date" xml:space="preserve">
+    <value>လှုပ်ရှားမှု ရက်စွဲ</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>ဖျက်ရန်</value>
+  </data>
+  <data name="Read-only view of this stock record." xml:space="preserve">
+    <value>ဤစတော့မှတ်တမ်းကို ဖတ်ရှုရန်သာ ပြသထားပါသည်။</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>ပြင်ရန်</value>
+  </data>
+  <data name="Search by customer name..." xml:space="preserve">
+    <value>ဝယ်ယူသူအမည်ဖြင့် ရှာပါ...</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>ရှင်းမည်</value>
+  </data>
+  <data name="Download Invoice PDF" xml:space="preserve">
+    <value>ဘောင်ချာ PDF ဒေါင်းလုဒ်လုပ်မည်</value>
+  </data>
+  <data name="Sale Details" xml:space="preserve">
+    <value>အရောင်းအသေးစိတ်</value>
+  </data>
+  <data name="Download Invoice" xml:space="preserve">
+    <value>ဘောင်ချာ ဒေါင်းလုဒ်လုပ်မည်</value>
+  </data>
+  <data name="Receipt Sharing" xml:space="preserve">
+    <value>ပြေစာမျှဝေရန်</value>
+  </data>
+  <data name="Share a permanent receipt link that is safe for customers and works well on mobile apps like Messenger and Viber." xml:space="preserve">
+    <value>ဝယ်ယူသူများနှင့် မျှဝေရန် ဘေးကင်းပြီး Messenger၊ Viber ကဲ့သို့သော မိုဘိုင်းအက်ပ်များတွင်လည်း အသုံးပြုရလွယ်ကူသည့် အမြဲတမ်းပြေစာလင့်ခ်ကို မျှဝေနိုင်ပါသည်။</value>
+  </data>
+  <data name="Receipt link" xml:space="preserve">
+    <value>ပြေစာလင့်ခ်</value>
+  </data>
+  <data name="Share Receipt" xml:space="preserve">
+    <value>ပြေစာ မျှဝေရန်</value>
+  </data>
+  <data name="Copy Link" xml:space="preserve">
+    <value>လင့်ခ်ကူးယူမည်</value>
+  </data>
+  <data name="Refresh Link" xml:space="preserve">
+    <value>လင့်ခ် အသစ်လုပ်မည်</value>
+  </data>
+  <data name="Open Receipt" xml:space="preserve">
+    <value>ပြေစာ ဖွင့်ကြည့်မည်</value>
+  </data>
+  <data name="Total Revenue" xml:space="preserve">
+    <value>စုစုပေါင်းရောင်းရငွေ</value>
+  </data>
+  <data name="Total Profit" xml:space="preserve">
+    <value>စုစုပေါင်းအမြတ်</value>
+  </data>
+  <data name="Variant" xml:space="preserve">
+    <value>မျိုးကွဲ</value>
+  </data>
+  <data name="Qty" xml:space="preserve">
+    <value>အရေအတွက်</value>
+  </data>
+  <data name="Deleting this sale will restore stock for all items and remove the linked cash transaction. This cannot be undone." xml:space="preserve">
+    <value>ဤအရောင်းကို ဖျက်လိုက်ပါက ပစ္စည်းအားလုံး၏ စတော့ကို ပြန်လည်ထည့်သွင်းမည်ဖြစ်ပြီး ဆက်စပ်နေသော ငွေလက်ခံ/ငွေထုတ် မှတ်တမ်းကိုလည်း ဖယ်ရှားသွားမည်ဖြစ်သည်။ ဤလုပ်ဆောင်ချက်ကို နောက်ပြန်မလှည့်နိုင်ပါ။</value>
+  </data>
+  <data name="Customer List" xml:space="preserve">
+    <value>ဝယ်ယူသူစာရင်း</value>
+  </data>
+  <data name="Manage your customer records, purchase history, and one-time registration links." xml:space="preserve">
+    <value>ဝယ်ယူသူအချက်အလက်များ၊ ဝယ်ယူမှုမှတ်တမ်းများနှင့် တစ်ကြိမ်သုံး စာရင်းသွင်းလင့်ခ်များကို စီမံနိုင်ပါသည်။</value>
+  </data>
+  <data name="Add Customer" xml:space="preserve">
+    <value>ဝယ်ယူသူထည့်မည်</value>
+  </data>
+  <data name="Create Share Link" xml:space="preserve">
+    <value>မျှဝေလင့်ခ် ဖန်တီးမည်</value>
+  </data>
+  <data name="Total Customers" xml:space="preserve">
+    <value>ဝယ်ယူသူစုစုပေါင်း</value>
+  </data>
+  <data name="customers total" xml:space="preserve">
+    <value>ယောက် စုစုပေါင်း</value>
+  </data>
+  <data name="Customer Share Links" xml:space="preserve">
+    <value>ဝယ်ယူသူမျှဝေလင့်ခ်များ</value>
+  </data>
+  <data name="Each link is tenant-isolated, expires after 7 days, and becomes invalid after one registration." xml:space="preserve">
+    <value>လင့်ခ်တစ်ခုစီသည် tenant အလိုက် သီးခြားထားရှိပြီး ၇ ရက်အကြာတွင် သက်တမ်းကုန်မည်ဖြစ်ကာ စာရင်းသွင်းမှု တစ်ကြိမ်ပြုလုပ်ပြီးနောက် အသုံးမဝင်တော့ပါ။</value>
+  </data>
+  <data name="No share links created yet." xml:space="preserve">
+    <value>မျှဝေလင့်ခ် မဖန်တီးရသေးပါ။</value>
+  </data>
+  <data name="Used by {0}" xml:space="preserve">
+    <value>{0} အသုံးပြုပြီး</value>
+  </data>
+  <data name="customer" xml:space="preserve">
+    <value>ဝယ်ယူသူ</value>
+  </data>
+  <data name="Expired" xml:space="preserve">
+    <value>သက်တမ်းကုန်</value>
+  </data>
+  <data name="Revoked" xml:space="preserve">
+    <value>ပယ်ဖျက်ထား</value>
+  </data>
+  <data name="Expires" xml:space="preserve">
+    <value>သက်တမ်းကုန်မည့်အချိန်</value>
+  </data>
+  <data name="Copy link" xml:space="preserve">
+    <value>လင့်ခ်ကူးယူမည်</value>
+  </data>
+  <data name="Revoke" xml:space="preserve">
+    <value>ပယ်ဖျက်မည်</value>
+  </data>
+  <data name="Search name, phone, Facebook, email..." xml:space="preserve">
+    <value>အမည်၊ ဖုန်း၊ Facebook၊ email ဖြင့် ရှာပါ...</value>
+  </data>
+  <data name="No customers yet" xml:space="preserve">
+    <value>ဝယ်ယူသူ မရှိသေးပါ</value>
+  </data>
+  <data name="No customers match your search" xml:space="preserve">
+    <value>သင်ရှာသော ဝယ်ယူသူ မတွေ့ပါ</value>
+  </data>
+  <data name="Add first customer" xml:space="preserve">
+    <value>ပထမဆုံး ဝယ်ယူသူထည့်မည်</value>
+  </data>
+  <data name="Textile" xml:space="preserve">
+    <value>အထည်</value>
+  </data>
+  <data name="Manage your textile purchases and inventory records." xml:space="preserve">
+    <value>အထည်ဝယ်ယူမှုများနှင့် စာရင်းမှတ်တမ်းများကို စီမံနိုင်ပါသည်။</value>
+  </data>
+  <data name="Create Textile" xml:space="preserve">
+    <value>အထည်စာရင်း ဖန်တီးမည်</value>
+  </data>
+  <data name="Total Records" xml:space="preserve">
+    <value>မှတ်တမ်းစုစုပေါင်း</value>
+  </data>
+  <data name="textile records" xml:space="preserve">
+    <value>အထည်မှတ်တမ်းများ</value>
+  </data>
+  <data name="Search name or supplier..." xml:space="preserve">
+    <value>အမည် သို့မဟုတ် ပေးသွင်းသူအလိုက် ရှာပါ...</value>
+  </data>
+  <data name="Purchase From" xml:space="preserve">
+    <value>ဝယ်ယူသည့်နေရာ</value>
+  </data>
+  <data name="Purchase Date" xml:space="preserve">
+    <value>ဝယ်ယူသည့်ရက်</value>
+  </data>
+  <data name="Total Price" xml:space="preserve">
+    <value>စုစုပေါင်းကျသင့်ငွေ</value>
+  </data>
+  <data name="No textile records yet" xml:space="preserve">
+    <value>အထည်မှတ်တမ်း မရှိသေးပါ</value>
+  </data>
+  <data name="No records match your search" xml:space="preserve">
+    <value>သင်ရှာသော မှတ်တမ်း မတွေ့ပါ</value>
+  </data>
+  <data name="Create your first record" xml:space="preserve">
+    <value>ပထမဆုံး မှတ်တမ်းဖန်တီးမည်</value>
+  </data>
+  <data name="Inventory control center" xml:space="preserve">
+    <value>စတော့နှင့် ပစ္စည်းစီမံခန့်ခွဲမှုစင်တာ</value>
+  </data>
+  <data name="Manage your clothing inventory with a cleaner and smarter dashboard." xml:space="preserve">
+    <value>အဝတ်အထည်စတော့စာရင်းကို ပိုမိုရှင်းလင်းပြီး ပိုမိုထက်မြက်သော dashboard ဖြင့် စီမံနိုင်ပါသည်။</value>
+  </data>
+  <data name="Manage your inventory with a cleaner and smarter dashboard." xml:space="preserve">
+    <value>သင့်စတော့စာရင်းကို ပိုမိုရှင်းလင်းပြီး ပိုမိုထက်မြက်သော dashboard ဖြင့် စီမံနိုင်ပါသည်။</value>
+  </data>
+  <data name="Monitor products, variants, stock movement, and recent activity in one place." xml:space="preserve">
+    <value>ကုန်ပစ္စည်းများ၊ မျိုးကွဲများ၊ စတော့လှုပ်ရှားမှုများနှင့် နောက်ဆုံးလုပ်ဆောင်ချက်များကို တစ်နေရာတည်းတွင် ကြည့်ရှုနိုင်ပါသည်။</value>
+  </data>
+  <data name="Manage Products" xml:space="preserve">
+    <value>ကုန်ပစ္စည်းများ စီမံမည်</value>
+  </data>
+  <data name="View Inventory" xml:space="preserve">
+    <value>စတော့စာရင်း ကြည့်မည်</value>
+  </data>
+  <data name="System overview" xml:space="preserve">
+    <value>စနစ်အကျဉ်းချုပ်</value>
+  </data>
+  <data name="All master products in catalog" xml:space="preserve">
+    <value>စာရင်းထဲရှိ ကုန်ပစ္စည်းမူရင်းအားလုံး</value>
+  </data>
+  <data name="Color and size combinations tracked" xml:space="preserve">
+    <value>အရောင်နှင့် အရွယ်အစား ပေါင်းစပ်မှုများကို ခြေရာခံထားသည်</value>
+  </data>
+  <data name="Low Stock Items" xml:space="preserve">
+    <value>စတော့နည်းနေသော ပစ္စည်းများ</value>
+  </data>
+  <data name="Items that may need replenishment" xml:space="preserve">
+    <value>စတော့ထပ်ဖြည့်ရန် လိုလာနိုင်သော ပစ္စည်းများ</value>
+  </data>
+  <data name="Access common tasks quickly from the dashboard." xml:space="preserve">
+    <value>အသုံးများသော လုပ်ဆောင်ချက်များကို dashboard မှ အမြန်ဝင်ရောက်နိုင်ပါသည်။</value>
+  </data>
+  <data name="Create a new master product in your catalog." xml:space="preserve">
+    <value>သင့်စာရင်းထဲတွင် ကုန်ပစ္စည်းမူရင်းအသစ်တစ်ခု ဖန်တီးပါ။</value>
+  </data>
+  <data name="Create size and color combinations for products." xml:space="preserve">
+    <value>ကုန်ပစ္စည်းများအတွက် အရွယ်အစားနှင့် အရောင်ပေါင်းစပ်မှုများ ဖန်တီးပါ။</value>
+  </data>
+  <data name="Record outgoing inventory movement accurately." xml:space="preserve">
+    <value>စတော့အထွက်လှုပ်ရှားမှုကို တိတိကျကျ မှတ်တမ်းတင်ပါ။</value>
+  </data>
+  <data name="Record a new sale and update item movement." xml:space="preserve">
+    <value>အရောင်းအသစ်ကို မှတ်တမ်းတင်ပြီး ပစ္စည်းလှုပ်ရှားမှုကို အပ်ဒိတ်လုပ်ပါ။</value>
+  </data>
+  <data name="Inventory Report" xml:space="preserve">
+    <value>စတော့အစီရင်ခံစာ</value>
+  </data>
+  <data name="Review available stock and movement summary." xml:space="preserve">
+    <value>လက်ကျန်စတော့နှင့် လှုပ်ရှားမှုအကျဉ်းချုပ်ကို စစ်ဆေးပါ။</value>
+  </data>
+  <data name="Inventory Health" xml:space="preserve">
+    <value>စတော့အခြေအနေ</value>
+  </data>
+  <data name="Quick inventory summary." xml:space="preserve">
+    <value>စတော့အကျဉ်းချုပ်ကို အမြန်ကြည့်ရှုနိုင်ပါသည်။</value>
+  </data>
+  <data name="{0} item(s) may need replenishment soon." xml:space="preserve">
+    <value>ပစ္စည်း {0} မျိုးကို မကြာမီ စတော့ထပ်ဖြည့်ရန် လိုလာနိုင်ပါသည်။</value>
+  </data>
+  <data name="No low stock alert at the moment." xml:space="preserve">
+    <value>လက်ရှိတွင် စတော့နည်းသတိပေးချက် မရှိသေးပါ။</value>
+  </data>
+  <data name="Sales &amp; Profit Trend" xml:space="preserve">
+    <value>အရောင်းနှင့် အမြတ်လမ်းကြောင်း</value>
+  </data>
+  <data name="Daily" xml:space="preserve">
+    <value>နေ့စဉ်</value>
+  </data>
+  <data name="Monthly" xml:space="preserve">
+    <value>လစဉ်</value>
+  </data>
+  <data name="Latest stock movement records from the system." xml:space="preserve">
+    <value>စနစ်အတွင်းရှိ နောက်ဆုံးစတော့လှုပ်ရှားမှု မှတ်တမ်းများ</value>
+  </data>
+  <data name="No recent activity found." xml:space="preserve">
+    <value>နောက်ဆုံးလုပ်ဆောင်ချက် မတွေ့ပါ။</value>
+  </data>
+  <data name="Monthly revenue and profit for the last 12 months" xml:space="preserve">
+    <value>ပြီးခဲ့သော ၁၂ လအတွင်း လစဉ်ရောင်းရငွေနှင့် အမြတ်</value>
+  </data>
+  <data name="Business finance overview" xml:space="preserve">
+    <value>လုပ်ငန်းဘဏ္ဍာရေး အကျဉ်းချုပ်</value>
+  </data>
+  <data name="Track money in, money out, and business cash position." xml:space="preserve">
+    <value>ငွေအဝင်၊ ငွေအထွက်နှင့် လုပ်ငန်းငွေလက်ကျန်အခြေအနေကို စောင့်ကြည့်နိုင်ပါသည်။</value>
+  </data>
+  <data name="Monitor sales income, textile purchases, tailor fees, personal withdrawals, and overall cash balance." xml:space="preserve">
+    <value>အရောင်းဝင်ငွေ၊ အထည်ဝယ်ယူမှု၊ အပ်ချုပ်ခ၊ ကိုယ်ပိုင်ထုတ်ယူငွေများနှင့် စုစုပေါင်းငွေလက်ကျန်ကို စောင့်ကြည့်နိုင်ပါသည်။</value>
+  </data>
+  <data name="Add Transaction" xml:space="preserve">
+    <value>ငွေလှုပ်ရှားမှု ထည့်မည်</value>
+  </data>
+  <data name="View All Transactions" xml:space="preserve">
+    <value>ငွေလှုပ်ရှားမှုအားလုံး ကြည့်မည်</value>
+  </data>
+  <data name="Total Cash In" xml:space="preserve">
+    <value>စုစုပေါင်း ငွေအဝင်</value>
+  </data>
+  <data name="Total Cash Out" xml:space="preserve">
+    <value>စုစုပေါင်း ငွေအထွက်</value>
+  </data>
+  <data name="Cash Balance" xml:space="preserve">
+    <value>ငွေလက်ကျန်</value>
+  </data>
+  <data name="Expense Breakdown" xml:space="preserve">
+    <value>အသုံးစရိတ် ခွဲခြမ်း</value>
+  </data>
+  <data name="Where your business money is going." xml:space="preserve">
+    <value>လုပ်ငန်းငွေများ မည်သည့်နေရာသို့ သုံးစွဲနေသည်ကို ကြည့်ရှုနိုင်ပါသည်။</value>
+  </data>
+  <data name="Sales Income" xml:space="preserve">
+    <value>အရောင်းဝင်ငွေ</value>
+  </data>
+  <data name="Textile Purchase" xml:space="preserve">
+    <value>အထည်ဝယ်ယူမှု</value>
+  </data>
+  <data name="Tailor Fee" xml:space="preserve">
+    <value>အပ်ချုပ်ခ</value>
+  </data>
+  <data name="Living Expense" xml:space="preserve">
+    <value>နေထိုင်စရိတ်</value>
+  </data>
+  <data name="Other Expense" xml:space="preserve">
+    <value>အခြားအသုံးစရိတ်</value>
+  </data>
+  <data name="Estimated Profit" xml:space="preserve">
+    <value>ခန့်မှန်းအမြတ်</value>
+  </data>
+  <data name="Recent Cash Transactions" xml:space="preserve">
+    <value>နောက်ဆုံး ငွေလှုပ်ရှားမှုများ</value>
+  </data>
+  <data name="Latest money movement records." xml:space="preserve">
+    <value>နောက်ဆုံး ငွေလှုပ်ရှားမှု မှတ်တမ်းများ</value>
+  </data>
+  <data name="Reference" xml:space="preserve">
+    <value>အကိုးအကား</value>
+  </data>
+  <data name="No transaction found." xml:space="preserve">
+    <value>ငွေလှုပ်ရှားမှု မတွေ့ပါ။</value>
+  </data>
+  <data name="Sign In" xml:space="preserve">
+    <value>ဝင်မည်</value>
+  </data>
+  <data name="Units in stock" xml:space="preserve">
+    <value>လက်ကျန်စတော့</value>
+  </data>
+  <data name="Sales this month" xml:space="preserve">
+    <value>ဒီလအရောင်း</value>
+  </data>
+  <data name="Low stock alerts" xml:space="preserve">
+    <value>စတော့နည်း သတိပေးချက်</value>
+  </data>
+  <data name="Free. Simple. Powerful." xml:space="preserve">
+    <value>အခမဲ့။ လွယ်ကူ။ အားကောင်း။</value>
+  </data>
+  <data name="The smart inventory tool built for" xml:space="preserve">
+    <value>အထူးသင့်လျော်စွာ ဖန်တီးထားသော smart inventory tool</value>
+  </data>
+  <data name="small businesses." xml:space="preserve">
+    <value>အသေးစားလုပ်ငန်းများအတွက်</value>
+  </data>
+  <data name="Skip the expensive ERP. Manage products, track stock, record sales, and watch your profit grow from one clean dashboard." xml:space="preserve">
+    <value>စျေးကြီးသော ERP မလိုအပ်ပါ။ ကုန်ပစ္စည်းများ စီမံခြင်း၊ စတော့ခြေရာခံခြင်း၊ အရောင်းမှတ်တမ်းတင်ခြင်းနှင့် အမြတ်တိုးလာမှုကို dashboard တစ်ခုတည်းမှ စောင့်ကြည့်နိုင်ပါသည်။</value>
+  </data>
+  <data name="Products &amp; Variants" xml:space="preserve">
+    <value>ကုန်ပစ္စည်းနှင့် မျိုးကွဲများ</value>
+  </data>
+  <data name="Track every size, color, and SKU without spreadsheets." xml:space="preserve">
+    <value>အရွယ်အစား၊ အရောင်နှင့် SKU အားလုံးကို spreadsheet မလိုဘဲ ခြေရာခံနိုင်ပါသည်။</value>
+  </data>
+  <data name="Live Stock Movement" xml:space="preserve">
+    <value>စတော့လှုပ်ရှားမှု တိုက်ရိုက်</value>
+  </data>
+  <data name="Real-time stock-in, stock-out, and adjustment records." xml:space="preserve">
+    <value>စတော့အဝင်၊ အထွက်နှင့် ပြင်ဆင်မှုမှတ်တမ်းများကို အချိန်နှင့်တပြေးညီ ကြည့်နိုင်ပါသည်။</value>
+  </data>
+  <data name="Sales &amp; Finance" xml:space="preserve">
+    <value>အရောင်းနှင့် ဘဏ္ဍာရေး</value>
+  </data>
+  <data name="See your revenue, cost, and profit with every sale." xml:space="preserve">
+    <value>အရောင်းတိုင်းအတွက် ရောင်းရငွေ၊ ကုန်ကျစရိတ်နှင့် အမြတ်ကို ကြည့်နိုင်ပါသည်။</value>
+  </data>
+  <data name="No credit card" xml:space="preserve">
+    <value>ကတ်မလို</value>
+  </data>
+  <data name="Works anywhere" xml:space="preserve">
+    <value>နေရာမရွေး အသုံးပြုနိုင်</value>
+  </data>
+  <data name="Back to home" xml:space="preserve">
+    <value>မူလစာမျက်နှာသို့ ပြန်မည်</value>
+  </data>
+  <data name="Welcome back" xml:space="preserve">
+    <value>ပြန်လည်ကြိုဆိုပါသည်</value>
+  </data>
+  <data name="Sign in to your workspace and pick up where you left off." xml:space="preserve">
+    <value>သင့် workspace ထဲသို့ ဝင်ရောက်ပြီး ရပ်ထားခဲ့သည့်နေရာမှ ဆက်လက်လုပ်ဆောင်ပါ။</value>
+  </data>
+  <data name="Email or Username" xml:space="preserve">
+    <value>အီးမေးလ် သို့မဟုတ် အသုံးပြုသူအမည်</value>
+  </data>
+  <data name="Email or username" xml:space="preserve">
+    <value>အီးမေးလ် သို့မဟုတ် အသုံးပြုသူအမည်</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>စကားဝှက်</value>
+  </data>
+  <data name="Your password" xml:space="preserve">
+    <value>သင့်စကားဝှက်</value>
+  </data>
+  <data name="Remember me" xml:space="preserve">
+    <value>ဝင်ရောက်ထားမှု မှတ်ထားမည်</value>
+  </data>
+  <data name="Forgot password?" xml:space="preserve">
+    <value>စကားဝှက်မေ့နေပါသလား။</value>
+  </data>
+  <data name="Your data is protected and tenant-isolated." xml:space="preserve">
+    <value>သင့်ဒေတာကို လုံခြုံစွာ ကာကွယ်ထားပြီး tenant အလိုက် သီးခြားထားရှိပါသည်။</value>
+  </data>
+  <data name="Forgot Password" xml:space="preserve">
+    <value>စကားဝှက် မေ့သွားသည်</value>
+  </data>
+  <data name="Forgot Password?" xml:space="preserve">
+    <value>စကားဝှက် မေ့သွားပါသလား။</value>
+  </data>
+  <data name="Enter your email and your administrator will help reset it." xml:space="preserve">
+    <value>သင့်အီးမေးလ်ကို ဖြည့်ပါ။ administrator မှ reset လုပ်ပေးပါမည်။</value>
+  </data>
+  <data name="Your email address" xml:space="preserve">
+    <value>သင့်အီးမေးလ်လိပ်စာ</value>
+  </data>
+  <data name="Submit Request" xml:space="preserve">
+    <value>တောင်းဆိုမှု ပို့မည်</value>
+  </data>
+  <data name="Back to sign in" xml:space="preserve">
+    <value>ဝင်ရောက်ရန်သို့ ပြန်မည်</value>
+  </data>
+  <data name="Your account uses a temporary password. Please set a new password to continue." xml:space="preserve">
+    <value>ဤအကောင့်သည် ယာယီစကားဝှက်ကို အသုံးပြုနေပါသည်။ ဆက်လက်အသုံးပြုရန် စကားဝှက်အသစ် သတ်မှတ်ပါ။</value>
+  </data>
+  <data name="Enter your current password and choose a new one." xml:space="preserve">
+    <value>လက်ရှိစကားဝှက်ကို ရိုက်ထည့်ပြီး အသစ်တစ်ခု ရွေးချယ်ပါ။</value>
+  </data>
+  <data name="Current password" xml:space="preserve">
+    <value>လက်ရှိစကားဝှက်</value>
+  </data>
+  <data name="New password (min 8 chars)" xml:space="preserve">
+    <value>စကားဝှက်အသစ် (အနည်းဆုံး ၈ လုံး)</value>
+  </data>
+  <data name="Confirm new password" xml:space="preserve">
+    <value>စကားဝှက်အသစ်ကို အတည်ပြုပါ</value>
+  </data>
+  <data name="Update Password" xml:space="preserve">
+    <value>စကားဝှက် ပြောင်းမည်</value>
+  </data>
+  <data name="Back to dashboard" xml:space="preserve">
+    <value>dashboard သို့ ပြန်မည်</value>
+  </data>
+  <data name="Access Denied" xml:space="preserve">
+    <value>ဝင်ရောက်ခွင့် မရှိပါ</value>
+  </data>
+  <data name="You don't have permission to access this page. Contact your administrator if you think this is a mistake." xml:space="preserve">
+    <value>ဤစာမျက်နှာကို ဝင်ရောက်ကြည့်ရှုခွင့် မရှိပါ။ အမှားဖြစ်သည်ဟု ထင်ပါက administrator ထံ ဆက်သွယ်ပါ။</value>
+  </data>
+  <data name="Back to Home" xml:space="preserve">
+    <value>မူလစာမျက်နှာသို့ ပြန်မည်</value>
+  </data>
+  <data name="Sign in as a different user" xml:space="preserve">
+    <value>အခြားအသုံးပြုသူဖြင့် ဝင်မည်</value>
+  </data>
+  <data name="Request Sent" xml:space="preserve">
+    <value>တောင်းဆိုမှု ပို့ပြီးပါပြီ</value>
+  </data>
+  <data name="Request Received" xml:space="preserve">
+    <value>တောင်းဆိုမှု လက်ခံပြီးပါပြီ</value>
+  </data>
+  <data name="Please contact your system administrator with your email address to have your password reset. Your administrator can reset it from the Manage Users panel." xml:space="preserve">
+    <value>စကားဝှက် reset ပြုလုပ်ရန် သင့်အီးမေးလ်လိပ်စာနှင့်အတူ system administrator ထံ ဆက်သွယ်ပါ။ administrator သည် Manage Users panel မှ reset လုပ်ပေးနိုင်ပါသည်။</value>
+  </data>
+  <data name="Back to Sign In" xml:space="preserve">
+    <value>ဝင်ရောက်ရန်သို့ ပြန်မည်</value>
+  </data>
+  <data name="This product cannot be deleted because one or more variants are used in sales history. Mark the product inactive instead." xml:space="preserve">
+    <value>ဤကုန်ပစ္စည်းကို ဖျက်၍မရပါ။ ၎င်း၏ မျိုးကွဲတစ်ခု သို့မဟုတ် တစ်ခုထက်ပိုသည် အရောင်းမှတ်တမ်းတွင် အသုံးပြုပြီးဖြစ်ပါသည်။ ဖျက်မည့်အစား ကုန်ပစ္စည်းကို inactive အဖြစ် ပြောင်းထားပါ။</value>
+  </data>
+  <data name="This product cannot be deleted because its variants still have stock on hand. Reduce stock to zero first and keep the history." xml:space="preserve">
+    <value>ဤကုန်ပစ္စည်းကို ဖျက်၍မရပါ။ ၎င်း၏ မျိုးကွဲများတွင် လက်ကျန်စတော့ ရှိနေသေးပါသည်။ ပထမဦးစွာ စတော့ကို သုညအထိ လျှော့ပြီး မှတ်တမ်းကို ဆက်လက်ထိန်းထားပါ။</value>
+  </data>
+  <data name="This product cannot be deleted because its variants already have stock movement history. Mark the product inactive instead." xml:space="preserve">
+    <value>ဤကုန်ပစ္စည်းကို ဖျက်၍မရပါ။ ၎င်း၏ မျိုးကွဲများတွင် စတော့လှုပ်ရှားမှုမှတ်တမ်း ရှိပြီးသားဖြစ်ပါသည်။ ဖျက်မည့်အစား ကုန်ပစ္စည်းကို inactive အဖြစ် ပြောင်းထားပါ။</value>
+  </data>
 </root>

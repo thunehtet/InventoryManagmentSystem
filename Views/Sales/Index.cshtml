@@ -1,7 +1,7 @@
 @using ClothInventoryApp.Dto.Sale
 @model IEnumerable<ViewSaleDto>
 @{
-    ViewData["Title"] = "Sales";
+    ViewData["Title"] = Localizer["Sales"];
     var currency       = ViewData["Currency"] as string ?? "";
     var pg             = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel;
     var hasSaleProfit  = (bool)(ViewBag.HasSaleProfit ?? false) && !User.IsInRole("Staff");
@@ -40,10 +40,10 @@
             <div class="filter-search-wrap">
                 <i class="bi bi-search filter-search-icon"></i>
                 <input type="text" name="search" value="@ViewBag.Search"
-                       class="filter-search-input" placeholder="@Localizer["Search by customer name…"]" autocomplete="off" />
+                       class="filter-search-input" placeholder="@Localizer["Search by customer name..."]" autocomplete="off" />
                 @if (!string.IsNullOrWhiteSpace(ViewBag.Search as string))
                 {
-                    <a href="@Url.Action("Index", new { size = pg?.PageSize ?? 10 })" class="filter-clear-btn" title="Clear">
+                    <a href="@Url.Action("Index", new { size = pg?.PageSize ?? 10 })" class="filter-clear-btn" title="@Localizer["Clear"]">
                         <i class="bi bi-x-circle-fill"></i>
                     </a>
                 }
@@ -115,12 +115,12 @@
                                 }
                                 <td>
                                     <div class="table-actions">
-                                        <a asp-action="Details" asp-route-id="@item.Id" class="action-btn action-btn-view" title="Details"><i class="bi bi-eye-fill"></i></a>
-                                        <a asp-action="InvoicePdf" asp-route-id="@item.Id" class="action-btn" title="Download Invoice PDF"
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="action-btn action-btn-view" title="@Localizer["Details"]"><i class="bi bi-eye-fill"></i></a>
+                                        <a asp-action="InvoicePdf" asp-route-id="@item.Id" class="action-btn" title="@Localizer["Download Invoice PDF"]"
                                            style="color:#6366f1;border-color:#e0e7ff;background:#f5f3ff"><i class="bi bi-file-earmark-pdf-fill"></i></a>
                                         @if (User.IsInRole("Admin"))
                                         {
-                                            <a asp-action="Delete" asp-route-id="@item.Id" class="action-btn action-btn-delete" title="Delete"><i class="bi bi-trash-fill"></i></a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="action-btn action-btn-delete" title="@Localizer["Delete"]"><i class="bi bi-trash-fill"></i></a>
                                         }
                                     </div>
                                 </td>

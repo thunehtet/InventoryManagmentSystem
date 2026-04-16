@@ -1,7 +1,7 @@
 ﻿@model ClothInventoryApp.Dto.Finance.FinanceDashboardViewModel
 
 @{
-    ViewData["Title"] = "Finance Overview";
+    ViewData["Title"] = Localizer["Finance Overview"];
     var currency = ViewData["Currency"] as string ?? "";
 }
 
@@ -10,24 +10,24 @@
         <div class="dashboard-hero-content">
             <div class="hero-badge-modern">
                 <i class="bi bi-cash-coin"></i>
-                <span>Business finance overview</span>
+                <span>@Localizer["Business finance overview"]</span>
             </div>
 
-            <h1 class="dashboard-title">Track money in, money out, and business cash position.</h1>
+            <h1 class="dashboard-title">@Localizer["Track money in, money out, and business cash position."]</h1>
 
             <p class="dashboard-subtitle">
-                Monitor sales income, textile purchases, tailor fees, personal withdrawals, and overall cash balance.
+                @Localizer["Monitor sales income, textile purchases, tailor fees, personal withdrawals, and overall cash balance."]
             </p>
 
             <div class="dashboard-hero-actions">
                 <a asp-controller="CashTransaction" asp-action="Create" class="btn-dashboard-primary">
                     <i class="bi bi-plus-circle"></i>
-                    Add Transaction
+                    @Localizer["Add Transaction"]
                 </a>
 
                 <a asp-controller="CashTransaction" asp-action="Index" class="btn-dashboard-secondary">
                     <i class="bi bi-list-ul"></i>
-                    View All Transactions
+                    @Localizer["View All Transactions"]
                 </a>
             </div>
         </div>
@@ -37,7 +37,7 @@
         <div class="dashboard-stat-card">
             <div class="stat-card-icon bg-blue-soft"><i class="bi bi-arrow-down-circle-fill"></i></div>
             <div class="stat-card-content">
-                <div class="stat-card-label">Total Cash In</div>
+                <div class="stat-card-label">@Localizer["Total Cash In"]</div>
                 <div class="stat-card-value">@Model.TotalCashIn.ToString("N0") @currency</div>
             </div>
         </div>
@@ -45,7 +45,7 @@
         <div class="dashboard-stat-card">
             <div class="stat-card-icon bg-orange-soft"><i class="bi bi-arrow-up-circle-fill"></i></div>
             <div class="stat-card-content">
-                <div class="stat-card-label">Total Cash Out</div>
+                <div class="stat-card-label">@Localizer["Total Cash Out"]</div>
                 <div class="stat-card-value">@Model.TotalCashOut.ToString("N0") @currency</div>
             </div>
         </div>
@@ -53,7 +53,7 @@
         <div class="dashboard-stat-card">
             <div class="stat-card-icon bg-purple-soft"><i class="bi bi-wallet2"></i></div>
             <div class="stat-card-content">
-                <div class="stat-card-label">Cash Balance</div>
+                <div class="stat-card-label">@Localizer["Cash Balance"]</div>
                 <div class="stat-card-value">@Model.CashBalance.ToString("N0") @currency</div>
             </div>
         </div>
@@ -63,50 +63,50 @@
         <div class="dashboard-panel dashboard-panel-large">
             <div class="panel-header">
                 <div>
-                    <h3>Expense Breakdown</h3>
-                    <p>Where your business money is going.</p>
+                    <h3>@Localizer["Expense Breakdown"]</h3>
+                    <p>@Localizer["Where your business money is going."]</p>
                 </div>
             </div>
 
             <div class="quick-action-grid">
                 <div class="quick-action-card">
                     <div class="quick-action-body">
-                        <h4>Sales Income</h4>
+                        <h4>@Localizer["Sales Income"]</h4>
                         <p>@Model.TotalSalesIncome.ToString("N0") @currency</p>
                     </div>
                 </div>
 
                 <div class="quick-action-card">
                     <div class="quick-action-body">
-                        <h4>Textile Purchase</h4>
+                        <h4>@Localizer["Textile Purchase"]</h4>
                         <p>@Model.TotalTextileExpense.ToString("N0") @currency</p>
                     </div>
                 </div>
 
                 <div class="quick-action-card">
                     <div class="quick-action-body">
-                        <h4>Tailor Fee</h4>
+                        <h4>@Localizer["Tailor Fee"]</h4>
                         <p>@Model.TotalTailorFee.ToString("N0") @currency</p>
                     </div>
                 </div>
 
                 <div class="quick-action-card">
                     <div class="quick-action-body">
-                        <h4>Living Expense</h4>
+                        <h4>@Localizer["Living Expense"]</h4>
                         <p>@Model.TotalLivingExpense.ToString("N0") @currency</p>
                     </div>
                 </div>
 
                 <div class="quick-action-card">
                     <div class="quick-action-body">
-                        <h4>Other Expense</h4>
+                        <h4>@Localizer["Other Expense"]</h4>
                         <p>@Model.TotalOtherExpense.ToString("N0") @currency</p>
                     </div>
                 </div>
 
                 <div class="quick-action-card">
                     <div class="quick-action-body">
-                        <h4>Estimated Profit</h4>
+                        <h4>@Localizer["Estimated Profit"]</h4>
                         <p>@Model.GrossProfitEstimate.ToString("N0") @currency</p>
                     </div>
                 </div>
@@ -117,8 +117,8 @@
     <section class="dashboard-panel recent-activity-panel">
         <div class="panel-header">
             <div>
-                <h3>Recent Cash Transactions</h3>
-                <p>Latest money movement records.</p>
+                <h3>@Localizer["Recent Cash Transactions"]</h3>
+                <p>@Localizer["Latest money movement records."]</p>
             </div>
         </div>
 
@@ -126,19 +126,19 @@
             <table class="table-modern dashboard-table">
                 <thead>
                     <tr>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th>Category</th>
-                        <th>Amount</th>
-                        <th>Reference</th>
-                        <th>Remarks</th>
+                        <th>@Localizer["Date"]</th>
+                        <th>@Localizer["Type"]</th>
+                        <th>@Localizer["Category"]</th>
+                        <th>@Localizer["Amount"]</th>
+                        <th>@Localizer["Reference"]</th>
+                        <th>@Localizer["Remarks"]</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if (!Model.RecentTransactions.Any())
                     {
                         <tr>
-                            <td colspan="6" class="empty-state-cell">No transaction found.</td>
+                            <td colspan="6" class="empty-state-cell">@Localizer["No transaction found."]</td>
                         </tr>
                     }
                     else

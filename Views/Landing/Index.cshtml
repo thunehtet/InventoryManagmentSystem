@@ -1,6 +1,7 @@
 ﻿@{
     Layout = null;
 }
+@model ClothInventoryApp.Dto.Landing.LandingSignupDto
 <!DOCTYPE html>
 <html lang="en" data-lang="en" id="htmlRoot">
 <head>
@@ -352,7 +353,7 @@
             </p>
         </div>
 
-        @{
+@{
             var landingPlans = ViewBag.Plans as List<ClothInventoryApp.Models.Plan>
                                ?? new List<ClothInventoryApp.Models.Plan>();
             // Feature the second plan (index 1) when ≥2 plans exist, otherwise first
@@ -416,21 +417,31 @@
 
                     <!-- Period / subtitle -->
                     <div class="price-period">
-                        @if (!string.IsNullOrWhiteSpace(lp.Description))
-                        {
-                            @lp.Description
-                        }
-                        else if (isFree)
+                        @if (isFree)
                         {
                             <span class="en">Forever free</span>
                             <span class="my">အမြဲအခမဲ့</span>
                         }
                         else
                         {
-                            <span class="en">per month</span>
-                            <span class="my">တစ်လ</span>
+                            <span class="en">Monthly price</span>
+                            <span class="my">တစ်လစာ စျေးနှုန်း</span>
                         }
                     </div>
+
+                    @if (!string.IsNullOrWhiteSpace(lp.Description))
+                    {
+                        <div class="price-period">
+                            @lp.Description
+                        </div>
+                    }
+                    else if (!isFree)
+                    {
+                        <div class="price-period">
+                            <span class="en">Billed per month</span>
+                            <span class="my">တစ်လလျှင် ကောက်ခံပါသည်</span>
+                        </div>
+                    }
 
                     <!-- Feature list -->
                     <ul class="price-features">
@@ -508,14 +519,14 @@
     <div class="contact-inner">
 
         <div class="contact-info fade-up">
-            <span class="section-label light"><span class="en">Get in Touch</span><span class="my">ဆက်သွယ်ပါ</span></span>
+            <span class="section-label light"><span class="en">Start Free</span><span class="my">အခမဲ့ စတင်ပါ</span></span>
             <h2 class="contact-title">
-                <span class="en">Ready to Digitalize Your Business?</span>
-                <span class="my">သင့်လုပ်ငန်းကို digital system နဲ့ စတင်ချင်ပြီလား?</span>
+                <span class="en">Send Your Free Account Inquiry</span>
+                <span class="my">free account အတွက် လျှောက်လွှာပို့ပါ</span>
             </h2>
             <p class="contact-sub">
-                <span class="en">Tell us about your business and we will help you start quickly with the 1-month Pro launch promotion. Ideal for Myanmar shops, online sellers and teams moving toward digital operations.</span>
-                <span class="my">သင့်လုပ်ငန်းအကြောင်း ပြောပြပါ။ ၁ လ Pro အခမဲ့ မိတ်ဆက်အစီအစဉ်ဖြင့် မြန်မြန်စတင်နိုင်အောင် ကူညီပေးပါမည်။ မြန်မာလုပ်ငန်းများ၊ online seller များနှင့် digital စနစ်သို့ ပြောင်းလဲနေသော team များအတွက် သင့်တော်ပါသည်။</span>
+                <span class="en">Fill in your business details below. SuperAdmin will review your inquiry first, then create your tenant admin account on the free plan after approval.</span>
+                <span class="my">အောက်တွင် သင့်လုပ်ငန်းအချက်အလက်များကို ဖြည့်ပါ။ SuperAdmin က သင့်လျှောက်လွှာကို စစ်ဆေးပြီး အတည်ပြုပြီးမှ free plan ဖြင့် tenant admin account ဖန်တီးပေးပါမည်။</span>
             </p>
 
             <div class="contact-details">
@@ -550,57 +561,71 @@
                 <div class="contact-success">
                     <i class="bi bi-check-circle-fill"></i>
                     <div>
-                        <div class="success-title"><span class="en">Message Sent!</span><span class="my">မက်ဆေ့ ရောက်ပြီ!</span></div>
+                        <div class="success-title"><span class="en">Inquiry Submitted!</span><span class="my">လျှောက်လွှာပို့ပြီးပါပြီ!</span></div>
                         <div class="success-sub">
-                            <span class="en">Thanks @TempData["ContactName"], we'll be in touch within 24 hours.</span>
-                            <span class="my">ကျေးဇူးတင်ပါသည် @TempData["ContactName"]၊ ၂၄နာရီအတွင်း ဆက်သွယ်ပါမည်။</span>
+                            <span class="en">Thanks @TempData["ContactName"]. Your inquiry for @TempData["SignupBusinessName"] has been sent. SuperAdmin will review it and create your free account after approval.</span>
+                            <span class="my">@TempData["ContactName"] ရေ ကျေးဇူးတင်ပါသည်။ @TempData["SignupBusinessName"] အတွက် လျှောက်လွှာကို ပို့ပြီးပါပြီ။ SuperAdmin က စစ်ဆေးအတည်ပြုပြီးနောက် free account ဖန်တီးပေးပါမည်။</span>
                         </div>
                     </div>
                 </div>
             }
 
-            <h3 class="form-card-title"><span class="en">Send Us a Message</span><span class="my">မက်ဆေ့ပေးပို့ပါ</span></h3>
+            <h3 class="form-card-title"><span class="en">Apply for a Free Account</span><span class="my">free account အတွက် လျှောက်ထားပါ</span></h3>
 
             <form asp-controller="Landing" asp-action="ContactSubmit" method="post">
                 @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="cname">
-                            <span class="en">Full Name *</span><span class="my">နာမည် *</span>
+                        <label class="form-label" asp-for="BusinessName">
+                            <span class="en">Business Name *</span><span class="my">လုပ်ငန်းအမည် *</span>
                         </label>
-                        <input type="text" id="cname" name="name" class="form-input"
-                               placeholder="Your name" required />
+                        <input asp-for="BusinessName" class="form-input"
+                               placeholder="Your business name" required />
+                        <span asp-validation-for="BusinessName" class="field-validation-error"></span>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="cemail">
+                        <label class="form-label" asp-for="BusinessType">
+                            <span class="en">Business Type *</span><span class="my">လုပ်ငန်းအမျိုးအစား *</span>
+                        </label>
+                        <input asp-for="BusinessType" class="form-input"
+                               placeholder="Clothing store, cosmetics, grocery..." required />
+                        <span asp-validation-for="BusinessType" class="field-validation-error"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" asp-for="FullName">
+                            <span class="en">Your Name *</span><span class="my">သင့်အမည် *</span>
+                        </label>
+                        <input asp-for="FullName" class="form-input"
+                               placeholder="Your full name" required />
+                        <span asp-validation-for="FullName" class="field-validation-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" asp-for="Email">
                             <span class="en">Email Address *</span><span class="my">အီးမေးလ် *</span>
                         </label>
-                        <input type="email" id="cemail" name="email" class="form-input"
+                        <input asp-for="Email" type="email" class="form-input"
                                placeholder="you@example.com" required />
+                        <span asp-validation-for="Email" class="field-validation-error"></span>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="cphone">
+                    <label class="form-label" asp-for="Phone">
                         <span class="en">Phone Number</span><span class="my">ဖုန်းနံပါတ်</span>
                     </label>
-                    <input type="tel" id="cphone" name="phone" class="form-input"
+                    <input asp-for="Phone" type="tel" class="form-input"
                            placeholder="+95 9 xxx xxx xxx" />
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="cmsg">
-                        <span class="en">Message *</span><span class="my">မက်ဆေ့ *</span>
-                    </label>
-                    <textarea id="cmsg" name="message" class="form-input form-textarea"
-                              placeholder="Tell us about your business..."
-                              rows="4" required></textarea>
+                    <span asp-validation-for="Phone" class="field-validation-error"></span>
                 </div>
 
                 <button type="submit" class="btn-contact-submit">
-                    <i class="bi bi-send-fill"></i>
-                    <span class="en">Send Message</span><span class="my">မက်ဆေ့ပို့ပါ</span>
+                    <i class="bi bi-rocket-takeoff-fill"></i>
+                    <span class="en">Send Inquiry</span><span class="my">လျှောက်လွှာပို့ပါ</span>
                 </button>
             </form>
         </div>
@@ -652,6 +677,8 @@
 <!-- ═══════════════════════════════════════════════════════════
      JAVASCRIPT
      ═══════════════════════════════════════════════════════════ -->
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<partial name="_ValidationScriptsPartial" />
 <script>
 (function () {
 
@@ -707,7 +734,3 @@
 
 </body>
 </html>
-
-
-
-

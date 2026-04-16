@@ -14,6 +14,10 @@ namespace ClothInventoryApp.Dtos.Tenant
         [MaxLength(200)]
         public string Name { get; set; } = string.Empty;
 
+        [MaxLength(100)]
+        [Display(Name = "Business Type")]
+        public string? BusinessType { get; set; }
+
         [MaxLength(300)]
         public string? LegalName { get; set; }
 

@@ -63,7 +63,7 @@ namespace ClothInventoryApp.Controllers
 
             var tenant = new Tenant
             {
-                Code = dto.Code, Name = dto.Name, LogoUrl = dto.LogoUrl,
+                Code = dto.Code, Name = dto.Name, BusinessType = dto.BusinessType, LogoUrl = dto.LogoUrl,
                 ContactEmail = dto.ContactEmail, ContactPhone = dto.ContactPhone,
                 Country = dto.Country, CurrencyCode = dto.CurrencyCode,
                 IsActive = dto.IsActive, CreatedAt = DateTime.UtcNow
@@ -100,6 +100,7 @@ namespace ClothInventoryApp.Controllers
             return View(new TenantEditDto
             {
                 Id = t.Id, Code = t.Code, Name = t.Name, LogoUrl = t.LogoUrl,
+                BusinessType = t.BusinessType,
                 ContactEmail = t.ContactEmail, ContactPhone = t.ContactPhone,
                 Country = t.Country, CurrencyCode = t.CurrencyCode, IsActive = t.IsActive
             });
@@ -117,7 +118,7 @@ namespace ClothInventoryApp.Controllers
             var t = await _db.Tenants.IgnoreQueryFilters().FirstOrDefaultAsync(x => x.Id == dto.Id);
             if (t == null) return NotFound();
 
-            t.Code = dto.Code; t.Name = dto.Name; t.LogoUrl = dto.LogoUrl;
+            t.Code = dto.Code; t.Name = dto.Name; t.BusinessType = dto.BusinessType; t.LogoUrl = dto.LogoUrl;
             t.ContactEmail = dto.ContactEmail; t.ContactPhone = dto.ContactPhone;
             t.Country = dto.Country; t.CurrencyCode = dto.CurrencyCode;
             t.IsActive = dto.IsActive; t.UpdatedAt = DateTime.UtcNow;

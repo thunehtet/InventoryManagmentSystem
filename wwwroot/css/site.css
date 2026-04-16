@@ -66,6 +66,21 @@ body {
     overflow-x: hidden;
 }
 
+.culture-my,
+.culture-my body,
+.culture-my input,
+.culture-my select,
+.culture-my textarea,
+.culture-my button,
+.culture-my .nav-link-modern,
+.culture-my .mob-nav-item,
+.culture-my .page-btn,
+.culture-my .size-btn {
+    font-family: 'Noto Sans Myanmar', 'Myanmar Text', 'Padauk', sans-serif;
+    letter-spacing: 0;
+    word-spacing: 0;
+}
+
 .modern-body {
     min-height: 100vh;
 }

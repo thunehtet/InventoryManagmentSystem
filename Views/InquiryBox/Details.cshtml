@@ -4,75 +4,120 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/pages/superadmin.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/create-product.css" asp-append-version="true" />
 }
 
-<div class="superadmin-shell">
-    <div class="product-hero">
-        <div class="product-hero-content">
-            <h1 class="product-hero-title">
-                <i class="bi bi-envelope-open-fill"></i> @Model.Name
-            </h1>
-            <p class="product-hero-sub">Received @Model.SubmittedAt.ToString("dddd, dd MMMM yyyy 'at' HH:mm") UTC</p>
-        </div>
-        <a asp-action="Index" class="sa-btn-back">
-            <i class="bi bi-arrow-left"></i> Back to Inbox
-        </a>
-    </div>
-
-    <div class="sa-panel" style="max-width:680px;">
-        <div class="sa-panel-header">
-            <span class="sa-section-dot"></span>
-            <h3 class="sa-panel-title">Inquiry Details</h3>
-            @if (Model.IsRead)
-            {
-                <span class="status-badge active ms-auto">Read</span>
-            }
-            else
-            {
-                <span class="status-badge trial ms-auto">New</span>
-            }
+<div class="create-product-shell">
+    <div class="create-main-card">
+        <div class="section-header">
+            <div>
+                <h3>Inquiry Details</h3>
+                <p>@Model.BusinessName requested a free account.</p>
+            </div>
+            <a asp-action="Index" class="btn-modern-outline">Back to Inbox</a>
         </div>
 
-        <div class="sa-detail-rows">
-            <div class="sa-detail-row">
-                <span class="sa-detail-label">Name</span>
-                <span class="sa-detail-value fw-semibold">@Model.Name</span>
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        <div class="form-grid-modern mb-4">
+            <div class="form-group-modern">
+                <label class="form-label-modern">Contact Name</label>
+                <input class="input-modern" value="@Model.Name" readonly />
             </div>
-            <div class="sa-detail-row">
-                <span class="sa-detail-label">Email</span>
-                <span class="sa-detail-value">
-                    <a href="mailto:@Model.Email" class="ib-email-link">@Model.Email</a>
-                </span>
+            <div class="form-group-modern">
+                <label class="form-label-modern">Email</label>
+                <input class="input-modern" value="@Model.Email" readonly />
             </div>
-            <div class="sa-detail-row">
-                <span class="sa-detail-label">Phone</span>
-                <span class="sa-detail-value">@(Model.Phone ?? "—")</span>
+            <div class="form-group-modern">
+                <label class="form-label-modern">Phone</label>
+                <input class="input-modern" value="@(Model.Phone ?? "-")" readonly />
             </div>
-            <div class="sa-detail-row" style="align-items:flex-start;">
-                <span class="sa-detail-label" style="padding-top:.15rem;">Message</span>
-                <span class="sa-detail-value" style="white-space:pre-wrap;line-height:1.7;">@(Model.Message ?? "—")</span>
+            <div class="form-group-modern">
+                <label class="form-label-modern">Business Name</label>
+                <input class="input-modern" value="@Model.BusinessName" readonly />
             </div>
-            <div class="sa-detail-row">
-                <span class="sa-detail-label">Received</span>
-                <span class="sa-detail-value text-muted small">@Model.SubmittedAt.ToString("dd MMM yyyy HH:mm") UTC</span>
+            <div class="form-group-modern">
+                <label class="form-label-modern">Business Type</label>
+                <input class="input-modern" value="@Model.BusinessType" readonly />
+            </div>
+            <div class="form-group-modern">
+                <label class="form-label-modern">Status</label>
+                <input class="input-modern" value="@Model.Status" readonly />
+            </div>
+            <div class="form-group-modern">
+                <label class="form-label-modern">Submitted</label>
+                <input class="input-modern" value="@Model.SubmittedAt.ToString("dd MMM yyyy HH:mm") UTC" readonly />
+            </div>
+            <div class="form-group-modern">
+                <label class="form-label-modern">Approved Tenant</label>
+                <input class="input-modern" value="@(Model.ApprovedTenant?.Name ?? "-")" readonly />
             </div>
         </div>
 
-        <div class="sa-form-actions">
-            <a asp-action="Index" class="sa-btn-cancel">
-                <i class="bi bi-arrow-left"></i> Back
-            </a>
-            <a href="mailto:@Model.Email" class="sa-btn-save">
-                <i class="bi bi-reply-fill"></i> Reply by Email
-            </a>
-            <form asp-action="Delete" asp-route-id="@Model.Id" method="post"
-                  onsubmit="return confirm('Delete this inquiry permanently?');" class="m-0">
-                @Html.AntiForgeryToken()
-                <button type="submit" class="sa-btn-danger">
-                    <i class="bi bi-trash"></i> Delete
-                </button>
-            </form>
+        <div class="product-table-card mb-4">
+            <h4 class="mb-3">Inquiry Notes</h4>
+            <div class="text-muted" style="white-space:pre-wrap;line-height:1.7;">
+                @(string.IsNullOrWhiteSpace(Model.Message) ? "-" : Model.Message)
+            </div>
         </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.ReviewRemarks))
+        {
+            <div class="alert alert-secondary mb-4">
+                <strong>Review Note:</strong> @Model.ReviewRemarks
+                @if (Model.ReviewedAt.HasValue)
+                {
+                    <span class="text-muted">(@Model.ReviewedAt.Value.ToString("dd MMM yyyy HH:mm"))</span>
+                }
+            </div>
+        }
+
+        @if (Model.Status == "Pending")
+        {
+            <div class="row g-4">
+                <div class="col-12 col-lg-6">
+                    <form asp-action="Approve" method="post" class="product-table-card h-100">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <h4 class="mb-3">Approve</h4>
+                        <p class="text-muted">This will create the tenant, tenant admin, and activate the free plan.</p>
+                        <button type="submit" class="btn-modern-primary">
+                            <i class="bi bi-check-circle-fill"></i> Approve and Create Free Account
+                        </button>
+                    </form>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <form asp-action="Reject" method="post" class="product-table-card h-100">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <h4 class="mb-3">Reject</h4>
+                        <textarea name="remarks" class="form-control mb-3" rows="4" placeholder="Reason for rejection..."></textarea>
+                        <button type="submit" class="btn-modern-danger">
+                            <i class="bi bi-x-circle-fill"></i> Reject Inquiry
+                        </button>
+                    </form>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="d-flex flex-wrap gap-2">
+                <a asp-action="Index" class="btn-modern-outline">Back</a>
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post"
+                      onsubmit="return confirm('Delete this inquiry permanently?');" class="m-0">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn-modern-danger">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                </form>
+            </div>
+        }
     </div>
 </div>

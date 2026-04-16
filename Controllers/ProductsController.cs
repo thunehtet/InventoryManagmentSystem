@@ -2,11 +2,13 @@
 using ClothInventoryApp.Dto;
 using ClothInventoryApp.Dto.Product;
 using ClothInventoryApp.Models;
+using ClothInventoryApp.Resources;
 using ClothInventoryApp.Services.Subscription;
 using ClothInventoryApp.Services.Tenant;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace ClothInventoryApp.Controllers
 {
@@ -16,12 +18,18 @@ namespace ClothInventoryApp.Controllers
         private readonly AppDbContext _context;
         private readonly ITenantProvider _tenantProvider;
         private readonly ISubscriptionService _subscriptionService;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public ProductsController(AppDbContext context, ITenantProvider tenantProvider, ISubscriptionService subscriptionService)
+        public ProductsController(
+            AppDbContext context,
+            ITenantProvider tenantProvider,
+            ISubscriptionService subscriptionService,
+            IStringLocalizer<SharedResource> localizer)
         {
             _context = context;
             _tenantProvider = tenantProvider;
             _subscriptionService = subscriptionService;
+            _localizer = localizer;
         }
 
         public async Task<IActionResult> Index(string? search, int page = 1, int size = 10)
@@ -179,6 +187,7 @@ namespace ClothInventoryApp.Controllers
             if (product == null)
                 return NotFound();
 
+            await PopulateDeleteStateAsync(id);
             return View(product);
         }
 
@@ -192,10 +201,59 @@ namespace ClothInventoryApp.Controllers
             if (product == null)
                 return NotFound();
 
+            var deleteState = await GetDeleteStateAsync(id);
+            if (!deleteState.CanDelete)
+            {
+                TempData["Error"] = deleteState.Message;
+                return RedirectToAction(nameof(Delete), new { id });
+            }
+
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
+        }
+
+        private async Task PopulateDeleteStateAsync(Guid productId)
+        {
+            var deleteState = await GetDeleteStateAsync(productId);
+            ViewBag.CanDelete = deleteState.CanDelete;
+            ViewBag.DeleteMessage = deleteState.Message;
+        }
+
+        private async Task<(bool CanDelete, string? Message)> GetDeleteStateAsync(Guid productId)
+        {
+            var variantIds = await _context.ProductVariants
+                .Where(v => v.ProductId == productId)
+                .Select(v => v.Id)
+                .ToListAsync();
+
+            if (variantIds.Count == 0)
+                return (true, null);
+
+            var hasSaleHistory = await _context.SaleItems
+                .AnyAsync(i => variantIds.Contains(i.ProductVariantId));
+            if (hasSaleHistory)
+            {
+                return (false, _localizer["This product cannot be deleted because one or more variants are used in sales history. Mark the product inactive instead."]);
+            }
+
+            var stockDelta = await _context.StockMovements
+                .Where(m => variantIds.Contains(m.ProductVariantId))
+                .SumAsync(m => m.MovementType == "IN" ? m.Quantity : m.MovementType == "OUT" ? -m.Quantity : 0);
+            if (stockDelta != 0)
+            {
+                return (false, _localizer["This product cannot be deleted because its variants still have stock on hand. Reduce stock to zero first and keep the history."]);
+            }
+
+            var hasStockHistory = await _context.StockMovements
+                .AnyAsync(m => variantIds.Contains(m.ProductVariantId));
+            if (hasStockHistory)
+            {
+                return (false, _localizer["This product cannot be deleted because its variants already have stock movement history. Mark the product inactive instead."]);
+            }
+
+            return (true, null);
         }
     }
 }
