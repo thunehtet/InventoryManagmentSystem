@@ -62,6 +62,96 @@
     margin-bottom: 24px;
 }
 
+.public-brand-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+    border-radius: 20px;
+    background:
+        radial-gradient(circle at top left, rgba(79, 70, 229, 0.10), transparent 42%),
+        linear-gradient(135deg, #f8fbff 0%, #eef2ff 100%);
+    border: 1px solid rgba(99, 102, 241, 0.14);
+    text-align: left;
+}
+
+.public-brand-banner--stacked {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.public-brand-banner--receipt {
+    margin: 12px 0 0;
+}
+
+.public-tenant-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.public-tenant-brand--centered {
+    flex-direction: column;
+    text-align: center;
+}
+
+.public-tenant-logo {
+    width: 68px;
+    height: 68px;
+    border-radius: 20px;
+    background: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.95);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.public-tenant-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.public-tenant-logo span {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--public-accent);
+}
+
+.public-tenant-label {
+    color: var(--public-muted);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.public-powered-by {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid rgba(226, 232, 240, 0.92);
+    color: var(--public-muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.public-powered-by img {
+    height: 22px;
+    width: auto;
+    object-fit: contain;
+}
+
 .public-card-icon,
 .public-check-icon {
     width: 64px;
@@ -366,5 +456,17 @@
 
     .receipt-share {
         grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767.98px) {
+    .public-brand-banner,
+    .public-brand-banner--receipt {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .public-powered-by {
+        white-space: normal;
     }
 }

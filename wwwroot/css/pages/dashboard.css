@@ -10,9 +10,9 @@
     gap: 24px;
     padding: 32px;
     border-radius: 28px;
-    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 45%, #312e81 100%);
+    background: linear-gradient(135deg, var(--hero-indigo-start) 0%, var(--hero-indigo-mid) 55%, var(--hero-indigo-end) 100%);
     color: #fff;
-    box-shadow: 0 22px 60px rgba(15, 23, 42, 0.18);
+    box-shadow: 0 22px 60px var(--hero-indigo-shadow);
     margin-bottom: 24px;
     overflow: hidden;
     position: relative;

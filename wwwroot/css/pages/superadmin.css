@@ -1372,11 +1372,28 @@ textarea.form-input-modern {
     padding: 28px 32px;
     color: #fff;
     margin-bottom: 20px;
+    box-shadow: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.superadmin-shell .product-hero::after {
+    content: "";
+    position: absolute;
+    right: -52px;
+    top: -52px;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    pointer-events: none;
 }
 
 .superadmin-shell .product-hero-content {
     flex: 1;
     min-width: 0;
+    position: relative;
+    z-index: 1;
 }
 
 .superadmin-shell .product-hero-title {

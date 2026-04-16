@@ -1,5 +1,6 @@
 using ClothInventoryApp.Data;
 using ClothInventoryApp.Models;
+using QuestPDF.Drawing;
 using QuestPDF.Infrastructure;
 using ClothInventoryApp.Services.Feature;
 using ClothInventoryApp.Services.Identity;
@@ -16,6 +17,8 @@ QuestPDF.Settings.License = LicenseType.Community;
 
 var builder = WebApplication.CreateBuilder(args);
 var env = builder.Environment;
+
+RegisterQuestPdfFonts(env.ContentRootPath);
 
 // MVC + Localization
 builder.Services.AddLocalization(options => options.ResourcesPath = "");
@@ -221,3 +224,21 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+
+static void RegisterQuestPdfFonts(string contentRootPath)
+{
+    var fontPaths = new[]
+    {
+        Path.Combine(contentRootPath, "Resources", "Fonts", "mmrtext.ttf"),
+        Path.Combine(contentRootPath, "Resources", "Fonts", "mmrtextb.ttf")
+    };
+
+    foreach (var fontPath in fontPaths)
+    {
+        if (!File.Exists(fontPath))
+            continue;
+
+        using var stream = File.OpenRead(fontPath);
+        FontManager.RegisterFont(stream);
+    }
+}

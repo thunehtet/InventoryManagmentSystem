@@ -125,14 +125,11 @@ a  { text-decoration: none; color: inherit; }
 
 .nav.scrolled .nav-brand { color: var(--text-dark); }
 
-.nav-brand-icon {
-    width: 38px; height: 38px;
-    border-radius: 11px;
-    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.1rem;
-    color: #fff;
-    box-shadow: 0 4px 14px rgba(99,102,241,.4);
+.nav-brand-logo {
+    display: block;
+    height: 34px;
+    width: auto;
+    object-fit: contain;
 }
 
 .nav-links {
@@ -262,9 +259,14 @@ a  { text-decoration: none; color: inherit; }
     z-index: 1;
 }
 
+.hero-copy {
+    min-width: 0;
+}
+
 .hero-badge {
     display: inline-flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 8px;
     padding: 8px 16px;
     border-radius: 999px;
@@ -274,11 +276,13 @@ a  { text-decoration: none; color: inherit; }
     font-weight: 600;
     color: #a5b4fc;
     margin-bottom: 24px;
+    max-width: 100%;
 }
 
 .promo-marquee {
     position: relative;
     max-width: 680px;
+    width: 100%;
     overflow: hidden;
     border-radius: 999px;
     border: 1px solid rgba(255,255,255,.16);
@@ -338,6 +342,8 @@ a  { text-decoration: none; color: inherit; }
     line-height: 1.1;
     color: #fff;
     margin-bottom: 20px;
+    max-width: 100%;
+    overflow-wrap: anywhere;
 }
 
 .hero-title-accent {
@@ -353,6 +359,7 @@ a  { text-decoration: none; color: inherit; }
     line-height: 1.8;
     margin-bottom: 36px;
     max-width: 480px;
+    overflow-wrap: anywhere;
 }
 
 .hero-btns {
@@ -408,6 +415,7 @@ a  { text-decoration: none; color: inherit; }
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
+    max-width: 100%;
 }
 
 .hero-trust-item {
@@ -1226,6 +1234,7 @@ textarea.form-input { resize: vertical; min-height: 110px; }
     .btn-nav-ghost { padding: 8px 12px; font-size: 13px; }
     .nav-inner .lang-btn { padding: 7px 10px; }
     .nav-burger { width: 34px; height: 34px; font-size: 1.2rem; }
+    .nav-brand-logo { height: 30px; }
 }
 
 /* ── 2) Tablet portrait / large phone — single-column hero ───── */
@@ -1242,9 +1251,33 @@ textarea.form-input { resize: vertical; min-height: 110px; }
     }
     .hero-mockup { display: none; }
     .hero-copy   { display: flex; flex-direction: column; align-items: center; }
+    .hero-badge,
+    .promo-marquee,
+    .hero-title,
+    .hero-sub,
+    .hero-trust {
+        width: 100%;
+    }
     .hero-sub    { max-width: 100%; }
     .hero-btns   { justify-content: center; }
     .hero-trust  { justify-content: center; }
+    .promo-marquee {
+        border-radius: 24px;
+    }
+    .promo-marquee-track {
+        width: 100%;
+        min-width: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        animation: none;
+        padding: 12px;
+    }
+    .promo-pill {
+        white-space: normal;
+        justify-content: center;
+        text-align: center;
+    }
 
     /* Contact stacks vertically */
     .contact-inner  { grid-template-columns: 1fr; gap: 40px; }
@@ -1281,6 +1314,9 @@ textarea.form-input { resize: vertical; min-height: 110px; }
     .hero-sub   { font-size: 0.97rem; }
     .hero-btns  { flex-direction: column; align-items: center; gap: 10px; }
     .btn-hero-primary, .btn-hero-ghost { width: 100%; justify-content: center; }
+    .hero-badge { padding: 10px 14px; }
+    .promo-pill { font-size: 12px; padding: 10px 12px; }
+    .hero-trust > span { justify-content: center; }
 
     /* Stats — 2×2 */
     .stats-inner { flex-wrap: wrap; }
@@ -1371,14 +1407,17 @@ textarea.form-input { resize: vertical; min-height: 110px; }
 .success-sub   { font-size: 13px; color: #065f46; }
 
 /* Hero trust items */
-.hero-trust span {
+.hero-trust > span {
     display: inline-flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 6px;
     font-size: 13px;
     color: rgba(255,255,255,.55);
+    max-width: 100%;
+    overflow-wrap: anywhere;
 }
-.hero-trust span i { color: var(--green); }
+.hero-trust > span i { color: var(--green); }
 
 /* (stat-divider and stat-item defined above in stats strip section) */
 
@@ -1556,13 +1595,17 @@ textarea.form-input { resize: vertical; min-height: 110px; }
 /* Footer brand area */
 .footer-brand { }
 .footer-brand-logo {
-    width: 40px; height: 40px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
-    display: inline-flex; align-items: center; justify-content: center;
-    font-size: 1.2rem;
-    color: #fff;
+    width: 180px;
+    max-width: 100%;
+    display: block;
     margin-bottom: 12px;
+}
+
+.footer-brand-logo img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
 }
 
 .footer-tagline {
@@ -1574,5 +1617,3 @@ textarea.form-input { resize: vertical; min-height: 110px; }
 }
 
 .footer-col { }
-
-

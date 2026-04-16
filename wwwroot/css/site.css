@@ -43,6 +43,10 @@ body {
     --muted: #667085;
     --primary: #635bff;
     --primary-2: #8b5cf6;
+    --hero-indigo-start: #1e1b4b;
+    --hero-indigo-mid: #312e81;
+    --hero-indigo-end: #4338ca;
+    --hero-indigo-shadow: rgba(49, 46, 129, 0.24);
     --sidebar-1: #0f172a;
     --sidebar-2: #1e293b;
     --shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
@@ -67,11 +71,11 @@ body {
 }
 
 .hero-modern {
-    background: radial-gradient(circle at top left, rgba(255,255,255,0.25), transparent 30%), linear-gradient(135deg, #635bff, #8b5cf6);
+    background: radial-gradient(circle at top left, rgba(255,255,255,0.18), transparent 30%), linear-gradient(135deg, var(--hero-indigo-start), var(--hero-indigo-mid) 55%, var(--hero-indigo-end));
     color: white;
     border-radius: 30px;
     padding: 42px;
-    box-shadow: 0 20px 40px rgba(99,91,255,0.20);
+    box-shadow: 0 20px 40px var(--hero-indigo-shadow);
     position: relative;
     overflow: hidden;
 }

@@ -4,7 +4,7 @@
 
 /* ── Banner ────────────────────────────────────────────────── */
 .ov-banner {
-    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 55%, #4338ca 100%);
+    background: linear-gradient(135deg, var(--hero-indigo-start) 0%, var(--hero-indigo-mid) 55%, var(--hero-indigo-end) 100%);
     border-radius: 22px;
     padding: 32px 36px;
     color: #fff;

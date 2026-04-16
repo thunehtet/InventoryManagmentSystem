@@ -3,6 +3,7 @@
 @{
     Layout = null;
     var tenantName = ViewBag.TenantName as string ?? "Shop";
+    var tenantLogoUrl = ViewBag.TenantLogoUrl as string;
     var tenantPhone = ViewBag.TenantPhone as string;
     var tenantEmail = ViewBag.TenantEmail as string;
     var currency = ViewBag.Currency as string ?? "";
@@ -13,6 +14,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="~/images/websitelogo.png" asp-append-version="true" />
     <title>Receipt - @tenantName</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
@@ -28,7 +30,28 @@
             <header class="receipt-header">
                 <div>
                     <div class="receipt-kicker">Shared Receipt</div>
-                    <h1 class="receipt-title">@tenantName</h1>
+                    <div class="public-brand-banner public-brand-banner--receipt">
+                        <div class="public-tenant-brand">
+                            <div class="public-tenant-logo">
+                                @if (!string.IsNullOrWhiteSpace(tenantLogoUrl))
+                                {
+                                    <img src="@tenantLogoUrl" alt="@tenantName" />
+                                }
+                                else
+                                {
+                                    <span>@tenantName.Substring(0, 1).ToUpperInvariant()</span>
+                                }
+                            </div>
+                            <div>
+                                <h1 class="receipt-title">@tenantName</h1>
+                                <div class="public-tenant-label">Official customer receipt</div>
+                            </div>
+                        </div>
+                        <div class="public-powered-by">
+                            <span>Powered by</span>
+                            <img src="~/images/websitelogo.png" alt="StockEasy" />
+                        </div>
+                    </div>
                     <div class="receipt-meta">
                         @if (!string.IsNullOrWhiteSpace(tenantPhone))
                         {

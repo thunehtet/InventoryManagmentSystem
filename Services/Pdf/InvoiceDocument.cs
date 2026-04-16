@@ -8,6 +8,7 @@ namespace ClothInventoryApp.Services.Pdf
 {
     public class InvoiceDocument : IDocument
     {
+        private static readonly string[] InvoiceFontFamily = ["Myanmar Text", "Arial", "Helvetica", "sans-serif"];
         private readonly ViewSaleDto _sale;
         private readonly TenantModel? _tenant;
         private readonly string _currency;
@@ -35,7 +36,7 @@ namespace ClothInventoryApp.Services.Pdf
             {
                 page.Size(PageSizes.A4);
                 page.Margin(40);
-                page.DefaultTextStyle(t => t.FontFamily("Arial").FontSize(10).FontColor("#1e293b"));
+                page.DefaultTextStyle(t => t.FontFamily(InvoiceFontFamily).FontSize(10).FontColor("#1e293b"));
 
                 page.Content().Element(ComposeContent);
                 page.Footer().Element(ComposeFooter);

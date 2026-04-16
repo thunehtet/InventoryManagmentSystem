@@ -45,6 +45,7 @@ namespace ClothInventoryApp.Controllers
             if (tenant == null) return NotFound();
 
             ViewBag.TenantName = tenant.Name;
+            ViewBag.TenantLogoUrl = tenant.LogoUrl;
             ViewBag.TenantCode = tenantCode;
             return View(new CreateCustomerDto());
         }
@@ -61,6 +62,7 @@ namespace ClothInventoryApp.Controllers
             if (tenant == null) return NotFound();
 
             ViewBag.TenantName = tenant.Name;
+            ViewBag.TenantLogoUrl = tenant.LogoUrl;
             ViewBag.TenantCode = tenantCode;
 
             if (!ModelState.IsValid)
@@ -92,6 +94,7 @@ namespace ClothInventoryApp.Controllers
                 return NotFound();
 
             ViewBag.TenantName = invite.Tenant.Name;
+            ViewBag.TenantLogoUrl = invite.Tenant.LogoUrl;
             ViewBag.InviteToken = invite.Token;
             ViewBag.InviteExpiresAt = invite.ExpiresAt;
             return View("Register", new CreateCustomerDto());
@@ -106,6 +109,7 @@ namespace ClothInventoryApp.Controllers
                 return NotFound();
 
             ViewBag.TenantName = invite.Tenant.Name;
+            ViewBag.TenantLogoUrl = invite.Tenant.LogoUrl;
             ViewBag.InviteToken = invite.Token;
             ViewBag.InviteExpiresAt = invite.ExpiresAt;
 
@@ -133,6 +137,7 @@ namespace ClothInventoryApp.Controllers
             await _context.SaveChangesAsync();
 
             ViewBag.TenantName = invite.Tenant.Name;
+            ViewBag.TenantLogoUrl = invite.Tenant.LogoUrl;
             return View("RegisterSuccess");
         }
 
@@ -143,6 +148,7 @@ namespace ClothInventoryApp.Controllers
             tenantCode = tenantCode.Trim().ToUpperInvariant();
             var tenant = await GetActiveTenantAsync(tenantCode);
             ViewBag.TenantName = tenant?.Name ?? tenantCode;
+            ViewBag.TenantLogoUrl = tenant?.LogoUrl;
             return View();
         }
 
@@ -180,6 +186,7 @@ namespace ClothInventoryApp.Controllers
             };
 
             ViewBag.TenantName = sale.Tenant.Name;
+            ViewBag.TenantLogoUrl = sale.Tenant.LogoUrl;
             ViewBag.TenantPhone = sale.Tenant.ContactPhone;
             ViewBag.TenantEmail = sale.Tenant.ContactEmail;
             ViewBag.Currency = sale.Tenant.CurrencyCode ?? string.Empty;

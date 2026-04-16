@@ -3,6 +3,7 @@
 @{
     Layout = null;
     var tenantName = ViewBag.TenantName as string ?? "the shop";
+    var tenantLogoUrl = ViewBag.TenantLogoUrl as string;
     var tenantCode = ViewBag.TenantCode as string ?? "";
     var inviteToken = ViewBag.InviteToken as string;
     var formAction = !string.IsNullOrWhiteSpace(inviteToken)
@@ -14,6 +15,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="~/images/websitelogo.png" asp-append-version="true" />
     <title>Register - @tenantName</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
@@ -27,10 +29,28 @@
     <div class="public-shell">
         <div class="public-card">
             <div class="public-card-header">
-                <div class="public-card-icon">
-                    <i class="bi bi-person-plus-fill"></i>
+                <div class="public-brand-banner">
+                    <div class="public-tenant-brand">
+                        <div class="public-tenant-logo">
+                            @if (!string.IsNullOrWhiteSpace(tenantLogoUrl))
+                            {
+                                <img src="@tenantLogoUrl" alt="@tenantName" />
+                            }
+                            else
+                            {
+                                <span>@tenantName.Substring(0, 1).ToUpperInvariant()</span>
+                            }
+                        </div>
+                        <div>
+                            <div class="public-tenant-label">Customer Registration</div>
+                            <h1 class="public-card-title">Join @tenantName</h1>
+                        </div>
+                    </div>
+                    <div class="public-powered-by">
+                        <span>Powered by</span>
+                        <img src="~/images/websitelogo.png" alt="StockEasy" />
+                    </div>
                 </div>
-                <h1 class="public-card-title">Join @tenantName</h1>
                 <p class="public-card-subtitle">Fill in your details to register as a customer.</p>
 
                 @if (!string.IsNullOrWhiteSpace(inviteToken))

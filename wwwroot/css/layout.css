@@ -94,12 +94,19 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    overflow: hidden;
 }
 
 .brand-logo img {
-    width: 30px;
-    height: 30px;
-    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.brand-logo-fallback {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #2563eb;
 }
 
 .brand-title {

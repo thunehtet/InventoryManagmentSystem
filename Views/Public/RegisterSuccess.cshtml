@@ -1,12 +1,14 @@
 @{
     Layout = null;
     var tenantName = ViewBag.TenantName as string ?? "the shop";
+    var tenantLogoUrl = ViewBag.TenantLogoUrl as string;
 }
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="~/images/websitelogo.png" asp-append-version="true" />
     <title>Registered! - @tenantName</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
@@ -19,6 +21,25 @@
 <body class="public-page public-page--success">
     <div class="public-shell public-shell--centered">
         <div class="public-card public-card--compact public-card--centered">
+            <div class="public-brand-banner public-brand-banner--stacked">
+                <div class="public-tenant-brand public-tenant-brand--centered">
+                    <div class="public-tenant-logo">
+                        @if (!string.IsNullOrWhiteSpace(tenantLogoUrl))
+                        {
+                            <img src="@tenantLogoUrl" alt="@tenantName" />
+                        }
+                        else
+                        {
+                            <span>@tenantName.Substring(0, 1).ToUpperInvariant()</span>
+                        }
+                    </div>
+                    <div class="public-tenant-label">@tenantName</div>
+                </div>
+                <div class="public-powered-by">
+                    <span>Powered by</span>
+                    <img src="~/images/websitelogo.png" alt="StockEasy" />
+                </div>
+            </div>
             <div class="public-check-icon">
                 <i class="bi bi-check-lg"></i>
             </div>

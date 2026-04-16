@@ -1,15 +1,26 @@
 @using ClothInventoryApp.Services.Feature
 @using ClothInventoryApp.Services.Tenant
+@using ClothInventoryApp.Data
+@using Microsoft.EntityFrameworkCore
 @inject IFeatureService FeatureService
 @inject ITenantProvider TenantProvider
+@inject AppDbContext DbContext
 @{
     bool hasSales = false, hasFinance = false, hasTextiles = false,
          hasCustomers = false, hasDashboard = false, hasSaleProfit = false;
+    string workspaceName = "StockEasy";
+    string? workspaceLogoUrl = null;
     if (!User.IsInRole("SuperAdmin") && User.Identity?.IsAuthenticated == true)
     {
         try
         {
             var _tid    = TenantProvider.GetTenantId();
+            var tenant = await DbContext.Tenants.AsNoTracking().FirstOrDefaultAsync(t => t.Id == _tid);
+            if (tenant != null)
+            {
+                workspaceName = tenant.Name;
+                workspaceLogoUrl = tenant.LogoUrl;
+            }
             hasSales      = await FeatureService.HasFeatureAsync(_tid, "sales");
             hasSaleProfit = await FeatureService.HasFeatureAsync(_tid, "sale_profit");
             hasCustomers  = await FeatureService.HasFeatureAsync(_tid, "customers");
@@ -25,7 +36,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Cloth Inventory</title>
+    <title>@ViewData["Title"] - StockEasy</title>
+    <link rel="icon" type="image/png" href="~/images/websitelogo.png" asp-append-version="true" />
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
@@ -50,10 +62,17 @@
         <aside class="sidebar" id="sidebar" data-initial>
             <div class="sidebar-brand" id="sidebarBrand" role="button" tabindex="0">
                 <div class="brand-logo">
-                    <img src="~/images/logo.jpeg" alt="Logo" />
+                    @if (!string.IsNullOrWhiteSpace(workspaceLogoUrl))
+                    {
+                        <img src="@workspaceLogoUrl" alt="@workspaceName" />
+                    }
+                    else
+                    {
+                        <span class="brand-logo-fallback">@workspaceName.Substring(0, 1).ToUpperInvariant()</span>
+                    }
                 </div>
                 <div>
-                    <div class="brand-title">ClothCo</div>
+                    <div class="brand-title">@workspaceName</div>
                     <div class="brand-subtitle">@Localizer["Inventory Manager"]</div>
                 </div>
             </div>
