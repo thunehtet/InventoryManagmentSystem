@@ -127,6 +127,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ITenantProvider, TenantProvider>();
 builder.Services.AddScoped<IFeatureService, FeatureService>();
 builder.Services.AddScoped<ITenantTimeService, TenantTimeService>();
+builder.Services.AddHttpClient();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
 builder.Services.Configure<UserProvisioningSettings>(builder.Configuration.GetSection("UserProvisioning"));
 builder.Services.Configure<SubscriptionPaymentSettings>(builder.Configuration.GetSection("SubscriptionPayments"));
