@@ -116,7 +116,10 @@ namespace ClothInventoryApp.Controllers
                 return RedirectToAction(nameof(Details), new { id });
             }
 
-            if (await _userManager.Users.IgnoreQueryFilters().AnyAsync(u => u.Email == inquiry.Email || u.UserName == inquiry.Email))
+            var normalizedEmail = _userManager.NormalizeEmail(inquiry.Email);
+            if (await _userManager.Users.IgnoreQueryFilters().AnyAsync(u =>
+                u.NormalizedEmail == normalizedEmail ||
+                u.NormalizedUserName == normalizedEmail))
             {
                 TempData["Error"] = "This email already has an account.";
                 return RedirectToAction(nameof(Details), new { id });

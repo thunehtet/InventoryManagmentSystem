@@ -571,15 +571,22 @@
             }
 
             <h3 class="form-card-title"><span class="en">Apply for a Free Account</span><span class="my">free account အတွက် လျှောက်ထားပါ</span></h3>
+            <div class="form-notice" role="note">
+                <i class="bi bi-info-circle-fill"></i>
+                <div>
+                    <span class="en">Required fields are marked with <span class="required-mark">*</span>.</span>
+                    <span class="my"><span class="required-mark">*</span> ပါသောအကွက်များကို မဖြစ်မနေ ဖြည့်ရပါမည်။</span>
+                </div>
+            </div>
 
             <form asp-controller="Landing" asp-action="ContactSubmit" method="post">
                 @Html.AntiForgeryToken()
-                <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+                <div asp-validation-summary="ModelOnly" class="form-validation-summary"></div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label" asp-for="BusinessName">
-                            <span class="en">Business Name *</span><span class="my">လုပ်ငန်းအမည် *</span>
+                            <span class="en">Business Name <span class="required-mark">*</span></span><span class="my">လုပ်ငန်းအမည် <span class="required-mark">*</span></span>
                         </label>
                         <input asp-for="BusinessName" class="form-input"
                                placeholder="Your business name" required />
@@ -587,7 +594,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label" asp-for="BusinessType">
-                            <span class="en">Business Type *</span><span class="my">လုပ်ငန်းအမျိုးအစား *</span>
+                            <span class="en">Business Type <span class="required-mark">*</span></span><span class="my">လုပ်ငန်းအမျိုးအစား <span class="required-mark">*</span></span>
                         </label>
                         <input asp-for="BusinessType" class="form-input"
                                placeholder="Clothing store, cosmetics, grocery..." required />
@@ -598,7 +605,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label" asp-for="FullName">
-                            <span class="en">Your Name *</span><span class="my">သင့်အမည် *</span>
+                            <span class="en">Your Name <span class="required-mark">*</span></span><span class="my">သင့်အမည် <span class="required-mark">*</span></span>
                         </label>
                         <input asp-for="FullName" class="form-input"
                                placeholder="Your full name" required />
@@ -606,7 +613,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label" asp-for="Email">
-                            <span class="en">Email Address *</span><span class="my">အီးမေးလ် *</span>
+                            <span class="en">Email Address <span class="required-mark">*</span></span><span class="my">အီးမေးလ် <span class="required-mark">*</span></span>
                         </label>
                         <input asp-for="Email" type="email" class="form-input"
                                placeholder="you@example.com" required />
@@ -623,6 +630,13 @@
                     <span asp-validation-for="Phone" class="field-validation-error"></span>
                 </div>
 
+                @if (!string.IsNullOrWhiteSpace(ViewBag.TurnstileSiteKey as string))
+                {
+                    <div class="form-group">
+                        <div class="cf-turnstile" data-sitekey="@ViewBag.TurnstileSiteKey"></div>
+                    </div>
+                }
+
                 <button type="submit" class="btn-contact-submit">
                     <i class="bi bi-rocket-takeoff-fill"></i>
                     <span class="en">Send Inquiry</span><span class="my">လျှောက်လွှာပို့ပါ</span>
@@ -632,6 +646,11 @@
 
     </div>
 </section>
+
+@if (!string.IsNullOrWhiteSpace(ViewBag.TurnstileSiteKey as string))
+{
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+}
 
 
 <!-- ═══════════════════════════════════════════════════════════

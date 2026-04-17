@@ -6,6 +6,7 @@ using ClothInventoryApp.Services.Feature;
 using ClothInventoryApp.Services.Email;
 using ClothInventoryApp.Services.Files;
 using ClothInventoryApp.Services.Identity;
+using ClothInventoryApp.Services.Security;
 using ClothInventoryApp.Options;
 using ClothInventoryApp.Services.Stock;
 using ClothInventoryApp.Services.Subscription;
@@ -111,12 +112,22 @@ builder.Services.AddRateLimiter(options =>
         limiter.QueueLimit = 0;
     });
 
-    options.AddFixedWindowLimiter("public-registration", limiter =>
+    options.AddPolicy("public-registration", httpContext =>
     {
-        limiter.PermitLimit = 10;
-        limiter.Window = TimeSpan.FromMinutes(10);
-        limiter.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        limiter.QueueLimit = 0;
+        var partitionKey = httpContext.Connection.RemoteIpAddress?.ToString();
+
+        if (string.IsNullOrWhiteSpace(partitionKey))
+            partitionKey = "unknown-public-client";
+
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey,
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 5,
+                Window = TimeSpan.FromMinutes(10),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            });
     });
 
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -129,10 +140,12 @@ builder.Services.AddScoped<IFeatureService, FeatureService>();
 builder.Services.AddScoped<ITenantTimeService, TenantTimeService>();
 builder.Services.AddHttpClient();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
+builder.Services.Configure<TurnstileSettings>(builder.Configuration.GetSection("Turnstile"));
 builder.Services.Configure<UserProvisioningSettings>(builder.Configuration.GetSection("UserProvisioning"));
 builder.Services.Configure<SubscriptionPaymentSettings>(builder.Configuration.GetSection("SubscriptionPayments"));
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 builder.Services.AddScoped<ITemporaryCredentialService, TemporaryCredentialService>();
+builder.Services.AddScoped<ITurnstileValidationService, TurnstileValidationService>();
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();

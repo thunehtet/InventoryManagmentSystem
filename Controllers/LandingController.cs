@@ -1,11 +1,14 @@
 using ClothInventoryApp.Data;
 using ClothInventoryApp.Dto.Landing;
 using ClothInventoryApp.Models;
+using ClothInventoryApp.Options;
+using ClothInventoryApp.Services.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace ClothInventoryApp.Controllers
 {
@@ -14,23 +17,24 @@ namespace ClothInventoryApp.Controllers
     {
         private readonly AppDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ITurnstileValidationService _turnstileValidationService;
+        private readonly TurnstileSettings _turnstileSettings;
 
-        public LandingController(AppDbContext db, UserManager<ApplicationUser> userManager)
+        public LandingController(
+            AppDbContext db,
+            UserManager<ApplicationUser> userManager,
+            ITurnstileValidationService turnstileValidationService,
+            IOptions<TurnstileSettings> turnstileSettings)
         {
             _db = db;
             _userManager = userManager;
+            _turnstileValidationService = turnstileValidationService;
+            _turnstileSettings = turnstileSettings.Value;
         }
 
         public async Task<IActionResult> Index()
         {
-            var plans = await _db.Plans
-                .Where(p => p.IsActive)
-                .Include(p => p.PlanFeatures.Where(pf => pf.IsEnabled))
-                    .ThenInclude(pf => pf.Feature)
-                .OrderBy(p => p.PriceMonthly)
-                .ToListAsync();
-
-            ViewBag.Plans = plans;
+            await LoadLandingViewDataAsync();
             return View(new LandingSignupDto());
         }
 
@@ -38,19 +42,32 @@ namespace ClothInventoryApp.Controllers
         [EnableRateLimiting("public-registration")]
         public async Task<IActionResult> ContactSubmit(LandingSignupDto dto)
         {
-            var plans = await _db.Plans
-                .Where(p => p.IsActive)
-                .Include(p => p.PlanFeatures.Where(pf => pf.IsEnabled))
-                    .ThenInclude(pf => pf.Feature)
-                .OrderBy(p => p.PriceMonthly)
-                .ToListAsync();
-            ViewBag.Plans = plans;
+            await LoadLandingViewDataAsync();
 
             if (!ModelState.IsValid)
                 return View(nameof(Index), dto);
 
-            var normalizedEmail = dto.Email.Trim();
-            if (await _userManager.Users.IgnoreQueryFilters().AnyAsync(u => u.Email == normalizedEmail || u.UserName == normalizedEmail))
+            if (!_turnstileSettings.IsConfigured)
+            {
+                ModelState.AddModelError(string.Empty, "Bot protection is not configured yet. Please try again later.");
+                return View(nameof(Index), dto);
+            }
+
+            var turnstileToken = Request.Form["cf-turnstile-response"].ToString();
+            var remoteIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+            var turnstileValid = await _turnstileValidationService.ValidateAsync(
+                turnstileToken,
+                remoteIp,
+                HttpContext.RequestAborted);
+
+            if (!turnstileValid)
+            {
+                ModelState.AddModelError(string.Empty, "Bot verification failed. Please try again.");
+                return View(nameof(Index), dto);
+            }
+
+            var normalizedEmail = NormalizeEmail(dto.Email);
+            if (await EmailAlreadyExistsAsync(normalizedEmail))
             {
                 ModelState.AddModelError(nameof(dto.Email), "This email is already registered.");
                 return View(nameof(Index), dto);
@@ -84,6 +101,27 @@ namespace ClothInventoryApp.Controllers
             TempData["ContactName"] = dto.FullName.Trim();
             TempData["SignupBusinessName"] = dto.BusinessName.Trim();
             return Redirect(Url.Action(nameof(Index))! + "#contact");
+        }
+
+        private string NormalizeEmail(string email)
+            => _userManager.NormalizeEmail(email.Trim());
+
+        private async Task<bool> EmailAlreadyExistsAsync(string normalizedEmail)
+            => await _userManager.Users
+                .IgnoreQueryFilters()
+                .AnyAsync(u => u.NormalizedEmail == normalizedEmail || u.NormalizedUserName == normalizedEmail);
+
+        private async Task LoadLandingViewDataAsync()
+        {
+            var plans = await _db.Plans
+                .Where(p => p.IsActive)
+                .Include(p => p.PlanFeatures.Where(pf => pf.IsEnabled))
+                    .ThenInclude(pf => pf.Feature)
+                .OrderBy(p => p.PriceMonthly)
+                .ToListAsync();
+
+            ViewBag.Plans = plans;
+            ViewBag.TurnstileSiteKey = _turnstileSettings.SiteKey;
         }
     }
 }
