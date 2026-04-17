@@ -9,5 +9,6 @@ namespace ClothInventoryApp.Options
         public string FromAddress { get; set; } = string.Empty;
         public string FromName { get; set; } = "StockEasy";
         public bool EnableSsl { get; set; } = true;
+        public int TimeoutSeconds { get; set; } = 10;
     }
 }

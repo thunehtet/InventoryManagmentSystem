@@ -339,7 +339,8 @@ namespace ClothInventoryApp.Controllers
                             <p>We received a request to reset your StockEasy password.</p>
                             <p><a href="{safeUrl}">Reset your password</a></p>
                             <p>If you did not request this, you can ignore this email.</p>
-                            """);
+                            """,
+                            HttpContext.RequestAborted);
                     }
                 }
                 catch (Exception ex)

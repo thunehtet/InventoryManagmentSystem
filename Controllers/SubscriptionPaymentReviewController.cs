@@ -187,7 +187,8 @@ namespace ClothInventoryApp.Controllers
                     <p><strong>Plan:</strong> {WebUtility.HtmlEncode(request.PlanNameSnapshot)}</p>
                     <p><strong>Billing cycle:</strong> {WebUtility.HtmlEncode(request.BillingCycle)}</p>
                     <p>Your subscription is now active.</p>
-                    """);
+                    """,
+                    HttpContext.RequestAborted);
             }
             catch (Exception ex)
             {
@@ -235,7 +236,8 @@ namespace ClothInventoryApp.Controllers
                     <p>Hello {WebUtility.HtmlEncode(request.RequestedByUser?.FullName ?? "there")},</p>
                     <p>Your subscription payment request for <strong>{WebUtility.HtmlEncode(request.PlanNameSnapshot)}</strong> was rejected.</p>
                     <p>Remarks: {WebUtility.HtmlEncode(request.ReviewRemarks ?? "Rejected by SuperAdmin.")}</p>
-                    """);
+                    """,
+                    HttpContext.RequestAborted);
             }
             catch (Exception ex)
             {

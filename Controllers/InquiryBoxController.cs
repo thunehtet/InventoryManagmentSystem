@@ -221,7 +221,8 @@ namespace ClothInventoryApp.Controllers
                         <p><strong>Username:</strong> {WebUtility.HtmlEncode(inquiry.Email)}</p>
                         <p><strong>Temporary password:</strong> {WebUtility.HtmlEncode(tempPassword)}</p>
                         <p>Please sign in and change your password immediately.</p>
-                        """);
+                        """,
+                        HttpContext.RequestAborted);
                 }
                 catch (Exception ex)
                 {
