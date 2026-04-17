@@ -1,10 +1,13 @@
 using ClothInventoryApp.Data;
 using ClothInventoryApp.Dtos.Tenant;
 using ClothInventoryApp.Models;
+using ClothInventoryApp.Services.Email;
+using ClothInventoryApp.Services.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace ClothInventoryApp.Controllers
 {
@@ -13,11 +16,22 @@ namespace ClothInventoryApp.Controllers
     {
         private readonly AppDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ITemporaryCredentialService _temporaryCredentialService;
+        private readonly IEmailService _emailService;
+        private readonly ILogger<TenantController> _logger;
 
-        public TenantController(AppDbContext db, UserManager<ApplicationUser> userManager)
+        public TenantController(
+            AppDbContext db,
+            UserManager<ApplicationUser> userManager,
+            ITemporaryCredentialService temporaryCredentialService,
+            IEmailService emailService,
+            ILogger<TenantController> logger)
         {
             _db = db;
             _userManager = userManager;
+            _temporaryCredentialService = temporaryCredentialService;
+            _emailService = emailService;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Index(string? search, int page = 1, int size = 10)
@@ -63,33 +77,70 @@ namespace ClothInventoryApp.Controllers
 
             var tenant = new Tenant
             {
-                Code = dto.Code, Name = dto.Name, BusinessType = dto.BusinessType, LogoUrl = dto.LogoUrl,
-                ContactEmail = dto.ContactEmail, ContactPhone = dto.ContactPhone,
-                Country = dto.Country, CurrencyCode = dto.CurrencyCode,
-                IsActive = dto.IsActive, CreatedAt = DateTime.UtcNow
+                Code = dto.Code,
+                Name = dto.Name,
+                BusinessType = dto.BusinessType,
+                LogoUrl = dto.LogoUrl,
+                ContactEmail = dto.ContactEmail,
+                ContactPhone = dto.ContactPhone,
+                Country = dto.Country,
+                CurrencyCode = dto.CurrencyCode,
+                IsActive = dto.IsActive,
+                CreatedAt = DateTime.UtcNow
             };
             _db.Tenants.Add(tenant);
             await _db.SaveChangesAsync();
 
-            var tempPassword = "Mandalay@2026";
+            var tempPassword = _temporaryCredentialService.GenerateTemporaryPassword();
+            var username = dto.ContactEmail;
             var appUser = new ApplicationUser
             {
-                UserName = dto.ContactEmail, Email = dto.ContactEmail,
-                FullName = dto.Name, TenantId = tenant.Id,
-                IsTenantAdmin = true, IsSuperAdmin = false,
-                IsActive = dto.IsActive, Type = "Admin",
-                CreatedAt = DateTime.UtcNow, MustChangePassword = true
+                UserName = username,
+                Email = dto.ContactEmail,
+                FullName = dto.Name,
+                TenantId = tenant.Id,
+                IsTenantAdmin = true,
+                IsSuperAdmin = false,
+                IsActive = dto.IsActive,
+                Type = "Admin",
+                CreatedAt = DateTime.UtcNow,
+                MustChangePassword = true
             };
             var result = await _userManager.CreateAsync(appUser, tempPassword);
             if (!result.Succeeded)
             {
-                foreach (var e in result.Errors) ModelState.AddModelError(string.Empty, e.Description);
+                foreach (var e in result.Errors)
+                    ModelState.AddModelError(string.Empty, e.Description);
                 _db.Tenants.Remove(tenant);
                 await _db.SaveChangesAsync();
                 return View(dto);
             }
 
-            TempData["Success"] = $"Tenant '{tenant.Name}' created. Admin login: {dto.ContactEmail} / {tempPassword}";
+            if (!string.IsNullOrWhiteSpace(dto.ContactEmail))
+            {
+                try
+                {
+                    await _emailService.SendAsync(
+                        dto.ContactEmail,
+                        "Your StockEasy admin account is ready",
+                        $"""
+                        <p>Hello {WebUtility.HtmlEncode(dto.Name)},</p>
+                        <p>Your StockEasy admin account has been created.</p>
+                        <p><strong>Username:</strong> {WebUtility.HtmlEncode(username)}</p>
+                        <p><strong>Temporary password:</strong> {WebUtility.HtmlEncode(tempPassword)}</p>
+                        <p>Please sign in and change your password immediately.</p>
+                        """);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to send tenant admin credentials for tenant {TenantCode}.", dto.Code);
+                    TempData["Warning"] = "Tenant created, but the credential email could not be sent.";
+                }
+            }
+
+            TempData["SuccessMsg"]      = this.LocalizeShared("Tenant '{0}' created. Admin login: {1} / {2}", tenant.Name, username ?? string.Empty, tempPassword);
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Tenant");
+            TempData["SuccessListLabel"]= "View Tenants";
             return RedirectToAction(nameof(Index));
         }
 
@@ -124,7 +175,10 @@ namespace ClothInventoryApp.Controllers
             t.IsActive = dto.IsActive; t.UpdatedAt = DateTime.UtcNow;
             await _db.SaveChangesAsync();
 
-            TempData["Success"] = $"Tenant '{t.Name}' updated.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Tenant '{0}' updated.", t.Name);
+            TempData["SuccessType"]     = "update";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Tenant");
+            TempData["SuccessListLabel"]= "View Tenants";
             return RedirectToAction(nameof(Index));
         }
 
@@ -161,7 +215,10 @@ namespace ClothInventoryApp.Controllers
             }
             _db.Tenants.Remove(t);
             await _db.SaveChangesAsync();
-            TempData["Success"] = $"Tenant '{t.Name}' deleted.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Tenant '{0}' deleted.", t.Name);
+            TempData["SuccessType"]     = "delete";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Tenant");
+            TempData["SuccessListLabel"]= "View Tenants";
             return RedirectToAction(nameof(Index));
         }
 
@@ -172,7 +229,12 @@ namespace ClothInventoryApp.Controllers
             if (t == null) return NotFound();
             t.IsActive = !t.IsActive; t.UpdatedAt = DateTime.UtcNow;
             await _db.SaveChangesAsync();
-            TempData["Success"] = t.IsActive ? $"{t.Name} activated." : $"{t.Name} deactivated.";
+            TempData["SuccessMsg"]      = t.IsActive
+                ? this.LocalizeShared("{0} activated.", t.Name)
+                : this.LocalizeShared("{0} deactivated.", t.Name);
+            TempData["SuccessType"]     = t.IsActive ? "update" : "delete";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Tenant");
+            TempData["SuccessListLabel"]= "View Tenants";
             return RedirectToAction(nameof(Index));
         }
     }

@@ -1,0 +1,38 @@
+﻿@using ClothInventoryApp.Dto.Textile
+@model ViewTextileDto
+
+@{
+    ViewData["Title"] = Localizer["Delete Purchase"];
+    var currency = ViewData["Currency"] as string ?? "";
+}
+
+<div class="create-product-shell">
+    <div class="create-main-card">
+        <div class="section-header">
+            <div>
+                <h3>@Localizer["Delete Purchase"]</h3>
+            </div>
+        </div>
+
+        <div class="form-grid-modern">
+            <div class="form-group-modern"><label class="form-label-modern">@Localizer["Item Name"]</label><input value="@Model.Name" class="input-modern" readonly /></div>
+            <div class="form-group-modern"><label class="form-label-modern">@Localizer["Supplier"]</label><input value="@Model.PurchaseFrom" class="input-modern" readonly /></div>
+            <div class="form-group-modern"><label class="form-label-modern">@Localizer["Purchase Quantity"]</label><input value="@Model.Quantity" class="input-modern" readonly /></div>
+            <div class="form-group-modern"><label class="form-label-modern">@Localizer["Purchase Date"]</label><input value="@Model.PurchaseDate.ToString("yyyy-MM-dd")" class="input-modern" readonly /></div>
+            <div class="form-group-modern"><label class="form-label-modern">@Localizer["Unit Cost"]</label><input value="@(Model.UnitPrice.ToString("N0") + " " + currency)" class="input-modern" readonly /></div>
+            <div class="form-group-modern"><label class="form-label-modern">@Localizer["Total Cost"]</label><input value="@(Model.TotalPrice.ToString("N0") + " " + currency)" class="input-modern" readonly /></div>
+        </div>
+
+        <form asp-action="Delete" method="post" class="mt-4">
+            <input type="hidden" asp-for="Id" />
+            <div class="form-footer-modern">
+                <button type="submit" class="btn-modern-danger btn-modern-lg">@Localizer["Delete"]</button>
+                <a asp-action="Index" class="btn-modern-outline btn-modern-lg">@Localizer["Cancel"]</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/create-product.css" />
+}

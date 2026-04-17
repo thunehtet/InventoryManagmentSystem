@@ -129,6 +129,9 @@ namespace ClothInventoryApp.Controllers
             _context.StockMovements.Add(stockMovement);
             await _context.SaveChangesAsync();
 
+            TempData["SuccessMsg"]      = "Stock movement saved.";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Stock");
+            TempData["SuccessListLabel"]= "View Movements";
             return RedirectToAction(nameof(Index));
         }
 
@@ -210,6 +213,10 @@ namespace ClothInventoryApp.Controllers
             _context.StockMovements.Update(stockMovement);
             await _context.SaveChangesAsync();
 
+            TempData["SuccessMsg"]      = "Stock movement updated.";
+            TempData["SuccessType"]     = "update";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Stock");
+            TempData["SuccessListLabel"]= "View Movements";
             return RedirectToAction(nameof(Index));
         }
 
@@ -302,6 +309,10 @@ namespace ClothInventoryApp.Controllers
             _context.StockMovements.Remove(stockMovement);
             await _context.SaveChangesAsync();
 
+            TempData["SuccessMsg"]      = "Stock movement deleted.";
+            TempData["SuccessType"]     = "delete";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Stock");
+            TempData["SuccessListLabel"]= "View Movements";
             return RedirectToAction(nameof(Index));
         }
 
@@ -331,10 +342,12 @@ namespace ClothInventoryApp.Controllers
         }
        
 
-        public async Task<IActionResult> StockIn()
+        public async Task<IActionResult> StockIn(Guid? variantId = null)
         {
             await LoadProductVariants();
-            return View(new StockInViewModel());
+            var vm = new StockInViewModel();
+            if (variantId.HasValue) vm.ProductVariantId = variantId.Value;
+            return View(vm);
         }
 
         [HttpPost]
@@ -369,6 +382,12 @@ namespace ClothInventoryApp.Controllers
             _context.StockMovements.Add(movement);
             await _context.SaveChangesAsync();
 
+            TempData["SuccessMsg"]      = "Stock recorded successfully.";
+            TempData["SuccessListUrl"]  = Url.Action("Inventory", "Stock");
+            TempData["SuccessListLabel"]= "View Inventory";
+            TempData["SuccessAddUrl"]   = Url.Action("StockIn", "Stock");
+            TempData["SuccessAddLabel"] = "Record More Stock";
+            TempData["SuccessAddHint"]  = "Accurate stock counts depend on recording every delivery. Add stock-in entries for each variant received to keep inventory up to date.";
             return RedirectToAction(nameof(Inventory));
         }
 
@@ -420,6 +439,9 @@ namespace ClothInventoryApp.Controllers
             _context.StockMovements.Add(movement);
             await _context.SaveChangesAsync();
 
+            TempData["SuccessMsg"]      = "Stock-out recorded.";
+            TempData["SuccessListUrl"]  = Url.Action("Inventory", "Stock");
+            TempData["SuccessListLabel"]= "View Inventory";
             return RedirectToAction(nameof(Inventory));
         }
 

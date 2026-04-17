@@ -1,7 +1,7 @@
 @using ClothInventoryApp.Dto.Textile
 @model IEnumerable<ViewTextileDto>
 @{
-    ViewData["Title"] = Localizer["Textiles"];
+    ViewData["Title"] = Localizer["Purchases"];
     var currency = ViewData["Currency"] as string ?? "";
     var pg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel;
 }
@@ -11,15 +11,15 @@
         <div class="product-hero-content">
             <div class="hero-kicker">
                 <i class="bi bi-box-seam-fill"></i>
-                <span>@Localizer["Textile"]</span>
+                <span>@Localizer["Purchases"]</span>
             </div>
-            <h1>@Localizer["Textile List"]</h1>
-            <p>@Localizer["Manage your textile purchases and inventory records."]</p>
+            <h1>@Localizer["Purchase List"]</h1>
+            <p>@Localizer["Use this page only for stock replenishment and inventory-related purchases from outside suppliers. Do not record general expenses here."]</p>
             <div class="hero-actions">
                 @if (User.IsInRole("Admin"))
                 {
                     <a asp-action="Create" class="btn-modern-primary">
-                        <i class="bi bi-plus-circle"></i> @Localizer["Create Textile"]
+                        <i class="bi bi-plus-circle"></i> @Localizer["Record Purchase"]
                     </a>
                 }
             </div>
@@ -28,7 +28,7 @@
             <div class="hero-stat-card">
                 <div class="hero-stat-icon"><i class="bi bi-archive"></i></div>
                 <div class="hero-stat-title">@Localizer["Total Records"]</div>
-                <div class="hero-stat-text">@(pg?.TotalCount ?? 0) @Localizer["textile records"]</div>
+                <div class="hero-stat-text">@(pg?.TotalCount ?? 0) @Localizer["purchase records"]</div>
             </div>
         </div>
     </div>
@@ -40,7 +40,7 @@
             <div class="filter-search-wrap">
                 <i class="bi bi-search filter-search-icon"></i>
                 <input type="text" name="search" value="@ViewBag.Search"
-                       class="filter-search-input" placeholder="@Localizer["Search name or supplier..."]" autocomplete="off" />
+                       class="filter-search-input" placeholder="@Localizer["Search item name or supplier..."]" autocomplete="off" />
                 @if (!string.IsNullOrWhiteSpace(ViewBag.Search as string))
                 {
                     <a href="@Url.Action("Index", new { size = pg?.PageSize ?? 10 })" class="filter-clear-btn" title="@Localizer["Clear"]">
@@ -60,12 +60,12 @@
             <table class="table-modern">
                 <thead>
                     <tr>
-                        <th>@Localizer["Name"]</th>
-                        <th>@Localizer["Purchase From"]</th>
-                        <th>@Localizer["Quantity"]</th>
+                        <th>@Localizer["Item Name"]</th>
+                        <th>@Localizer["Supplier"]</th>
+                        <th>@Localizer["Purchase Quantity"]</th>
                         <th>@Localizer["Purchase Date"]</th>
-                        <th>@Localizer["Unit Price"]</th>
-                        <th>@Localizer["Total Price"]</th>
+                        <th>@Localizer["Unit Cost"]</th>
+                        <th>@Localizer["Total Cost"]</th>
                         <th>@Localizer["Actions"]</th>
                     </tr>
                 </thead>
@@ -75,10 +75,10 @@
                         <tr>
                             <td colspan="7" class="empty-state">
                                 <i class="bi bi-inbox"></i>
-                                <div>@(string.IsNullOrWhiteSpace(ViewBag.Search as string) ? Localizer["No textile records yet"].Value : Localizer["No records match your search"].Value)</div>
+                                <div>@(string.IsNullOrWhiteSpace(ViewBag.Search as string) ? Localizer["No purchase records yet."].Value : Localizer["No records match your search"].Value)</div>
                                 @if (User.IsInRole("Admin") && string.IsNullOrWhiteSpace(ViewBag.Search as string))
                                 {
-                                    <a asp-action="Create" class="btn-modern-primary mt-2">@Localizer["Create your first record"]</a>
+                                    <a asp-action="Create" class="btn-modern-primary mt-2">@Localizer["Record your first purchase"]</a>
                                 }
                             </td>
                         </tr>

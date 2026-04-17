@@ -49,7 +49,7 @@
             <div class="mb-4">
                 <div class="form-check">
                     <input asp-for="IsActive" class="form-check-input" />
-                    <label asp-for="IsActive" class="form-check-label">Active</label>
+                    <label asp-for="IsActive" class="form-check-label">@Localizer["Active"]</label>
                 </div>
             </div>
 
@@ -57,7 +57,7 @@
                 <button type="submit" class="btn-modern-primary">
                     <i class="bi bi-check-circle-fill"></i> Save Changes
                 </button>
-                <a asp-action="Index" class="btn-modern-secondary">Cancel</a>
+                <a asp-action="Index" class="btn-modern-secondary">@Localizer["Cancel"]</a>
             </div>
         </form>
     </div>

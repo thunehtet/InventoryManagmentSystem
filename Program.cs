@@ -3,12 +3,14 @@ using ClothInventoryApp.Models;
 using QuestPDF.Drawing;
 using QuestPDF.Infrastructure;
 using ClothInventoryApp.Services.Feature;
+using ClothInventoryApp.Services.Email;
 using ClothInventoryApp.Services.Files;
 using ClothInventoryApp.Services.Identity;
 using ClothInventoryApp.Options;
 using ClothInventoryApp.Services.Stock;
 using ClothInventoryApp.Services.Subscription;
 using ClothInventoryApp.Services.Tenant;
+using ClothInventoryApp.Services.Time;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
@@ -82,7 +84,7 @@ builder.Services.ConfigureApplicationCookie(options =>
         ? CookieSecurePolicy.SameAsRequest
         : CookieSecurePolicy.Always;
 
-    options.ExpireTimeSpan = TimeSpan.FromHours(8);
+    options.ExpireTimeSpan = TimeSpan.FromHours(12);
     options.SlidingExpiration = true;
 });
 
@@ -124,7 +126,12 @@ builder.Services.AddRateLimiter(options =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ITenantProvider, TenantProvider>();
 builder.Services.AddScoped<IFeatureService, FeatureService>();
+builder.Services.AddScoped<ITenantTimeService, TenantTimeService>();
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
+builder.Services.Configure<UserProvisioningSettings>(builder.Configuration.GetSection("UserProvisioning"));
 builder.Services.Configure<SubscriptionPaymentSettings>(builder.Configuration.GetSection("SubscriptionPayments"));
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+builder.Services.AddScoped<ITemporaryCredentialService, TemporaryCredentialService>();
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
@@ -181,6 +188,51 @@ app.UseRouting();
 app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Prevent browsers from serving stale authenticated HTML from cache.
+app.Use(async (context, next) =>
+{
+    if (context.User.Identity?.IsAuthenticated != true)
+    {
+        await next();
+        return;
+    }
+
+    if (!HttpMethods.IsGet(context.Request.Method) && !HttpMethods.IsHead(context.Request.Method))
+    {
+        await next();
+        return;
+    }
+
+    var path = context.Request.Path.Value ?? string.Empty;
+    if (path.StartsWith("/css", StringComparison.OrdinalIgnoreCase) ||
+        path.StartsWith("/js", StringComparison.OrdinalIgnoreCase) ||
+        path.StartsWith("/lib", StringComparison.OrdinalIgnoreCase) ||
+        path.StartsWith("/images", StringComparison.OrdinalIgnoreCase))
+    {
+        await next();
+        return;
+    }
+
+    var acceptsHtml = context.Request.Headers.Accept.ToString().Contains("text/html", StringComparison.OrdinalIgnoreCase);
+    if (acceptsHtml)
+    {
+        context.Response.OnStarting(() =>
+        {
+            var contentType = context.Response.ContentType ?? string.Empty;
+            if (contentType.Contains("text/html", StringComparison.OrdinalIgnoreCase))
+            {
+                context.Response.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0";
+                context.Response.Headers["Pragma"] = "no-cache";
+                context.Response.Headers["Expires"] = "0";
+            }
+
+            return Task.CompletedTask;
+        });
+    }
+
+    await next();
+});
 
 // Force password change on first login
 app.Use(async (context, next) =>

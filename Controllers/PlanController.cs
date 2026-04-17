@@ -51,7 +51,9 @@ namespace ClothInventoryApp.Controllers
                 IsActive = dto.IsActive, CreatedAt = DateTime.UtcNow
             });
             await _db.SaveChangesAsync();
-            TempData["Success"] = $"Plan '{dto.Name}' created.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Plan '{0}' created.", dto.Name);
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Plan");
+            TempData["SuccessListLabel"]= "View Plans";
             return RedirectToAction(nameof(Index));
         }
 
@@ -82,7 +84,10 @@ namespace ClothInventoryApp.Controllers
             p.PriceMonthly = dto.PriceMonthly; p.PriceYearly = dto.PriceYearly;
             p.MaxUsers = dto.MaxUsers; p.MaxProducts = dto.MaxProducts; p.IsActive = dto.IsActive;
             await _db.SaveChangesAsync();
-            TempData["Success"] = $"Plan '{p.Name}' updated.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Plan '{0}' updated.", p.Name);
+            TempData["SuccessType"]     = "update";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Plan");
+            TempData["SuccessListLabel"]= "View Plans";
             return RedirectToAction(nameof(Index));
         }
 
@@ -109,7 +114,10 @@ namespace ClothInventoryApp.Controllers
             }
             _db.Plans.Remove(p);
             await _db.SaveChangesAsync();
-            TempData["Success"] = $"Plan '{p.Name}' deleted.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Plan '{0}' deleted.", p.Name);
+            TempData["SuccessType"]     = "delete";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Plan");
+            TempData["SuccessListLabel"]= "View Plans";
             return RedirectToAction(nameof(Index));
         }
     }

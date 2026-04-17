@@ -80,6 +80,10 @@
                     {
                         foreach (var item in Model)
                         {
+                            var isProtected = item.Category == "Sale Income"
+                                || item.Category == "Sales"
+                                || item.Category == "Inventory Purchase"
+                                || item.Category == "Textile Purchase";
                             <tr>
                                 <td class="text-muted" style="font-size:0.875rem">@item.TransactionDate.ToString("dd MMM yyyy")</td>
                                 <td>
@@ -99,8 +103,11 @@
                                 <td>
                                     <div class="table-actions">
                                         <a asp-action="Details" asp-route-id="@item.Id" class="action-btn action-btn-view" title="Details"><i class="bi bi-eye-fill"></i></a>
-                                        <a asp-action="Edit" asp-route-id="@item.Id" class="action-btn action-btn-edit" title="Edit"><i class="bi bi-pencil-fill"></i></a>
-                                        <a asp-action="Delete" asp-route-id="@item.Id" class="action-btn action-btn-delete" title="Delete"><i class="bi bi-trash-fill"></i></a>
+                                        @if (!isProtected)
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="action-btn action-btn-edit" title="Edit"><i class="bi bi-pencil-fill"></i></a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="action-btn action-btn-delete" title="Delete"><i class="bi bi-trash-fill"></i></a>
+                                        }
                                     </div>
                                 </td>
                             </tr>

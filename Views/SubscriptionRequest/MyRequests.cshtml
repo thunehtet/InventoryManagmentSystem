@@ -23,11 +23,6 @@
         </div>
     </div>
 
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success">@TempData["Success"]</div>
-    }
-
     <div class="product-table-card">
         <div class="table-responsive-modern">
             <table class="table-modern">
@@ -57,7 +52,7 @@
                         foreach (var item in Model)
                         {
                             <tr>
-                                <td>@item.SubmittedAt.ToString("dd MMM yyyy HH:mm")</td>
+                            <td>@Html.TenantDate(item.SubmittedAt, "dd MMM yyyy HH:mm")</td>
                                 <td>@item.PlanNameSnapshot</td>
                                 <td>@item.BillingCycle</td>
                                 <td>@item.ExpectedPrice.ToString("N0")</td>

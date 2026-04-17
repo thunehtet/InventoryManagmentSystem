@@ -11,9 +11,9 @@ namespace ClothInventoryApp.Controllers
 {
     [Authorize]
     [FeatureRequired("textiles")]
-    public class TextileController : TenantAwareController
+    public class PurchasesController : TenantAwareController
     {
-        public TextileController(AppDbContext context, ITenantProvider tenantProvider)
+        public PurchasesController(AppDbContext context, ITenantProvider tenantProvider)
             : base(context, tenantProvider)
         {
         }
@@ -29,7 +29,7 @@ namespace ClothInventoryApp.Controllers
                     t.PurchaseFrom.Contains(search));
 
             var total = await query.CountAsync();
-            var textiles = await query
+            var purchases = await query
                 .OrderByDescending(t => t.PurchaseDate)
                 .Skip((page - 1) * size)
                 .Take(size)
@@ -52,7 +52,7 @@ namespace ClothInventoryApp.Controllers
                 Action = nameof(Index),
                 Extra = new() { ["search"] = search }
             };
-            return View(textiles);
+            return View(purchases);
         }
 
         [Authorize(Roles = "Admin")]
@@ -90,9 +90,9 @@ namespace ClothInventoryApp.Controllers
                 TransactionDate = textile.PurchaseDate,
                 TenantId = tenantId,
                 Type = "OUT",
-                Category = "Textile Purchase",
+                Category = "Inventory Purchase",
                 Amount = textile.TotalPrice,
-                ReferenceNo = $"Textile #{textile.Id}",
+                ReferenceNo = $"Purchase #{textile.Id}",
                 Remarks = textile.Name
             });
 

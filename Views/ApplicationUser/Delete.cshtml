@@ -50,7 +50,7 @@
             <div class="product-detail-row">
                 <span class="product-detail-label">Last Login</span>
                 <span class="product-detail-value">
-                    @(Model.LastLoginAt.HasValue ? Model.LastLoginAt.Value.ToString("dd MMM yyyy HH:mm") : "Never")
+                    @(Model.LastLoginAt.HasValue ? Html.TenantDate(Model.LastLoginAt, "dd MMM yyyy HH:mm") : "Never")
                 </span>
             </div>
         </div>
@@ -62,7 +62,7 @@
                     <i class="bi bi-trash-fill"></i> Yes, Delete User
                 </button>
             </form>
-            <a asp-action="Index" class="btn btn-light">Cancel</a>
+            <a asp-action="Index" class="btn btn-light">@Localizer["Cancel"]</a>
         </div>
     </div>
 </div>

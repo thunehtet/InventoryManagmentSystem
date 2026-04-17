@@ -51,7 +51,9 @@ namespace ClothInventoryApp.Controllers
                 IsActive = dto.IsActive
             });
             await _db.SaveChangesAsync();
-            TempData["Success"] = $"Feature '{dto.Name}' created.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Feature '{0}' created.", dto.Name);
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Feature");
+            TempData["SuccessListLabel"]= "View Features";
             return RedirectToAction(nameof(Index));
         }
 
@@ -80,7 +82,10 @@ namespace ClothInventoryApp.Controllers
             f.Code = dto.Code; f.Name = dto.Name;
             f.Description = dto.Description; f.IsActive = dto.IsActive;
             await _db.SaveChangesAsync();
-            TempData["Success"] = $"Feature '{f.Name}' updated.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Feature '{0}' updated.", f.Name);
+            TempData["SuccessType"]     = "update";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Feature");
+            TempData["SuccessListLabel"]= "View Features";
             return RedirectToAction(nameof(Index));
         }
 
@@ -107,7 +112,10 @@ namespace ClothInventoryApp.Controllers
             }
             _db.Features.Remove(f);
             await _db.SaveChangesAsync();
-            TempData["Success"] = $"Feature '{f.Name}' deleted.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Feature '{0}' deleted.", f.Name);
+            TempData["SuccessType"]     = "delete";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Feature");
+            TempData["SuccessListLabel"]= "View Features";
             return RedirectToAction(nameof(Index));
         }
     }

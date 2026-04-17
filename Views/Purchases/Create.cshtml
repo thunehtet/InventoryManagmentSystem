@@ -2,14 +2,15 @@
 @model CreateTextileDto
 
 @{
-    ViewData["Title"] = "Create Textile";
+    ViewData["Title"] = Localizer["Record Purchase"];
 }
 
 <div class="create-product-shell">
     <div class="create-main-card">
         <div class="section-header">
             <div>
-                <h3>Create Textile</h3>
+                <h3>@Localizer["Record Purchase"]</h3>
+                <p>@Localizer["Use this form only when you buy goods to refill inventory stock."]</p>
             </div>
         </div>
 
@@ -18,19 +19,19 @@
 
             <div class="form-grid-modern">
                 <div class="form-group-modern form-group-full">
-                    <label asp-for="Name" class="form-label-modern"></label>
+                    <label asp-for="Name" class="form-label-modern">@Localizer["Item Name"]</label>
                     <input asp-for="Name" class="input-modern input-modern-lg" />
                     <span asp-validation-for="Name" class="field-validation-modern"></span>
                 </div>
 
                 <div class="form-group-modern">
-                    <label asp-for="PurchaseFrom" class="form-label-modern"></label>
+                    <label asp-for="PurchaseFrom" class="form-label-modern">@Localizer["Supplier"]</label>
                     <input asp-for="PurchaseFrom" class="input-modern" />
                     <span asp-validation-for="PurchaseFrom" class="field-validation-modern"></span>
                 </div>
 
                 <div class="form-group-modern">
-                    <label asp-for="Quantity" class="form-label-modern"></label>
+                    <label asp-for="Quantity" class="form-label-modern">@Localizer["Purchase Quantity"]</label>
                     <input asp-for="Quantity" class="input-modern" type="number" />
                     <span asp-validation-for="Quantity" class="field-validation-modern"></span>
                 </div>
@@ -42,15 +43,15 @@
                 </div>
 
                 <div class="form-group-modern">
-                    <label asp-for="UnitPrice" class="form-label-modern"></label>
+                    <label asp-for="UnitPrice" class="form-label-modern">@Localizer["Unit Cost"]</label>
                     <input asp-for="UnitPrice" class="input-modern" type="number" />
                     <span asp-validation-for="UnitPrice" class="field-validation-modern"></span>
                 </div>
             </div>
 
             <div class="form-footer-modern">
-                <button type="submit" class="btn-modern-primary btn-modern-lg">Save Textile</button>
-                <a asp-action="Index" class="btn-modern-outline btn-modern-lg">Cancel</a>
+                <button type="submit" class="btn-modern-primary btn-modern-lg">@Localizer["Save Purchase"]</button>
+                <a asp-action="Index" class="btn-modern-outline btn-modern-lg">@Localizer["Cancel"]</a>
             </div>
         </form>
     </div>

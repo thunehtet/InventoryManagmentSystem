@@ -85,7 +85,7 @@ namespace ClothInventoryApp.Controllers
                     s.IsActive = false;
                     s.UpdatedAt = now;
                 }
-                replacedMsg = $"{existing.Count} previous subscription(s) archived and deactivated.";
+                replacedMsg = this.LocalizeShared("{0} previous subscription(s) archived and deactivated.", existing.Count);
             }
 
             _db.TenantSubscriptions.Add(new TenantSubscription
@@ -98,7 +98,11 @@ namespace ClothInventoryApp.Controllers
             });
             await _db.SaveChangesAsync();
 
-            TempData["Success"] = "Subscription created." + (replacedMsg != null ? $" Note: {replacedMsg}" : "");
+            TempData["SuccessMsg"]      = replacedMsg == null
+                ? "Subscription created."
+                : this.LocalizeShared("Subscription created. Note: {0}", replacedMsg);
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Subscription");
+            TempData["SuccessListLabel"]= "View Subscriptions";
             return RedirectToAction(nameof(Index));
         }
 
@@ -160,7 +164,10 @@ namespace ClothInventoryApp.Controllers
             s.IsTrial = dto.IsTrial; s.IsActive = dto.IsActive;
             s.Notes = dto.Notes; s.UpdatedAt = DateTime.UtcNow;
             await _db.SaveChangesAsync();
-            TempData["Success"] = "Subscription updated.";
+            TempData["SuccessMsg"]      = "Subscription updated.";
+            TempData["SuccessType"]     = "update";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Subscription");
+            TempData["SuccessListLabel"]= "View Subscriptions";
             return RedirectToAction(nameof(Index));
         }
 
@@ -180,7 +187,10 @@ namespace ClothInventoryApp.Controllers
             if (s == null) return NotFound();
             _db.TenantSubscriptions.Remove(s);
             await _db.SaveChangesAsync();
-            TempData["Success"] = "Subscription deleted.";
+            TempData["SuccessMsg"]      = "Subscription deleted.";
+            TempData["SuccessType"]     = "delete";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Subscription");
+            TempData["SuccessListLabel"]= "View Subscriptions";
             return RedirectToAction(nameof(Index));
         }
 

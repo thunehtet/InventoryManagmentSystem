@@ -1,5 +1,46 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+temp_build_out/
+
+# Visual Studio / Rider / VS Code
 .vs/
-bin/
-obj/
-*.user
+.idea/
+.vscode/
 *.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# .NET local tooling and caches
+.dotnet/
+TestResults/
+*.nupkg
+*.snupkg
+
+# Logs
+*.log
+logs/
+
+# Local uploads and generated runtime content
+wwwroot/uploads/
+
+# Environment and local secrets
+.env
+.env.*
+appsettings.Local.json
+appsettings.*.local.json
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Node / frontend caches if introduced later
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

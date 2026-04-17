@@ -14,13 +14,9 @@
                 <h3>Review Payment Request</h3>
                 <p>@Model.TenantName requested @Model.PlanName.</p>
             </div>
-            <a asp-action="Index" class="btn-modern-outline">Back</a>
+            <a asp-action="Index" class="btn-modern-outline">@Localizer["Back"]</a>
         </div>
 
-        @if (TempData["Success"] != null)
-        {
-            <div class="alert alert-success">@TempData["Success"]</div>
-        }
         @if (TempData["Error"] != null)
         {
             <div class="alert alert-danger">@TempData["Error"]</div>
@@ -57,7 +53,7 @@
             </div>
             <div class="form-group-modern">
                 <label class="form-label-modern">Submitted</label>
-                <input class="input-modern" value="@Model.SubmittedAt.ToString("dd MMM yyyy HH:mm")" readonly />
+                            <input class="input-modern" value="@Html.TenantDate(Model.SubmittedAt, "dd MMM yyyy HH:mm")" readonly />
             </div>
         </div>
 
@@ -80,7 +76,7 @@
                 <strong>Review Note:</strong> @Model.ReviewRemarks
                 @if (Model.ReviewedAt.HasValue)
                 {
-                    <span class="text-muted">(@Model.ReviewedAt.Value.ToString("dd MMM yyyy HH:mm"))</span>
+                                <span class="text-muted">(@Html.TenantDate(Model.ReviewedAt, "dd MMM yyyy HH:mm"))</span>
                 }
             </div>
         }

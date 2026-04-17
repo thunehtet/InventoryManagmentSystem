@@ -141,7 +141,7 @@ public class HomeController : Controller
                     ["customers"]   = ("bi-people-fill",           "Customer management"),
                     ["dashboard"]   = ("bi-bar-chart-line-fill",   "Sales dashboard & analytics"),
                     ["finance"]     = ("bi-cash-coin",             "Finance dashboard & expenses"),
-                    ["textiles"]    = ("bi-tags-fill",             "Textile / materials tracking"),
+                    ["textiles"]    = ("bi-tags-fill",             "Purchases for stock replenishment"),
                     ["sales"]       = ("bi-bag-check-fill",        "Sales recording"),
                 };
 

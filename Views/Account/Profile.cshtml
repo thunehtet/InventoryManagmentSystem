@@ -1,0 +1,131 @@
+@model ClothInventoryApp.Dtos.Account.ProfileSettingsDto
+@{
+    ViewData["Title"] = "Profile";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/create-product.css" asp-append-version="true" />
+}
+
+<div class="create-product-shell">
+    <div class="create-product-hero">
+        <div class="create-product-hero-content">
+            <div class="hero-kicker">
+                <i class="bi bi-person-badge-fill"></i>
+                <span>Profile</span>
+            </div>
+            <h1>Profile Settings</h1>
+            <p>Manage your profile photo, brand logo, and your sign-in identity.</p>
+        </div>
+    </div>
+
+    <div class="create-product-grid">
+        <div class="create-main-card">
+            <div class="section-header">
+                <div>
+                    <h3>Account Details</h3>
+                    <p>Username and email can only be changed once.</p>
+                </div>
+            </div>
+
+            <form asp-action="Profile" method="post" enctype="multipart/form-data" class="modern-product-form">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="validation-summary-modern"></div>
+
+                <div class="product-table-card mb-4">
+                    <div class="row g-4">
+                        <div class="col-12 col-lg-6">
+                            <div class="fw-semibold mb-2">Profile Photo</div>
+                            @if (!string.IsNullOrWhiteSpace(Model.CurrentProfileImageUrl))
+                            {
+                                <img src="@Model.CurrentProfileImageUrl" alt="Profile Photo" style="width:120px;height:120px;object-fit:cover;border-radius:24px;border:1px solid #e5e7eb;" />
+                            }
+                            else
+                            {
+                                <div class="d-flex align-items-center justify-content-center text-muted" style="width:120px;height:120px;border:1px dashed #cbd5e1;border-radius:24px;">
+                                    <i class="bi bi-person-circle fs-1"></i>
+                                </div>
+                            }
+                            <div class="mt-3">
+                                <input asp-for="ProfileImage" class="input-modern" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" />
+                                <span asp-validation-for="ProfileImage" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        @if (Model.IsTenantAdmin)
+                        {
+                            <div class="col-12 col-lg-6">
+                                <div class="fw-semibold mb-2">Brand Logo</div>
+                                @if (!string.IsNullOrWhiteSpace(Model.CurrentBrandLogoUrl))
+                                {
+                                    <img src="@Model.CurrentBrandLogoUrl" alt="@Model.TenantName" style="width:120px;height:120px;object-fit:cover;border-radius:24px;border:1px solid #e5e7eb;" />
+                                }
+                                else
+                                {
+                                    <div class="d-flex align-items-center justify-content-center text-muted" style="width:120px;height:120px;border:1px dashed #cbd5e1;border-radius:24px;">
+                                        <i class="bi bi-building fs-1"></i>
+                                    </div>
+                                }
+                                <div class="mt-3">
+                                    <input asp-for="BrandLogoImage" class="input-modern" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" />
+                                    <span asp-validation-for="BrandLogoImage" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="form-grid-modern">
+                    <div class="form-group-modern">
+                        <label asp-for="FullName" class="form-label-modern"></label>
+                        <input asp-for="FullName" class="input-modern" />
+                        <span asp-validation-for="FullName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="form-group-modern">
+                        <label asp-for="UserName" class="form-label-modern"></label>
+                        @if (Model.CanChangeLoginIdentity)
+                        {
+                            <input asp-for="UserName" class="input-modern" />
+                        }
+                        else
+                        {
+                            <input asp-for="UserName" class="input-modern" readonly />
+                        }
+                        <span asp-validation-for="UserName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="form-group-modern">
+                        <label asp-for="Email" class="form-label-modern"></label>
+                        @if (Model.CanChangeLoginIdentity)
+                        {
+                            <input asp-for="Email" class="input-modern" />
+                        }
+                        else
+                        {
+                            <input asp-for="Email" class="input-modern" readonly />
+                        }
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="form-group-modern">
+                        <label class="form-label-modern">Identity Change Rule</label>
+                        <input class="input-modern" readonly value="@(Model.CanChangeLoginIdentity ? "You can still change username/email once." : $"Already used on {Model.LoginIdentityChangedAt:yyyy-MM-dd HH:mm}")" />
+                    </div>
+                </div>
+
+                <div class="form-footer-modern">
+                    <button type="submit" class="btn-modern-primary btn-modern-lg">
+                        <i class="bi bi-save-fill"></i>
+                        Save Profile
+                    </button>
+                    <a asp-controller="Home" asp-action="Index" class="btn-modern-outline btn-modern-lg">@Localizer["Back"]</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

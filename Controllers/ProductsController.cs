@@ -104,6 +104,12 @@ namespace ClothInventoryApp.Controllers
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
+            TempData["SuccessMsg"]      = this.LocalizeShared("Product '{0}' added to catalog.", product.Name);
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Products");
+            TempData["SuccessListLabel"]= "View Products";
+            TempData["SuccessAddUrl"]   = Url.Action("Create", "ProductVariants", new { productId = product.Id });
+            TempData["SuccessAddLabel"] = "Add Variants for This Product";
+            TempData["SuccessAddHint"]  = "Next step: add size, color, and price variants so this product can be stocked and sold.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -167,6 +173,10 @@ namespace ClothInventoryApp.Controllers
             _context.Products.Update(product);
             await _context.SaveChangesAsync();
 
+            TempData["SuccessMsg"]      = this.LocalizeShared("Product '{0}' updated.", product.Name);
+            TempData["SuccessType"]     = "update";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Products");
+            TempData["SuccessListLabel"]= "View Products";
             return RedirectToAction(nameof(Index));
         }
 
@@ -211,6 +221,10 @@ namespace ClothInventoryApp.Controllers
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
 
+            TempData["SuccessMsg"]      = this.LocalizeShared("Product '{0}' deleted.", product.Name);
+            TempData["SuccessType"]     = "delete";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Products");
+            TempData["SuccessListLabel"]= "View Products";
             return RedirectToAction(nameof(Index));
         }
 

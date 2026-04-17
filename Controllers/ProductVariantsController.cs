@@ -62,10 +62,12 @@ namespace ClothInventoryApp.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(Guid? productId = null)
         {
             await LoadProductsDropDown();
-            return View(new CreateProductVariantDto());
+            var dto = new CreateProductVariantDto();
+            if (productId.HasValue) dto.ProductId = productId.Value;
+            return View(dto);
         }
 
         [HttpPost]
@@ -117,6 +119,12 @@ namespace ClothInventoryApp.Controllers
             _context.ProductVariants.Add(variant);
             await _context.SaveChangesAsync();
 
+            TempData["SuccessMsg"]      = "Variant added successfully.";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "ProductVariants");
+            TempData["SuccessListLabel"]= "View Variants";
+            TempData["SuccessAddUrl"]   = Url.Action("StockIn", "Stock", new { variantId = variant.Id });
+            TempData["SuccessAddLabel"] = "Record Stock for This Variant";
+            TempData["SuccessAddHint"]  = "Next step: record the opening stock so this variant is ready for sales.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -189,6 +197,10 @@ namespace ClothInventoryApp.Controllers
             _context.ProductVariants.Update(variant);
             await _context.SaveChangesAsync();
 
+            TempData["SuccessMsg"]      = "Variant updated.";
+            TempData["SuccessType"]     = "update";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "ProductVariants");
+            TempData["SuccessListLabel"]= "View Variants";
             return RedirectToAction(nameof(Index));
         }
 
@@ -262,6 +274,10 @@ namespace ClothInventoryApp.Controllers
             _context.ProductVariants.Remove(variant);
             await _context.SaveChangesAsync();
 
+            TempData["SuccessMsg"]      = "Variant deleted.";
+            TempData["SuccessType"]     = "delete";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "ProductVariants");
+            TempData["SuccessListLabel"]= "View Variants";
             return RedirectToAction(nameof(Index));
         }
 

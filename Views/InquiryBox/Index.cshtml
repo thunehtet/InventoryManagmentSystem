@@ -30,13 +30,6 @@
         </a>
     </div>
 
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
     @if (TempData["Error"] != null)
     {
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -119,7 +112,7 @@
                                     </span>
                                 </td>
                                 <td class="text-muted small" style="white-space:nowrap;">
-                                    @item.SubmittedAt.ToString("dd MMM yyyy HH:mm")
+                                    @Html.TenantDate(item.SubmittedAt, "dd MMM yyyy HH:mm")
                                 </td>
                                 <td>
                                     <div class="table-actions">

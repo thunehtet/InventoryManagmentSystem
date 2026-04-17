@@ -143,7 +143,9 @@ namespace ClothInventoryApp.Controllers
                 CreatedAt = DateTime.UtcNow
             });
             await _context.SaveChangesAsync();
-            TempData["Success"] = $"Customer '{dto.Name}' added.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Customer '{0}' added.", dto.Name);
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Customer");
+            TempData["SuccessListLabel"]= "View Customers";
             return RedirectToAction(nameof(Index));
         }
 
@@ -172,7 +174,10 @@ namespace ClothInventoryApp.Controllers
             c.FacebookAccount = dto.FacebookAccount; c.Address = dto.Address;
             c.Notes = dto.Notes; c.IsActive = dto.IsActive;
             await _context.SaveChangesAsync();
-            TempData["Success"] = $"Customer '{c.Name}' updated.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Customer '{0}' updated.", c.Name);
+            TempData["SuccessType"]     = "update";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Customer");
+            TempData["SuccessListLabel"]= "View Customers";
             return RedirectToAction(nameof(Index));
         }
 
@@ -201,7 +206,10 @@ namespace ClothInventoryApp.Controllers
 
             _context.Customers.Remove(c);
             await _context.SaveChangesAsync();
-            TempData["Success"] = $"Customer '{c.Name}' deleted.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Customer '{0}' deleted.", c.Name);
+            TempData["SuccessType"]     = "delete";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Customer");
+            TempData["SuccessListLabel"]= "View Customers";
             return RedirectToAction(nameof(Index));
         }
 
@@ -223,7 +231,9 @@ namespace ClothInventoryApp.Controllers
             _context.CustomerInviteLinks.Add(link);
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Customer invite link created.";
+            TempData["SuccessMsg"]      = "Customer invite link created.";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Customer");
+            TempData["SuccessListLabel"]= "View Customers";
             return RedirectToAction(nameof(Index));
         }
 
@@ -238,7 +248,10 @@ namespace ClothInventoryApp.Controllers
             link.IsActive = false;
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Customer invite link revoked.";
+            TempData["SuccessMsg"]      = "Customer invite link revoked.";
+            TempData["SuccessType"]     = "delete";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Customer");
+            TempData["SuccessListLabel"]= "View Customers";
             return RedirectToAction(nameof(Index));
         }
 

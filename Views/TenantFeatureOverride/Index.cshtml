@@ -23,14 +23,6 @@
         </div>
     </div>
 
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
-
     @{ var pg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel; }
     <form method="get" asp-action="Index" class="sa-search-bar">
         @if (pg != null) { <input type="hidden" name="size" value="@pg.PageSize" /> }

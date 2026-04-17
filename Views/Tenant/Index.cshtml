@@ -23,13 +23,6 @@
         </div>
     </div>
 
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
     @if (TempData["Error"] != null)
     {
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -82,7 +75,7 @@
                                     @(t.IsActive ? "Active" : "Inactive")
                                 </span>
                             </td>
-                            <td class="text-muted small">@t.CreatedAt.ToString("dd MMM yyyy")</td>
+                            <td class="text-muted small">@Html.TenantDate(t.CreatedAt, t.Country, "dd MMM yyyy")</td>
                             <td>
                                 <div class="table-actions">
                                     <a asp-action="Details" asp-route-id="@t.Id" class="action-btn action-btn-view" title="View">

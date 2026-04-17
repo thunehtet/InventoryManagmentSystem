@@ -29,14 +29,6 @@
         </div>
     </div>
 
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
-
     @{ var subpg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel; }
     <form method="get" asp-action="Index" class="sa-search-bar">
         @if (subpg != null) { <input type="hidden" name="size" value="@subpg.PageSize" /> }
@@ -87,7 +79,7 @@
                                 }
                                 else if (s.IsActive && !isExpired)
                                 {
-                                    <span class="status-badge active">Active</span>
+                                    <span class="status-badge active">@Localizer["Active"]</span>
                                 }
                                 else
                                 {

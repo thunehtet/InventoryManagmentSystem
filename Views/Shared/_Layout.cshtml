@@ -10,17 +10,21 @@
          hasCustomers = false, hasDashboard = false, hasSaleProfit = false;
     string workspaceName = "StockEasy";
     string? workspaceLogoUrl = null;
+    string? currentUserProfileImageUrl = null;
     if (!User.IsInRole("SuperAdmin") && User.Identity?.IsAuthenticated == true)
     {
         try
         {
             var _tid    = TenantProvider.GetTenantId();
             var tenant = await DbContext.Tenants.AsNoTracking().FirstOrDefaultAsync(t => t.Id == _tid);
+            var currentUserName = User.Identity?.Name;
+            var currentUser = await DbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.UserName == currentUserName);
             if (tenant != null)
             {
                 workspaceName = tenant.Name;
                 workspaceLogoUrl = tenant.LogoUrl;
             }
+            currentUserProfileImageUrl = currentUser?.ProfileImageUrl;
             hasSales      = await FeatureService.HasFeatureAsync(_tid, "sales");
             hasSaleProfit = await FeatureService.HasFeatureAsync(_tid, "sale_profit");
             hasCustomers  = await FeatureService.HasFeatureAsync(_tid, "customers");
@@ -197,16 +201,16 @@
 
                 @if (hasTextiles)
                 {
-                <a asp-controller="Textile" asp-action="Index" class="nav-link-modern">
+                <a asp-controller="Purchases" asp-action="Index" class="nav-link-modern">
                     <i class="bi bi-tags-fill"></i>
-                    <span>@Localizer["Textile List"]</span>
+                    <span>@Localizer["Purchases"]</span>
                 </a>
                 }
                 else
                 {
                 <span class="nav-link-modern nav-link-locked" title="Upgrade to Pro">
                     <i class="bi bi-tags-fill"></i>
-                    <span>@Localizer["Textile List"]</span>
+                    <span>@Localizer["Purchases"]</span>
                     <i class="bi bi-lock-fill ms-auto nav-lock-icon"></i>
                 </span>
                 }
@@ -325,14 +329,21 @@
                     <div class="user-dropdown">
                         <button class="user-btn" onclick="toggleUserMenu()" type="button">
                             <div class="user-avatar">
-                                <i class="bi bi-person-circle"></i>
+                                @if (!string.IsNullOrWhiteSpace(currentUserProfileImageUrl))
+                                {
+                                    <img src="@currentUserProfileImageUrl" alt="@User.Identity?.Name" />
+                                }
+                                else
+                                {
+                                    <i class="bi bi-person-circle"></i>
+                                }
                             </div>
                             <span class="user-name">@User.Identity?.Name</span>
                             <i class="bi bi-chevron-down"></i>
                         </button>
 
                         <div id="userMenu" class="user-menu">
-                            <a href="#" class="user-menu-item">
+                            <a asp-controller="Account" asp-action="Profile" class="user-menu-item">
                                 <i class="bi bi-person"></i>
                                 @Localizer["Profile"]
                             </a>
@@ -462,8 +473,64 @@
         </div>
     </div>
 
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/layout.js" asp-append-version="true"></script>
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <script>
+            (function () {
+                var redirecting = false;
+
+                function redirectToLogin() {
+                    if (redirecting) {
+                        return;
+                    }
+
+                    redirecting = true;
+                    var returnUrl = window.location.pathname + window.location.search + window.location.hash;
+                    window.location.replace('/Account/Login?returnUrl=' + encodeURIComponent(returnUrl));
+                }
+
+                async function checkSession() {
+                    try {
+                        var response = await fetch('/Account/Ping', {
+                            method: 'GET',
+                            credentials: 'same-origin',
+                            cache: 'no-store',
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                        });
+
+                        if (response.redirected) {
+                            redirectToLogin();
+                            return;
+                        }
+
+                        if (response.status === 401 || response.status === 403) {
+                            redirectToLogin();
+                        }
+                    } catch {
+                        // Ignore transient network failures; retry on next user-visible resume event.
+                    }
+                }
+
+                window.addEventListener('pageshow', function (event) {
+                    if (event.persisted) {
+                        checkSession();
+                    }
+                });
+
+                document.addEventListener('visibilitychange', function () {
+                    if (document.visibilityState === 'visible') {
+                        checkSession();
+                    }
+                });
+
+                window.addEventListener('focus', checkSession);
+            })();
+        </script>
+    }
+    @await Html.PartialAsync("_SuccessModal")
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

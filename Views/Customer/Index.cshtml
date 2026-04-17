@@ -40,14 +40,6 @@
         </div>
     </div>
 
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
-
     <section class="customer-share-card">
         <div class="customer-share-card__header">
             <div>
@@ -77,7 +69,7 @@
                         <div class="customer-share-item__main">
                             <div class="customer-share-item__meta">
                                 <span class="customer-share-status customer-share-status--@statusClass">@statusText</span>
-                                <span>@Localizer["Expires"] @link.ExpiresAt.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")</span>
+                                <span>@Localizer["Expires"] @Html.TenantDate(link.ExpiresAt, "dd MMM yyyy, hh:mm tt")</span>
                             </div>
                             <div class="customer-share-item__url">@link.Url</div>
                         </div>

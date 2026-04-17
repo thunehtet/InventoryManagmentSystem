@@ -56,12 +56,12 @@
             <div class="product-detail-row">
                 <span class="product-detail-label">Last Login</span>
                 <span class="product-detail-value">
-                    @(Model.LastLoginAt.HasValue ? Model.LastLoginAt.Value.ToString("dd MMM yyyy HH:mm") : "Never logged in")
+                    @(Model.LastLoginAt.HasValue ? Html.TenantDate(Model.LastLoginAt, "dd MMM yyyy HH:mm") : "Never logged in")
                 </span>
             </div>
             <div class="product-detail-row">
                 <span class="product-detail-label">Member Since</span>
-                <span class="product-detail-value">@Model.CreatedAt.ToString("dd MMM yyyy")</span>
+                <span class="product-detail-value">@Html.TenantDate(Model.CreatedAt, "dd MMM yyyy")</span>
             </div>
         </div>
     </div>

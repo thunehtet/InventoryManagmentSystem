@@ -139,7 +139,9 @@ namespace ClothInventoryApp.Controllers
                 return View(dto);
             }
 
-            TempData["Success"] = $"User {dto.Email} created. Default password has been set.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("User {0} created. Default password has been set.", dto.Email);
+            TempData["SuccessListUrl"]  = Url.Action("Index", "ApplicationUser");
+            TempData["SuccessListLabel"]= "View Users";
             return RedirectToAction(nameof(Index));
         }
 
@@ -217,7 +219,10 @@ namespace ClothInventoryApp.Controllers
                 }
             }
 
-            TempData["Success"] = "User updated successfully.";
+            TempData["SuccessMsg"]      = "User updated successfully.";
+            TempData["SuccessType"]     = "update";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "ApplicationUser");
+            TempData["SuccessListLabel"]= "View Users";
             return RedirectToAction(nameof(Index));
         }
 
@@ -255,7 +260,10 @@ namespace ClothInventoryApp.Controllers
             }
 
             await _userManager.DeleteAsync(user);
-            TempData["Success"] = "User deleted.";
+            TempData["SuccessMsg"]      = "User deleted.";
+            TempData["SuccessType"]     = "delete";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "ApplicationUser");
+            TempData["SuccessListLabel"]= "View Users";
             return RedirectToAction(nameof(Index));
         }
     }

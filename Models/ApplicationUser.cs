@@ -27,7 +27,9 @@ namespace ClothInventoryApp.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? LastLoginAt { get; set; }
 
-       
+        public bool CanChangeLoginIdentity { get; set; } = true;
+        public DateTime? LoginIdentityChangedAt { get; set; }
+
         public string? ProfileImageUrl { get; set; }
     }
 }

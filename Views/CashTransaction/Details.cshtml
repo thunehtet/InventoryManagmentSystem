@@ -24,8 +24,8 @@
         </div>
 
         <div class="form-footer-modern">
-            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-modern-primary btn-modern-lg">Edit</a>
-            <a asp-action="Index" class="btn-modern-outline btn-modern-lg">Back</a>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-modern-primary btn-modern-lg">@Localizer["Edit"]</a>
+            <a asp-action="Index" class="btn-modern-outline btn-modern-lg">@Localizer["Back"]</a>
         </div>
     </div>
 </div>

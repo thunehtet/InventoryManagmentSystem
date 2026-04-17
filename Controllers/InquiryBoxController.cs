@@ -1,9 +1,12 @@
 using ClothInventoryApp.Data;
 using ClothInventoryApp.Models;
+using ClothInventoryApp.Services.Email;
+using ClothInventoryApp.Services.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace ClothInventoryApp.Controllers
 {
@@ -12,11 +15,22 @@ namespace ClothInventoryApp.Controllers
     {
         private readonly AppDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IEmailService _emailService;
+        private readonly ITemporaryCredentialService _temporaryCredentialService;
+        private readonly ILogger<InquiryBoxController> _logger;
 
-        public InquiryBoxController(AppDbContext db, UserManager<ApplicationUser> userManager)
+        public InquiryBoxController(
+            AppDbContext db,
+            UserManager<ApplicationUser> userManager,
+            IEmailService emailService,
+            ITemporaryCredentialService temporaryCredentialService,
+            ILogger<InquiryBoxController> logger)
         {
             _db = db;
             _userManager = userManager;
+            _emailService = emailService;
+            _temporaryCredentialService = temporaryCredentialService;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Index(string? filter, int page = 1, int size = 10)
@@ -119,7 +133,7 @@ namespace ClothInventoryApp.Controllers
             if (reviewer == null) return Unauthorized();
 
             var now = DateTime.UtcNow;
-            var tempPassword = $"StockEasy@{Random.Shared.Next(1000, 9999)}";
+            var tempPassword = _temporaryCredentialService.GenerateTemporaryPassword();
             var tenantCode = await GenerateUniqueTenantCodeAsync(inquiry.BusinessName);
 
             await using var transaction = await _db.Database.BeginTransactionAsync();
@@ -195,7 +209,34 @@ namespace ClothInventoryApp.Controllers
                 await _db.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                TempData["Success"] = $"Inquiry approved. Free account created for {inquiry.BusinessName}. Login: {inquiry.Email} / {tempPassword}";
+                try
+                {
+                    await _emailService.SendAsync(
+                        inquiry.Email,
+                        "Your StockEasy workspace is ready",
+                        $"""
+                        <p>Hello {WebUtility.HtmlEncode(inquiry.Name)},</p>
+                        <p>Your StockEasy workspace has been approved and created.</p>
+                        <p><strong>Workspace:</strong> {WebUtility.HtmlEncode(inquiry.BusinessName)}</p>
+                        <p><strong>Username:</strong> {WebUtility.HtmlEncode(inquiry.Email)}</p>
+                        <p><strong>Temporary password:</strong> {WebUtility.HtmlEncode(tempPassword)}</p>
+                        <p>Please sign in and change your password immediately.</p>
+                        """);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to send approval email for inquiry {InquiryId}.", inquiry.Id);
+                    TempData["Warning"] = "Account created, but the approval email could not be sent.";
+                }
+
+                TempData["SuccessMsg"]      = this.LocalizeShared(
+                    "Inquiry approved. Free account created for {0}. Login: {1} / {2}",
+                    inquiry.BusinessName,
+                    inquiry.Email,
+                    tempPassword);
+                TempData["SuccessType"]     = "update";
+                TempData["SuccessListUrl"]  = Url.Action("Index", "InquiryBox");
+                TempData["SuccessListLabel"]= "View All Inquiries";
                 return RedirectToAction(nameof(Details), new { id });
             }
             catch
@@ -230,7 +271,10 @@ namespace ClothInventoryApp.Controllers
             inquiry.IsRead = true;
 
             await _db.SaveChangesAsync();
-            TempData["Success"] = "Inquiry rejected.";
+            TempData["SuccessMsg"]      = "Inquiry rejected.";
+            TempData["SuccessType"]     = "delete";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "InquiryBox");
+            TempData["SuccessListLabel"]= "View All Inquiries";
             return RedirectToAction(nameof(Details), new { id });
         }
 
@@ -243,7 +287,10 @@ namespace ClothInventoryApp.Controllers
                 _db.ContactInquiries.Remove(item);
                 await _db.SaveChangesAsync();
             }
-            TempData["Success"] = "Inquiry deleted.";
+            TempData["SuccessMsg"]      = "Inquiry deleted.";
+            TempData["SuccessType"]     = "delete";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "InquiryBox");
+            TempData["SuccessListLabel"]= "View Inquiries";
             return RedirectToAction(nameof(Index));
         }
 

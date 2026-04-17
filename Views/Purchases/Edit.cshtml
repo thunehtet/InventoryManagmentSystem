@@ -2,14 +2,14 @@
 @model ViewTextileDto
 
 @{
-    ViewData["Title"] = "Edit Textile";
+    ViewData["Title"] = Localizer["Edit Purchase"];
 }
 
 <div class="create-product-shell">
     <div class="create-main-card">
         <div class="section-header">
             <div>
-                <h3>Edit Textile</h3>
+                <h3>@Localizer["Edit Purchase"]</h3>
             </div>
         </div>
 
@@ -19,17 +19,17 @@
 
             <div class="form-grid-modern">
                 <div class="form-group-modern form-group-full">
-                    <label asp-for="Name" class="form-label-modern"></label>
+                    <label asp-for="Name" class="form-label-modern">@Localizer["Item Name"]</label>
                     <input asp-for="Name" class="input-modern input-modern-lg" />
                 </div>
 
                 <div class="form-group-modern">
-                    <label asp-for="PurchaseFrom" class="form-label-modern"></label>
+                    <label asp-for="PurchaseFrom" class="form-label-modern">@Localizer["Supplier"]</label>
                     <input asp-for="PurchaseFrom" class="input-modern" />
                 </div>
 
                 <div class="form-group-modern">
-                    <label asp-for="Quantity" class="form-label-modern"></label>
+                    <label asp-for="Quantity" class="form-label-modern">@Localizer["Purchase Quantity"]</label>
                     <input asp-for="Quantity" class="input-modern" type="number" />
                 </div>
 
@@ -39,14 +39,14 @@
                 </div>
 
                 <div class="form-group-modern">
-                    <label asp-for="UnitPrice" class="form-label-modern"></label>
+                    <label asp-for="UnitPrice" class="form-label-modern">@Localizer["Unit Cost"]</label>
                     <input asp-for="UnitPrice" class="input-modern" type="number" />
                 </div>
             </div>
 
             <div class="form-footer-modern">
-                <button type="submit" class="btn-modern-primary btn-modern-lg">Update Textile</button>
-                <a asp-action="Index" class="btn-modern-outline btn-modern-lg">Cancel</a>
+                <button type="submit" class="btn-modern-primary btn-modern-lg">@Localizer["Update Purchase"]</button>
+                <a asp-action="Index" class="btn-modern-outline btn-modern-lg">@Localizer["Cancel"]</a>
             </div>
         </form>
     </div>

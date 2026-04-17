@@ -242,6 +242,9 @@ namespace ClothInventoryApp.Controllers
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
+                TempData["SuccessMsg"]      = "Sale recorded successfully.";
+                TempData["SuccessListUrl"]  = Url.Action("Index", "Sales");
+                TempData["SuccessListLabel"]= "View Sales";
                 return RedirectToAction(nameof(Index));
             }
             catch (InvalidOperationException ex)

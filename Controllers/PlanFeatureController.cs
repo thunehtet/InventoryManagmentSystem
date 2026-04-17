@@ -67,7 +67,9 @@ namespace ClothInventoryApp.Controllers
                 IsEnabled = dto.IsEnabled
             });
             await _db.SaveChangesAsync();
-            TempData["Success"] = "Feature assigned to plan.";
+            TempData["SuccessMsg"]      = "Feature assigned to plan.";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "PlanFeature", new { planId = dto.PlanId });
+            TempData["SuccessListLabel"]= "View Plan Features";
             return RedirectToAction(nameof(Index), new { planId = dto.PlanId });
         }
 
@@ -89,7 +91,10 @@ namespace ClothInventoryApp.Controllers
             var planId = pf.PlanId;
             _db.PlanFeatures.Remove(pf);
             await _db.SaveChangesAsync();
-            TempData["Success"] = "Feature removed from plan.";
+            TempData["SuccessMsg"]      = "Feature removed from plan.";
+            TempData["SuccessType"]     = "delete";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "PlanFeature", new { planId });
+            TempData["SuccessListLabel"]= "View Plan Features";
             return RedirectToAction(nameof(Index), new { planId });
         }
 

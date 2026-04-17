@@ -30,6 +30,9 @@ namespace ClothInventoryApp.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<bool>("CanChangeLoginIdentity")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("longtext");
@@ -65,6 +68,9 @@ namespace ClothInventoryApp.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("LoginIdentityChangedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<bool>("MustChangePassword")

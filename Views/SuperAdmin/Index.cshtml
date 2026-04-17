@@ -132,7 +132,7 @@
                                         @(t.IsActive ? "Active" : "Inactive")
                                     </span>
                                 </td>
-                                <td class="text-muted small">@t.CreatedAt.ToString("dd MMM yyyy")</td>
+                                <td class="text-muted small">@Html.TenantDate(t.CreatedAt, "dd MMM yyyy")</td>
                             </tr>
                         }
                         @if (!Model.RecentTenants.Any())

@@ -5,7 +5,7 @@
         public Guid Id { get; set; }
         public Guid TenantId { get; set; }
         public Tenant Tenant { get; set; } = null!;
-        public DateTime TransactionDate { get; set; } = DateTime.Now;
+        public DateTime TransactionDate { get; set; } = DateTime.UtcNow;
         public string Type { get; set; } = "";
         public string Category { get; set; } = "";
         public int Amount { get; set; }

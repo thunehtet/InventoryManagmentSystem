@@ -18,6 +18,7 @@ namespace ClothInventoryApp.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IFileStorageService _fileStorageService;
         private readonly SubscriptionPaymentSettings _paymentSettings;
+        private const string DefaultQrImageUrl = "/paymentqr/mykpayqr.jpeg";
 
         public SubscriptionRequestController(
             AppDbContext db,
@@ -104,7 +105,7 @@ namespace ClothInventoryApp.Controllers
                 WalletDisplayName = _paymentSettings.WalletDisplayName,
                 WalletAccountName = _paymentSettings.WalletAccountName,
                 WalletAccountNo = _paymentSettings.WalletAccountNo,
-                QrImageUrl = _paymentSettings.QrImageUrl,
+                QrImageUrl = ResolveQrImageUrl(),
                 Instructions = _paymentSettings.Instructions,
                 Form = new CreateSubscriptionPaymentRequestDto
                 {
@@ -188,7 +189,9 @@ namespace ClothInventoryApp.Controllers
             });
 
             await _db.SaveChangesAsync(cancellationToken);
-            TempData["Success"] = "Payment request submitted. SuperAdmin will review it before activating the subscription.";
+            TempData["SuccessMsg"]      = "Payment request submitted. SuperAdmin will review it before activating the subscription.";
+            TempData["SuccessListUrl"]  = Url.Action("MyRequests", "SubscriptionRequest");
+            TempData["SuccessListLabel"]= "View My Requests";
             return RedirectToAction(nameof(MyRequests));
         }
 
@@ -221,11 +224,16 @@ namespace ClothInventoryApp.Controllers
                 WalletDisplayName = _paymentSettings.WalletDisplayName,
                 WalletAccountName = _paymentSettings.WalletAccountName,
                 WalletAccountNo = _paymentSettings.WalletAccountNo,
-                QrImageUrl = _paymentSettings.QrImageUrl,
+                QrImageUrl = ResolveQrImageUrl(),
                 Instructions = _paymentSettings.Instructions,
                 Form = dto
             };
         }
+
+        private string ResolveQrImageUrl() =>
+            string.IsNullOrWhiteSpace(_paymentSettings.QrImageUrl)
+                ? DefaultQrImageUrl
+                : _paymentSettings.QrImageUrl;
 
         private static string NormalizeBillingCycle(string? billingCycle) =>
             string.Equals(billingCycle, "Yearly", StringComparison.OrdinalIgnoreCase) ? "Yearly" : "Monthly";

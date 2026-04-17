@@ -1,12 +1,14 @@
 using ClothInventoryApp.Data;
 using ClothInventoryApp.Dto.SuperAdmin;
 using ClothInventoryApp.Models;
+using ClothInventoryApp.Services.Email;
 using ClothInventoryApp.Services.Files;
 using ClothInventoryApp.Services.Subscription;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace ClothInventoryApp.Controllers
 {
@@ -16,15 +18,21 @@ namespace ClothInventoryApp.Controllers
         private readonly AppDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IFileStorageService _fileStorageService;
+        private readonly IEmailService _emailService;
+        private readonly ILogger<SubscriptionPaymentReviewController> _logger;
 
         public SubscriptionPaymentReviewController(
             AppDbContext db,
             UserManager<ApplicationUser> userManager,
-            IFileStorageService fileStorageService)
+            IFileStorageService fileStorageService,
+            IEmailService emailService,
+            ILogger<SubscriptionPaymentReviewController> logger)
         {
             _db = db;
             _userManager = userManager;
             _fileStorageService = fileStorageService;
+            _emailService = emailService;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Index(string? status = "Pending", string? search = null, int page = 1, int size = 10)
@@ -106,6 +114,7 @@ namespace ClothInventoryApp.Controllers
                 .Include(r => r.Tenant)
                 .Include(r => r.Plan)
                 .Include(r => r.PaymentProofFile)
+                .Include(r => r.RequestedByUser)
                 .FirstOrDefaultAsync(r => r.Id == id);
             if (request == null) return NotFound();
 
@@ -166,7 +175,30 @@ namespace ClothInventoryApp.Controllers
             request.ApprovedSubscriptionId = subscription.Id;
 
             await _db.SaveChangesAsync();
-            TempData["Success"] = "Payment request approved and subscription activated.";
+
+            try
+            {
+                await _emailService.SendAsync(
+                    request.RequestedByUser?.Email ?? string.Empty,
+                    "Subscription payment approved",
+                    $"""
+                    <p>Hello {WebUtility.HtmlEncode(request.RequestedByUser?.FullName ?? "there")},</p>
+                    <p>Your subscription request has been approved.</p>
+                    <p><strong>Plan:</strong> {WebUtility.HtmlEncode(request.PlanNameSnapshot)}</p>
+                    <p><strong>Billing cycle:</strong> {WebUtility.HtmlEncode(request.BillingCycle)}</p>
+                    <p>Your subscription is now active.</p>
+                    """);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send approval email for payment request {RequestId}.", request.Id);
+                TempData["Warning"] = "Subscription activated, but the approval email could not be sent.";
+            }
+
+            TempData["SuccessMsg"]      = "Payment request approved and subscription activated.";
+            TempData["SuccessType"]     = "update";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "SubscriptionPaymentReview");
+            TempData["SuccessListLabel"]= "View All Requests";
             return RedirectToAction(nameof(Details), new { id });
         }
 
@@ -174,7 +206,9 @@ namespace ClothInventoryApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Reject(Guid id, string? remarks)
         {
-            var request = await _db.SubscriptionPaymentRequests.FirstOrDefaultAsync(r => r.Id == id);
+            var request = await _db.SubscriptionPaymentRequests
+                .Include(r => r.RequestedByUser)
+                .FirstOrDefaultAsync(r => r.Id == id);
             if (request == null) return NotFound();
 
             if (!string.Equals(request.Status, "Pending", StringComparison.OrdinalIgnoreCase))
@@ -192,7 +226,27 @@ namespace ClothInventoryApp.Controllers
             request.ReviewRemarks = string.IsNullOrWhiteSpace(remarks) ? "Rejected by SuperAdmin." : remarks.Trim();
             await _db.SaveChangesAsync();
 
-            TempData["Success"] = "Payment request rejected.";
+            try
+            {
+                await _emailService.SendAsync(
+                    request.RequestedByUser?.Email ?? string.Empty,
+                    "Subscription payment rejected",
+                    $"""
+                    <p>Hello {WebUtility.HtmlEncode(request.RequestedByUser?.FullName ?? "there")},</p>
+                    <p>Your subscription payment request for <strong>{WebUtility.HtmlEncode(request.PlanNameSnapshot)}</strong> was rejected.</p>
+                    <p>Remarks: {WebUtility.HtmlEncode(request.ReviewRemarks ?? "Rejected by SuperAdmin.")}</p>
+                    """);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send rejection email for payment request {RequestId}.", request.Id);
+                TempData["Warning"] = "Request rejected, but the rejection email could not be sent.";
+            }
+
+            TempData["SuccessMsg"]      = "Payment request rejected.";
+            TempData["SuccessType"]     = "delete";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "SubscriptionPaymentReview");
+            TempData["SuccessListLabel"]= "View All Requests";
             return RedirectToAction(nameof(Details), new { id });
         }
 

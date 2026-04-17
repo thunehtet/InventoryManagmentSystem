@@ -23,14 +23,6 @@
         </div>
     </div>
 
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
-
     <form asp-action="Manage" method="post" class="sa-form-card">
         @Html.AntiForgeryToken()
         <input asp-for="TenantId" type="hidden" />

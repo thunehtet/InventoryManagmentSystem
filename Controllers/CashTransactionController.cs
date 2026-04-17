@@ -14,6 +14,9 @@ namespace ClothInventoryApp.Controllers
     [FeatureRequired("finance")]
     public class CashTransactionController : TenantAwareController
     {
+        private static readonly string[] ManualCategories = { "Packaging Fee", "Transportation", "Other" };
+        private static readonly string[] ProtectedCategories = { "Sale Income", "Sales", "Inventory Purchase", "Textile Purchase" };
+
         public CashTransactionController(AppDbContext context, ITenantProvider tenantProvider)
             : base(context, tenantProvider)
         {
@@ -74,6 +77,14 @@ namespace ClothInventoryApp.Controllers
                 LoadDropDowns();
                 return View(dto);
             }
+
+            if (!IsAllowedManualCategory(dto.Category))
+            {
+                ModelState.AddModelError(nameof(dto.Category), "Select a valid manual transaction category.");
+                LoadDropDowns();
+                return View(dto);
+            }
+
             var tenantId = _tenantProvider.GetTenantId();
             var item = new CashTransaction
             {
@@ -89,6 +100,9 @@ namespace ClothInventoryApp.Controllers
             _context.CashTransactions.Add(item);
             await _context.SaveChangesAsync();
 
+            TempData["SuccessMsg"]      = "Transaction recorded.";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "CashTransaction");
+            TempData["SuccessListLabel"]= "View Transactions";
             return RedirectToAction(nameof(Index));
         }
 
@@ -98,6 +112,12 @@ namespace ClothInventoryApp.Controllers
 
             if (item == null)
                 return NotFound();
+
+            if (IsProtectedTransaction(item))
+            {
+                TempData["Error"] = "This transaction is managed from its source record and cannot be edited here.";
+                return RedirectToAction(nameof(Index));
+            }
 
             var dto = new CreateCashTransactionDto
             {
@@ -129,6 +149,19 @@ namespace ClothInventoryApp.Controllers
             if (item == null)
                 return NotFound();
 
+            if (IsProtectedTransaction(item))
+            {
+                TempData["Error"] = "This transaction is managed from its source record and cannot be edited here.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (!IsAllowedManualCategory(dto.Category))
+            {
+                ModelState.AddModelError(nameof(dto.Category), "Select a valid manual transaction category.");
+                LoadDropDowns();
+                return View(dto);
+            }
+
             item.TransactionDate = dto.TransactionDate;
             item.Type = dto.Type;
             item.Category = dto.Category;
@@ -138,6 +171,10 @@ namespace ClothInventoryApp.Controllers
 
             await _context.SaveChangesAsync();
 
+            TempData["SuccessMsg"]      = "Transaction updated.";
+            TempData["SuccessType"]     = "update";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "CashTransaction");
+            TempData["SuccessListLabel"]= "View Transactions";
             return RedirectToAction(nameof(Index));
         }
 
@@ -182,6 +219,12 @@ namespace ClothInventoryApp.Controllers
             if (item == null)
                 return NotFound();
 
+            if (IsProtectedCategory(item.Category))
+            {
+                TempData["Error"] = "This transaction is managed from its source record and cannot be deleted here.";
+                return RedirectToAction(nameof(Index));
+            }
+
             return View(item);
         }
 
@@ -194,9 +237,19 @@ namespace ClothInventoryApp.Controllers
             if (item == null)
                 return NotFound();
 
+            if (IsProtectedTransaction(item))
+            {
+                TempData["Error"] = "This transaction is managed from its source record and cannot be deleted here.";
+                return RedirectToAction(nameof(Index));
+            }
+
             _context.CashTransactions.Remove(item);
             await _context.SaveChangesAsync();
 
+            TempData["SuccessMsg"]      = "Transaction deleted.";
+            TempData["SuccessType"]     = "delete";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "CashTransaction");
+            TempData["SuccessListLabel"]= "View Transactions";
             return RedirectToAction(nameof(Index));
         }
 
@@ -210,15 +263,27 @@ namespace ClothInventoryApp.Controllers
 
             ViewBag.Categories = new List<SelectListItem>
             {
-                new SelectListItem { Value = "Sale Income", Text = "Sale Income" },
-                new SelectListItem { Value = "Textile Purchase", Text = "Textile Purchase" },
-                new SelectListItem { Value = "Tailor Fee", Text = "Tailor Fee" },
-                new SelectListItem { Value = "Transport", Text = "Transport" },
-                new SelectListItem { Value = "Packaging", Text = "Packaging" },
-                new SelectListItem { Value = "Utilities", Text = "Utilities" },
-                new SelectListItem { Value = "Living Expense", Text = "Living Expense" },
+                new SelectListItem { Value = "Packaging Fee", Text = "Packaging Fee" },
+                new SelectListItem { Value = "Transportation", Text = "Transportation" },
                 new SelectListItem { Value = "Other", Text = "Other" }
             };
+        }
+
+        private static bool IsAllowedManualCategory(string? category)
+        {
+            return !string.IsNullOrWhiteSpace(category)
+                && ManualCategories.Contains(category, StringComparer.OrdinalIgnoreCase);
+        }
+
+        private static bool IsProtectedCategory(string? category)
+        {
+            return !string.IsNullOrWhiteSpace(category)
+                && ProtectedCategories.Contains(category, StringComparer.OrdinalIgnoreCase);
+        }
+
+        private static bool IsProtectedTransaction(CashTransaction item)
+        {
+            return item.SaleId != null || IsProtectedCategory(item.Category);
         }
     }
 }

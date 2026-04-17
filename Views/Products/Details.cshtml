@@ -39,11 +39,11 @@
                 <span class="product-detail-value">
                     @if (Model.IsActive)
                     {
-                        <span class="badge-modern badge-success">Active</span>
+                        <span class="badge-modern badge-success">@Localizer["Active"]</span>
                     }
                     else
                     {
-                        <span class="badge-modern badge-muted">Inactive</span>
+                        <span class="badge-modern badge-muted">@Localizer["Inactive"]</span>
                     }
                 </span>
             </div>
@@ -56,7 +56,7 @@
             <a asp-action="Delete" asp-route-id="@Model.Id" class="btn-modern-danger">
                 <i class="bi bi-trash-fill"></i> Delete
             </a>
-            <a asp-action="Index" class="btn-modern-secondary">Cancel</a>
+            <a asp-action="Index" class="btn-modern-secondary">@Localizer["Cancel"]</a>
         </div>
     </div>
 </div>

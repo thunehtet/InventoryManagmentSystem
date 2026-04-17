@@ -75,6 +75,11 @@ namespace ClothInventoryApp.Migrations
                 defaultValue: "")
                 .Annotation("MySql:CharSet", "utf8mb4");
 
+            // Backfill: treat all pre-existing inquiries as Pending so they
+            // remain visible in the Pending tab after the Status filter is active.
+            migrationBuilder.Sql(
+                "UPDATE ContactInquiries SET Status = 'Pending' WHERE Status = ''");
+
             migrationBuilder.CreateTable(
                 name: "UploadedFiles",
                 columns: table => new

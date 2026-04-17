@@ -1,0 +1,95 @@
+@{
+    var msg     = TempData["SuccessMsg"] as string;
+    var type    = TempData["SuccessType"] as string ?? "save";  // save | update | delete
+    var listUrl = TempData["SuccessListUrl"] as string;
+    var listLbl = TempData["SuccessListLabel"] as string ?? "View List";
+    var addUrl  = TempData["SuccessAddUrl"] as string;
+    var addLbl  = TempData["SuccessAddLabel"] as string ?? "Continue";
+    var addHint = TempData["SuccessAddHint"] as string;
+
+    string ringClass, icon, titleKey;
+    switch (type)
+    {
+        case "delete":
+            ringClass = "success-check-ring--delete";
+            icon      = "bi-trash3-fill";
+            titleKey  = "Deleted";
+            break;
+        case "update":
+            ringClass = "success-check-ring--update";
+            icon      = "bi-pencil-fill";
+            titleKey  = "Updated";
+            break;
+        default:
+            ringClass = "";
+            icon      = "bi-check-lg";
+            titleKey  = "Saved Successfully";
+            break;
+    }
+}
+@if (msg != null)
+{
+<div class="modal fade success-modal" id="successModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content success-mc">
+            <div class="success-check-ring @ringClass">
+                <i class="bi @icon"></i>
+            </div>
+
+            <h5 class="success-mc-title">@Localizer[titleKey]</h5>
+            <p class="success-mc-msg">@Localizer[msg]</p>
+
+            @if (addUrl != null)
+            {
+                if (addHint != null)
+                {
+                    <div class="success-hint-box">
+                        <i class="bi bi-arrow-right-circle-fill"></i>
+                        <p class="success-hint-text">@Localizer[addHint]</p>
+                    </div>
+                }
+                <div class="success-mc-actions">
+                    <a href="@addUrl" class="success-btn-add">
+                        <i class="bi bi-arrow-right-circle"></i> @Localizer[addLbl]
+                    </a>
+                    @if (listUrl != null)
+                    {
+                        <a href="@listUrl" class="success-btn-list">
+                            @Localizer[listLbl] <i class="bi bi-arrow-right"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <button type="button" data-bs-dismiss="modal" class="success-btn-list">@Localizer["Done"]</button>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="success-mc-actions">
+                    @if (listUrl != null)
+                    {
+                        <a href="@listUrl" class="success-btn-add success-btn-add--@type">
+                            @Localizer[listLbl] <i class="bi bi-arrow-right"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <button type="button" data-bs-dismiss="modal" class="success-btn-add success-btn-add--@type">
+                            @Localizer["Got it"]
+                        </button>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<script>
+    (function () {
+        var el = document.getElementById('successModal');
+        if (el && typeof bootstrap !== 'undefined') {
+            new bootstrap.Modal(el, { backdrop: 'static', keyboard: false }).show();
+        }
+    })();
+</script>
+}

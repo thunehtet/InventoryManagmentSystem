@@ -1,22 +1,23 @@
-﻿@model ClothInventoryApp.Dto.Finance.FinanceDashboardViewModel
+@model ClothInventoryApp.Dto.Finance.FinanceDashboardViewModel
 
 @{
     ViewData["Title"] = Localizer["Finance Overview"];
     var currency = ViewData["Currency"] as string ?? "";
+    var selectedMonthName = new DateTime(Model.SelectedYear, Model.SelectedMonth, 1).ToString("MMMM");
 }
 
 <div class="dashboard-shell">
-    <section class="dashboard-hero">
+    <section class="dashboard-hero finance-hero">
         <div class="dashboard-hero-content">
             <div class="hero-badge-modern">
                 <i class="bi bi-cash-coin"></i>
-                <span>@Localizer["Business finance overview"]</span>
+                <span>@Localizer["Financial performance dashboard"]</span>
             </div>
 
-            <h1 class="dashboard-title">@Localizer["Track money in, money out, and business cash position."]</h1>
+            <h1 class="dashboard-title">@Localizer["Track period cashflow, spending, and business profit clearly."]</h1>
 
             <p class="dashboard-subtitle">
-                @Localizer["Monitor sales income, textile purchases, tailor fees, personal withdrawals, and overall cash balance."]
+                @Localizer["Use this dashboard to review money movement and performance. Operations stay on the main dashboard."]
             </p>
 
             <div class="dashboard-hero-actions">
@@ -33,93 +34,243 @@
         </div>
     </section>
 
-    <section class="dashboard-stats-grid">
+    <section class="dashboard-panel mb-4">
+        <div class="panel-header panel-header-with-action">
+            <div>
+                <h3>@Localizer["Reporting Period"]</h3>
+                <p>@Localizer["Showing finance metrics for {0} {1}.", selectedMonthName, Model.SelectedYear]</p>
+            </div>
+            <form method="get" asp-action="Index" class="trend-period-form">
+                <label class="visually-hidden" for="financeMonth">@Localizer["Month"]</label>
+                <select id="financeMonth" name="month" class="form-select form-select-sm trend-period-select">
+                    @for (var month = 1; month <= 12; month++)
+                    {
+                        var monthName = new DateTime(Model.SelectedYear, month, 1).ToString("MMMM");
+                        if (month == Model.SelectedMonth)
+                        {
+                            <option value="@month" selected>@monthName</option>
+                        }
+                        else
+                        {
+                            <option value="@month">@monthName</option>
+                        }
+                    }
+                </select>
+                <label class="visually-hidden" for="financeYear">@Localizer["Year"]</label>
+                <select id="financeYear" name="year" class="form-select form-select-sm trend-period-select">
+                    @foreach (var year in Model.AvailableYears)
+                    {
+                        if (year == Model.SelectedYear)
+                        {
+                            <option value="@year" selected>@year</option>
+                        }
+                        else
+                        {
+                            <option value="@year">@year</option>
+                        }
+                    }
+                </select>
+            </form>
+        </div>
+    </section>
+
+    <section class="dashboard-stats-grid dashboard-stats-grid-4">
         <div class="dashboard-stat-card">
             <div class="stat-card-icon bg-blue-soft"><i class="bi bi-arrow-down-circle-fill"></i></div>
             <div class="stat-card-content">
-                <div class="stat-card-label">@Localizer["Total Cash In"]</div>
-                <div class="stat-card-value">@Model.TotalCashIn.ToString("N0") @currency</div>
+                <div class="stat-card-label">@Localizer["Cash In"]</div>
+                <div class="stat-card-value">@Model.PeriodCashIn.ToString("N0") @currency</div>
+                <div class="stat-card-note">@Localizer["Money received in this period"]</div>
             </div>
         </div>
 
         <div class="dashboard-stat-card">
             <div class="stat-card-icon bg-orange-soft"><i class="bi bi-arrow-up-circle-fill"></i></div>
             <div class="stat-card-content">
-                <div class="stat-card-label">@Localizer["Total Cash Out"]</div>
-                <div class="stat-card-value">@Model.TotalCashOut.ToString("N0") @currency</div>
+                <div class="stat-card-label">@Localizer["Cash Out"]</div>
+                <div class="stat-card-value">@Model.PeriodCashOut.ToString("N0") @currency</div>
+                <div class="stat-card-note">@Localizer["All expenses and withdrawals"]</div>
+            </div>
+        </div>
+
+        <div class="dashboard-stat-card">
+            <div class="stat-card-icon @(Model.PeriodNetCashFlow >= 0 ? "bg-green-soft" : "bg-red-soft")"><i class="bi bi-activity"></i></div>
+            <div class="stat-card-content">
+                <div class="stat-card-label">@Localizer["Net Cashflow"]</div>
+                <div class="stat-card-value">@Model.PeriodNetCashFlow.ToString("N0") @currency</div>
+                <div class="stat-card-note">@Localizer["Previous month: {0} {1}", Model.PreviousMonthNetCashFlow.ToString("N0"), currency]</div>
             </div>
         </div>
 
         <div class="dashboard-stat-card">
             <div class="stat-card-icon bg-purple-soft"><i class="bi bi-wallet2"></i></div>
             <div class="stat-card-content">
-                <div class="stat-card-label">@Localizer["Cash Balance"]</div>
-                <div class="stat-card-value">@Model.CashBalance.ToString("N0") @currency</div>
+                <div class="stat-card-label">@Localizer["Gross Profit Est."]</div>
+                <div class="stat-card-value">@Model.GrossProfitEstimate.ToString("N0") @currency</div>
+                <div class="stat-card-note">@Localizer["Sales income minus operating expense"]</div>
             </div>
         </div>
     </section>
 
-    <section class="dashboard-main-grid">
+    <section class="dashboard-main-grid finance-main-grid">
         <div class="dashboard-panel dashboard-panel-large">
+            <div id="financeTrendData"
+                 data-labels='@System.Text.Json.JsonSerializer.Serialize(Model.MonthlyTrend.Select(x => x.Label))'
+                 data-cash-in='@System.Text.Json.JsonSerializer.Serialize(Model.MonthlyTrend.Select(x => x.CashIn))'
+                 data-cash-out='@System.Text.Json.JsonSerializer.Serialize(Model.MonthlyTrend.Select(x => x.CashOut))'
+                 data-currency='@currency'
+                 data-cash-in-label='@Localizer["Cash In"].Value'
+                 data-cash-out-label='@Localizer["Cash Out"].Value'
+                 hidden></div>
             <div class="panel-header">
                 <div>
-                    <h3>@Localizer["Expense Breakdown"]</h3>
-                    <p>@Localizer["Where your business money is going."]</p>
+                    <h3>@Localizer["Cashflow Trend"]</h3>
+                    <p>@Localizer["Monthly cash in and cash out for {0}.", Model.SelectedYear]</p>
+                </div>
+            </div>
+            <div class="chart-wrap finance-chart-wrap">
+                <canvas id="financeTrendChart"></canvas>
+            </div>
+        </div>
+
+        <div class="dashboard-panel dashboard-panel-side">
+            <div class="panel-header">
+                <div>
+                    <h3>@Localizer["Period Summary"]</h3>
+                    <p>@Localizer["Key finance readings for this period."]</p>
                 </div>
             </div>
 
-            <div class="quick-action-grid">
-                <div class="quick-action-card">
-                    <div class="quick-action-body">
-                        <h4>@Localizer["Sales Income"]</h4>
-                        <p>@Model.TotalSalesIncome.ToString("N0") @currency</p>
+            <div class="attention-list">
+                <div class="attention-card tone-blue">
+                    <div class="attention-top">
+                        <span class="attention-title">@Localizer["Sales Income"]</span>
+                        <span class="attention-value">@Model.PeriodSalesIncome.ToString("N0")</span>
                     </div>
+                    <p>@Localizer["Cash received from sale income transactions."]</p>
                 </div>
 
-                <div class="quick-action-card">
-                    <div class="quick-action-body">
-                        <h4>@Localizer["Textile Purchase"]</h4>
-                        <p>@Model.TotalTextileExpense.ToString("N0") @currency</p>
+                <div class="attention-card tone-orange">
+                    <div class="attention-top">
+                        <span class="attention-title">@Localizer["Operating Expense"]</span>
+                        <span class="attention-value">@Model.OperatingExpense.ToString("N0")</span>
                     </div>
+                    <p>@Localizer["Inventory purchase, packaging fee, transportation, and other operating expense."]</p>
                 </div>
 
-                <div class="quick-action-card">
-                    <div class="quick-action-body">
-                        <h4>@Localizer["Tailor Fee"]</h4>
-                        <p>@Model.TotalTailorFee.ToString("N0") @currency</p>
+                <div class="attention-card tone-red">
+                    <div class="attention-top">
+                        <span class="attention-title">@Localizer["Owner Drawings"]</span>
+                        <span class="attention-value">@Model.OwnerDrawings.ToString("N0")</span>
                     </div>
+                    <p>@Localizer["Living expense is shown separately so profit stays clearer."]</p>
                 </div>
+            </div>
+        </div>
+    </section>
 
-                <div class="quick-action-card">
-                    <div class="quick-action-body">
-                        <h4>@Localizer["Living Expense"]</h4>
-                        <p>@Model.TotalLivingExpense.ToString("N0") @currency</p>
-                    </div>
+    <section class="dashboard-main-grid finance-main-grid">
+        <div class="dashboard-panel dashboard-panel-large">
+            <div class="panel-header panel-header-with-action">
+                <div>
+                    <h3>@Localizer["Expense Breakdown"]</h3>
+                    <p>@Localizer["Where the money went during {0} {1}.", selectedMonthName, Model.SelectedYear]</p>
                 </div>
+            </div>
 
-                <div class="quick-action-card">
-                    <div class="quick-action-body">
-                        <h4>@Localizer["Other Expense"]</h4>
-                        <p>@Model.TotalOtherExpense.ToString("N0") @currency</p>
-                    </div>
+            @if (!Model.ExpenseBreakdown.Any())
+            {
+                <div class="empty-state-wrap py-4">
+                    <i class="bi bi-pie-chart"></i>
+                    <p>@Localizer["No expenses recorded for this period."]</p>
                 </div>
+            }
+            else
+            {
+                <div class="expense-breakdown-list">
+                    @foreach (var item in Model.ExpenseBreakdown)
+                    {
+                        <div class="expense-breakdown-row">
+                            <div class="expense-breakdown-head">
+                                <span class="expense-name">@Localizer[item.Category]</span>
+                                <span class="expense-amount">@item.Amount.ToString("N0") @currency</span>
+                            </div>
+                            <div class="expense-bar-wrap">
+                                <div class="expense-bar" style="width:@item.Percentage%"></div>
+                            </div>
+                            <div class="expense-foot">@item.Percentage%</div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
 
-                <div class="quick-action-card">
-                    <div class="quick-action-body">
-                        <h4>@Localizer["Estimated Profit"]</h4>
-                        <p>@Model.GrossProfitEstimate.ToString("N0") @currency</p>
+        <div class="dashboard-panel dashboard-panel-side">
+            <div class="panel-header">
+                <div>
+                    <h3>@Localizer["Finance Health"]</h3>
+                    <p>@Localizer["Current risk indicators for this period."]</p>
+                </div>
+            </div>
+
+            @if (Model.PeriodNetCashFlow < 0)
+            {
+                <div class="alert-soft warning mb-3">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <span>@Localizer["Cash out is higher than cash in for this period."]</span>
+                </div>
+            }
+            else
+            {
+                <div class="alert-soft success mb-3">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>@Localizer["Cashflow is positive for this period."]</span>
+                </div>
+            }
+
+            <div class="health-list">
+                <div class="health-row">
+                    <div class="health-label-wrap">
+                        <span class="health-dot blue"></span>
+                        <span class="health-label">@Localizer["Inventory Purchase"]</span>
                     </div>
+                    <span class="health-value">@Model.PeriodTextileExpense.ToString("N0")</span>
+                </div>
+                <div class="health-row">
+                    <div class="health-label-wrap">
+                        <span class="health-dot purple"></span>
+                        <span class="health-label">@Localizer["Packaging Fee"]</span>
+                    </div>
+                    <span class="health-value">@Model.PeriodPackagingFee.ToString("N0")</span>
+                </div>
+                <div class="health-row">
+                    <div class="health-label-wrap">
+                        <span class="health-dot purple"></span>
+                        <span class="health-label">@Localizer["Transportation"]</span>
+                    </div>
+                    <span class="health-value">@Model.PeriodTransportationExpense.ToString("N0")</span>
+                </div>
+                <div class="health-row">
+                    <div class="health-label-wrap">
+                        <span class="health-dot orange"></span>
+                        <span class="health-label">@Localizer["Other Expense"]</span>
+                    </div>
+                    <span class="health-value">@Model.PeriodOtherExpense.ToString("N0")</span>
                 </div>
             </div>
         </div>
     </section>
 
     <section class="dashboard-panel recent-activity-panel">
-        <div class="panel-header">
+        <div class="panel-header panel-header-with-action">
             <div>
                 <h3>@Localizer["Recent Cash Transactions"]</h3>
                 <p>@Localizer["Latest money movement records."]</p>
             </div>
+            <a asp-controller="CashTransaction" asp-action="Index" class="panel-link-action">
+                @Localizer["View all"]
+                <i class="bi bi-arrow-right"></i>
+            </a>
         </div>
 
         <div class="table-responsive">
@@ -145,20 +296,16 @@
                     {
                         foreach (var item in Model.RecentTransactions)
                         {
+                            var isIn = item.Type == "IN";
                             <tr>
-                                <td>@item.TransactionDate.ToString("yyyy-MM-dd")</td>
+                                <td>@Html.TenantDate(item.TransactionDate, "yyyy-MM-dd HH:mm")</td>
                                 <td>
-                                    @if (item.Type == "IN")
-                                    {
-                                        <span class="badge-soft success">IN</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge-soft warning">OUT</span>
-                                    }
+                                    <span class="badge-soft @(isIn ? "success" : "warning")">@(isIn ? "IN" : "OUT")</span>
                                 </td>
                                 <td>@item.Category</td>
-                                <td>@item.Amount.ToString("N0") @currency</td>
+                                <td class="@(isIn ? "qty-positive" : "qty-negative")">
+                                    @(isIn ? "+" : "-")@item.Amount.ToString("N0") @currency
+                                </td>
                                 <td>@item.ReferenceNo</td>
                                 <td>@item.Remarks</td>
                             </tr>
@@ -171,5 +318,151 @@
 </div>
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/pages/dashboard.css" />
+    <link rel="stylesheet" href="~/css/pages/dashboard.css" asp-append-version="true" />
+    <style>
+        .finance-hero {
+            grid-template-columns: 1fr;
+            background: linear-gradient(135deg, #0f766e 0%, #115e59 55%, #134e4a 100%);
+            box-shadow: 0 22px 60px rgba(15, 118, 110, 0.22);
+        }
+
+        .dashboard-stats-grid-4 {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .finance-main-grid {
+            grid-template-columns: 1.7fr 1fr;
+        }
+
+        .bg-green-soft {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .bg-red-soft {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .trend-period-form {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .trend-period-select {
+            min-width: 130px;
+            border-radius: 999px;
+        }
+
+        .finance-chart-wrap {
+            height: 320px;
+        }
+
+        .attention-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .attention-card {
+            display: block;
+            padding: 16px;
+            border-radius: 18px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+        }
+
+        .attention-top,
+        .expense-breakdown-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .attention-title,
+        .expense-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .attention-value,
+        .expense-amount {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .attention-card p {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #64748b;
+        }
+
+        .tone-orange { border-color: #fed7aa; background: #fff7ed; }
+        .tone-red { border-color: #fecaca; background: #fef2f2; }
+        .tone-blue { border-color: #bfdbfe; background: #eff6ff; }
+
+        .expense-breakdown-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .expense-breakdown-row {
+            padding: 16px;
+            border-radius: 18px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+        }
+
+        .expense-bar-wrap {
+            height: 10px;
+            border-radius: 999px;
+            background: #e2e8f0;
+            overflow: hidden;
+        }
+
+        .expense-bar {
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #0f766e, #14b8a6);
+        }
+
+        .expense-foot {
+            margin-top: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748b;
+        }
+
+        @@media (max-width: 1100px) {
+            .dashboard-stats-grid-4,
+            .finance-main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .trend-period-form {
+                width: 100%;
+            }
+
+            .trend-period-select {
+                flex: 1 1 160px;
+            }
+
+            .dashboard-stats-grid-4 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="~/js/finance-index.js" asp-append-version="true"></script>
 }

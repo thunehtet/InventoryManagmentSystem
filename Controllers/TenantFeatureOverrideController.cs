@@ -121,7 +121,10 @@ namespace ClothInventoryApp.Controllers
             }
 
             await _db.SaveChangesAsync();
-            TempData["Success"] = $"Feature overrides updated for {tenant.Name}.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Feature overrides updated for {0}.", tenant.Name);
+            TempData["SuccessType"]     = "update";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "TenantFeatureOverride");
+            TempData["SuccessListLabel"]= "View Overrides";
             return RedirectToAction(nameof(Manage), new { tenantId = dto.TenantId });
         }
 
