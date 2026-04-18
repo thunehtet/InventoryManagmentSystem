@@ -58,11 +58,11 @@
                     <div class="col-12 col-md-5">
                         @if (!string.IsNullOrWhiteSpace(Model.QrImageUrl))
                         {
-                            <img src="@Model.QrImageUrl" alt="Wallet QR" style="width:100%;max-width:280px;border-radius:18px;border:1px solid #e5e7eb;" />
+                            <img src="@Model.QrImageUrl" alt="Wallet QR" class="payment-qr-image" />
                         }
                         else
                         {
-                            <div class="d-flex align-items-center justify-content-center text-muted" style="width:100%;max-width:280px;aspect-ratio:1/1;border:1px dashed #cbd5e1;border-radius:18px;">
+                            <div class="d-flex align-items-center justify-content-center text-muted payment-qr-placeholder">
                                 QR image not configured
                             </div>
                         }

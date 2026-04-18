@@ -27,7 +27,9 @@ RegisterQuestPdfFonts(env.ContentRootPath);
 
 // MVC + Localization
 builder.Services.AddLocalization(options => options.ResourcesPath = "");
-builder.Services.AddControllersWithViews()
+builder.Services.AddMemoryCache();
+builder.Services.AddControllersWithViews(options =>
+    options.Filters.AddService<ClothInventoryApp.Filters.ActiveTenantFilter>())
     .AddViewLocalization();
 
 // Database
@@ -149,6 +151,7 @@ builder.Services.AddScoped<ITurnstileValidationService, TurnstileValidationServi
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+builder.Services.AddScoped<ClothInventoryApp.Filters.ActiveTenantFilter>();
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AppClaimsPrincipalFactory>();
 builder.Services.AddHostedService<ClothInventoryApp.Services.Subscription.SubscriptionExpiryService>();
 
@@ -172,6 +175,18 @@ app.Use(async (context, next) =>
     headers["X-XSS-Protection"] = "1; mode=block";
     headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
     headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()";
+    headers["Content-Security-Policy"] =
+        "default-src 'self'; " +
+        "base-uri 'self'; " +
+        "object-src 'none'; " +
+        "frame-ancestors 'none'; " +
+        "script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com; " +
+        "style-src 'self' https://cdn.jsdelivr.net https://fonts.googleapis.com; " +
+        "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net data:; " +
+        "img-src 'self' data: https:; " +
+        "connect-src 'self' https://challenges.cloudflare.com; " +
+        "frame-src https://challenges.cloudflare.com; " +
+        "form-action 'self';";
     await next();
 });
 

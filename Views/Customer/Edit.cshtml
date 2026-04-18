@@ -69,20 +69,19 @@
 
                 <div class="form-group-modern form-group-full">
                     <label asp-for="Notes" class="form-label-modern"></label>
-                    <textarea asp-for="Notes" class="input-modern" rows="3"
-                              style="height:auto;padding-top:.75rem;padding-left:1rem"
+                    <textarea asp-for="Notes" class="input-modern textarea-modern" rows="3"
                               placeholder="Any additional notes…"></textarea>
                     <span asp-validation-for="Notes" class="field-validation-modern"></span>
                 </div>
 
                 <div class="form-group-modern form-group-full">
-                    <div class="status-toggle-card" onclick="document.getElementById('isActiveToggle').click()">
+                    <div class="status-toggle-card" data-toggle-target="isActiveToggle">
                         <div class="status-toggle-copy">
                             <div class="status-toggle-title">Active Customer</div>
                             <div class="status-toggle-text">Active customers appear in the sale customer picker.</div>
                         </div>
                         <div class="status-toggle-switch">
-                            <input asp-for="IsActive" id="isActiveToggle" class="form-check-input modern-switch" type="checkbox" onclick="event.stopPropagation()" />
+                            <input asp-for="IsActive" id="isActiveToggle" class="form-check-input modern-switch" type="checkbox" data-toggle-stop />
                         </div>
                     </div>
                 </div>

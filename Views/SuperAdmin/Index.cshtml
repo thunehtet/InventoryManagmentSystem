@@ -21,10 +21,10 @@
                 System-wide overview — tenants, subscriptions, and platform health.
             </p>
             <div class="dashboard-hero-actions">
-                <a asp-action="Tenants" class="btn-dashboard-secondary">
+                <a asp-controller="Tenant" asp-action="Index" class="btn-dashboard-secondary">
                     <i class="bi bi-building"></i> View All Tenants
                 </a>
-                <a asp-action="Subscriptions" class="btn-dashboard-secondary">
+                <a asp-controller="Subscription" asp-action="Index" class="btn-dashboard-secondary">
                     <i class="bi bi-credit-card-fill"></i> Subscriptions
                 </a>
             </div>
@@ -100,11 +100,11 @@
         <!-- Recent Tenants -->
         <div class="superadmin-panel">
             <div class="superadmin-panel-header-with-action">
-                <div class="superadmin-panel-header" style="margin-bottom:0;">
+                <div class="superadmin-panel-header superadmin-hero-header-tight">
                     <h3>Recent Tenants</h3>
                     <p>Latest registered workspaces</p>
                 </div>
-                <a asp-action="Tenants" class="superadmin-panel-link">
+                <a asp-controller="Tenant" asp-action="Index" class="superadmin-panel-link">
                     View all <i class="bi bi-arrow-right"></i>
                 </a>
             </div>
@@ -163,7 +163,7 @@
                         <div class="plan-dist-row">
                             <span class="plan-dist-name">@p.PlanName</span>
                             <div class="plan-dist-bar-wrap">
-                                <div class="plan-dist-bar" style="width:@pct.ToString("F0")%"></div>
+                                <progress class="plan-dist-bar" max="100" value="@pct.ToString("F0")">@pct.ToString("F0")%</progress>
                             </div>
                             <span class="plan-dist-count">@p.Count</span>
                         </div>
@@ -176,7 +176,7 @@
             }
 
             <div class="mt-4">
-                <a asp-action="Plans" class="superadmin-panel-link">
+                <a asp-controller="Plan" asp-action="Index" class="superadmin-panel-link">
                     Manage plans <i class="bi bi-arrow-right"></i>
                 </a>
             </div>

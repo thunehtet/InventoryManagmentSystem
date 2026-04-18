@@ -13,8 +13,13 @@ namespace ClothInventoryApp.Controllers
     public class SubscriptionController : Controller
     {
         private readonly AppDbContext _db;
+        private readonly ISubscriptionService _subscriptionService;
 
-        public SubscriptionController(AppDbContext db) => _db = db;
+        public SubscriptionController(AppDbContext db, ISubscriptionService subscriptionService)
+        {
+            _db = db;
+            _subscriptionService = subscriptionService;
+        }
 
         public async Task<IActionResult> Index(string? search, int page = 1, int size = 10)
         {
@@ -50,11 +55,13 @@ namespace ClothInventoryApp.Controllers
         public async Task<IActionResult> Create()
         {
             await LoadDropDowns();
-            ViewBag.ActiveSubByTenant = await _db.TenantSubscriptions
+            ViewBag.ActiveSubByTenant = (await _db.TenantSubscriptions
                 .AsNoTracking().IgnoreQueryFilters()
                 .Where(s => s.IsActive)
                 .Include(s => s.Plan)
-                .ToDictionaryAsync(s => s.TenantId, s => s.Plan.Name);
+                .ToListAsync())
+                .GroupBy(s => s.TenantId)
+                .ToDictionary(g => g.Key, g => g.First().Plan.Name);
             return View(new SubscriptionCreateDto());
         }
 
@@ -63,40 +70,59 @@ namespace ClothInventoryApp.Controllers
         {
             if (!ModelState.IsValid) { await LoadDropDowns(); return View(dto); }
 
-            var existing = await _db.TenantSubscriptions
-                .IgnoreQueryFilters()
-                .Where(s => s.TenantId == dto.TenantId && s.IsActive)
-                .ToListAsync();
-
+            var now = DateTime.UtcNow;
             string? replacedMsg = null;
-            if (existing.Any())
+
+            await using var transaction = await _db.Database.BeginTransactionAsync();
+            try
             {
-                var now = DateTime.UtcNow;
-                foreach (var s in existing)
+                var existing = await _db.TenantSubscriptions
+                    .IgnoreQueryFilters()
+                    .Where(s => s.TenantId == dto.TenantId && s.IsActive)
+                    .ToListAsync();
+
+                if (existing.Any())
                 {
-                    // Load navigations needed for the archive snapshot
-                    await _db.Entry(s).Reference(x => x.Plan).LoadAsync();
-                    await _db.Entry(s).Reference(x => x.Tenant).LoadAsync();
+                    foreach (var s in existing)
+                    {
+                        await _db.Entry(s).Reference(x => x.Plan).LoadAsync();
+                        await _db.Entry(s).Reference(x => x.Tenant).LoadAsync();
 
-                    _db.PastSubscriptions.Add(
-                        SubscriptionExpiryService.BuildArchiveRecord(s, now, "Replaced",
-                            $"Replaced by new subscription created on {now:yyyy-MM-dd}."));
+                        _db.PastSubscriptions.Add(
+                            SubscriptionExpiryService.BuildArchiveRecord(s, now, "Replaced",
+                                $"Replaced by new subscription created on {now:yyyy-MM-dd}."));
 
-                    s.IsActive = false;
-                    s.UpdatedAt = now;
+                        s.IsActive = false;
+                        s.UpdatedAt = now;
+                    }
+                    replacedMsg = this.LocalizeShared("{0} previous subscription(s) archived and deactivated.", existing.Count);
                 }
-                replacedMsg = this.LocalizeShared("{0} previous subscription(s) archived and deactivated.", existing.Count);
+
+                _db.TenantSubscriptions.Add(new TenantSubscription
+                {
+                    TenantId = dto.TenantId, PlanId = dto.PlanId,
+                    StartDate = dto.StartDate, EndDate = dto.EndDate,
+                    BillingCycle = dto.BillingCycle, Price = dto.Price,
+                    IsTrial = dto.IsTrial, IsActive = dto.IsActive,
+                    Notes = dto.Notes, CreatedAt = now
+                });
+
+                await _db.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                _db.ChangeTracker.Clear();
+                throw;
             }
 
-            _db.TenantSubscriptions.Add(new TenantSubscription
+            if (dto.IsActive)
             {
-                TenantId = dto.TenantId, PlanId = dto.PlanId,
-                StartDate = dto.StartDate, EndDate = dto.EndDate,
-                BillingCycle = dto.BillingCycle, Price = dto.Price,
-                IsTrial = dto.IsTrial, IsActive = dto.IsActive,
-                Notes = dto.Notes, CreatedAt = DateTime.UtcNow
-            });
-            await _db.SaveChangesAsync();
+                var newPlan = await _db.Plans.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.Id == dto.PlanId);
+                if (string.Equals(newPlan?.Code, "FREE", StringComparison.OrdinalIgnoreCase))
+                    await _subscriptionService.ResetMonthlyFeatureUsageAsync(dto.TenantId);
+            }
 
             TempData["SuccessMsg"]      = replacedMsg == null
                 ? "Subscription created."
@@ -127,7 +153,10 @@ namespace ClothInventoryApp.Controllers
             var s = await _db.TenantSubscriptions.IgnoreQueryFilters().FirstOrDefaultAsync(x => x.Id == dto.Id);
             if (s == null) return NotFound();
 
-            var editNow = DateTime.UtcNow;
+            var editNow      = DateTime.UtcNow;
+            var oldPlanId    = s.PlanId;
+            var oldTenantId  = s.TenantId;
+            var wasActive    = s.IsActive;
 
             if (dto.IsActive)
             {
@@ -164,6 +193,18 @@ namespace ClothInventoryApp.Controllers
             s.IsTrial = dto.IsTrial; s.IsActive = dto.IsActive;
             s.Notes = dto.Notes; s.UpdatedAt = DateTime.UtcNow;
             await _db.SaveChangesAsync();
+
+            // Reset feature usage when the active plan is changed to FREE or activated as FREE
+            bool planChanged    = dto.PlanId    != oldPlanId;
+            bool tenantChanged  = dto.TenantId  != oldTenantId;
+            bool justActivated  = !wasActive && dto.IsActive;
+            if (dto.IsActive && (planChanged || tenantChanged || justActivated))
+            {
+                var newPlan = await _db.Plans.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.Id == dto.PlanId);
+                if (string.Equals(newPlan?.Code, "FREE", StringComparison.OrdinalIgnoreCase))
+                    await _subscriptionService.ResetMonthlyFeatureUsageAsync(dto.TenantId);
+            }
+
             TempData["SuccessMsg"]      = "Subscription updated.";
             TempData["SuccessType"]     = "update";
             TempData["SuccessListUrl"]  = Url.Action("Index", "Subscription");
@@ -183,10 +224,57 @@ namespace ClothInventoryApp.Controllers
         [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var s = await _db.TenantSubscriptions.IgnoreQueryFilters().FirstOrDefaultAsync(x => x.Id == id);
+            var s = await _db.TenantSubscriptions
+                .IgnoreQueryFilters()
+                .Include(x => x.Plan)
+                .Include(x => x.Tenant)
+                .FirstOrDefaultAsync(x => x.Id == id);
             if (s == null) return NotFound();
+
+            var now = DateTime.UtcNow;
+            var tenantId = s.TenantId;
+            var wasActive = s.IsActive;
+
+            // Archive before deleting so the audit trail is preserved
+            _db.PastSubscriptions.Add(
+                SubscriptionExpiryService.BuildArchiveRecord(s, now, "Cancelled",
+                    $"Manually deleted via admin UI on {now:yyyy-MM-dd}."));
+
             _db.TenantSubscriptions.Remove(s);
             await _db.SaveChangesAsync();
+
+            // If the deleted sub was active, ensure the tenant still has a subscription
+            if (wasActive)
+            {
+                var stillActive = await _db.TenantSubscriptions
+                    .IgnoreQueryFilters()
+                    .AnyAsync(x => x.TenantId == tenantId && x.IsActive);
+
+                if (!stillActive)
+                {
+                    var freePlan = await _db.Plans.IgnoreQueryFilters()
+                        .FirstOrDefaultAsync(p => p.Code == "FREE" && p.IsActive);
+                    if (freePlan != null)
+                    {
+                        _db.TenantSubscriptions.Add(new TenantSubscription
+                        {
+                            TenantId     = tenantId,
+                            PlanId       = freePlan.Id,
+                            StartDate    = now,
+                            EndDate      = now.AddYears(1),
+                            BillingCycle = "Free",
+                            Price        = 0,
+                            IsTrial      = false,
+                            IsActive     = true,
+                            Notes        = $"Auto-assigned after subscription {id} was deleted on {now:yyyy-MM-dd}.",
+                            CreatedAt    = now
+                        });
+                        await _db.SaveChangesAsync();
+                        await _subscriptionService.ResetMonthlyFeatureUsageAsync(tenantId);
+                    }
+                }
+            }
+
             TempData["SuccessMsg"]      = "Subscription deleted.";
             TempData["SuccessType"]     = "delete";
             TempData["SuccessListUrl"]  = Url.Action("Index", "Subscription");

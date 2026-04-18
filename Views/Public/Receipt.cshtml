@@ -15,7 +15,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="~/images/websitelogo.png" asp-append-version="true" />
-    <title>Receipt - @tenantName</title>
+    <title>@Localizer["Receipt"] - @tenantName</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -29,7 +29,7 @@
         <article class="receipt-card">
             <header class="receipt-header">
                 <div>
-                    <div class="receipt-kicker">Shared Receipt</div>
+                    <div class="receipt-kicker">@Localizer["Shared Receipt"]</div>
                     <div class="public-brand-banner public-brand-banner--receipt">
                         <div class="public-tenant-brand">
                             <div class="public-tenant-logo">
@@ -44,7 +44,7 @@
                             </div>
                             <div>
                                 <h1 class="receipt-title">@tenantName</h1>
-                                <div class="public-tenant-label">Official customer receipt</div>
+                                <div class="public-tenant-label">@Localizer["Official customer receipt"]</div>
                             </div>
                         </div>
                         <div class="public-powered-by">
@@ -65,19 +65,19 @@
                 </div>
 
                 <div class="receipt-date-block">
-                    <div class="receipt-label">Date</div>
+                    <div class="receipt-label">@Localizer["Date"]</div>
                     <div class="receipt-date">@Model.SaleDate.ToString("dd MMM yyyy")</div>
                 </div>
             </header>
 
             <section class="receipt-share">
-                <button type="button" class="public-btn public-btn--primary" data-share-url="@receiptUrl" data-share-title="Receipt from @tenantName">
+                <button type="button" class="public-btn public-btn--primary" data-share-url="@receiptUrl" data-share-title="@string.Format(Localizer["Receipt from {0}"].Value, tenantName)">
                     <i class="bi bi-share-fill"></i>
-                    <span>Share Receipt</span>
+                    <span>@Localizer["Share Receipt"]</span>
                 </button>
                 <button type="button" class="public-btn public-btn--ghost" data-copy-text="@receiptUrl">
                     <i class="bi bi-link-45deg"></i>
-                    <span>Copy Link</span>
+                    <span>@Localizer["Copy Link"]</span>
                 </button>
                 <a class="public-btn public-btn--ghost" href="https://www.facebook.com/sharer/sharer.php?u=@Uri.EscapeDataString(receiptUrl)" target="_blank" rel="noopener noreferrer">
                     <i class="bi bi-messenger"></i>
@@ -93,10 +93,10 @@
                 <table class="receipt-table">
                     <thead>
                         <tr>
-                            <th>Product</th>
+                            <th>@Localizer["Product"]</th>
                             <th class="receipt-num">Qty</th>
-                            <th class="receipt-num">Price</th>
-                            <th class="receipt-num">Total</th>
+                            <th class="receipt-num">@Localizer["Price"]</th>
+                            <th class="receipt-num">@Localizer["Total"]</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -117,12 +117,12 @@
                 @if (Model.Discount > 0)
                 {
                     <div class="receipt-total-row">
-                        <span>Discount</span>
+                        <span>@Localizer["Discount"]</span>
                         <span>- @Model.Discount.ToString("N0") @currency</span>
                     </div>
                 }
                 <div class="receipt-total-row receipt-total-row--final">
-                    <span>Total</span>
+                    <span>@Localizer["Total"]</span>
                     <span>@Model.TotalAmount.ToString("N0") @currency</span>
                 </div>
             </section>

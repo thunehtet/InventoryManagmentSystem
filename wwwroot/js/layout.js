@@ -9,6 +9,7 @@
     const sidebar      = document.getElementById('sidebar');
     const sidebarBrand = document.getElementById('sidebarBrand');
     const overlay      = document.getElementById('sidebarOverlay');
+    const userMenuToggle = document.getElementById('userMenuToggle');
     const body         = document.body;
     const MOBILE_BP    = 900;
 
@@ -70,6 +71,9 @@
     }
 
     window.addEventListener('resize', handleResize);
+    if (isMobile()) {
+        sidebar.classList.add('collapsed');
+    }
     handleResize();
     // Remove data-initial after first paint so transitions work for user interactions
     requestAnimationFrame(function () {
@@ -77,7 +81,7 @@
     });
 
     // ── User dropdown ──────────────────────────────────────────
-    window.toggleUserMenu = function () {
+    function toggleUserMenu() {
         var menu = document.getElementById('userMenu');
         if (!menu) return;
         // On mobile use fixed positioning anchored to the button's screen coordinates
@@ -98,7 +102,14 @@
             }
         }
         menu.classList.toggle('show');
-    };
+    }
+
+    if (userMenuToggle) {
+        userMenuToggle.addEventListener('click', function (event) {
+            event.stopPropagation();
+            toggleUserMenu();
+        });
+    }
 
     document.addEventListener('click', function (e) {
         if (!e.target.closest('.user-dropdown')) {

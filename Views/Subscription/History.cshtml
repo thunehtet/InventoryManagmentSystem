@@ -27,22 +27,22 @@
     <!-- Stats strip -->
     @{ var histTotalCount = (ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel)?.TotalCount ?? Model.Count(); }
     <div class="d-flex gap-3 mb-4 flex-wrap">
-        <div class="hero-stat-card" style="min-width:160px">
+        <div class="hero-stat-card superadmin-minw-160">
             <div class="hero-stat-icon"><i class="bi bi-archive-fill"></i></div>
             <div class="hero-stat-title">Total Archived</div>
             <div class="hero-stat-text">@histTotalCount records</div>
         </div>
-        <div class="hero-stat-card" style="min-width:160px">
+        <div class="hero-stat-card superadmin-minw-160">
             <div class="hero-stat-icon"><i class="bi bi-calendar-x-fill"></i></div>
             <div class="hero-stat-title">Expired</div>
             <div class="hero-stat-text">@Model.Count(r => r.Reason == "Expired") (this page)</div>
         </div>
-        <div class="hero-stat-card" style="min-width:160px">
+        <div class="hero-stat-card superadmin-minw-160">
             <div class="hero-stat-icon"><i class="bi bi-arrow-repeat"></i></div>
             <div class="hero-stat-title">Replaced</div>
             <div class="hero-stat-text">@Model.Count(r => r.Reason == "Replaced") (this page)</div>
         </div>
-        <div class="hero-stat-card" style="min-width:160px">
+        <div class="hero-stat-card superadmin-minw-160">
             <div class="hero-stat-icon"><i class="bi bi-x-circle-fill"></i></div>
             <div class="hero-stat-title">Cancelled</div>
             <div class="hero-stat-text">@Model.Count(r => r.Reason == "Cancelled") (this page)</div>
@@ -63,7 +63,7 @@
         </button>
         @if (!string.IsNullOrWhiteSpace(ViewBag.Search as string))
         {
-            <a asp-action="History" asp-route-size="@(histpg?.PageSize ?? 10)" class="sa-btn-back" style="height:40px;padding:0 14px">Clear</a>
+            <a asp-action="History" asp-route-size="@(histpg?.PageSize ?? 10)" class="sa-btn-back superadmin-btn-compact">Clear</a>
         }
     </form>
 
@@ -87,7 +87,7 @@
                     {
                         <tr>
                             <td colspan="8" class="text-center text-muted py-4">
-                                <i class="bi bi-inbox" style="font-size:2rem;opacity:.3"></i>
+                                <i class="bi bi-inbox superadmin-empty-icon"></i>
                                 <div class="mt-2">No archived subscriptions yet.</div>
                             </td>
                         </tr>
@@ -102,7 +102,7 @@
                                     @r.PlanName
                                     @if (r.IsTrial)
                                     {
-                                        <span class="status-badge trial ms-1" style="font-size:10px">Trial</span>
+                                        <span class="status-badge trial ms-1 superadmin-badge-trial-sm">Trial</span>
                                     }
                                 </td>
                                 <td class="text-muted small">@r.BillingCycle</td>
@@ -116,12 +116,12 @@
                                         @r.Price.ToString("N0")
                                     }
                                 </td>
-                                <td class="text-muted small" style="white-space:nowrap">
+                                <td class="text-muted small superadmin-nowrap">
                                     @r.StartDate.ToString("dd MMM yyyy")
-                                    <span style="color:#cbd5e1">→</span>
+                                    <span class="superadmin-arrow-muted">→</span>
                                     @r.EndDate.ToString("dd MMM yyyy")
                                 </td>
-                                <td class="text-muted small" style="white-space:nowrap">
+                                <td class="text-muted small superadmin-nowrap">
                                     @r.ArchivedAt.ToString("dd MMM yyyy HH:mm")
                                 </td>
                                 <td>
@@ -138,7 +138,7 @@
                                         <i class="bi @icon me-1"></i>@r.Reason
                                     </span>
                                 </td>
-                                <td class="text-muted small" style="max-width:220px;white-space:normal">
+                                <td class="text-muted small superadmin-cell-wrap">
                                     @(r.Notes ?? "—")
                                 </td>
                             </tr>

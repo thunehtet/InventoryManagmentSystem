@@ -86,14 +86,14 @@
                         foreach (var item in Model)
                         {
                             <tr>
-                                <td class="text-muted" style="font-size:0.875rem">@item.SaleDate.ToString("dd MMM yyyy")</td>
+                                <td class="text-muted table-cell-sm">@item.SaleDate.ToString("dd MMM yyyy")</td>
                                 @if (hasCustomers)
                                 {
                                     <td>
                                         @if (item.CustomerId.HasValue)
                                         {
                                             <a asp-controller="Customer" asp-action="Details" asp-route-id="@item.CustomerId"
-                                               style="color:#6366f1;text-decoration:none;font-weight:600">
+                                               class="link-inline-primary">
                                                 <i class="bi bi-person-fill me-1"></i>@item.CustomerName
                                             </a>
                                         }
@@ -116,8 +116,7 @@
                                 <td>
                                     <div class="table-actions">
                                         <a asp-action="Details" asp-route-id="@item.Id" class="action-btn action-btn-view" title="@Localizer["Details"]"><i class="bi bi-eye-fill"></i></a>
-                                        <a asp-action="InvoicePdf" asp-route-id="@item.Id" class="action-btn" title="@Localizer["Download Invoice PDF"]"
-                                           style="color:#6366f1;border-color:#e0e7ff;background:#f5f3ff"><i class="bi bi-file-earmark-pdf-fill"></i></a>
+                                        <a asp-action="InvoicePdf" asp-route-id="@item.Id" class="action-btn action-btn-pdf" title="@Localizer["Download Invoice PDF"]"><i class="bi bi-file-earmark-pdf-fill"></i></a>
                                         @if (User.IsInRole("Admin"))
                                         {
                                             <a asp-action="Delete" asp-route-id="@item.Id" class="action-btn action-btn-delete" title="@Localizer["Delete"]"><i class="bi bi-trash-fill"></i></a>

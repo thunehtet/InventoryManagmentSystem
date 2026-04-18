@@ -200,6 +200,11 @@ a  { text-decoration: none; color: inherit; }
     box-shadow: 0 4px 16px rgba(99,102,241,.35);
 }
 
+.btn-nav-cta-mobile {
+    text-align: center;
+    padding: 11px 20px;
+}
+
 .btn-nav-cta:hover {
     background: var(--brand-dark);
     color: #fff;
@@ -792,6 +797,19 @@ a  { text-decoration: none; color: inherit; }
     padding: 32px;
     position: relative;
     transition: transform .25s, box-shadow .25s;
+}
+
+.price-card-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #94a3b8;
+}
+
+.price-card-empty-icon {
+    display: block;
+    margin-bottom: 1rem;
+    font-size: 2rem;
 }
 
 .price-card:hover {

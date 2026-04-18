@@ -5,6 +5,13 @@
     var currency = ViewData["Currency"] as string ?? "";
     var pg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel;
     var inviteLinks = ViewBag.InviteLinks as List<CustomerInviteLinkDto> ?? new();
+
+    int inviteUsed    = ViewBag.InviteUsed is int iu ? iu : 0;
+    int? inviteMax    = ViewBag.InviteMax as int?;
+    bool inviteLocked = inviteMax.HasValue && inviteUsed >= inviteMax.Value;
+
+    string? limitFeature = TempData["LimitFeature"] as string;
+    int? limitMax        = TempData["LimitMax"] as int?;
 }
 
 <div class="product-index-shell customer-page-shell">
@@ -22,12 +29,26 @@
                     <a asp-action="Create" class="btn-modern-primary">
                         <i class="bi bi-person-plus-fill"></i> @Localizer["Add Customer"]
                     </a>
-                    <form asp-action="CreateInviteLink" method="post" class="customer-inline-form">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn-modern-outline">
-                            <i class="bi bi-link-45deg"></i> @Localizer["Create Share Link"]
-                        </button>
-                    </form>
+                    @if (inviteLocked)
+                    {
+                        <span class="btn-modern-outline sa-limit-btn" title="@string.Format(Localizer["You have used all {0} free invite links this month. Upgrade to create more."].Value, inviteMax)">
+                            <i class="bi bi-lock-fill"></i> @Localizer["Create Share Link"]
+                            <span class="sa-limit-badge">@inviteUsed / @inviteMax</span>
+                        </span>
+                    }
+                    else
+                    {
+                        <form asp-action="CreateInviteLink" method="post" class="customer-inline-form">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-modern-outline">
+                                <i class="bi bi-link-45deg"></i> @Localizer["Create Share Link"]
+                                @if (inviteMax.HasValue)
+                                {
+                                    <span class="sa-limit-badge sa-limit-badge--ok">@inviteUsed / @inviteMax</span>
+                                }
+                            </button>
+                        </form>
+                    }
                 }
             </div>
         </div>
@@ -40,11 +61,26 @@
         </div>
     </div>
 
+    @if (limitFeature == "customer_invite")
+    {
+        <div class="sa-limit-banner">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            @string.Format(Localizer["You have used all {0} free customer invite links this month."].Value, limitMax)
+            <a asp-controller="Subscription" asp-action="Index" class="sa-limit-upgrade-link">@Localizer["Upgrade to unlock unlimited"]</a>
+        </div>
+    }
+
     <section class="customer-share-card">
         <div class="customer-share-card__header">
             <div>
                 <h2>@Localizer["Customer Share Links"]</h2>
                 <p>@Localizer["Each link is tenant-isolated, expires after 7 days, and becomes invalid after one registration."]</p>
+                @if (inviteMax.HasValue)
+                {
+                    <span class="sa-usage-pill @(inviteLocked ? "sa-usage-pill--warn" : "")">
+                        <i class="bi bi-link-45deg"></i> @inviteUsed / @inviteMax @Localizer["invite links this month"]
+                    </span>
+                }
             </div>
         </div>
 

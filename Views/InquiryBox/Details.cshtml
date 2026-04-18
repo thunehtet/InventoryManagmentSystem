@@ -59,7 +59,7 @@
 
         <div class="product-table-card mb-4">
             <h4 class="mb-3">Inquiry Notes</h4>
-            <div class="text-muted" style="white-space:pre-wrap;line-height:1.7;">
+            <div class="text-muted superadmin-detail-prewrap">
                 @(string.IsNullOrWhiteSpace(Model.Message) ? "-" : Model.Message)
             </div>
         </div>
@@ -107,7 +107,7 @@
             <div class="d-flex flex-wrap gap-2">
                 <a asp-action="Index" class="btn-modern-outline">@Localizer["Back"]</a>
                 <form asp-action="Delete" asp-route-id="@Model.Id" method="post"
-                      onsubmit="return confirm('Delete this inquiry permanently?');" class="m-0">
+                      data-confirm-message="Delete this inquiry permanently?" class="m-0">
                     @Html.AntiForgeryToken()
                     <button type="submit" class="btn-modern-danger">
                         <i class="bi bi-trash"></i> Delete

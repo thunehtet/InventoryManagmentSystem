@@ -100,7 +100,9 @@
 .brand-logo img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    display: block;
+    padding: 6px;
 }
 
 .brand-logo-fallback {
@@ -353,9 +355,25 @@
 }
 
 .user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     font-size: 1.3rem;
     color: #635bff;
     line-height: 1;
+    background: #eef2ff;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .user-name {

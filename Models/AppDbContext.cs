@@ -53,6 +53,7 @@ namespace ClothInventoryApp.Data
         public DbSet<CustomerInviteLink> CustomerInviteLinks => Set<CustomerInviteLink>();
         public DbSet<UploadedFile> UploadedFiles => Set<UploadedFile>();
         public DbSet<SubscriptionPaymentRequest> SubscriptionPaymentRequests => Set<SubscriptionPaymentRequest>();
+        public DbSet<TenantFeatureUsage> TenantFeatureUsages => Set<TenantFeatureUsage>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -327,6 +328,15 @@ namespace ClothInventoryApp.Data
 
             modelBuilder.Entity<PastSubscription>()
                 .HasIndex(p => p.ArchivedAt);
+
+            modelBuilder.Entity<TenantFeatureUsage>()
+                .HasKey(x => new { x.TenantId, x.YearMonth, x.Feature });
+
+            modelBuilder.Entity<TenantFeatureUsage>()
+                .HasOne(x => x.Tenant)
+                .WithMany()
+                .HasForeignKey(x => x.TenantId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

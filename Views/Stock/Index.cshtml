@@ -85,7 +85,7 @@
                         foreach (var item in Model)
                         {
                             <tr>
-                                <td class="fw-semibold" style="font-size:0.875rem">@item.ProductVariantName</td>
+                                <td class="fw-semibold table-cell-sm">@item.ProductVariantName</td>
                                 <td>
                                     @if (item.MovementType == "IN")
                                     {
@@ -93,7 +93,7 @@
                                     }
                                     else if (item.MovementType == "OUT")
                                     {
-                                        <span class="badge-modern" style="background:#fee2e2;color:#dc2626;">OUT</span>
+                                        <span class="badge-modern badge-out-danger">OUT</span>
                                     }
                                     else
                                     {
@@ -101,8 +101,8 @@
                                     }
                                 </td>
                                 <td class="fw-semibold">@item.Quantity</td>
-                                <td class="text-muted" style="font-size:0.875rem">@item.MovementDate.ToString("dd MMM yyyy")</td>
-                                <td class="text-muted" style="font-size:0.875rem">@(item.Remarks ?? "—")</td>
+                                <td class="text-muted table-cell-sm">@item.MovementDate.ToString("dd MMM yyyy")</td>
+                                <td class="text-muted table-cell-sm">@(item.Remarks ?? "—")</td>
                                 <td>
                                     <div class="table-actions">
                                         <a asp-action="Details" asp-route-id="@item.Id" class="action-btn action-btn-view" title="Details"><i class="bi bi-eye-fill"></i></a>

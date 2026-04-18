@@ -48,6 +48,10 @@ namespace ClothInventoryApp.Controllers
                 Name = dto.Name, Code = dto.Code, Description = dto.Description,
                 PriceMonthly = dto.PriceMonthly, PriceYearly = dto.PriceYearly,
                 MaxUsers = dto.MaxUsers, MaxProducts = dto.MaxProducts,
+                MaxMonthlySales = dto.MaxMonthlySales,
+                MaxMonthlyPdfInvoices = dto.MaxMonthlyPdfInvoices,
+                MaxMonthlyReceiptShares = dto.MaxMonthlyReceiptShares,
+                MaxMonthlyCustomerInvites = dto.MaxMonthlyCustomerInvites,
                 IsActive = dto.IsActive, CreatedAt = DateTime.UtcNow
             });
             await _db.SaveChangesAsync();
@@ -65,7 +69,12 @@ namespace ClothInventoryApp.Controllers
             {
                 Id = p.Id, Name = p.Name, Code = p.Code, Description = p.Description,
                 PriceMonthly = p.PriceMonthly, PriceYearly = p.PriceYearly,
-                MaxUsers = p.MaxUsers, MaxProducts = p.MaxProducts, IsActive = p.IsActive
+                MaxUsers = p.MaxUsers, MaxProducts = p.MaxProducts,
+                MaxMonthlySales = p.MaxMonthlySales,
+                MaxMonthlyPdfInvoices = p.MaxMonthlyPdfInvoices,
+                MaxMonthlyReceiptShares = p.MaxMonthlyReceiptShares,
+                MaxMonthlyCustomerInvites = p.MaxMonthlyCustomerInvites,
+                IsActive = p.IsActive
             });
         }
 
@@ -82,7 +91,12 @@ namespace ClothInventoryApp.Controllers
             if (p == null) return NotFound();
             p.Name = dto.Name; p.Code = dto.Code; p.Description = dto.Description;
             p.PriceMonthly = dto.PriceMonthly; p.PriceYearly = dto.PriceYearly;
-            p.MaxUsers = dto.MaxUsers; p.MaxProducts = dto.MaxProducts; p.IsActive = dto.IsActive;
+            p.MaxUsers = dto.MaxUsers; p.MaxProducts = dto.MaxProducts;
+            p.MaxMonthlySales = dto.MaxMonthlySales;
+            p.MaxMonthlyPdfInvoices = dto.MaxMonthlyPdfInvoices;
+            p.MaxMonthlyReceiptShares = dto.MaxMonthlyReceiptShares;
+            p.MaxMonthlyCustomerInvites = dto.MaxMonthlyCustomerInvites;
+            p.IsActive = dto.IsActive;
             await _db.SaveChangesAsync();
             TempData["SuccessMsg"]      = this.LocalizeShared("Plan '{0}' updated.", p.Name);
             TempData["SuccessType"]     = "update";

@@ -1,5 +1,6 @@
 using ClothInventoryApp.Data;
 using ClothInventoryApp.Dtos.Tenant;
+using ClothInventoryApp.Filters;
 using ClothInventoryApp.Models;
 using ClothInventoryApp.Services.Email;
 using ClothInventoryApp.Services.Identity;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using System.Net;
 
 namespace ClothInventoryApp.Controllers
@@ -18,6 +20,7 @@ namespace ClothInventoryApp.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ITemporaryCredentialService _temporaryCredentialService;
         private readonly IEmailService _emailService;
+        private readonly IMemoryCache _cache;
         private readonly ILogger<TenantController> _logger;
 
         public TenantController(
@@ -25,12 +28,14 @@ namespace ClothInventoryApp.Controllers
             UserManager<ApplicationUser> userManager,
             ITemporaryCredentialService temporaryCredentialService,
             IEmailService emailService,
+            IMemoryCache cache,
             ILogger<TenantController> logger)
         {
             _db = db;
             _userManager = userManager;
             _temporaryCredentialService = temporaryCredentialService;
             _emailService = emailService;
+            _cache = cache;
             _logger = logger;
         }
 
@@ -176,6 +181,8 @@ namespace ClothInventoryApp.Controllers
             t.IsActive = dto.IsActive; t.UpdatedAt = DateTime.UtcNow;
             await _db.SaveChangesAsync();
 
+            _cache.Remove(ActiveTenantFilter.CacheKey(t.Id));
+
             TempData["SuccessMsg"]      = this.LocalizeShared("Tenant '{0}' updated.", t.Name);
             TempData["SuccessType"]     = "update";
             TempData["SuccessListUrl"]  = Url.Action("Index", "Tenant");
@@ -230,6 +237,7 @@ namespace ClothInventoryApp.Controllers
             if (t == null) return NotFound();
             t.IsActive = !t.IsActive; t.UpdatedAt = DateTime.UtcNow;
             await _db.SaveChangesAsync();
+            _cache.Remove(ActiveTenantFilter.CacheKey(t.Id));
             TempData["SuccessMsg"]      = t.IsActive
                 ? this.LocalizeShared("{0} activated.", t.Name)
                 : this.LocalizeShared("{0} deactivated.", t.Name);

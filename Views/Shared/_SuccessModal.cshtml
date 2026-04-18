@@ -29,7 +29,7 @@
 }
 @if (msg != null)
 {
-<div class="modal fade success-modal" id="successModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade success-modal" id="successModal" tabindex="-1" aria-hidden="true" data-auto-show="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content success-mc">
             <div class="success-check-ring @ringClass">
@@ -84,12 +84,5 @@
         </div>
     </div>
 </div>
-<script>
-    (function () {
-        var el = document.getElementById('successModal');
-        if (el && typeof bootstrap !== 'undefined') {
-            new bootstrap.Modal(el, { backdrop: 'static', keyboard: false }).show();
-        }
-    })();
-</script>
+<script src="~/js/success-modal.js" asp-append-version="true"></script>
 }

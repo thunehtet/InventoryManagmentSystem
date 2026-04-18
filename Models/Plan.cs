@@ -25,6 +25,11 @@ namespace ClothInventoryApp.Models
         public int? MaxVariants { get; set; }
         public int? MaxStorageMb { get; set; }
 
+        public int? MaxMonthlySales { get; set; }
+        public int? MaxMonthlyPdfInvoices { get; set; }
+        public int? MaxMonthlyReceiptShares { get; set; }
+        public int? MaxMonthlyCustomerInvites { get; set; }
+
         public bool IsActive { get; set; } = true;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

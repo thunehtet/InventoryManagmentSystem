@@ -30,6 +30,18 @@ namespace ClothInventoryApp.Dto.SuperAdmin
         [Display(Name = "Max Products")]
         public int? MaxProducts { get; set; }
 
+        [Display(Name = "Max Monthly Sales")]
+        public int? MaxMonthlySales { get; set; }
+
+        [Display(Name = "Max Monthly PDF Invoices")]
+        public int? MaxMonthlyPdfInvoices { get; set; }
+
+        [Display(Name = "Max Monthly Receipt Shares")]
+        public int? MaxMonthlyReceiptShares { get; set; }
+
+        [Display(Name = "Max Monthly Customer Invites")]
+        public int? MaxMonthlyCustomerInvites { get; set; }
+
         [Display(Name = "Is Active")]
         public bool IsActive { get; set; } = true;
     }

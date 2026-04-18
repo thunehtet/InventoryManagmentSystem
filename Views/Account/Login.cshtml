@@ -42,14 +42,14 @@
                 <div class="auth-deco-card auth-deco-card--2">
                     <div class="auth-deco-icon auth-deco-icon--green"><i class="bi bi-graph-up-arrow"></i></div>
                     <div>
-                        <div class="auth-deco-val" style="color:#34d399">+18%</div>
+                        <div class="auth-deco-val auth-deco-val-green">+18%</div>
                         <div class="auth-deco-lbl">@Localizer["Sales this month"]</div>
                     </div>
                 </div>
                 <div class="auth-deco-card auth-deco-card--3">
                     <div class="auth-deco-icon auth-deco-icon--amber"><i class="bi bi-exclamation-triangle-fill"></i></div>
                     <div>
-                        <div class="auth-deco-val" style="color:#fbbf24">3</div>
+                        <div class="auth-deco-val auth-deco-val-amber">3</div>
                         <div class="auth-deco-lbl">@Localizer["Low stock alerts"]</div>
                     </div>
                 </div>
@@ -132,6 +132,10 @@
                     </div>
 
                     <form asp-action="Login" method="post" class="auth-form">
+                        @if (ViewBag.Error != null)
+                        {
+                            <div class="alert alert-danger mb-3">@ViewBag.Error</div>
+                        }
                         <div asp-validation-summary="ModelOnly" class="auth-validation"></div>
 
                         <div class="auth-input-group">
@@ -160,7 +164,7 @@
                         <div class="auth-form-row">
                             <div class="form-check auth-check">
                                 <input asp-for="RememberMe" class="form-check-input" />
-                                <label asp-for="RememberMe" class="form-check-label" style="font-size:.88rem;color:#64748b;">@Localizer["Remember me"]</label>
+                                <label asp-for="RememberMe" class="form-check-label auth-remember-label">@Localizer["Remember me"]</label>
                             </div>
                             <a asp-action="ForgotPassword" class="auth-link">@Localizer["Forgot password?"]</a>
                         </div>

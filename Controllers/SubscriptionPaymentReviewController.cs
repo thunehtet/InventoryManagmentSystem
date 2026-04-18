@@ -19,6 +19,7 @@ namespace ClothInventoryApp.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IFileStorageService _fileStorageService;
         private readonly IEmailService _emailService;
+        private readonly ISubscriptionService _subscriptionService;
         private readonly ILogger<SubscriptionPaymentReviewController> _logger;
 
         public SubscriptionPaymentReviewController(
@@ -26,12 +27,14 @@ namespace ClothInventoryApp.Controllers
             UserManager<ApplicationUser> userManager,
             IFileStorageService fileStorageService,
             IEmailService emailService,
+            ISubscriptionService subscriptionService,
             ILogger<SubscriptionPaymentReviewController> logger)
         {
             _db = db;
             _userManager = userManager;
             _fileStorageService = fileStorageService;
             _emailService = emailService;
+            _subscriptionService = subscriptionService;
             _logger = logger;
         }
 
@@ -133,6 +136,9 @@ namespace ClothInventoryApp.Controllers
                 ? startDate.AddYears(1).AddDays(-1)
                 : startDate.AddMonths(1).AddDays(-1);
 
+            await using var transaction = await _db.Database.BeginTransactionAsync();
+            try
+            {
             var activeSubscriptions = await _db.TenantSubscriptions
                 .IgnoreQueryFilters()
                 .Where(s => s.TenantId == request.TenantId && s.IsActive)
@@ -175,6 +181,18 @@ namespace ClothInventoryApp.Controllers
             request.ApprovedSubscriptionId = subscription.Id;
 
             await _db.SaveChangesAsync();
+            await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                _db.ChangeTracker.Clear();
+                throw;
+            }
+
+            var approvedPlan = await _db.Plans.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.Id == request.PlanId);
+            if (string.Equals(approvedPlan?.Code, "FREE", StringComparison.OrdinalIgnoreCase))
+                await _subscriptionService.ResetMonthlyFeatureUsageAsync(request.TenantId);
 
             try
             {

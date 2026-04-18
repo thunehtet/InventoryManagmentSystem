@@ -41,11 +41,29 @@
         <div class="sc-order-head">
             <i class="bi bi-receipt-cutoff"></i>
             <span>@Localizer["New Sale"]</span>
+            @{
+                int saleUsed = ViewBag.MonthlySaleUsed is int su ? su : 0;
+                int? saleMax = ViewBag.MonthlySaleMax as int?;
+            }
+            @if (saleMax.HasValue)
+            {
+                <span class="sa-usage-pill @(saleUsed >= saleMax.Value ? "sa-usage-pill--warn" : "")">
+                    @saleUsed / @saleMax @Localizer["sales this month"]
+                </span>
+            }
         </div>
 
-        <form asp-action="Create" method="post" id="saleForm" class="sc-form">
+        <form asp-action="Create" method="post" id="saleForm" class="sc-form"
+              data-is-staff="@(isStaff ? "true" : "false")"
+              data-load-failed="@Localizer["Failed to load products. Please refresh."].Value"
+              data-all="@Localizer["All"].Value"
+              data-no-products="@Localizer["No products found"].Value"
+              data-out-of-stock="@Localizer["Out of stock"].Value"
+              data-left="@Localizer["left"].Value"
+              data-price="@Localizer["Price"].Value"
+              data-cart-required="@Localizer["Please add at least one product to the sale."].Value">
 
-            <div id="clientError" class="sc-error" style="display:none"></div>
+            <div id="clientError" class="sc-error sc-hidden"></div>
             <div asp-validation-summary="ModelOnly" class="sc-error"></div>
 
             <!-- Sale Date -->
@@ -67,9 +85,9 @@
                         <option value="@c.Value">@c.Text</option>
                     }
                 </select>
-                <div style="margin-top:4px">
+                <div class="sc-field-note">
                     <a asp-controller="Customer" asp-action="Create" target="_blank"
-                       style="font-size:12px;color:#6366f1;text-decoration:none">
+                       class="sc-field-link">
                         <i class="bi bi-person-plus-fill"></i> @Localizer["Add new customer"]
                     </a>
                 </div>
@@ -100,7 +118,7 @@
                     <span class="sc-total-label">@Localizer["Subtotal"]</span>
                     <span class="sc-total-val" id="sumRevenue">0</span>
                 </div>
-                <div class="sc-total-row" id="discountRow" style="display:none">
+                <div class="sc-total-row sc-hidden" id="discountRow">
                     <span class="sc-total-label">@Localizer["Discount"]</span>
                     <span class="sc-total-val sc-cost" id="sumDiscount">0</span>
                 </div>
@@ -141,20 +159,6 @@
 </div>
 
 @section Scripts {
-    <script>
-    window.salePageConfig = {
-        isStaff: @(isStaff ? "true" : "false"),
-        strings: {
-            loadFailed:   @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["Failed to load products. Please refresh."].Value)),
-            all:          @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["All"].Value)),
-            noProducts:   @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["No products found"].Value)),
-            outOfStock:   @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["Out of stock"].Value)),
-            left:         @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["left"].Value)),
-            price:        @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["Price"].Value)),
-            cartRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["Please add at least one product to the sale."].Value))
-        }
-    };
-    </script>
     <script src="~/js/sale-create.js" asp-append-version="true"></script>
 }
 

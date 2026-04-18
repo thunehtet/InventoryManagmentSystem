@@ -268,6 +268,8 @@
 .auth-deco-icon--amber { background: rgba(251,191,36,.18);  color: #fbbf24; }
 
 .auth-deco-val { font-size: 0.88rem; font-weight: 800; color: #fff; line-height: 1.2; }
+.auth-deco-val-green { color: #34d399; }
+.auth-deco-val-amber { color: #fbbf24; }
 .auth-deco-lbl { font-size: 0.66rem; color: rgba(255,255,255,.55); font-weight: 500; }
 
 /* ── Right: Form panel ───────────────────────────────────────── */
@@ -279,6 +281,16 @@
     padding: 40px 36px;
     background: rgba(255,255,255,.03);
     gap: 16px;
+}
+
+.auth-panel-compact {
+    max-width: 440px;
+    width: 100%;
+}
+
+.auth-panel-narrow {
+    max-width: 480px;
+    width: 100%;
 }
 
 /* Back to home link */
@@ -335,6 +347,15 @@
     margin-bottom: 14px;
 }
 
+.auth-card-avatar-danger {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.auth-card-avatar-success {
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+}
+
 /* ── Form ────────────────────────────────────────────────────── */
 .auth-form {
     display: flex;
@@ -349,6 +370,13 @@
     color: #be123c;
     padding: 10px 14px;
     font-size: 0.88rem;
+}
+
+.auth-validation-warning {
+    margin-bottom: .5rem;
+    background: rgba(251,191,36,.12);
+    border-color: #fbbf24;
+    color: #fbbf24;
 }
 
 .auth-input-group {
@@ -418,6 +446,10 @@
 
 .auth-link:hover { text-decoration: underline; color: #4f46e5; }
 
+.auth-submit-link {
+    text-decoration: none;
+}
+
 /* ── Submit button ───────────────────────────────────────────── */
 .auth-submit-btn {
     width: 100%;
@@ -441,6 +473,11 @@
     color: #fff;
     transform: translateY(-1px);
     box-shadow: 0 14px 32px rgba(99,102,241,.46);
+}
+
+.auth-submit-btn-secondary {
+    background: linear-gradient(135deg, #475569, #64748b);
+    box-shadow: 0 14px 30px rgba(71,85,105,.22);
 }
 
 .auth-submit-btn:active { transform: translateY(0); }
@@ -473,6 +510,155 @@
 }
 
 .auth-card-footer i { color: #6ee7b7; font-size: 0.78rem; }
+
+.auth-page-centered {
+    justify-content: center;
+    align-items: center;
+}
+
+.auth-icon-violet {
+    color: #7c3aed;
+}
+
+.auth-icon-success-lg {
+    color: #059669;
+    font-size: 2rem;
+}
+
+.auth-copy-spaced {
+    color: #64748b;
+    margin-top: 8px;
+}
+
+.auth-form-compact-top {
+    padding-top: 0;
+}
+
+.auth-remember-label {
+    font-size: .88rem;
+    color: #64748b;
+}
+
+.auth-panel-feature-required {
+    max-width: 520px;
+    width: 100%;
+}
+
+.auth-card-centered {
+    text-align: center;
+}
+
+.feature-required-header {
+    margin-bottom: 1.5rem;
+}
+
+.feature-required-icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 1.2rem;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: #fff;
+}
+
+.feature-required-title {
+    margin-bottom: .5rem;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #f1f5f9;
+}
+
+.feature-required-highlight {
+    color: #818cf8;
+}
+
+.feature-required-copy {
+    margin-bottom: 1.8rem;
+    color: #94a3b8;
+    font-size: .93rem;
+    line-height: 1.6;
+}
+
+.feature-required-strong {
+    color: #e2e8f0;
+}
+
+.feature-required-plan-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: .75rem;
+    margin-bottom: 1.8rem;
+}
+
+.feature-required-plan-card {
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 14px;
+    padding: 1rem .75rem;
+    background: rgba(255,255,255,.05);
+}
+
+.feature-required-plan-card-featured {
+    border: 2px solid #6366f1;
+    background: rgba(99,102,241,.12);
+}
+
+.feature-required-plan-name {
+    margin-bottom: .3rem;
+    font-size: .9rem;
+    font-weight: 700;
+    color: #f1f5f9;
+}
+
+.feature-required-plan-price {
+    margin-bottom: .5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #818cf8;
+}
+
+.feature-required-plan-period {
+    font-size: .75rem;
+    color: #64748b;
+}
+
+.feature-required-plan-copy {
+    font-size: .78rem;
+    line-height: 1.5;
+    color: #94a3b8;
+}
+
+.feature-required-note {
+    margin-bottom: 1.5rem;
+    font-size: .85rem;
+    color: #64748b;
+}
+
+.feature-required-note-link {
+    color: #818cf8;
+}
+
+.feature-required-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .7rem 1.4rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.08);
+    color: #e2e8f0;
+    text-decoration: none;
+    font-size: .9rem;
+    font-weight: 500;
+}
+
+.feature-required-back-link:hover {
+    color: #fff;
+    background: rgba(255,255,255,.12);
+}
 
 /* ══════════════════════════════════════════════════════════════
    RESPONSIVE

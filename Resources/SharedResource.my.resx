@@ -1683,4 +1683,31 @@
   <data name="Payment request rejected." xml:space="preserve">
     <value>ငွေပေးချေမှု တောင်းဆိုချက်ကို ပယ်ချပြီးပါပြီ။</value>
   </data>
+  <data name="shares this month" xml:space="preserve">
+    <value>ယခုလအတွင်း မျှဝေမှုများ</value>
+  </data>
+  <data name="Share Invoice with Link" xml:space="preserve">
+    <value>လင့်ခ်ဖြင့် ပြေစာမျှဝေရန်</value>
+  </data>
+  <data name="Yes, Generate Link" xml:space="preserve">
+    <value>ဟုတ်ကဲ့၊ လင့်ခ်ဖန်တီးမည်</value>
+  </data>
+  <data name="Upgrade for unlimited sharing" xml:space="preserve">
+    <value>အကန့်အသတ်မရှိ မျှဝေရန် အဆင့်မြှင့်မည်</value>
+  </data>
+  <data name="You are on the Free plan. Receipt link sharing has a monthly limit of {0} uses ({1} used so far). Generating a link will count as 1 usage. Continue?" xml:space="preserve">
+    <value>သင်သည် Free Plan ကို အသုံးပြုနေပါသည်။ ပြေစာလင့်ခ်မျှဝေခြင်းကို လစဉ် {0} ကြိမ်သာ အသုံးပြုနိုင်ပြီး ယခု {1} ကြိမ် အသုံးပြုပြီးဖြစ်သည်။ လင့်ခ်ဖန်တီးခြင်းသည် အသုံးပြုမှု ၁ ကြိမ်အဖြစ် တွက်ပါမည်။ ဆက်လုပ်မလား။</value>
+  </data>
+  <data name="You have used all {0} free receipt shares this month." xml:space="preserve">
+    <value>ယခုလအတွက် အခမဲ့ ပြေစာမျှဝေခွင့် {0} ကြိမ်လုံး အသုံးပြုပြီးပါပြီ။</value>
+  </data>
+  <data name="Shared Receipt" xml:space="preserve">
+    <value>မျှဝေထားသော ပြေစာ</value>
+  </data>
+  <data name="Official customer receipt" xml:space="preserve">
+    <value>တရားဝင် ဖောက်သည်ပြေစာ</value>
+  </data>
+  <data name="Receipt from {0}" xml:space="preserve">
+    <value>{0} မှ ပြေစာ</value>
+  </data>
 </root>

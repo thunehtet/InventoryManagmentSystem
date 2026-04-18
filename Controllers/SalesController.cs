@@ -4,6 +4,7 @@ using ClothInventoryApp.Filters;
 using ClothInventoryApp.Models;
 using ClothInventoryApp.Services.Feature;
 using ClothInventoryApp.Services.Stock;
+using ClothInventoryApp.Services.Subscription;
 using ClothInventoryApp.Services.Tenant;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,16 +22,19 @@ namespace ClothInventoryApp.Controllers
     {
         private readonly IFeatureService _featureService;
         private readonly IStockService _stockService;
+        private readonly ISubscriptionService _subscriptionService;
 
         public SalesController(
             AppDbContext context,
             ITenantProvider tenantProvider,
             IFeatureService featureService,
-            IStockService stockService)
+            IStockService stockService,
+            ISubscriptionService subscriptionService)
             : base(context, tenantProvider)
         {
             _featureService = featureService;
             _stockService = stockService;
+            _subscriptionService = subscriptionService;
         }
        
 
@@ -79,6 +83,10 @@ namespace ClothInventoryApp.Controllers
             var hasCustomers = await _featureService.HasFeatureAsync(tid, "customers");
             ViewBag.HasCustomers = hasCustomers;
 
+            var (saleUsed, saleMax) = await _subscriptionService.GetMonthlySaleUsageAsync(tid);
+            ViewBag.MonthlySaleUsed = saleUsed;
+            ViewBag.MonthlySaleMax  = saleMax;
+
             await LoadVariantDropDown();
             if (hasCustomers) await LoadCustomerDropDown();
             return View(new CreateSaleDto());
@@ -96,6 +104,20 @@ namespace ClothInventoryApp.Controllers
             }
 
             var tenantId = _tenantProvider.GetTenantId();
+
+            if (!await _subscriptionService.CanCreateSaleAsync(tenantId))
+            {
+                var (used, max) = await _subscriptionService.GetMonthlySaleUsageAsync(tenantId);
+                ViewBag.MonthlySaleUsed = used;
+                ViewBag.MonthlySaleMax  = max;
+                ModelState.AddModelError("", $"You have reached the {max} sales/month limit on your current plan. Upgrade to record more sales.");
+                var hasC = await _featureService.HasFeatureAsync(tenantId, "customers");
+                ViewBag.HasCustomers = hasC;
+                await LoadVariantDropDown();
+                if (hasC) await LoadCustomerDropDown();
+                return View(dto);
+            }
+
             dto.Items = dto.Items
                 .Where(x =>  x.Quantity > 0)
                 .ToList();
@@ -275,6 +297,24 @@ namespace ClothInventoryApp.Controllers
             if (sale == null)
                 return NotFound();
 
+            var tid = _tenantProvider.GetTenantId();
+
+            // Only show link if token already exists — usage is counted when the user explicitly requests it.
+            string? receiptUrl = null;
+            if (!string.IsNullOrWhiteSpace(sale.PublicReceiptToken))
+            {
+                receiptUrl = Url.Action("Receipt", "Public", new { token = sale.PublicReceiptToken }, Request.Scheme);
+            }
+
+            var (shareUsed, shareMax) = await _subscriptionService.GetFeatureUsageAsync(tid, FeatureUsageKeys.ReceiptShare);
+            ViewBag.ReceiptShareUsed = shareUsed;
+            ViewBag.ReceiptShareMax  = shareMax;
+            ViewBag.CanGenerateReceiptLink = receiptUrl != null || !shareMax.HasValue || shareUsed < shareMax.Value;
+
+            var (pdfUsed, pdfMax) = await _subscriptionService.GetFeatureUsageAsync(tid, FeatureUsageKeys.PdfInvoice);
+            ViewBag.PdfUsed = pdfUsed;
+            ViewBag.PdfMax  = pdfMax;
+
             var dto = new ViewSaleDto
             {
                 Id = sale.Id,
@@ -286,11 +326,7 @@ namespace ClothInventoryApp.Controllers
                 CustomerName = sale.Customer?.Name,
                 CustomerPhone = sale.Customer?.Phone,
                 CustomerAddress = sale.Customer?.Address,
-                PublicReceiptUrl = Url.Action(
-                    "Receipt",
-                    "Public",
-                    new { token = await EnsurePublicReceiptTokenAsync(sale) },
-                    Request.Scheme),
+                PublicReceiptUrl = receiptUrl,
                 Items = sale.Items.Select(i => new ViewSaleItemDto
                 {
                     Id = i.Id,
@@ -317,6 +353,18 @@ namespace ClothInventoryApp.Controllers
             if (sale == null) return NotFound();
 
             var tenantId = _tenantProvider.GetTenantId();
+
+            if (!await _subscriptionService.CanUseFeatureAsync(tenantId, FeatureUsageKeys.PdfInvoice))
+            {
+                var (used, max) = await _subscriptionService.GetFeatureUsageAsync(tenantId, FeatureUsageKeys.PdfInvoice);
+                TempData["LimitFeature"]  = FeatureUsageKeys.PdfInvoice;
+                TempData["LimitUsed"]     = used;
+                TempData["LimitMax"]      = max;
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+            await _subscriptionService.IncrementFeatureUsageAsync(tenantId, FeatureUsageKeys.PdfInvoice);
+
             var tenant = await _context.Tenants.FirstOrDefaultAsync(t => t.Id == tenantId);
 
             var dto = new ViewSaleDto
@@ -530,6 +578,36 @@ namespace ClothInventoryApp.Controllers
                 .ToListAsync();
 
             ViewBag.Customers = new SelectList(customers, "Id", "Name");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GenerateReceiptLink(Guid id)
+        {
+            var sale = await _context.Sales.FirstOrDefaultAsync(s => s.Id == id);
+            if (sale == null) return NotFound();
+
+            var tid = _tenantProvider.GetTenantId();
+
+            // If token already exists, return it without consuming quota.
+            if (!string.IsNullOrWhiteSpace(sale.PublicReceiptToken))
+            {
+                var existing = Url.Action("Receipt", "Public", new { token = sale.PublicReceiptToken }, Request.Scheme);
+                return Json(new { success = true, url = existing });
+            }
+
+            if (!await _subscriptionService.CanUseFeatureAsync(tid, FeatureUsageKeys.ReceiptShare))
+            {
+                var (used, max) = await _subscriptionService.GetFeatureUsageAsync(tid, FeatureUsageKeys.ReceiptShare);
+                return Json(new { success = false, limitReached = true, used, max });
+            }
+
+            await _subscriptionService.IncrementFeatureUsageAsync(tid, FeatureUsageKeys.ReceiptShare);
+            var token = await EnsurePublicReceiptTokenAsync(sale);
+            var url = Url.Action("Receipt", "Public", new { token }, Request.Scheme);
+
+            var (newUsed, newMax) = await _subscriptionService.GetFeatureUsageAsync(tid, FeatureUsageKeys.ReceiptShare);
+            return Json(new { success = true, url, used = newUsed, max = newMax });
         }
 
         [HttpPost]

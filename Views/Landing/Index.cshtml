@@ -17,13 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/pages/landing.css" asp-append-version="true" />
 
-    <!-- Apply saved language BEFORE render to avoid flash -->
-    <script>
-        (function(){
-            var l = localStorage.getItem('se-lang') || 'en';
-            document.getElementById('htmlRoot').setAttribute('data-lang', l);
-        })();
-    </script>
+    <script src="~/js/landing-init.js" asp-append-version="true"></script>
 </head>
 <body>
 
@@ -70,7 +64,7 @@
         <a href="#contact"><span class="en">Contact</span><span class="my">ဆက်သွယ်ရန်</span></a>
         <hr />
         <!-- Get Started CTA (btn-nav-cta is hidden on mobile, so show it here) -->
-        <a href="#contact" class="btn-nav-cta" style="text-align:center;border-radius:10px;padding:11px 20px;">
+        <a href="#contact" class="btn-nav-cta btn-nav-cta-mobile">
             <span class="en">Get Started Free</span><span class="my">အခမဲ့ စတင်ပါ</span>
         </a>
     </div>
@@ -365,8 +359,8 @@
         @if (!landingPlans.Any())
         {
             <!-- Fallback: no plans configured yet -->
-            <div class="price-card fade-up" style="grid-column:1/-1;text-align:center;padding:3rem 2rem;color:#94a3b8;">
-                <i class="bi bi-info-circle" style="font-size:2rem;display:block;margin-bottom:1rem;"></i>
+            <div class="price-card price-card-empty fade-up">
+                <i class="bi bi-info-circle price-card-empty-icon"></i>
                 <span class="en">Pricing plans coming soon. Contact us for details.</span>
                 <span class="my">စျေးနှုန်းအစီအစဉ်များ မကြာမီ ရောက်ရှိမည်။ ဆက်သွယ်ပါ။</span>
             </div>
@@ -698,58 +692,7 @@
      ═══════════════════════════════════════════════════════════ -->
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <partial name="_ValidationScriptsPartial" />
-<script>
-(function () {
-
-    // ── Language toggle ────────────────────────────────────────
-    window.toggleLang = function () {
-        var root = document.getElementById('htmlRoot');
-        var current = root.getAttribute('data-lang') || 'en';
-        var next = current === 'en' ? 'my' : 'en';
-        root.setAttribute('data-lang', next);
-        localStorage.setItem('se-lang', next);
-
-        // Sync ASP.NET culture cookie so app sections use correct culture
-        var culture = next === 'my' ? 'my-MM' : 'en';
-        document.cookie = '.AspNetCore.Culture=c%3D' + culture + '%7Cuic%3D' + culture
-            + '; path=/; max-age=31536000; SameSite=Strict';
-    };
-
-    var langBtn = document.getElementById('langBtn');
-    if (langBtn) langBtn.addEventListener('click', toggleLang);
-
-    // ── Navbar scroll effect ───────────────────────────────────
-    var nav = document.getElementById('navbar');
-    window.addEventListener('scroll', function () {
-        nav.classList.toggle('scrolled', window.scrollY > 40);
-    }, { passive: true });
-
-    // ── Close mobile menu when a link is clicked ───────────────
-    document.querySelectorAll('.nav-mobile a').forEach(function (link) {
-        link.addEventListener('click', function () {
-            var t = document.getElementById('nav-toggle');
-            if (t) t.checked = false;
-        });
-    });
-
-    // ── Scroll fade-up animations ──────────────────────────────
-    var fadeEls = document.querySelectorAll('.fade-up');
-    if ('IntersectionObserver' in window) {
-        var io = new IntersectionObserver(function (entries) {
-            entries.forEach(function (entry) {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    io.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.10, rootMargin: '0px 0px -40px 0px' });
-        fadeEls.forEach(function (el) { io.observe(el); });
-    } else {
-        fadeEls.forEach(function (el) { el.classList.add('visible'); });
-    }
-
-})();
-</script>
+<script src="~/js/landing.js" asp-append-version="true"></script>
 
 </body>
 </html>

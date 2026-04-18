@@ -26,11 +26,11 @@
     <div class="auth-bg-shape auth-bg-shape-1"></div>
     <div class="auth-bg-shape auth-bg-shape-2"></div>
 
-    <div class="auth-page" style="justify-content:center">
-        <div class="auth-panel" style="max-width:440px;width:100%">
+    <div class="auth-page auth-page-centered">
+        <div class="auth-panel auth-panel-compact">
             <div class="auth-card-modern">
                 <div class="auth-card-header">
-                    <div class="auth-card-avatar" style="background:#fee2e2;color:#dc2626">
+                    <div class="auth-card-avatar auth-card-avatar-danger">
                         <i class="bi bi-shield-lock-fill"></i>
                     </div>
                     <h2>@Localizer["Access Denied"]</h2>
@@ -38,13 +38,12 @@
                 </div>
 
                 <div class="d-flex flex-column gap-3 mt-2">
-                    <a href="/Home/Index" class="auth-submit-btn" style="text-decoration:none">
+                    <a href="/Home/Index" class="auth-submit-btn auth-submit-link">
                         <i class="bi bi-house-fill"></i> @Localizer["Back to Home"]
                     </a>
                     <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
                         @Html.AntiForgeryToken()
-                        <button type="submit" class="auth-submit-btn"
-                                style="background:linear-gradient(135deg,#475569,#64748b);box-shadow:0 14px 30px rgba(71,85,105,0.22)">
+                        <button type="submit" class="auth-submit-btn auth-submit-btn-secondary">
                             <i class="bi bi-box-arrow-right"></i> @Localizer["Sign in as a different user"]
                         </button>
                     </form>

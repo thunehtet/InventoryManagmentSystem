@@ -91,6 +91,10 @@ namespace ClothInventoryApp.Services.Subscription
                     "FREE plan not found. Expired tenants will have no active subscription.");
 
             // ── 3. Process each expired subscription ──────────────────
+            // Track tenants already downgraded in this batch to prevent duplicate free subs
+            // when a single tenant has more than one expired active subscription.
+            var downgradedThisRun = new HashSet<Guid>();
+
             foreach (var sub in expired)
             {
                 // Archive snapshot
@@ -102,14 +106,15 @@ namespace ClothInventoryApp.Services.Subscription
 
                 // Auto-downgrade to FREE — only if the tenant doesn't already
                 // have the free plan active (prevents duplicate free subs)
-                if (freePlan != null)
+                if (freePlan != null && !downgradedThisRun.Contains(sub.TenantId))
                 {
                     var alreadyFree = await db.TenantSubscriptions
                         .IgnoreQueryFilters()
                         .AnyAsync(s =>
                             s.TenantId == sub.TenantId &&
                             s.IsActive &&
-                            s.PlanId == freePlan.Id, ct);
+                            s.PlanId == freePlan.Id &&
+                            s.Id != sub.Id, ct); // exclude the sub being expired
 
                     if (!alreadyFree)
                     {
@@ -118,7 +123,7 @@ namespace ClothInventoryApp.Services.Subscription
                             TenantId     = sub.TenantId,
                             PlanId       = freePlan.Id,
                             StartDate    = now,
-                            EndDate      = new DateTime(2099, 12, 31, 23, 59, 59, DateTimeKind.Utc),
+                            EndDate      = now.AddYears(1),
                             BillingCycle = "Free",
                             Price        = 0,
                             IsTrial      = false,
@@ -127,6 +132,13 @@ namespace ClothInventoryApp.Services.Subscription
                                            $"{sub.EndDate:yyyy-MM-dd}.",
                             CreatedAt    = now
                         });
+
+                        // Only reset usage when transitioning from a paid plan.
+                        // FREE → FREE renewal keeps the current month's count intact.
+                        if (sub.PlanId != freePlan.Id)
+                            await StageFeatureUsageResetAsync(db, sub.TenantId, now, ct);
+
+                        downgradedThisRun.Add(sub.TenantId);
                     }
                 }
 
@@ -139,6 +151,34 @@ namespace ClothInventoryApp.Services.Subscription
 
             _logger.LogInformation(
                 "Processed {Count} expired subscription(s) successfully.", expired.Count);
+        }
+
+        // ── Helper: stage feature usage reset (no SaveChanges — caller saves) ──
+        private static async Task StageFeatureUsageResetAsync(
+            AppDbContext db, Guid tenantId, DateTime now, CancellationToken ct)
+        {
+            var yearMonth = now.ToString("yyyy-MM");
+            var features  = new[] { FeatureUsageKeys.PdfInvoice, FeatureUsageKeys.ReceiptShare, FeatureUsageKeys.CustomerInvite };
+
+            foreach (var feature in features)
+            {
+                var row = await db.TenantFeatureUsages
+                    .FirstOrDefaultAsync(x =>
+                        x.TenantId  == tenantId &&
+                        x.YearMonth == yearMonth &&
+                        x.Feature   == feature, ct);
+
+                if (row == null)
+                    db.TenantFeatureUsages.Add(new TenantFeatureUsage
+                    {
+                        TenantId   = tenantId,
+                        YearMonth  = yearMonth,
+                        Feature    = feature,
+                        UsageCount = 0
+                    });
+                else
+                    row.UsageCount = 0;
+            }
         }
 
         // ── Helper: build a PastSubscription snapshot ─────────────────

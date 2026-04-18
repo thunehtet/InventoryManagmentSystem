@@ -4,6 +4,27 @@
 @{
     ViewData["Title"] = Localizer["Sale Details"];
     var currency = ViewData["Currency"] as string ?? "";
+
+    int pdfUsed   = ViewBag.PdfUsed  is int pu ? pu : 0;
+    int? pdfMax   = ViewBag.PdfMax   as int?;
+    bool pdfLocked = pdfMax.HasValue && pdfUsed >= pdfMax.Value;
+
+    int shareUsed    = ViewBag.ReceiptShareUsed is int su ? su : 0;
+    int? shareMax    = ViewBag.ReceiptShareMax  as int?;
+    bool hasExistingLink = Model.PublicReceiptUrl != null;
+    bool canGenerate     = ViewBag.CanGenerateReceiptLink is bool cg ? cg : true;
+    bool shareLocked     = !hasExistingLink && !canGenerate;
+
+    string shareConfirmMsg = shareMax.HasValue
+        ? string.Format(Localizer["You are on the Free plan. Receipt link sharing has a monthly limit of {0} uses ({1} used so far). Generating a link will count as 1 usage. Continue?"].Value, shareMax, shareUsed)
+        : "";
+    string shareLimitExhaustedMsg = shareMax.HasValue
+        ? string.Format(Localizer["You have used all {0} free receipt shares this month."].Value, shareMax)
+        : "";
+
+    string? limitFeature = TempData["LimitFeature"] as string;
+    int limitUsed = TempData["LimitUsed"] is int lu ? lu : 0;
+    int? limitMax = TempData["LimitMax"] as int?;
 }
 
 <div class="create-product-shell sale-details-shell">
@@ -13,39 +34,123 @@
                 <h3>@Localizer["Sale Details"]</h3>
             </div>
             <div class="sale-details-actions">
-                <a asp-action="InvoicePdf" asp-route-id="@Model.Id" class="btn-modern-primary sale-details-btn">
-                    <i class="bi bi-file-earmark-pdf-fill me-1"></i> @Localizer["Download Invoice"]
-                </a>
+                @if (pdfLocked)
+                {
+                    <span class="btn-modern-primary sale-details-btn sa-limit-btn" title="@string.Format(Localizer["You have used all {0} PDF downloads this month. Upgrade to unlock unlimited."].Value, pdfMax)">
+                        <i class="bi bi-lock-fill me-1"></i> @Localizer["Download Invoice"]
+                        <span class="sa-limit-badge">@pdfUsed / @pdfMax</span>
+                    </span>
+                }
+                else
+                {
+                    <a asp-action="InvoicePdf" asp-route-id="@Model.Id" class="btn-modern-primary sale-details-btn">
+                        <i class="bi bi-file-earmark-pdf-fill me-1"></i> @Localizer["Download Invoice"]
+                        @if (pdfMax.HasValue)
+                        {
+                            <span class="sa-limit-badge sa-limit-badge--ok">@pdfUsed / @pdfMax</span>
+                        }
+                    </a>
+                }
                 <a asp-action="Index" class="btn-modern-outline sale-details-btn">
                     <i class="bi bi-arrow-left me-1"></i> @Localizer["Back"]
                 </a>
             </div>
         </div>
 
+        @if (limitFeature == "receipt_share")
+        {
+            <div class="sa-limit-banner">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                @string.Format(Localizer["You have used all {0} free receipt shares this month."].Value, limitMax)
+                <a asp-controller="Subscription" asp-action="Index" class="sa-limit-upgrade-link">@Localizer["Upgrade to unlock unlimited"]</a>
+            </div>
+        }
+        @if (limitFeature == "pdf_invoice")
+        {
+            <div class="sa-limit-banner">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                @string.Format(Localizer["You have used all {0} free PDF invoice downloads this month."].Value, limitMax)
+                <a asp-controller="Subscription" asp-action="Index" class="sa-limit-upgrade-link">@Localizer["Upgrade to unlock unlimited"]</a>
+            </div>
+        }
+
         <section class="sale-share-panel">
             <div class="sale-share-panel__copy">
                 <h4>@Localizer["Receipt Sharing"]</h4>
                 <p>@Localizer["Share a permanent receipt link that is safe for customers and works well on mobile apps like Messenger and Viber."]</p>
+                @if (shareMax.HasValue)
+                {
+                    <span class="sa-usage-pill @(shareLocked ? "sa-usage-pill--warn" : "")" id="shareUsagePill">
+                        <i class="bi bi-share"></i> <span id="shareUsageText">@shareUsed / @shareMax</span> @Localizer["shares this month"]
+                    </span>
+                }
             </div>
-            <div class="sale-share-panel__actions">
-                <button type="button" class="btn-modern-primary" data-share-url="@Model.PublicReceiptUrl" data-share-title="@Localizer["Receipt link"]">
-                    <i class="bi bi-share-fill"></i> @Localizer["Share Receipt"]
+
+            @* CSRF token for AJAX call *@
+            @Html.AntiForgeryToken()
+
+            @* State 1: Button — always shown first *@
+            <div id="shareInitArea">
+                <button type="button" id="btnGenerateReceiptLink" class="btn-modern-primary"
+                        data-existing-url="@(Model.PublicReceiptUrl ?? "")"
+                        data-has-limit="@(shareMax.HasValue ? "true" : "false")"
+                        data-limit-reached="@(shareLocked ? "true" : "false")"
+                        data-generate-url="@Url.Action("GenerateReceiptLink", "Sales", new { id = Model.Id })"
+                        data-confirm-msg="@shareConfirmMsg"
+                        data-limit-msg="@shareLimitExhaustedMsg">
+                    <i class="bi bi-share-fill me-1"></i> @Localizer["Share Invoice with Link"]
+                    @if (shareMax.HasValue)
+                    {
+                        <span class="sa-limit-badge @(shareLocked ? "" : "sa-limit-badge--ok")">@shareUsed / @shareMax</span>
+                    }
                 </button>
-                <button type="button" class="btn-modern-outline" data-copy-text="@Model.PublicReceiptUrl">
-                    <i class="bi bi-copy"></i> @Localizer["Copy Link"]
-                </button>
-                <form asp-action="RefreshReceiptLink" method="post" class="customer-inline-form">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="id" value="@Model.Id" />
-                    <button type="submit" class="btn-modern-outline">
-                        <i class="bi bi-arrow-repeat"></i> @Localizer["Refresh Link"]
+            </div>
+
+            @* State 2: Free-plan confirmation notice *@
+            <div id="shareConfirmArea" class="sa-confirm-notice d-none">
+                <i class="bi bi-info-circle-fill"></i>
+                <p id="shareConfirmMsg"></p>
+                <div class="sa-confirm-actions">
+                    <button type="button" id="btnConfirmYes" class="btn-modern-primary">
+                        <i class="bi bi-check-lg me-1"></i> @Localizer["Yes, Generate Link"]
                     </button>
-                </form>
-                <a href="@Model.PublicReceiptUrl" target="_blank" rel="noopener noreferrer" class="btn-modern-outline">
-                    <i class="bi bi-box-arrow-up-right"></i> @Localizer["Open Receipt"]
+                    <button type="button" id="btnConfirmNo" class="btn-modern-outline">
+                        @Localizer["Cancel"]
+                    </button>
+                </div>
+            </div>
+
+            @* State 3: Revealed link and share actions *@
+            <div id="shareRevealArea" class="d-none">
+                <div class="sale-share-panel__actions">
+                    <button type="button" class="btn-modern-primary" id="btnShareReceipt" data-share-title="@Localizer["Receipt link"]">
+                        <i class="bi bi-share-fill"></i> @Localizer["Share Receipt"]
+                    </button>
+                    <button type="button" class="btn-modern-outline" id="btnCopyLink">
+                        <i class="bi bi-copy"></i> @Localizer["Copy Link"]
+                    </button>
+                    <form asp-action="RefreshReceiptLink" method="post" class="customer-inline-form">
+                        <input type="hidden" name="__RequestVerificationToken" value="" id="refreshCsrf" />
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" class="btn-modern-outline">
+                            <i class="bi bi-arrow-repeat"></i> @Localizer["Refresh Link"]
+                        </button>
+                    </form>
+                    <a id="linkOpenReceipt" href="#" target="_blank" rel="noopener noreferrer" class="btn-modern-outline">
+                        <i class="bi bi-box-arrow-up-right"></i> @Localizer["Open Receipt"]
+                    </a>
+                </div>
+                <div class="sale-share-link" id="shareLinkDisplay"></div>
+            </div>
+
+            @* State 4: Limit locked *@
+            <div id="shareLimitArea" class="sa-limit-locked d-none">
+                <i class="bi bi-lock-fill"></i>
+                <p id="shareLimitMsg"></p>
+                <a asp-controller="Subscription" asp-action="Index" class="btn-modern-primary">
+                    @Localizer["Upgrade for unlimited sharing"]
                 </a>
             </div>
-            <div class="sale-share-link">@Model.PublicReceiptUrl</div>
         </section>
 
         <div class="form-grid-modern">
@@ -131,4 +236,5 @@
 
 @section Scripts {
     <script src="~/js/public-share.js" asp-append-version="true"></script>
+    <script src="~/js/sale-details.js" asp-append-version="true"></script>
 }

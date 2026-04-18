@@ -44,7 +44,7 @@
         </button>
         @if (!string.IsNullOrWhiteSpace(ViewBag.Search as string))
         {
-            <a asp-action="Index" asp-route-size="@(tpg?.PageSize ?? 10)" class="sa-btn-back" style="height:40px;padding:0 14px">Clear</a>
+            <a asp-action="Index" asp-route-size="@(tpg?.PageSize ?? 10)" class="sa-btn-back superadmin-btn-compact">Clear</a>
         }
     </form>
 

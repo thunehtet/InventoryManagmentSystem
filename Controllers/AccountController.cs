@@ -44,9 +44,11 @@ namespace ClothInventoryApp.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult Login(string? returnUrl = null)
+        public IActionResult Login(string? returnUrl = null, string? message = null)
         {
             ViewBag.ReturnUrl = returnUrl;
+            if (message == "suspended")
+                ViewBag.Error = "Your account has been suspended. Please contact support.";
             return View(new LoginDto());
         }
 
@@ -70,6 +72,23 @@ namespace ClothInventoryApp.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                 return View(dto);
+            }
+
+            // Block login if the tenant has been deactivated by SuperAdmin.
+            // SuperAdmin users (TenantId = system GUID) are exempt.
+            if (!user.IsSuperAdmin)
+            {
+                var tenantActive = await _db.Tenants
+                    .IgnoreQueryFilters()
+                    .Where(t => t.Id == user.TenantId)
+                    .Select(t => t.IsActive)
+                    .FirstOrDefaultAsync();
+
+                if (!tenantActive)
+                {
+                    ModelState.AddModelError(string.Empty, "Your account has been suspended. Please contact support.");
+                    return View(dto);
+                }
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(

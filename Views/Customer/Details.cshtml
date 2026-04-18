@@ -15,11 +15,11 @@
             <div class="d-flex gap-2">
                 @if (User.IsInRole("Admin"))
                 {
-                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-modern-primary" style="height:40px;padding:0 16px;font-size:.85rem">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-modern-primary btn-height-40">
                         <i class="bi bi-pencil-fill me-1"></i> Edit
                     </a>
                 }
-                <a asp-action="Index" class="btn-modern-outline" style="height:40px;padding:0 16px;font-size:.85rem">
+                <a asp-action="Index" class="btn-modern-outline btn-height-40">
                     <i class="bi bi-arrow-left me-1"></i> Back
                 </a>
             </div>
@@ -27,17 +27,17 @@
 
         <!-- Stats row -->
         <div class="d-flex gap-3 mb-4">
-            <div class="hero-stat-card" style="flex:1;min-width:0">
+            <div class="hero-stat-card hero-stat-card-fluid">
                 <div class="hero-stat-icon"><i class="bi bi-bag-check-fill"></i></div>
                 <div class="hero-stat-title">Total Sales</div>
                 <div class="hero-stat-text">@Model.TotalSales sales</div>
             </div>
-            <div class="hero-stat-card" style="flex:1;min-width:0">
+            <div class="hero-stat-card hero-stat-card-fluid">
                 <div class="hero-stat-icon"><i class="bi bi-cash-coin"></i></div>
                 <div class="hero-stat-title">Total Revenue</div>
                 <div class="hero-stat-text">@Model.TotalRevenue.ToString("N0") @currency</div>
             </div>
-            <div class="hero-stat-card" style="flex:1;min-width:0">
+            <div class="hero-stat-card hero-stat-card-fluid">
                 <div class="hero-stat-icon"><i class="bi bi-calendar3"></i></div>
                 <div class="hero-stat-title">Customer Since</div>
                 <div class="hero-stat-text">@Model.CreatedAt.ToString("dd MMM yyyy")</div>
@@ -56,7 +56,7 @@
 
             <div class="form-group-modern">
                 <label class="form-label-modern">Status</label>
-                <div class="input-modern d-flex align-items-center" style="background:#f8fafc;cursor:default">
+                <div class="input-modern d-flex align-items-center customer-status-readonly">
                     <span class="badge-modern @(Model.IsActive ? "badge-success" : "badge-muted")">
                         @(Model.IsActive ? "Active" : "Inactive")
                     </span>
@@ -111,8 +111,8 @@
             {
                 <div class="form-group-modern form-group-full">
                     <label class="form-label-modern">Notes</label>
-                    <textarea class="input-modern" rows="3" readonly
-                              style="height:auto;padding-top:.75rem;padding-left:1rem">@Model.Notes</textarea>
+                    <textarea class="input-modern textarea-modern" rows="3" readonly
+>@Model.Notes</textarea>
                 </div>
             }
         </div>
@@ -155,8 +155,7 @@
                                             <i class="bi bi-eye-fill"></i>
                                         </a>
                                         <a asp-controller="Sales" asp-action="InvoicePdf" asp-route-id="@s.Id"
-                                           class="action-btn" title="Download Invoice PDF"
-                                           style="color:#6366f1;border-color:#e0e7ff;background:#f5f3ff">
+                                           class="action-btn action-btn-pdf" title="Download Invoice PDF">
                                             <i class="bi bi-file-earmark-pdf-fill"></i>
                                         </a>
                                     </div>

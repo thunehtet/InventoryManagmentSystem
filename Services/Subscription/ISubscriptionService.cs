@@ -4,22 +4,25 @@ namespace ClothInventoryApp.Services.Subscription
     {
         Task<bool> IsSubscriptionActiveAsync(Guid tenantId);
 
-        /// <summary>Returns (currentCount, planMax) for users. planMax=null means unlimited.</summary>
         Task<(int Current, int? Max)> GetUserLimitAsync(Guid tenantId);
-
-        /// <summary>Returns (currentCount, planMax) for products. planMax=null means unlimited.</summary>
         Task<(int Current, int? Max)> GetProductLimitAsync(Guid tenantId);
-
-        /// <summary>True if tenant can add one more user under their active plan.</summary>
-        Task<bool> CanAddUserAsync(Guid tenantId);
-
-        /// <summary>True if tenant can add one more product under their active plan.</summary>
-        Task<bool> CanAddProductAsync(Guid tenantId);
-
-        /// <summary>Returns (currentCount, planMax) for variants. planMax=null means unlimited.</summary>
         Task<(int Current, int? Max)> GetVariantLimitAsync(Guid tenantId);
 
-        /// <summary>True if tenant can add one more variant under their active plan.</summary>
+        Task<bool> CanAddUserAsync(Guid tenantId);
+        Task<bool> CanAddProductAsync(Guid tenantId);
         Task<bool> CanAddVariantAsync(Guid tenantId);
+
+        // ── Monthly sale transaction limit ───────────────────────────
+        Task<(int Current, int? Max)> GetMonthlySaleUsageAsync(Guid tenantId);
+        Task<bool> CanCreateSaleAsync(Guid tenantId);
+
+        // ── Per-feature monthly usage (pdf_invoice, receipt_share, customer_invite) ──
+        Task<(int Used, int? Max)> GetFeatureUsageAsync(Guid tenantId, string feature);
+        Task<bool> CanUseFeatureAsync(Guid tenantId, string feature);
+        Task IncrementFeatureUsageAsync(Guid tenantId, string feature);
+
+        // Resets all tracked feature usage counts to 0 for the current month.
+        // Call whenever a tenant is downgraded to the free plan.
+        Task ResetMonthlyFeatureUsageAsync(Guid tenantId);
     }
 }

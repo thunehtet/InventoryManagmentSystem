@@ -116,24 +116,24 @@
             <div class="ov-usage-row">
                 <span class="ov-usage-lbl">@Localizer["Products"]</span>
                 <div class="ov-usage-bar-wrap">
-                    <div class="ov-usage-bar" style="width:@(Model.ProductUsagePct)%"
-                         data-pct="@Model.ProductUsagePct"></div>
+                    <progress class="ov-usage-bar" max="100" value="@Model.ProductUsagePct"
+                              data-pct="@Model.ProductUsagePct">@Model.ProductUsagePct%</progress>
                 </div>
                 <span class="ov-usage-num">@Model.ProductsCurrent / @(Model.ProductsMax?.ToString() ?? "∞")</span>
             </div>
             <div class="ov-usage-row">
                 <span class="ov-usage-lbl">@Localizer["Variants"]</span>
                 <div class="ov-usage-bar-wrap">
-                    <div class="ov-usage-bar" style="width:@(Model.VariantUsagePct)%"
-                         data-pct="@Model.VariantUsagePct"></div>
+                    <progress class="ov-usage-bar" max="100" value="@Model.VariantUsagePct"
+                              data-pct="@Model.VariantUsagePct">@Model.VariantUsagePct%</progress>
                 </div>
                 <span class="ov-usage-num">@Model.VariantsCurrent / @(Model.VariantsMax?.ToString() ?? "∞")</span>
             </div>
             <div class="ov-usage-row">
                 <span class="ov-usage-lbl">@Localizer["Users"]</span>
                 <div class="ov-usage-bar-wrap">
-                    <div class="ov-usage-bar" style="width:@(Model.UserUsagePct)%"
-                         data-pct="@Model.UserUsagePct"></div>
+                    <progress class="ov-usage-bar" max="100" value="@Model.UserUsagePct"
+                              data-pct="@Model.UserUsagePct">@Model.UserUsagePct%</progress>
                 </div>
                 <span class="ov-usage-num">@Model.UsersCurrent / @(Model.UsersMax?.ToString() ?? "∞")</span>
             </div>
@@ -197,7 +197,7 @@
             @Localizer["Unlock more with"] <strong>@Model.NextPlanName</strong>
             @if (Model.NextPlanPrice.HasValue)
             {
-            <span class="ov-upgrade-price">from $@Model.NextPlanPrice/mo</span>
+            <span class="ov-upgrade-price">from @Model.NextPlanPrice MMK/mon</span>
             }
         </div>
         <div class="ov-upgrade-features">

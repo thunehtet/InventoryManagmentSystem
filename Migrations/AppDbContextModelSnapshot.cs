@@ -441,6 +441,18 @@ namespace ClothInventoryApp.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<int?>("MaxMonthlyCustomerInvites")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MaxMonthlyPdfInvoices")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MaxMonthlyReceiptShares")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MaxMonthlySales")
+                        .HasColumnType("int");
+
                     b.Property<int?>("MaxProducts")
                         .HasColumnType("int");
 
@@ -754,6 +766,25 @@ namespace ClothInventoryApp.Migrations
                         .IsUnique();
 
                     b.ToTable("TenantFeatureOverrides");
+                });
+
+            modelBuilder.Entity("ClothInventoryApp.Models.TenantFeatureUsage", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("YearMonth")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Feature")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int>("UsageCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("TenantId", "YearMonth", "Feature");
+
+                    b.ToTable("TenantFeatureUsages");
                 });
 
             modelBuilder.Entity("ClothInventoryApp.Models.TenantSetting", b =>
@@ -1413,6 +1444,17 @@ namespace ClothInventoryApp.Migrations
                         .IsRequired();
 
                     b.Navigation("Feature");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("ClothInventoryApp.Models.TenantFeatureUsage", b =>
+                {
+                    b.HasOne("ClothInventoryApp.Models.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Tenant");
                 });

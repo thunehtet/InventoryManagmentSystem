@@ -2,6 +2,7 @@ using ClothInventoryApp.Data;
 using ClothInventoryApp.Dto.Customer;
 using ClothInventoryApp.Filters;
 using ClothInventoryApp.Models;
+using ClothInventoryApp.Services.Subscription;
 using ClothInventoryApp.Services.Tenant;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,8 +15,16 @@ namespace ClothInventoryApp.Controllers
     [FeatureRequired("customers")]
     public class CustomerController : TenantAwareController
     {
-        public CustomerController(AppDbContext context, ITenantProvider tenantProvider)
-            : base(context, tenantProvider) { }
+        private readonly ISubscriptionService _subscriptionService;
+
+        public CustomerController(
+            AppDbContext context,
+            ITenantProvider tenantProvider,
+            ISubscriptionService subscriptionService)
+            : base(context, tenantProvider)
+        {
+            _subscriptionService = subscriptionService;
+        }
 
         public async Task<IActionResult> Index(string? search, int page = 1, int size = 10)
         {
@@ -85,6 +94,11 @@ namespace ClothInventoryApp.Controllers
                     CustomerName = x.Customer != null ? x.Customer.Name : null
                 })
                 .ToListAsync();
+
+            var tenantId = _tenantProvider.GetTenantId();
+            var (inviteUsed, inviteMax) = await _subscriptionService.GetFeatureUsageAsync(tenantId, FeatureUsageKeys.CustomerInvite);
+            ViewBag.InviteUsed = inviteUsed;
+            ViewBag.InviteMax  = inviteMax;
 
             return View(customers);
         }
@@ -218,6 +232,17 @@ namespace ClothInventoryApp.Controllers
         public async Task<IActionResult> CreateInviteLink()
         {
             var tenantId = _tenantProvider.GetTenantId();
+
+            if (!await _subscriptionService.CanUseFeatureAsync(tenantId, FeatureUsageKeys.CustomerInvite))
+            {
+                var (used, max) = await _subscriptionService.GetFeatureUsageAsync(tenantId, FeatureUsageKeys.CustomerInvite);
+                TempData["LimitFeature"] = FeatureUsageKeys.CustomerInvite;
+                TempData["LimitUsed"]    = used;
+                TempData["LimitMax"]     = max;
+                return RedirectToAction(nameof(Index));
+            }
+
+            await _subscriptionService.IncrementFeatureUsageAsync(tenantId, FeatureUsageKeys.CustomerInvite);
 
             var link = new CustomerInviteLink
             {

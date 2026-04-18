@@ -85,7 +85,7 @@
                                 || item.Category == "Inventory Purchase"
                                 || item.Category == "Textile Purchase";
                             <tr>
-                                <td class="text-muted" style="font-size:0.875rem">@item.TransactionDate.ToString("dd MMM yyyy")</td>
+                                <td class="text-muted table-cell-sm">@item.TransactionDate.ToString("dd MMM yyyy")</td>
                                 <td>
                                     @if (item.Type == "IN")
                                     {
@@ -98,8 +98,8 @@
                                 </td>
                                 <td>@item.Category</td>
                                 <td class="fw-semibold">@item.Amount.ToString("N0") @currency</td>
-                                <td class="text-muted" style="font-size:0.875rem">@(item.ReferenceNo ?? "—")</td>
-                                <td class="text-muted" style="font-size:0.875rem">@(item.Remarks ?? "—")</td>
+                                <td class="text-muted table-cell-sm">@(item.ReferenceNo ?? "—")</td>
+                                <td class="text-muted table-cell-sm">@(item.Remarks ?? "—")</td>
                                 <td>
                                     <div class="table-actions">
                                         <a asp-action="Details" asp-route-id="@item.Id" class="action-btn action-btn-view" title="Details"><i class="bi bi-eye-fill"></i></a>

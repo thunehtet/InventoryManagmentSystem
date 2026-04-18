@@ -70,18 +70,47 @@
             <div class="sa-form-section">
                 <div class="sa-section-header">
                     <span class="sa-section-dot"></span>
-                    <span class="sa-section-title">Limits</span>
+                    <span class="sa-section-title">Resource Limits <small class="text-muted fw-normal">(leave blank = unlimited)</small></span>
                 </div>
                 <div class="superadmin-form-grid">
                     <div class="form-group-modern">
                         <label asp-for="MaxUsers" class="form-label-modern">Max Users</label>
-                        <input asp-for="MaxUsers" class="form-input-modern" type="number" min="1" />
+                        <input asp-for="MaxUsers" class="form-input-modern" type="number" min="1" placeholder="Unlimited" />
                         <span asp-validation-for="MaxUsers" class="text-danger small"></span>
                     </div>
                     <div class="form-group-modern">
                         <label asp-for="MaxProducts" class="form-label-modern">Max Products</label>
-                        <input asp-for="MaxProducts" class="form-input-modern" type="number" min="1" />
+                        <input asp-for="MaxProducts" class="form-input-modern" type="number" min="1" placeholder="Unlimited" />
                         <span asp-validation-for="MaxProducts" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sa-form-section">
+                <div class="sa-section-header">
+                    <span class="sa-section-dot"></span>
+                    <span class="sa-section-title">Monthly Usage Limits <small class="text-muted fw-normal">(leave blank = unlimited)</small></span>
+                </div>
+                <div class="superadmin-form-grid">
+                    <div class="form-group-modern">
+                        <label asp-for="MaxMonthlySales" class="form-label-modern">Max Sales / Month</label>
+                        <input asp-for="MaxMonthlySales" class="form-input-modern" type="number" min="1" placeholder="Unlimited" />
+                        <span asp-validation-for="MaxMonthlySales" class="text-danger small"></span>
+                    </div>
+                    <div class="form-group-modern">
+                        <label asp-for="MaxMonthlyPdfInvoices" class="form-label-modern">Max PDF Invoices / Month</label>
+                        <input asp-for="MaxMonthlyPdfInvoices" class="form-input-modern" type="number" min="1" placeholder="Unlimited" />
+                        <span asp-validation-for="MaxMonthlyPdfInvoices" class="text-danger small"></span>
+                    </div>
+                    <div class="form-group-modern">
+                        <label asp-for="MaxMonthlyReceiptShares" class="form-label-modern">Max Receipt Shares / Month</label>
+                        <input asp-for="MaxMonthlyReceiptShares" class="form-input-modern" type="number" min="1" placeholder="Unlimited" />
+                        <span asp-validation-for="MaxMonthlyReceiptShares" class="text-danger small"></span>
+                    </div>
+                    <div class="form-group-modern">
+                        <label asp-for="MaxMonthlyCustomerInvites" class="form-label-modern">Max Customer Invites / Month</label>
+                        <input asp-for="MaxMonthlyCustomerInvites" class="form-input-modern" type="number" min="1" placeholder="Unlimited" />
+                        <span asp-validation-for="MaxMonthlyCustomerInvites" class="text-danger small"></span>
                     </div>
                 </div>
             </div>

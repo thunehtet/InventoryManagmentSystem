@@ -17,7 +17,7 @@
             </a>
         </div>
 
-        <div class="alert alert-danger" role="alert" style="border-radius:10px;margin-bottom:24px">
+        <div class="alert alert-danger alert-rounded-spaced" role="alert">
             <i class="bi bi-exclamation-triangle-fill me-2"></i>
             Are you sure you want to delete <strong>@Model.Name</strong>?
             @if (Model.Sales.Any())
@@ -50,7 +50,7 @@
         <form asp-action="Delete" method="post">
             @Html.AntiForgeryToken()
             <div class="form-footer-modern">
-                <button type="submit" class="btn btn-danger btn-modern-lg" style="border-radius:10px;font-weight:600">
+                <button type="submit" class="btn btn-danger btn-modern-lg btn-modern-danger-rounded">
                     <i class="bi bi-trash-fill me-1"></i> Yes, Delete
                 </button>
                 <a asp-action="Index" class="btn-modern-outline btn-modern-lg">@Localizer["Cancel"]</a>

@@ -17,7 +17,7 @@
                 @(Model.IsTenantAdmin ? "Admin" : "Staff") · @(Model.IsActive ? "Active" : "Inactive")
             </p>
         </div>
-        <div class="d-flex gap-2" style="align-self:center">
+        <div class="d-flex gap-2 hero-align-center">
             <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-modern-primary">
                 <i class="bi bi-pencil-fill"></i> Edit
             </a>

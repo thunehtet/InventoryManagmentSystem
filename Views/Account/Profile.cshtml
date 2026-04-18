@@ -38,11 +38,11 @@
                             <div class="fw-semibold mb-2">Profile Photo</div>
                             @if (!string.IsNullOrWhiteSpace(Model.CurrentProfileImageUrl))
                             {
-                                <img src="@Model.CurrentProfileImageUrl" alt="Profile Photo" style="width:120px;height:120px;object-fit:cover;border-radius:24px;border:1px solid #e5e7eb;" />
+                                <img src="@Model.CurrentProfileImageUrl" alt="Profile Photo" class="profile-media-preview" />
                             }
                             else
                             {
-                                <div class="d-flex align-items-center justify-content-center text-muted" style="width:120px;height:120px;border:1px dashed #cbd5e1;border-radius:24px;">
+                                <div class="d-flex align-items-center justify-content-center text-muted profile-media-placeholder">
                                     <i class="bi bi-person-circle fs-1"></i>
                                 </div>
                             }
@@ -58,11 +58,11 @@
                                 <div class="fw-semibold mb-2">Brand Logo</div>
                                 @if (!string.IsNullOrWhiteSpace(Model.CurrentBrandLogoUrl))
                                 {
-                                    <img src="@Model.CurrentBrandLogoUrl" alt="@Model.TenantName" style="width:120px;height:120px;object-fit:cover;border-radius:24px;border:1px solid #e5e7eb;" />
+                                    <img src="@Model.CurrentBrandLogoUrl" alt="@Model.TenantName" class="profile-media-preview" />
                                 }
                                 else
                                 {
-                                    <div class="d-flex align-items-center justify-content-center text-muted" style="width:120px;height:120px;border:1px dashed #cbd5e1;border-radius:24px;">
+                                    <div class="d-flex align-items-center justify-content-center text-muted profile-media-placeholder">
                                         <i class="bi bi-building fs-1"></i>
                                     </div>
                                 }

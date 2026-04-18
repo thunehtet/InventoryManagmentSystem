@@ -44,6 +44,10 @@
     margin-top: 16px;
 }
 
+.hero-align-center {
+    align-self: center;
+}
+
 /* CARD */
 .product-table-card {
     background: #fff;
@@ -158,6 +162,22 @@
     pointer-events: none;
 }
 
+.btn-disabled-static {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-height-40 {
+    height: 40px;
+    padding: 0 16px;
+    font-size: .85rem;
+}
+
+.badge-out-danger {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
 .plan-card-actions {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -236,6 +256,60 @@
     border-radius: 999px;
     font-size: 12px;
     font-weight: 600;
+}
+
+.table-cell-sm {
+    font-size: .875rem;
+}
+
+.table-cell-xs-muted {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.table-cell-sm-muted {
+    font-size: 13px;
+    color: #64748b;
+}
+
+.table-cell-sm-faded {
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+.text-heading-sm {
+    font-size: 14px;
+    color: #1e293b;
+}
+
+.warning-note {
+    margin-top: .5rem;
+    font-size: .78rem;
+    color: #f87171;
+    font-weight: 600;
+}
+
+.link-inline-primary {
+    color: #6366f1;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.link-inline-primary:hover {
+    color: #4f46e5;
+    text-decoration: underline;
+}
+
+.action-btn-pdf {
+    color: #6366f1;
+    border-color: #e0e7ff;
+    background: #f5f3ff;
+}
+
+.action-btn-pdf:hover {
+    color: #4f46e5;
+    border-color: #c7d2fe;
+    background: #ede9fe;
 }
 
 /* Product hero sub-text */

@@ -116,7 +116,9 @@
 .public-tenant-logo img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    display: block;
+    padding: 8px;
 }
 
 .public-tenant-logo span {

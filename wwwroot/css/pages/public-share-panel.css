@@ -72,6 +72,34 @@
     color: #64748b;
 }
 
+.sa-confirm-notice {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    padding: 1rem 1.25rem;
+    border-radius: 16px;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    color: #78350f;
+}
+
+.sa-confirm-notice > i {
+    font-size: 1.4rem;
+    color: #f59e0b;
+}
+
+.sa-confirm-notice p {
+    margin: 0;
+    font-size: .92rem;
+    line-height: 1.5;
+}
+
+.sa-confirm-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .6rem;
+}
+
 @media (max-width: 767.98px) {
     .sale-details-shell .section-header {
         gap: 1rem;

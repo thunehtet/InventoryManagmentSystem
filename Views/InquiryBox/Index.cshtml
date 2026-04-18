@@ -75,12 +75,12 @@
                 <table class="superadmin-table">
                     <thead>
                         <tr>
-                            <th style="width:60px;"></th>
+                            <th class="superadmin-col-xs"></th>
                             <th>Contact</th>
                             <th>Business</th>
                             <th>Status</th>
                             <th>Received</th>
-                            <th style="width:100px;"></th>
+                            <th class="superadmin-col-sm"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -111,7 +111,7 @@
                                         @item.Status
                                     </span>
                                 </td>
-                                <td class="text-muted small" style="white-space:nowrap;">
+                                <td class="text-muted small superadmin-nowrap">
                                     @Html.TenantDate(item.SubmittedAt, "dd MMM yyyy HH:mm")
                                 </td>
                                 <td>
@@ -121,7 +121,7 @@
                                             <i class="bi bi-eye"></i>
                                         </a>
                                         <form asp-action="Delete" asp-route-id="@item.Id" method="post"
-                                              onsubmit="return confirm('Delete this inquiry?');" class="m-0">
+                                              data-confirm-message="Delete this inquiry?" class="m-0">
                                             @Html.AntiForgeryToken()
                                             <button type="submit" class="action-btn action-btn-delete" title="Delete">
                                                 <i class="bi bi-trash"></i>

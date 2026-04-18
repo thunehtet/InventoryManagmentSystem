@@ -19,7 +19,14 @@
     </div>
 
     <div class="sa-form-card">
-        <form asp-action="Create" method="post">
+        <form asp-action="Create" method="post"
+              data-active-subs='@Html.Raw(
+                  System.Text.Json.JsonSerializer.Serialize(
+                      (ViewBag.ActiveSubByTenant as Dictionary<Guid, string>)
+                          ?.ToDictionary(k => k.Key.ToString(), k => k.Value)
+                      ?? new Dictionary<string, string>()
+                  )
+              )'>
             @Html.AntiForgeryToken()
             <div asp-validation-summary="ModelOnly" class="alert alert-danger mx-4 mt-4 mb-0"></div>
 
@@ -119,26 +126,5 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script>
-    (function () {
-        var activeSubs = @Html.Raw(
-            System.Text.Json.JsonSerializer.Serialize(
-                (ViewBag.ActiveSubByTenant as Dictionary<Guid, string>)
-                    ?.ToDictionary(k => k.Key.ToString(), k => k.Value)
-                ?? new Dictionary<string, string>()
-            )
-        );
-        document.getElementById('tenantSelect').addEventListener('change', function () {
-            var selected = this.value;
-            var warning  = document.getElementById('activeSubWarning');
-            var planName = document.getElementById('activeSubPlan');
-            if (selected && activeSubs[selected]) {
-                planName.textContent = activeSubs[selected];
-                warning.classList.remove('d-none');
-            } else {
-                warning.classList.add('d-none');
-            }
-        });
-    })();
-    </script>
+    <script src="~/js/subscription-create.js" asp-append-version="true"></script>
 }

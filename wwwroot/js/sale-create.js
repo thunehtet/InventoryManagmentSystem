@@ -5,10 +5,6 @@
 (function () {
     'use strict';
 
-    var cfg = window.salePageConfig || {};
-    var str = cfg.strings || {};
-    var isStaff = cfg.isStaff === true;
-
     var filterTabs = document.getElementById('filterTabs');
     var variantGrid = document.getElementById('variantGrid');
     var variantSearch = document.getElementById('variantSearch');
@@ -28,6 +24,17 @@
     var saleForm = document.getElementById('saleForm');
 
     if (!saleForm) return;
+
+    var str = {
+        loadFailed: saleForm.dataset.loadFailed,
+        all: saleForm.dataset.all,
+        noProducts: saleForm.dataset.noProducts,
+        outOfStock: saleForm.dataset.outOfStock,
+        left: saleForm.dataset.left,
+        price: saleForm.dataset.price,
+        cartRequired: saleForm.dataset.cartRequired
+    };
+    var isStaff = saleForm.dataset.isStaff === 'true';
 
     var pageSize = 48;
     var currentPage = 1;
@@ -135,7 +142,7 @@
             var inCart = cart[v.id];
             var noStock = v.stock <= 0;
             var initial = v.productName.charAt(0).toUpperCase();
-            var accent = colorToHex(v.color);
+            var accentClass = colorClass(v.color);
             var qtyBadge = inCart ? '<span class="sc-qty-badge">' + inCart.qty + '</span>' : '';
             var stockCls = noStock ? 'sc-stock-none' : v.stock <= 5 ? 'sc-stock-low' : 'sc-stock-ok';
             var stockTxt = noStock
@@ -145,7 +152,7 @@
             var onclick = noStock ? '' : 'data-add="' + v.id + '"';
 
             return '<div class="' + cardCls + '" ' + onclick + ' data-id="' + v.id + '">' +
-                '<div class="sc-avatar" style="--av-color:' + accent + '">' +
+                '<div class="sc-avatar ' + accentClass + '">' +
                 initial + qtyBadge +
                 '</div>' +
                 '<div class="sc-card-body">' +
@@ -154,7 +161,7 @@
                 (v.category ? '<span class="sc-tag">' + escHtml(v.category) + '</span>' : '') +
                 '<span class="sc-tag">' + escHtml(v.sku) + '</span>' +
                 '<span class="sc-tag">' + escHtml(v.size) + '</span>' +
-                '<span class="sc-dot" style="background:' + accent + '" title="' + escHtml(v.color) + '"></span>' +
+                '<span class="sc-dot ' + accentClass + '" title="' + escHtml(v.color) + '"></span>' +
                 '</div>' +
                 '<div class="sc-card-foot">' +
                 '<span class="sc-price">' + fmt(v.sellingPrice) + '</span>' +
@@ -249,13 +256,13 @@
         if (cartBadge) cartBadge.textContent = String(items.length);
 
         if (!items.length) {
-            if (emptyCart) emptyCart.style.display = 'flex';
+            if (emptyCart) emptyCart.classList.remove('sc-hidden');
             if (cartList) cartList.innerHTML = '';
             syncTotalsAndInputs();
             return;
         }
 
-        if (emptyCart) emptyCart.style.display = 'none';
+        if (emptyCart) emptyCart.classList.add('sc-hidden');
         if (cartList) {
             var priceLbl = escHtml(str.price || 'Price');
             cartList.innerHTML = items.map(function (item) {
@@ -324,9 +331,9 @@
         if (discountRow && sumDiscount) {
             if (discount > 0) {
                 sumDiscount.textContent = '- ' + fmt(discount);
-                discountRow.style.display = '';
+                discountRow.classList.remove('sc-hidden');
             } else {
-                discountRow.style.display = 'none';
+                discountRow.classList.add('sc-hidden');
             }
         }
 
@@ -368,7 +375,7 @@
             e.preventDefault();
             if (clientError) {
                 clientError.textContent = str.cartRequired || 'Please add at least one product to the sale.';
-                clientError.style.display = 'block';
+                clientError.classList.remove('sc-hidden');
                 clientError.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
@@ -398,17 +405,21 @@
         return String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
     }
 
-    function colorToHex(name) {
-        var map = {
-            red: '#e74c3c', blue: '#3498db', green: '#27ae60', yellow: '#f1c40f',
-            orange: '#e67e22', purple: '#9b59b6', pink: '#e91e63', brown: '#795548',
-            grey: '#607d8b', gray: '#607d8b', black: '#2c3e50', white: '#bdc3c7',
-            navy: '#1a237e', teal: '#00897b', maroon: '#880e4f', beige: '#d7ccc8',
-            cream: '#efebe9', gold: '#ffc107', silver: '#9e9e9e', cyan: '#00bcd4',
-            lime: '#8bc34a', indigo: '#3f51b5', violet: '#7c4dff', magenta: '#e91e63',
-            khaki: '#c8b560', turquoise: '#1abc9c', coral: '#ff6b6b', lavender: '#b39ddb'
+    function colorClass(name) {
+        var normalized = (name || '').toLowerCase().replace(/[^a-z]+/g, '-').replace(/^-+|-+$/g, '');
+        var supported = {
+            red: true, blue: true, green: true, yellow: true, orange: true, purple: true,
+            pink: true, brown: true, grey: true, gray: true, black: true, white: true,
+            navy: true, teal: true, maroon: true, beige: true, cream: true, gold: true,
+            silver: true, cyan: true, lime: true, indigo: true, violet: true, magenta: true,
+            khaki: true, turquoise: true, coral: true, lavender: true
         };
-        return map[(name || '').toLowerCase()] || '#6366f1';
+
+        if (!supported[normalized]) {
+            return 'sc-color-default';
+        }
+
+        return 'sc-color-' + normalized;
     }
 
     loadVariants(true);

@@ -81,6 +81,10 @@ namespace ClothInventoryApp.Data
                 Description = "Get started at no cost — products, variants and basic sales included.",
                 PriceMonthly = 0,
                 MaxUsers = 1, MaxProducts = 5, MaxVariants = 10,
+                MaxMonthlySales = 30,
+                MaxMonthlyPdfInvoices = 5,
+                MaxMonthlyReceiptShares = 10,
+                MaxMonthlyCustomerInvites = 3,
                 IsActive = true
             };
             var planStarter = new Plan

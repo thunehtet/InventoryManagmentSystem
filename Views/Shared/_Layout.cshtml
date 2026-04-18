@@ -285,8 +285,6 @@
             </nav>
             }
         </aside>
-        <script>(function(){if(window.innerWidth<=900){document.getElementById('sidebar').classList.add('collapsed');}}());</script>
-
         <div class="main-panel">
             <header class="topbar">
                 <div class="topbar-left">
@@ -327,7 +325,7 @@
                     </div>
 
                     <div class="user-dropdown">
-                        <button class="user-btn" onclick="toggleUserMenu()" type="button">
+                        <button class="user-btn" id="userMenuToggle" type="button">
                             <div class="user-avatar">
                                 @if (!string.IsNullOrWhiteSpace(currentUserProfileImageUrl))
                                 {
@@ -475,60 +473,11 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/form-enhancements.js" asp-append-version="true"></script>
     <script src="~/js/layout.js" asp-append-version="true"></script>
     @if (User.Identity?.IsAuthenticated == true)
     {
-        <script>
-            (function () {
-                var redirecting = false;
-
-                function redirectToLogin() {
-                    if (redirecting) {
-                        return;
-                    }
-
-                    redirecting = true;
-                    var returnUrl = window.location.pathname + window.location.search + window.location.hash;
-                    window.location.replace('/Account/Login?returnUrl=' + encodeURIComponent(returnUrl));
-                }
-
-                async function checkSession() {
-                    try {
-                        var response = await fetch('/Account/Ping', {
-                            method: 'GET',
-                            credentials: 'same-origin',
-                            cache: 'no-store',
-                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                        });
-
-                        if (response.redirected) {
-                            redirectToLogin();
-                            return;
-                        }
-
-                        if (response.status === 401 || response.status === 403) {
-                            redirectToLogin();
-                        }
-                    } catch {
-                        // Ignore transient network failures; retry on next user-visible resume event.
-                    }
-                }
-
-                window.addEventListener('pageshow', function (event) {
-                    if (event.persisted) {
-                        checkSession();
-                    }
-                });
-
-                document.addEventListener('visibilitychange', function () {
-                    if (document.visibilityState === 'visible') {
-                        checkSession();
-                    }
-                });
-
-                window.addEventListener('focus', checkSession);
-            })();
-        </script>
+        <script src="~/js/session-guard.js" asp-append-version="true"></script>
     }
     @await Html.PartialAsync("_SuccessModal")
     @await RenderSectionAsync("Scripts", required: false)
