@@ -1,5 +1,6 @@
 using ClothInventoryApp.Data;
 using ClothInventoryApp.Models;
+using ClothInventoryApp.Services.Telegram;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClothInventoryApp.Services.Subscription
@@ -62,6 +63,7 @@ namespace ClothInventoryApp.Services.Subscription
         {
             using var scope = _scopeFactory.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var telegram = scope.ServiceProvider.GetRequiredService<ITelegramService>();
 
             var now = DateTime.UtcNow;
 
@@ -145,6 +147,21 @@ namespace ClothInventoryApp.Services.Subscription
                 _logger.LogInformation(
                     "Subscription {SubId} ({TenantName} / {PlanName}) expired — archived and downgraded.",
                     sub.Id, sub.Tenant.Name, sub.Plan.Name);
+
+                // Notify tenant admin via Viber
+                var admin = await db.Users
+                    .IgnoreQueryFilters()
+                    .Where(u => u.TenantId == sub.TenantId && u.IsTenantAdmin && u.TelegramChatId != null)
+                    .Select(u => new { u.TelegramChatId, u.FullName })
+                    .FirstOrDefaultAsync(ct);
+
+                if (admin?.TelegramChatId != null)
+                {
+                    var msg = $"⚠️ StockEasy\n\nHello {admin.FullName},\n\n" +
+                              $"Your {sub.Plan.Name} subscription expired on {sub.EndDate:yyyy-MM-dd}.\n\n" +
+                              $"You have been moved to the Free plan. Please renew to restore full access.";
+                    await telegram.SendMessageAsync(admin.TelegramChatId, msg, ct);
+                }
             }
 
             await db.SaveChangesAsync(ct);

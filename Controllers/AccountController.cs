@@ -1,6 +1,7 @@
 using ClothInventoryApp.Data;
 using ClothInventoryApp.Dtos.Account;
 using ClothInventoryApp.Models;
+using ClothInventoryApp.Options;
 using ClothInventoryApp.Services.Email;
 using ClothInventoryApp.Services.Files;
 using Microsoft.AspNetCore.Authentication;
@@ -9,7 +10,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text.Encodings.Web;
 
 namespace ClothInventoryApp.Controllers
@@ -24,6 +27,7 @@ namespace ClothInventoryApp.Controllers
         private readonly IEmailService _emailService;
         private readonly AppDbContext _db;
         private readonly IFileStorageService _fileStorageService;
+        private readonly TelegramSettings _telegramSettings;
         private readonly ILogger<AccountController> _logger;
 
         public AccountController(
@@ -32,6 +36,7 @@ namespace ClothInventoryApp.Controllers
             IEmailService emailService,
             AppDbContext db,
             IFileStorageService fileStorageService,
+            IOptions<TelegramSettings> telegramSettings,
             ILogger<AccountController> logger)
         {
             _signInManager = signInManager;
@@ -39,6 +44,7 @@ namespace ClothInventoryApp.Controllers
             _emailService = emailService;
             _db = db;
             _fileStorageService = fileStorageService;
+            _telegramSettings = telegramSettings.Value;
             _logger = logger;
         }
 
@@ -430,6 +436,56 @@ namespace ClothInventoryApp.Controllers
         public IActionResult AccessDenied() => View();
 
         [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GenerateTelegramLink(CancellationToken cancellationToken)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction(nameof(Login));
+
+            // Remove any existing tokens for this user
+            var old = await _db.TelegramLinkTokens
+                .Where(t => t.UserId == user.Id)
+                .ToListAsync(cancellationToken);
+            _db.TelegramLinkTokens.RemoveRange(old);
+
+            var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(8)).ToLowerInvariant();
+            _db.TelegramLinkTokens.Add(new TelegramLinkToken
+            {
+                Token = token,
+                UserId = user.Id,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(15)
+            });
+            await _db.SaveChangesAsync(cancellationToken);
+
+            var botUsername = ResolveBotUsername();
+            TempData["TelegramDeepLink"] = $"https://t.me/{botUsername}?start={token}";
+            return RedirectToAction(nameof(Profile));
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DisconnectTelegram(CancellationToken cancellationToken)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction(nameof(Login));
+
+            user.TelegramChatId = null;
+            await _userManager.UpdateAsync(user);
+
+            var tokens = await _db.TelegramLinkTokens
+                .Where(t => t.UserId == user.Id)
+                .ToListAsync(cancellationToken);
+            _db.TelegramLinkTokens.RemoveRange(tokens);
+            await _db.SaveChangesAsync(cancellationToken);
+
+            TempData["SuccessMsg"] = "Telegram disconnected.";
+            TempData["SuccessType"] = "update";
+            return RedirectToAction(nameof(Profile));
+        }
+
+        [Authorize]
         [HttpGet]
         public IActionResult Ping()
         {
@@ -443,6 +499,7 @@ namespace ClothInventoryApp.Controllers
                 FullName = user.FullName,
                 UserName = user.UserName ?? string.Empty,
                 Email = user.Email ?? string.Empty,
+                IsTelegramConnected = user.TelegramChatId != null,
                 CurrentProfileImageUrl = user.ProfileImageUrl,
                 CurrentBrandLogoUrl = tenant.LogoUrl,
                 TenantName = tenant.Name,
@@ -458,8 +515,19 @@ namespace ClothInventoryApp.Controllers
             dto.CurrentBrandLogoUrl = tenant.LogoUrl;
             dto.TenantName = tenant.Name;
             dto.IsTenantAdmin = user.IsTenantAdmin;
+            dto.IsTelegramConnected = user.TelegramChatId != null;
             dto.CanChangeLoginIdentity = user.CanChangeLoginIdentity;
             dto.LoginIdentityChangedAt = user.LoginIdentityChangedAt;
         }
+
+        private string ResolveBotUsername() =>
+            FirstNonEmpty(
+                Environment.GetEnvironmentVariable("TELEGRAM_BOT_USERNAME"),
+                Environment.GetEnvironmentVariable("Telegram__BotUsername"),
+                _telegramSettings.BotUsername)
+            ?? "YourBot";
+
+        private static string? FirstNonEmpty(params string?[] values) =>
+            values.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v));
     }
 }

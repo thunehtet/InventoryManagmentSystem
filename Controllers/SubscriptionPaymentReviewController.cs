@@ -4,6 +4,7 @@ using ClothInventoryApp.Models;
 using ClothInventoryApp.Services.Email;
 using ClothInventoryApp.Services.Files;
 using ClothInventoryApp.Services.Subscription;
+using ClothInventoryApp.Services.Telegram;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,7 @@ namespace ClothInventoryApp.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IFileStorageService _fileStorageService;
         private readonly IEmailService _emailService;
+        private readonly ITelegramService _telegramService;
         private readonly ISubscriptionService _subscriptionService;
         private readonly ILogger<SubscriptionPaymentReviewController> _logger;
 
@@ -27,6 +29,7 @@ namespace ClothInventoryApp.Controllers
             UserManager<ApplicationUser> userManager,
             IFileStorageService fileStorageService,
             IEmailService emailService,
+            ITelegramService telegramService,
             ISubscriptionService subscriptionService,
             ILogger<SubscriptionPaymentReviewController> logger)
         {
@@ -34,6 +37,7 @@ namespace ClothInventoryApp.Controllers
             _userManager = userManager;
             _fileStorageService = fileStorageService;
             _emailService = emailService;
+            _telegramService = telegramService;
             _subscriptionService = subscriptionService;
             _logger = logger;
         }
@@ -214,6 +218,13 @@ namespace ClothInventoryApp.Controllers
                 TempData["Warning"] = "Subscription activated, but the approval email could not be sent.";
             }
 
+            if (!string.IsNullOrWhiteSpace(request.RequestedByUser?.TelegramChatId))
+            {
+                var msg = $"✅ StockEasy\n\nHello {request.RequestedByUser.FullName},\n\n" +
+                          $"Your {request.PlanNameSnapshot} subscription has been approved and is now active.";
+                await _telegramService.SendMessageAsync(request.RequestedByUser.TelegramChatId, msg, HttpContext.RequestAborted);
+            }
+
             TempData["SuccessMsg"]      = "Payment request approved and subscription activated.";
             TempData["SuccessType"]     = "update";
             TempData["SuccessListUrl"]  = Url.Action("Index", "SubscriptionPaymentReview");
@@ -261,6 +272,14 @@ namespace ClothInventoryApp.Controllers
             {
                 _logger.LogError(ex, "Failed to send rejection email for payment request {RequestId}.", request.Id);
                 TempData["Warning"] = "Request rejected, but the rejection email could not be sent.";
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.RequestedByUser?.TelegramChatId))
+            {
+                var msg = $"❌ StockEasy\n\nHello {request.RequestedByUser.FullName},\n\n" +
+                          $"Your payment request for {request.PlanNameSnapshot} was rejected.\n\n" +
+                          $"Reason: {request.ReviewRemarks}";
+                await _telegramService.SendMessageAsync(request.RequestedByUser.TelegramChatId, msg, HttpContext.RequestAborted);
             }
 
             TempData["SuccessMsg"]      = "Payment request rejected.";

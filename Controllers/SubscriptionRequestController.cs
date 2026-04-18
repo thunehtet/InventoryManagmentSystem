@@ -3,6 +3,7 @@ using ClothInventoryApp.Dto.SubscriptionRequest;
 using ClothInventoryApp.Models;
 using ClothInventoryApp.Options;
 using ClothInventoryApp.Services.Files;
+using ClothInventoryApp.Services.Telegram;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,7 @@ namespace ClothInventoryApp.Controllers
         private readonly AppDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IFileStorageService _fileStorageService;
+        private readonly ITelegramService _telegramService;
         private readonly SubscriptionPaymentSettings _paymentSettings;
         private const string DefaultQrImageUrl = "/paymentqr/mykpayqr.jpeg";
 
@@ -24,11 +26,13 @@ namespace ClothInventoryApp.Controllers
             AppDbContext db,
             UserManager<ApplicationUser> userManager,
             IFileStorageService fileStorageService,
+            ITelegramService telegramService,
             IOptions<SubscriptionPaymentSettings> paymentSettings)
         {
             _db = db;
             _userManager = userManager;
             _fileStorageService = fileStorageService;
+            _telegramService = telegramService;
             _paymentSettings = paymentSettings.Value;
         }
 
@@ -189,6 +193,27 @@ namespace ClothInventoryApp.Controllers
             });
 
             await _db.SaveChangesAsync(cancellationToken);
+
+            // Notify SuperAdmin via Viber
+            var superAdmin = await _db.Users
+                .IgnoreQueryFilters()
+                .Where(u => u.IsSuperAdmin && u.TelegramChatId != null)
+                .Select(u => new { u.TelegramChatId, u.FullName })
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (superAdmin?.TelegramChatId != null)
+            {
+                var tenantName = await _db.Tenants
+                    .IgnoreQueryFilters()
+                    .Where(t => t.Id == user.TenantId)
+                    .Select(t => t.Name)
+                    .FirstOrDefaultAsync(cancellationToken);
+
+                var msg = $"💳 StockEasy\n\nNew payment request from {tenantName ?? user.FullName} " +
+                          $"for {plan.Name} ({dto.BillingCycle}).\n\nPlease review it in the admin panel.";
+                await _telegramService.SendMessageAsync(superAdmin.TelegramChatId, msg, cancellationToken);
+            }
+
             TempData["SuccessMsg"]      = "Payment request submitted. SuperAdmin will review it before activating the subscription.";
             TempData["SuccessListUrl"]  = Url.Action("MyRequests", "SubscriptionRequest");
             TempData["SuccessListLabel"]= "View My Requests";

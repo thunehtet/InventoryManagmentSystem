@@ -4,6 +4,7 @@ using ClothInventoryApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClothInventoryApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260418200409_AddTelegramLinkTokens")]
+    partial class AddTelegramLinkTokens
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -95,10 +98,6 @@ namespace ClothInventoryApp.Migrations
 
                     b.Property<string>("ProfileImageUrl")
                         .HasColumnType("longtext");
-
-                    b.Property<string>("TelegramChatId")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("longtext");
@@ -770,34 +769,6 @@ namespace ClothInventoryApp.Migrations
                         .IsUnique();
 
                     b.ToTable("TenantFeatureOverrides");
-                });
-
-            modelBuilder.Entity("ClothInventoryApp.Models.TelegramLinkToken", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("varchar(16)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("TelegramLinkTokens");
                 });
 
             modelBuilder.Entity("ClothInventoryApp.Models.TenantFeatureUsage", b =>
@@ -1478,17 +1449,6 @@ namespace ClothInventoryApp.Migrations
                     b.Navigation("Feature");
 
                     b.Navigation("Tenant");
-                });
-
-            modelBuilder.Entity("ClothInventoryApp.Models.TelegramLinkToken", b =>
-                {
-                    b.HasOne("ClothInventoryApp.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ClothInventoryApp.Models.TenantFeatureUsage", b =>

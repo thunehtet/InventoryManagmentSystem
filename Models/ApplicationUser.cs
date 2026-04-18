@@ -31,5 +31,8 @@ namespace ClothInventoryApp.Models
         public DateTime? LoginIdentityChangedAt { get; set; }
 
         public string? ProfileImageUrl { get; set; }
+
+        [MaxLength(50)]
+        public string? TelegramChatId { get; set; }
     }
 }

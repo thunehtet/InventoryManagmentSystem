@@ -26,6 +26,8 @@ namespace ClothInventoryApp.Dtos.Account
         [Display(Name = "Brand Logo")]
         public IFormFile? BrandLogoImage { get; set; }
 
+        public bool IsTelegramConnected { get; set; }
+
         public string? CurrentProfileImageUrl { get; set; }
         public string? CurrentBrandLogoUrl { get; set; }
         public string TenantName { get; set; } = string.Empty;

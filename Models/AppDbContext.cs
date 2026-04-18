@@ -54,6 +54,7 @@ namespace ClothInventoryApp.Data
         public DbSet<UploadedFile> UploadedFiles => Set<UploadedFile>();
         public DbSet<SubscriptionPaymentRequest> SubscriptionPaymentRequests => Set<SubscriptionPaymentRequest>();
         public DbSet<TenantFeatureUsage> TenantFeatureUsages => Set<TenantFeatureUsage>();
+        public DbSet<TelegramLinkToken> TelegramLinkTokens => Set<TelegramLinkToken>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

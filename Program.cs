@@ -7,6 +7,7 @@ using ClothInventoryApp.Services.Email;
 using ClothInventoryApp.Services.Files;
 using ClothInventoryApp.Services.Identity;
 using ClothInventoryApp.Services.Security;
+using ClothInventoryApp.Services.Telegram;
 using ClothInventoryApp.Options;
 using ClothInventoryApp.Services.Stock;
 using ClothInventoryApp.Services.Subscription;
@@ -145,7 +146,9 @@ builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Emai
 builder.Services.Configure<TurnstileSettings>(builder.Configuration.GetSection("Turnstile"));
 builder.Services.Configure<UserProvisioningSettings>(builder.Configuration.GetSection("UserProvisioning"));
 builder.Services.Configure<SubscriptionPaymentSettings>(builder.Configuration.GetSection("SubscriptionPayments"));
+builder.Services.Configure<TelegramSettings>(builder.Configuration.GetSection("Telegram"));
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+builder.Services.AddScoped<ITelegramService, TelegramService>();
 builder.Services.AddScoped<ITemporaryCredentialService, TemporaryCredentialService>();
 builder.Services.AddScoped<ITurnstileValidationService, TurnstileValidationService>();
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
@@ -154,6 +157,7 @@ builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 builder.Services.AddScoped<ClothInventoryApp.Filters.ActiveTenantFilter>();
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AppClaimsPrincipalFactory>();
 builder.Services.AddHostedService<ClothInventoryApp.Services.Subscription.SubscriptionExpiryService>();
+builder.Services.AddHostedService<ClothInventoryApp.Services.Telegram.TelegramNotificationBackgroundService>();
 
 var app = builder.Build();
 
