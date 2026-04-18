@@ -1,5 +1,6 @@
 using ClothInventoryApp.Data;
 using ClothInventoryApp.Services.Telegram;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
@@ -12,6 +13,7 @@ namespace ClothInventoryApp.Controllers
     /// When a user clicks the deep link and taps START, the bot receives
     /// /start <token>. We match the token to a StockEasy user and save their chat_id.
     /// </summary>
+    [AllowAnonymous]
     [ApiController]
     [Route("telegram/webhook")]
     public class TelegramWebhookController : ControllerBase

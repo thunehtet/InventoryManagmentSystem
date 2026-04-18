@@ -113,47 +113,6 @@
                         <input class="input-modern" readonly value="@(Model.CanChangeLoginIdentity ? "You can still change username/email once." : $"Already used on {Model.LoginIdentityChangedAt:yyyy-MM-dd HH:mm}")" />
                     </div>
 
-                    <div class="form-group-modern">
-                        <label class="form-label-modern">Telegram Notifications</label>
-                        @if (Model.IsTelegramConnected)
-                        {
-                            <div class="d-flex align-items-center gap-3 flex-wrap">
-                                <span class="badge bg-success fs-6 px-3 py-2">
-                                    <i class="bi bi-telegram me-1"></i> Connected
-                                </span>
-                                <form asp-action="DisconnectTelegram" method="post">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        <i class="bi bi-x-circle me-1"></i> Disconnect
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="text-muted small mt-2">You will receive low stock and subscription notifications on Telegram.</div>
-                        }
-                        else
-                        {
-                            @if (TempData["TelegramDeepLink"] is string deepLink)
-                            {
-                                <div class="alert alert-info py-2 px-3 mb-2">
-                                    <strong>Step:</strong> Click the button below in Telegram and tap <strong>START</strong>.
-                                    This link expires in 15 minutes.
-                                </div>
-                                <a href="@deepLink" target="_blank" class="btn btn-primary">
-                                    <i class="bi bi-telegram me-1"></i> Open Bot &amp; Connect
-                                </a>
-                            }
-                            else
-                            {
-                                <form asp-action="GenerateTelegramLink" method="post">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-outline-primary">
-                                        <i class="bi bi-telegram me-1"></i> Connect Telegram
-                                    </button>
-                                </form>
-                                <div class="text-muted small mt-2">Connect once to receive stock and subscription alerts via Telegram.</div>
-                            }
-                        }
-                    </div>
                 </div>
 
                 <div class="form-footer-modern">
@@ -164,6 +123,54 @@
                     <a asp-controller="Home" asp-action="Index" class="btn-modern-outline btn-modern-lg">@Localizer["Back"]</a>
                 </div>
             </form>
+        </div>
+
+        <div class="create-main-card mt-4">
+            <div class="section-header">
+                <div>
+                    <h3>Telegram Notifications</h3>
+                    <p>Receive low stock alerts and subscription updates on Telegram.</p>
+                </div>
+            </div>
+
+            @if (Model.IsTelegramConnected)
+            {
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <span class="badge bg-success fs-6 px-3 py-2">
+                        <i class="bi bi-telegram me-1"></i> Connected
+                    </span>
+                    <form asp-action="DisconnectTelegram" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-x-circle me-1"></i> Disconnect
+                        </button>
+                    </form>
+                </div>
+                <div class="text-muted small mt-2">You will receive low stock and subscription notifications on Telegram.</div>
+            }
+            else
+            {
+                @if (TempData["TelegramDeepLink"] is string deepLink)
+                {
+                    <div class="alert alert-info py-2 px-3 mb-3">
+                        <strong>Step:</strong> Click the button below, then tap <strong>START</strong> in Telegram.
+                        This link expires in 15 minutes.
+                    </div>
+                    <a href="@deepLink" target="_blank" class="btn-modern-primary btn-modern-lg d-inline-flex align-items-center gap-2">
+                        <i class="bi bi-telegram"></i> Open Bot &amp; Connect
+                    </a>
+                }
+                else
+                {
+                    <form asp-action="GenerateTelegramLink" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn-modern-outline btn-modern-lg d-inline-flex align-items-center gap-2">
+                            <i class="bi bi-telegram"></i> Connect Telegram
+                        </button>
+                    </form>
+                    <div class="text-muted small mt-2">Connect once to receive stock and subscription alerts via Telegram.</div>
+                }
+            }
         </div>
     </div>
 </div>
