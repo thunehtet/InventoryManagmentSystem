@@ -449,6 +449,13 @@ namespace ClothInventoryApp.Controllers
         {
             size = PaginationViewModel.Clamp(size);
             var tenantId = _tenantProvider.GetTenantId();
+
+            var tenantSettings = await _context.TenantSettings.AsNoTracking()
+                .FirstOrDefaultAsync(s => s.TenantId == tenantId);
+            var lowStockThreshold = tenantSettings?.LowStockThreshold ?? 10;
+            var isAdmin = User.IsInRole("Admin");
+            var lowStockAlertVisible = isAdmin || (tenantSettings?.LowStockAlertEnabled != false);
+
             var query = _context.ProductVariants
                 .Include(v => v.Product)
                 .AsQueryable();
@@ -490,7 +497,7 @@ namespace ClothInventoryApp.Controllers
                         Color = v.Color,
                         CurrentStock = stockMap.TryGetValue(v.Id, out var stock) ? stock : 0
                     })
-                    .Where(x => x.CurrentStock < 10)
+                    .Where(x => x.CurrentStock < lowStockThreshold)
                     .OrderBy(x => x.CurrentStock)
                     .ThenBy(x => x.ProductName)
                     .ThenBy(x => x.SKU)
@@ -539,6 +546,8 @@ namespace ClothInventoryApp.Controllers
 
             ViewBag.Search = search;
             ViewBag.LowStock = lowstock;
+            ViewBag.LowStockThreshold = lowStockThreshold;
+            ViewBag.LowStockAlertVisible = lowStockAlertVisible;
             ViewBag.Pagination = new PaginationViewModel
             {
                 Page = page,

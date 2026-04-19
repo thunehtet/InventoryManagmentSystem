@@ -307,13 +307,6 @@ namespace ClothInventoryApp.Controllers
 
         private async Task<(bool CanDelete, string? Message)> GetDeleteStateAsync(Guid variantId)
         {
-            var hasSaleHistory = await _context.SaleItems
-                .AnyAsync(i => i.ProductVariantId == variantId);
-            if (hasSaleHistory)
-            {
-                return (false, "This variant cannot be deleted because it is used in sales history.");
-            }
-
             var stockDelta = await _context.StockMovements
                 .Where(m => m.ProductVariantId == variantId)
                 .SumAsync(m => m.MovementType == "IN" ? m.Quantity : m.MovementType == "OUT" ? -m.Quantity : 0);

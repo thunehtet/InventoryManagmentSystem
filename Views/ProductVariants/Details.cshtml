@@ -59,8 +59,15 @@
                 </div>
 
                 <div class="form-group-modern">
-                    <label class="form-label-modern">Cost Price</label>
-                    <input value="@(Model.CostPrice.ToString("N0") + " " + currency)" class="input-modern" readonly />
+                    <label class="form-label-modern">
+                        Cost Price
+                        <button class="sensitive-toggle-btn" data-sensitive-btn="detail-cost" title="Show">
+                            <i class="bi bi-eye-fill"></i>
+                        </button>
+                    </label>
+                    <input data-sensitive-group="detail-cost"
+                           data-real="@(Model.CostPrice.ToString("N0") + " " + currency)"
+                           value="••••••" class="input-modern" readonly />
                 </div>
 
                 <div class="form-group-modern">
@@ -85,4 +92,8 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/pages/create-product.css" />
+}
+
+@section Scripts {
+    <script src="~/js/sensitive-toggle.js" asp-append-version="true"></script>
 }

@@ -68,6 +68,8 @@
             </div>
         </div>
 
+        @if (Model.LowStockAlertVisible)
+        {
         <div class="ov-metric-card @(Model.LowStockCount > 0 ? "ov-metric-card--alert" : "")">
             <div class="ov-metric-icon @(Model.LowStockCount > 0 ? "ov-icon--red" : "ov-icon--green")">
                 <i class="bi bi-@(Model.LowStockCount > 0 ? "exclamation-circle-fill" : "check-circle-fill")"></i>
@@ -78,9 +80,10 @@
             </div>
             @if (Model.LowStockCount > 0)
             {
-            <a asp-controller="Stock" asp-action="Inventory" class="ov-metric-action">@Localizer["View"] <i class="bi bi-arrow-right"></i></a>
+            <a asp-controller="Stock" asp-action="Inventory" asp-route-lowstock="true" class="ov-metric-action">@Localizer["View"] <i class="bi bi-arrow-right"></i></a>
             }
         </div>
+        }
     </div>
 
     <!-- Subscription card -->
@@ -112,28 +115,37 @@
         </div>
 
         <!-- Usage bars -->
+        @{
+            string BarClass(int pct, bool unlimited) {
+                if (unlimited) return "ov-usage-fill ov-usage-fill--unlimited";
+                if (pct >= 100) return "ov-usage-fill ov-usage-fill--full";
+                if (pct >= 90)  return "ov-usage-fill ov-usage-fill--danger";
+                if (pct >= 75)  return "ov-usage-fill ov-usage-fill--warn";
+                return "ov-usage-fill";
+            }
+        }
         <div class="ov-usage-list">
             <div class="ov-usage-row">
                 <span class="ov-usage-lbl">@Localizer["Products"]</span>
                 <div class="ov-usage-bar-wrap">
-                    <progress class="ov-usage-bar" max="100" value="@Model.ProductUsagePct"
-                              data-pct="@Model.ProductUsagePct">@Model.ProductUsagePct%</progress>
+                    <div class="@BarClass(Model.ProductUsagePct, !Model.ProductsMax.HasValue)"
+                         style="width:@(Model.ProductsMax.HasValue ? Model.ProductUsagePct : 100)%"></div>
                 </div>
                 <span class="ov-usage-num">@Model.ProductsCurrent / @(Model.ProductsMax?.ToString() ?? "∞")</span>
             </div>
             <div class="ov-usage-row">
                 <span class="ov-usage-lbl">@Localizer["Variants"]</span>
                 <div class="ov-usage-bar-wrap">
-                    <progress class="ov-usage-bar" max="100" value="@Model.VariantUsagePct"
-                              data-pct="@Model.VariantUsagePct">@Model.VariantUsagePct%</progress>
+                    <div class="@BarClass(Model.VariantUsagePct, !Model.VariantsMax.HasValue)"
+                         style="width:@(Model.VariantsMax.HasValue ? Model.VariantUsagePct : 100)%"></div>
                 </div>
                 <span class="ov-usage-num">@Model.VariantsCurrent / @(Model.VariantsMax?.ToString() ?? "∞")</span>
             </div>
             <div class="ov-usage-row">
                 <span class="ov-usage-lbl">@Localizer["Users"]</span>
                 <div class="ov-usage-bar-wrap">
-                    <progress class="ov-usage-bar" max="100" value="@Model.UserUsagePct"
-                              data-pct="@Model.UserUsagePct">@Model.UserUsagePct%</progress>
+                    <div class="@BarClass(Model.UserUsagePct, !Model.UsersMax.HasValue)"
+                         style="width:@(Model.UsersMax.HasValue ? Model.UserUsagePct : 100)%"></div>
                 </div>
                 <span class="ov-usage-num">@Model.UsersCurrent / @(Model.UsersMax?.ToString() ?? "∞")</span>
             </div>

@@ -239,7 +239,7 @@ namespace ClothInventoryApp.Controllers
                 {
                     _context.StockMovements.Add(new StockMovement
                     {
-                        ProductVariantId = item.ProductVariantId,
+                        ProductVariantId = item.ProductVariantId!.Value,
                         TenantId = tenantId,
                         Quantity = item.Quantity,
                         MovementType = "OUT",
@@ -314,6 +314,8 @@ namespace ClothInventoryApp.Controllers
             var (pdfUsed, pdfMax) = await _subscriptionService.GetFeatureUsageAsync(tid, FeatureUsageKeys.PdfInvoice);
             ViewBag.PdfUsed = pdfUsed;
             ViewBag.PdfMax  = pdfMax;
+
+            ViewBag.HasSaleProfit = await _featureService.HasFeatureAsync(tid, "sale_profit") && !User.IsInRole("Staff");
 
             var dto = new ViewSaleDto
             {

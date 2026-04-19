@@ -63,7 +63,12 @@
                         <th>SKU</th>
                         <th>@Localizer["Size"]</th>
                         <th>@Localizer["Color"]</th>
-                        <th>@Localizer["Cost Price"]</th>
+                        <th>
+                            @Localizer["Cost Price"]
+                            <button class="sensitive-toggle-btn" data-sensitive-btn="variant-cost" title="Show">
+                                <i class="bi bi-eye-fill"></i>
+                            </button>
+                        </th>
                         <th>@Localizer["Selling Price"]</th>
                         <th>@Localizer["Actions"]</th>
                     </tr>
@@ -91,7 +96,7 @@
                                 <td class="fw-semibold">@item.SKU</td>
                                 <td>@item.Size</td>
                                 <td>@item.Color</td>
-                                <td>@item.CostPrice.ToString("N0") @currency</td>
+                                <td><span class="sensitive-val" data-sensitive-group="variant-cost" data-real="@(item.CostPrice.ToString("N0")) @currency">••••</span></td>
                                 <td>@item.SellingPrice.ToString("N0") @currency</td>
                                 <td>
                                     <div class="table-actions">
@@ -115,4 +120,8 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/pages/product-index.css" />
+}
+
+@section Scripts {
+    <script src="~/js/sensitive-toggle.js" asp-append-version="true"></script>
 }

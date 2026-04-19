@@ -668,3 +668,17 @@
     .filter-search-btn { padding: 8px 12px; }
     .product-table-card .pagination-bar { margin: 8px -12px -12px; }
 }
+
+/* Sensitive value toggle */
+.sensitive-toggle-btn {
+    background: none;
+    border: none;
+    padding: 0 0 0 6px;
+    cursor: pointer;
+    color: #94a3b8;
+    font-size: 13px;
+    vertical-align: middle;
+    line-height: 1;
+}
+.sensitive-toggle-btn:hover { color: #6366f1; }
+.sensitive-val { letter-spacing: 1px; }

@@ -218,8 +218,23 @@ namespace ClothInventoryApp.Controllers
                 return RedirectToAction(nameof(Delete), new { id });
             }
 
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
+            using var tx = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var variants = await _context.ProductVariants
+                    .Where(v => v.ProductId == id)
+                    .ToListAsync();
+                _context.ProductVariants.RemoveRange(variants);
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
+                await tx.CommitAsync();
+            }
+            catch
+            {
+                await tx.RollbackAsync();
+                TempData["Error"] = "Failed to delete product. Please try again.";
+                return RedirectToAction(nameof(Delete), new { id });
+            }
 
             TempData["SuccessMsg"]      = this.LocalizeShared("Product '{0}' deleted.", product.Name);
             TempData["SuccessType"]     = "delete";
@@ -244,13 +259,6 @@ namespace ClothInventoryApp.Controllers
 
             if (variantIds.Count == 0)
                 return (true, null);
-
-            var hasSaleHistory = await _context.SaleItems
-                .AnyAsync(i => variantIds.Contains(i.ProductVariantId));
-            if (hasSaleHistory)
-            {
-                return (false, _localizer["This product cannot be deleted because one or more variants are used in sales history. Mark the product inactive instead."]);
-            }
 
             var stockDelta = await _context.StockMovements
                 .Where(m => variantIds.Contains(m.ProductVariantId))

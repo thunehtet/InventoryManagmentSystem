@@ -4,6 +4,7 @@
 @{
     ViewData["Title"] = Localizer["Sale Details"];
     var currency = ViewData["Currency"] as string ?? "";
+    var hasSaleProfit = (bool)(ViewBag.HasSaleProfit ?? false);
 
     int pdfUsed   = ViewBag.PdfUsed  is int pu ? pu : 0;
     int? pdfMax   = ViewBag.PdfMax   as int?;
@@ -187,11 +188,21 @@
                 </div>
             }
 
-            <div class="form-group-modern">
-                <label class="form-label-modern">@Localizer["Total Profit"]</label>
-                <input value="@(Model.TotalProfit.ToString("N0") + " " + currency)"
-                       class="input-modern @(Model.TotalProfit >= 0 ? "text-success" : "text-danger") fw-bold" readonly />
-            </div>
+            @if (hasSaleProfit)
+            {
+                <div class="form-group-modern">
+                    <label class="form-label-modern">
+                        @Localizer["Total Profit"]
+                        <button class="sensitive-toggle-btn" data-sensitive-btn="sale-sensitive" title="Show">
+                            <i class="bi bi-eye-fill"></i>
+                        </button>
+                    </label>
+                    <input data-sensitive-group="sale-sensitive"
+                           data-real="@(Model.TotalProfit.ToString("N0") + " " + currency)"
+                           value="••••••"
+                           class="input-modern @(Model.TotalProfit >= 0 ? "text-success" : "text-danger") fw-bold" readonly />
+                </div>
+            }
         </div>
 
         <hr />
@@ -202,9 +213,17 @@
                         <th>@Localizer["Variant"]</th>
                         <th>@Localizer["Qty"]</th>
                         <th>@Localizer["Unit Price"]</th>
-                        <th>@Localizer["Cost Price"]</th>
+                        @if (hasSaleProfit) { <th>@Localizer["Cost Price"]</th> }
                         <th>@Localizer["Revenue"]</th>
-                        <th>@Localizer["Profit"]</th>
+                        @if (hasSaleProfit)
+                        {
+                            <th>
+                                @Localizer["Profit"]
+                                <button class="sensitive-toggle-btn" data-sensitive-btn="sale-sensitive" title="Show">
+                                    <i class="bi bi-eye-fill"></i>
+                                </button>
+                            </th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
@@ -214,11 +233,17 @@
                             <td>@item.ProductVariantName</td>
                             <td>@item.Quantity</td>
                             <td>@item.UnitPrice.ToString("N0") @currency</td>
-                            <td>@item.CostPrice.ToString("N0") @currency</td>
+                            @if (hasSaleProfit)
+                            {
+                                <td><span class="sensitive-val" data-sensitive-group="sale-sensitive" data-real="@(item.CostPrice.ToString("N0")) @currency">••••</span></td>
+                            }
                             <td>@item.LineTotal.ToString("N0") @currency</td>
-                            <td class="@(item.LineProfit >= 0 ? "text-success" : "text-danger") fw-semibold">
-                                @item.LineProfit.ToString("N0") @currency
-                            </td>
+                            @if (hasSaleProfit)
+                            {
+                                <td class="@(item.LineProfit >= 0 ? "text-success" : "text-danger") fw-semibold">
+                                    <span class="sensitive-val" data-sensitive-group="sale-sensitive" data-real="@(item.LineProfit.ToString("N0")) @currency">••••</span>
+                                </td>
+                            }
                         </tr>
                     }
                 </tbody>
@@ -237,4 +262,5 @@
 @section Scripts {
     <script src="~/js/public-share.js" asp-append-version="true"></script>
     <script src="~/js/sale-details.js" asp-append-version="true"></script>
+    <script src="~/js/sensitive-toggle.js" asp-append-version="true"></script>
 }

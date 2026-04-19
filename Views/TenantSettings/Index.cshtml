@@ -1,0 +1,277 @@
+@model ClothInventoryApp.Dto.TenantSettings.TenantSettingsEditDto
+@{
+    ViewData["Title"] = "Workspace Settings";
+}
+
+<div class="create-product-shell">
+
+    <!-- ── Hero ────────────────────────────────────────────────── -->
+    <div class="create-product-hero">
+        <div class="create-product-hero-content">
+            <div class="hero-kicker">
+                <i class="bi bi-gear-fill"></i>
+                <span>Workspace</span>
+            </div>
+            <h1>Settings</h1>
+            <p>Control what your staff can see and set operational thresholds for your workspace.</p>
+            <div class="hero-actions">
+                <a asp-controller="Home" asp-action="Index" class="btn-soft-light">
+                    <i class="bi bi-arrow-left"></i> Back to Overview
+                </a>
+            </div>
+        </div>
+        <div class="create-product-hero-side">
+            <div class="hero-stat-card">
+                <div class="hero-stat-icon">
+                    <i class="bi bi-shield-lock-fill"></i>
+                </div>
+                <div class="hero-stat-title">Admin Only</div>
+                <div class="hero-stat-text">
+                    These settings only affect staff accounts. Admins always have full access.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Body ────────────────────────────────────────────────── -->
+    <form asp-action="Update" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="create-product-grid">
+
+            <!-- ── Main: Staff Permissions ──────────────────────── -->
+            <div class="create-main-card">
+                <div class="section-header">
+                    <div>
+                        <h3>Staff Feature Visibility</h3>
+                        <p>Toggle which features staff members can navigate to. Disabled features are fully hidden — not locked.</p>
+                    </div>
+                </div>
+
+                <div class="staff-toggles-list">
+
+                    <label class="status-toggle-card" for="StaffCanSeeDashboard">
+                        <div class="status-toggle-copy">
+                            <div class="status-toggle-title">
+                                <i class="bi bi-bar-chart-line-fill me-2" style="color:#6366f1"></i>Dashboard
+                            </div>
+                            <div class="status-toggle-text">Analytics overview, sales trends, and business insights</div>
+                        </div>
+                        <div class="status-toggle-switch">
+                            <input asp-for="StaffCanSeeDashboard"
+                                   class="form-check-input modern-switch"
+                                   id="StaffCanSeeDashboard"
+                                   type="checkbox" />
+                        </div>
+                    </label>
+
+                    <label class="status-toggle-card" for="StaffCanSeeFinance">
+                        <div class="status-toggle-copy">
+                            <div class="status-toggle-title">
+                                <i class="bi bi-cash-coin me-2" style="color:#10b981"></i>Finance Dashboard
+                            </div>
+                            <div class="status-toggle-text">Revenue summary, profit margins, and expense tracking</div>
+                        </div>
+                        <div class="status-toggle-switch">
+                            <input asp-for="StaffCanSeeFinance"
+                                   class="form-check-input modern-switch"
+                                   id="StaffCanSeeFinance"
+                                   type="checkbox" />
+                        </div>
+                    </label>
+
+                    <label class="status-toggle-card" for="StaffCanSeeProducts">
+                        <div class="status-toggle-copy">
+                            <div class="status-toggle-title">
+                                <i class="bi bi-box-seam-fill me-2" style="color:#0891b2"></i>Products
+                            </div>
+                            <div class="status-toggle-text">Product catalog listing and detail pages</div>
+                        </div>
+                        <div class="status-toggle-switch">
+                            <input asp-for="StaffCanSeeProducts"
+                                   class="form-check-input modern-switch"
+                                   id="StaffCanSeeProducts"
+                                   type="checkbox" />
+                        </div>
+                    </label>
+
+                    <label class="status-toggle-card" for="StaffCanSeeVariants">
+                        <div class="status-toggle-copy">
+                            <div class="status-toggle-title">
+                                <i class="bi bi-palette-fill me-2" style="color:#7c3aed"></i>Variants
+                            </div>
+                            <div class="status-toggle-text">Product variant listing (SKU, size, colour)</div>
+                        </div>
+                        <div class="status-toggle-switch">
+                            <input asp-for="StaffCanSeeVariants"
+                                   class="form-check-input modern-switch"
+                                   id="StaffCanSeeVariants"
+                                   type="checkbox" />
+                        </div>
+                    </label>
+
+                    <label class="status-toggle-card" for="StaffCanSeeTextiles">
+                        <div class="status-toggle-copy">
+                            <div class="status-toggle-title">
+                                <i class="bi bi-tags-fill me-2" style="color:#f59e0b"></i>Purchases
+                            </div>
+                            <div class="status-toggle-text">Textile and raw material purchase records</div>
+                        </div>
+                        <div class="status-toggle-switch">
+                            <input asp-for="StaffCanSeeTextiles"
+                                   class="form-check-input modern-switch"
+                                   id="StaffCanSeeTextiles"
+                                   type="checkbox" />
+                        </div>
+                    </label>
+
+                    <label class="status-toggle-card" for="StaffCanSeeStockMovement">
+                        <div class="status-toggle-copy">
+                            <div class="status-toggle-title">
+                                <i class="bi bi-plus-circle-fill me-2" style="color:#16a34a"></i>Stock Movement
+                            </div>
+                            <div class="status-toggle-text">Stock in / out movement entry and history</div>
+                        </div>
+                        <div class="status-toggle-switch">
+                            <input asp-for="StaffCanSeeStockMovement"
+                                   class="form-check-input modern-switch"
+                                   id="StaffCanSeeStockMovement"
+                                   type="checkbox" />
+                        </div>
+                    </label>
+
+                    <label class="status-toggle-card" for="StaffCanSeeInventory">
+                        <div class="status-toggle-copy">
+                            <div class="status-toggle-title">
+                                <i class="bi bi-clock-history me-2" style="color:#64748b"></i>Inventory Log
+                            </div>
+                            <div class="status-toggle-text">Current stock balance and inventory log</div>
+                        </div>
+                        <div class="status-toggle-switch">
+                            <input asp-for="StaffCanSeeInventory"
+                                   class="form-check-input modern-switch"
+                                   id="StaffCanSeeInventory"
+                                   type="checkbox" />
+                        </div>
+                    </label>
+
+                    <label class="status-toggle-card" for="StaffCanSeeSales">
+                        <div class="status-toggle-copy">
+                            <div class="status-toggle-title">
+                                <i class="bi bi-bag-check-fill me-2" style="color:#3b82f6"></i>Sales
+                            </div>
+                            <div class="status-toggle-text">Sales history, invoices, and transaction records</div>
+                        </div>
+                        <div class="status-toggle-switch">
+                            <input asp-for="StaffCanSeeSales"
+                                   class="form-check-input modern-switch"
+                                   id="StaffCanSeeSales"
+                                   type="checkbox" />
+                        </div>
+                    </label>
+
+                    <label class="status-toggle-card" for="StaffCanSeeCustomers">
+                        <div class="status-toggle-copy">
+                            <div class="status-toggle-title">
+                                <i class="bi bi-people-fill me-2" style="color:#8b5cf6"></i>Customers
+                            </div>
+                            <div class="status-toggle-text">Customer profiles, contact info, and purchase history</div>
+                        </div>
+                        <div class="status-toggle-switch">
+                            <input asp-for="StaffCanSeeCustomers"
+                                   class="form-check-input modern-switch"
+                                   id="StaffCanSeeCustomers"
+                                   type="checkbox" />
+                        </div>
+                    </label>
+
+                </div>
+
+                <div class="form-footer-modern">
+                    <button type="submit" class="btn-modern-primary">
+                        <i class="bi bi-floppy-fill"></i> Save Settings
+                    </button>
+                </div>
+            </div>
+
+            <!-- ── Sidebar: Low Stock Alert ──────────────────────── -->
+            <div class="create-side-column">
+
+                <div class="side-info-card">
+                    <div class="side-info-header">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <h4>Low Stock Alert</h4>
+                    </div>
+
+                    <p class="side-info-text">
+                        Variants at or below the threshold are flagged as low stock across the app and in Telegram alerts.
+                    </p>
+
+                    <div class="info-list-modern mb-3">
+                        <div class="info-row-modern">
+                            <span class="info-label">Threshold</span>
+                            <div class="input-icon-wrap" style="width:110px">
+                                <i class="bi bi-sliders"></i>
+                                <input asp-for="LowStockThreshold"
+                                       type="number"
+                                       class="input-modern"
+                                       style="height:40px;font-size:.9rem;padding-left:36px"
+                                       min="1" max="10000"
+                                       placeholder="10" />
+                            </div>
+                        </div>
+                        <span asp-validation-for="LowStockThreshold" class="field-validation-modern"></span>
+                    </div>
+
+                    <label class="status-toggle-card" for="LowStockAlertEnabled" style="margin-top:4px">
+                        <div class="status-toggle-copy">
+                            <div class="status-toggle-title">
+                                <i class="bi bi-bell-fill me-2" style="color:#ef4444"></i>Enable for Staff
+                            </div>
+                            <div class="status-toggle-text">Show the low-stock warning badge to staff</div>
+                        </div>
+                        <div class="status-toggle-switch">
+                            <input asp-for="LowStockAlertEnabled"
+                                   class="form-check-input modern-switch"
+                                   id="LowStockAlertEnabled"
+                                   type="checkbox" />
+                        </div>
+                    </label>
+                </div>
+
+                <div class="side-info-card">
+                    <div class="side-info-header">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <h4>How it works</h4>
+                    </div>
+                    <p class="side-info-text" style="margin:0">
+                        Visibility toggles only hide navigation items — staff cannot reach a hidden page directly either.
+                        Admins always see everything, regardless of these settings.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+    </form>
+
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/create-product.css" asp-append-version="true" />
+    <style>
+        .staff-toggles-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .staff-toggles-list .status-toggle-card {
+            cursor: pointer;
+            user-select: none;
+        }
+    </style>
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

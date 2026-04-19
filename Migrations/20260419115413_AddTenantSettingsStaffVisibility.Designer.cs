@@ -4,6 +4,7 @@ using ClothInventoryApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClothInventoryApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260419115413_AddTenantSettingsStaffVisibility")]
+    partial class AddTenantSettingsStaffVisibility
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -870,22 +873,10 @@ namespace ClothInventoryApp.Migrations
                     b.Property<bool>("StaffCanSeeFinance")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("StaffCanSeeInventory")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("StaffCanSeeProducts")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<bool>("StaffCanSeeSales")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("StaffCanSeeStockMovement")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<bool>("StaffCanSeeTextiles")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("StaffCanSeeVariants")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<Guid>("TenantId")

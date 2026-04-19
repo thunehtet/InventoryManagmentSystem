@@ -66,7 +66,12 @@
                         @if (hasSaleProfit)
                         {
                             <th>@Localizer["Discount"]</th>
-                            <th>@Localizer["Profit"]</th>
+                            <th>
+                                @Localizer["Profit"]
+                                <button class="sensitive-toggle-btn" data-sensitive-btn="profit-list" title="Show">
+                                    <i class="bi bi-eye-fill"></i>
+                                </button>
+                            </th>
                         }
                         <th>@Localizer["Actions"]</th>
                     </tr>
@@ -110,7 +115,8 @@
                                         @(item.Discount > 0 ? "- " + item.Discount.ToString("N0") + " " + currency : "—")
                                     </td>
                                     <td class="@(item.TotalProfit >= 0 ? "qty-positive" : "qty-negative") fw-semibold">
-                                        @item.TotalProfit.ToString("N0") @currency
+                                        <span data-sensitive-group="profit-list"
+                                              data-real="@(item.TotalProfit.ToString("N0")) @currency">••••</span>
                                     </td>
                                 }
                                 <td>
@@ -135,4 +141,8 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/pages/product-index.css" />
+}
+
+@section Scripts {
+    <script src="~/js/sensitive-toggle.js" asp-append-version="true"></script>
 }

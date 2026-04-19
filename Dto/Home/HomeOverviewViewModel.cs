@@ -10,6 +10,7 @@
         public int TotalProducts { get; set; }
         public int TotalVariants { get; set; }
         public int LowStockCount { get; set; }
+        public bool LowStockAlertVisible { get; set; } = true;
         public List<RecentInventoryActivityItem> RecentActivities { get; set; } = new();
 
         // ── Subscription ─────────────────────────────────────────

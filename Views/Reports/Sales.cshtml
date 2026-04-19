@@ -1,0 +1,259 @@
+@using ClothInventoryApp.Dto.Reports
+@model SalesReportViewModel
+@{
+    ViewData["Title"] = Localizer["Sales Report"];
+    var currency      = ViewData["Currency"] as string ?? "";
+    var hasSaleProfit = (bool)(ViewBag.HasSaleProfit ?? false);
+    var hasCustomers  = (bool)(ViewBag.HasCustomers  ?? false);
+}
+
+<div class="product-index-shell">
+
+    <!-- HERO -->
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <div class="hero-kicker">
+                <i class="bi bi-bar-chart-line-fill"></i>
+                <span>@Localizer["Reports"]</span>
+            </div>
+            <h1>@Localizer["Sales Report"]</h1>
+            <p>@Localizer["Revenue and profit summary for a selected period."]</p>
+        </div>
+        <div class="product-hero-side">
+            <div class="hero-stat-card">
+                <div class="hero-stat-icon"><i class="bi bi-receipt"></i></div>
+                <div class="hero-stat-title">@Localizer["Total Sales"]</div>
+                <div class="hero-stat-text">@Model.TotalCount @Localizer["transactions"]</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="list-filter-bar rpt-filter-bar">
+        <div class="rpt-preset-btns">
+            <a href="@Url.Action("Sales", new { preset = "last_7" })"
+               class="rpt-preset-btn @(Model.Preset == "last_7" ? "rpt-preset-btn--active" : "")">
+                @Localizer["Last 7 Days"]
+            </a>
+            <a href="@Url.Action("Sales", new { preset = "this_month" })"
+               class="rpt-preset-btn @(Model.Preset == "this_month" ? "rpt-preset-btn--active" : "")">
+                @Localizer["This Month"]
+            </a>
+            <a href="@Url.Action("Sales", new { preset = "last_month" })"
+               class="rpt-preset-btn @(Model.Preset == "last_month" ? "rpt-preset-btn--active" : "")">
+                @Localizer["Last Month"]
+            </a>
+            <a href="@Url.Action("Sales", new { preset = "this_year" })"
+               class="rpt-preset-btn @(Model.Preset == "this_year" ? "rpt-preset-btn--active" : "")">
+                @Localizer["This Year"]
+            </a>
+        </div>
+        <form method="get" asp-action="Sales" class="rpt-custom-range">
+            <input type="hidden" name="preset" value="custom" />
+            <input type="date" name="from" value="@Model.From.ToString("yyyy-MM-dd")" class="input-modern rpt-date-input" />
+            <span class="rpt-date-sep">—</span>
+            <input type="date" name="to"   value="@Model.To.ToString("yyyy-MM-dd")"   class="input-modern rpt-date-input" />
+            <button type="submit" class="filter-search-btn">
+                <i class="bi bi-funnel-fill"></i> @Localizer["Apply"]
+            </button>
+        </form>
+    </div>
+
+    <!-- SUMMARY CARDS -->
+    <div class="rpt-summary-grid">
+        <div class="rpt-card rpt-card--blue">
+            <div class="rpt-card-icon"><i class="bi bi-bag-check-fill"></i></div>
+            <div class="rpt-card-body">
+                <div class="rpt-card-label">@Localizer["Total Sales"]</div>
+                <div class="rpt-card-value">@Model.TotalCount</div>
+            </div>
+        </div>
+        <div class="rpt-card rpt-card--indigo">
+            <div class="rpt-card-icon"><i class="bi bi-cash-stack"></i></div>
+            <div class="rpt-card-body">
+                <div class="rpt-card-label">@Localizer["Total Revenue"]</div>
+                <div class="rpt-card-value">@Model.TotalRevenue.ToString("N0") @currency</div>
+            </div>
+        </div>
+        @if (Model.TotalDiscount > 0)
+        {
+            <div class="rpt-card rpt-card--orange">
+                <div class="rpt-card-icon"><i class="bi bi-tag-fill"></i></div>
+                <div class="rpt-card-body">
+                    <div class="rpt-card-label">@Localizer["Total Discount"]</div>
+                    <div class="rpt-card-value">@Model.TotalDiscount.ToString("N0") @currency</div>
+                </div>
+            </div>
+        }
+        @if (hasSaleProfit)
+        {
+            <div class="rpt-card @(Model.TotalProfit >= 0 ? "rpt-card--green" : "rpt-card--red")">
+                <div class="rpt-card-icon"><i class="bi bi-graph-up-arrow"></i></div>
+                <div class="rpt-card-body">
+                    <div class="rpt-card-label">
+                        @Localizer["Total Profit"]
+                        <button class="sensitive-toggle-btn" data-sensitive-btn="rpt-profit" title="Show">
+                            <i class="bi bi-eye-fill"></i>
+                        </button>
+                    </div>
+                    <div class="rpt-card-value">
+                        <span data-sensitive-group="rpt-profit"
+                              data-real="@(Model.TotalProfit.ToString("N0")) @currency">••••••</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (!Model.Sales.Any())
+    {
+        <div class="product-table-card">
+            <div class="empty-state" style="padding: 48px 0;">
+                <i class="bi bi-inbox"></i>
+                <div>@Localizer["No sales in this period."]</div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- DAILY BREAKDOWN -->
+        <div class="product-table-card" style="margin-bottom: 20px;">
+            <div class="rpt-section-title">
+                <i class="bi bi-calendar3"></i> @Localizer["Daily Breakdown"]
+            </div>
+            <div class="table-responsive-modern">
+                <table class="table-modern">
+                    <thead>
+                        <tr>
+                            <th>@Localizer["Date"]</th>
+                            <th>@Localizer["Sales"]</th>
+                            <th>@Localizer["Revenue"]</th>
+                            @if (Model.TotalDiscount > 0) { <th>@Localizer["Discount"]</th> }
+                            @if (hasSaleProfit)
+                            {
+                                <th>
+                                    @Localizer["Profit"]
+                                    <button class="sensitive-toggle-btn" data-sensitive-btn="rpt-profit" title="Show">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </button>
+                                </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in Model.DailyRows)
+                        {
+                            <tr>
+                                <td class="text-muted table-cell-sm">@row.Date.ToString("dd MMM yyyy")</td>
+                                <td>@row.Count</td>
+                                <td class="fw-semibold">@row.Revenue.ToString("N0") @currency</td>
+                                @if (Model.TotalDiscount > 0)
+                                {
+                                    <td class="@(row.Discount > 0 ? "text-danger" : "text-muted")">
+                                        @(row.Discount > 0 ? "- " + row.Discount.ToString("N0") + " " + currency : "—")
+                                    </td>
+                                }
+                                @if (hasSaleProfit)
+                                {
+                                    <td class="@(row.Profit >= 0 ? "qty-positive" : "qty-negative") fw-semibold">
+                                        <span data-sensitive-group="rpt-profit"
+                                              data-real="@(row.Profit.ToString("N0")) @currency">••••</span>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr class="rpt-tfoot">
+                            <td><strong>@Localizer["Total"]</strong></td>
+                            <td><strong>@Model.TotalCount</strong></td>
+                            <td><strong>@Model.TotalRevenue.ToString("N0") @currency</strong></td>
+                            @if (Model.TotalDiscount > 0)
+                            {
+                                <td class="text-danger fw-semibold">- @Model.TotalDiscount.ToString("N0") @currency</td>
+                            }
+                            @if (hasSaleProfit)
+                            {
+                                <td class="@(Model.TotalProfit >= 0 ? "qty-positive" : "qty-negative") fw-semibold">
+                                    <span data-sensitive-group="rpt-profit"
+                                          data-real="@(Model.TotalProfit.ToString("N0")) @currency">••••</span>
+                                </td>
+                            }
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- INDIVIDUAL SALES -->
+        <div class="product-table-card">
+            <div class="rpt-section-title">
+                <i class="bi bi-list-ul"></i> @Localizer["Individual Sales"]
+            </div>
+            <div class="table-responsive-modern">
+                <table class="table-modern">
+                    <thead>
+                        <tr>
+                            <th>@Localizer["Date"]</th>
+                            @if (hasCustomers) { <th>@Localizer["Customer"]</th> }
+                            <th>@Localizer["Revenue"]</th>
+                            @if (Model.TotalDiscount > 0) { <th>@Localizer["Discount"]</th> }
+                            @if (hasSaleProfit) { <th>@Localizer["Profit"]</th> }
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in Model.Sales)
+                        {
+                            <tr>
+                                <td class="text-muted table-cell-sm">@s.SaleDate.ToString("dd MMM yyyy")</td>
+                                @if (hasCustomers)
+                                {
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(s.CustomerName))
+                                        {
+                                            <span><i class="bi bi-person-fill me-1 text-muted"></i>@s.CustomerName</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">@Localizer["Walk-in"]</span>
+                                        }
+                                    </td>
+                                }
+                                <td class="fw-semibold">@s.TotalAmount.ToString("N0") @currency</td>
+                                @if (Model.TotalDiscount > 0)
+                                {
+                                    <td class="@(s.Discount > 0 ? "text-danger fw-semibold" : "text-muted")">
+                                        @(s.Discount > 0 ? "- " + s.Discount.ToString("N0") + " " + currency : "—")
+                                    </td>
+                                }
+                                @if (hasSaleProfit)
+                                {
+                                    <td class="@(s.TotalProfit >= 0 ? "qty-positive" : "qty-negative") fw-semibold">
+                                        <span data-sensitive-group="rpt-profit"
+                                              data-real="@(s.TotalProfit.ToString("N0")) @currency">••••</span>
+                                    </td>
+                                }
+                                <td>
+                                    <a asp-controller="Sales" asp-action="Details" asp-route-id="@s.Id"
+                                       class="action-btn action-btn-view" title="@Localizer["Details"]">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/product-index.css" />
+    <link rel="stylesheet" href="~/css/pages/sales-report.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script src="~/js/sensitive-toggle.js" asp-append-version="true"></script>
+}

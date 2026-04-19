@@ -12,7 +12,6 @@ namespace ClothInventoryApp.Services.Telegram
     public class TelegramNotificationBackgroundService : BackgroundService
     {
         private static readonly TimeSpan CheckInterval = TimeSpan.FromHours(24);
-        private const int LowStockThreshold = 10;
 
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly ILogger<TelegramNotificationBackgroundService> _logger;
@@ -103,8 +102,22 @@ namespace ClothInventoryApp.Services.Telegram
 
         private async Task SendLowStockAlertsAsync(AppDbContext db, ITelegramService telegram, CancellationToken ct)
         {
-            var lowStockVariants = await db.ProductVariants
+            // Load per-tenant thresholds (only tenants with alert enabled)
+            var tenantThresholds = await db.TenantSettings
                 .IgnoreQueryFilters()
+                .Where(s => s.LowStockAlertEnabled)
+                .Select(s => new { s.TenantId, Threshold = s.LowStockThreshold ?? 10 })
+                .ToListAsync(ct);
+
+            if (tenantThresholds.Count == 0) return;
+
+            // Fetch all variants with stock for those tenants, filter in memory per threshold
+            var enabledTenantIds = tenantThresholds.Select(t => t.TenantId).ToHashSet();
+            var thresholdMap = tenantThresholds.ToDictionary(t => t.TenantId, t => t.Threshold);
+
+            var allVariants = await db.ProductVariants
+                .IgnoreQueryFilters()
+                .Where(v => enabledTenantIds.Contains(v.TenantId))
                 .Select(v => new
                 {
                     v.TenantId,
@@ -114,8 +127,11 @@ namespace ClothInventoryApp.Services.Telegram
                     CurrentStock = v.StockMovements.Sum(m =>
                         (int?)(m.MovementType == "IN" ? m.Quantity : m.MovementType == "OUT" ? -m.Quantity : 0)) ?? 0
                 })
-                .Where(x => x.CurrentStock < LowStockThreshold && x.CurrentStock >= 0)
                 .ToListAsync(ct);
+
+            var lowStockVariants = allVariants
+                .Where(v => v.CurrentStock >= 0 && v.CurrentStock < thresholdMap.GetValueOrDefault(v.TenantId, 10))
+                .ToList();
 
             if (lowStockVariants.Count == 0) return;
 
@@ -134,6 +150,7 @@ namespace ClothInventoryApp.Services.Telegram
                 var admin = admins.FirstOrDefault(a => a.TenantId == group.Key);
                 if (admin?.TelegramChatId == null) continue;
 
+                var threshold = thresholdMap.GetValueOrDefault(group.Key, 10);
                 var lines = group.Take(10).Select(v =>
                     $"• {v.ProductName} [{v.Color}/{v.Size}] — {v.CurrentStock} left");
 
@@ -141,7 +158,7 @@ namespace ClothInventoryApp.Services.Telegram
 
                 var msg = $"📦 StockEasy Low Stock Alert\n\n" +
                           $"Hello {admin.FullName},\n\n" +
-                          $"The following items are below {LowStockThreshold} units:\n\n" +
+                          $"The following items are below {threshold} units:\n\n" +
                           string.Join("\n", lines) + more +
                           "\n\nPlease restock soon.";
 

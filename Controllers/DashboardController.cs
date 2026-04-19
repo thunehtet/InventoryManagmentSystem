@@ -99,6 +99,11 @@ namespace ClothInventoryApp.Controllers
             vm.TotalProducts = await _context.Products.CountAsync();
             vm.TotalVariants = await _context.ProductVariants.CountAsync();
 
+            var tenantId = _tenantProvider.GetTenantId();
+            var tenantSettings = await _context.TenantSettings.AsNoTracking()
+                .FirstOrDefaultAsync(s => s.TenantId == tenantId);
+            var lowStockThreshold = tenantSettings?.LowStockThreshold ?? 10;
+
             var stockData = await _context.ProductVariants
                 .AsNoTracking()
                 .Select(v => new
@@ -112,7 +117,7 @@ namespace ClothInventoryApp.Controllers
                 })
                 .ToListAsync();
 
-            vm.LowStockCount = stockData.Count(x => x.Stock > 0 && x.Stock < 10);
+            vm.LowStockCount = stockData.Count(x => x.Stock > 0 && x.Stock < lowStockThreshold);
             vm.OutOfStockCount = stockData.Count(x => x.Stock <= 0);
 
             vm.RecentActivities = await _context.StockMovements

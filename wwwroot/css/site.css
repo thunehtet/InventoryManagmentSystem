@@ -4,6 +4,19 @@
     min-height: 100%;
 }
 
+/* Prevent date/time inputs from overflowing their containers on mobile.
+   Browsers impose a minimum intrinsic width on these input types that
+   ignores width:100%, so we must also set max-width and min-width. */
+input[type="date"],
+input[type="datetime-local"],
+input[type="time"],
+input[type="month"],
+input[type="week"] {
+    box-sizing: border-box;
+    min-width: 0;
+    max-width: 100%;
+}
+
 @media (min-width: 768px) {
     html {
         font-size: 16px;

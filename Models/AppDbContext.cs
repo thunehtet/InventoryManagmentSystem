@@ -121,7 +121,8 @@ namespace ClothInventoryApp.Data
                 .HasOne(i => i.ProductVariant)
                 .WithMany(v => v.SaleItems)
                 .HasForeignKey(i => i.ProductVariantId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<SaleItem>()
                 .HasOne(i => i.Sale)

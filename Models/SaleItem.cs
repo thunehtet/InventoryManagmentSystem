@@ -10,8 +10,8 @@
         public Guid SaleId { get; set; }
         public Sale Sale { get; set; } = null!;
 
-        public Guid ProductVariantId { get; set; }
-        public ProductVariant ProductVariant { get; set; } = null!;
+        public Guid? ProductVariantId { get; set; }
+        public ProductVariant? ProductVariant { get; set; }
 
         public string ProductNameSnapshot { get; set; } = string.Empty;
         public string ProductSkuSnapshot { get; set; } = string.Empty;

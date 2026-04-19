@@ -157,7 +157,7 @@ namespace ClothInventoryApp.Services.Pdf
                 });
 
                 // ── Totals ─────────────────────────────────────────
-                var subtotal = _sale.Items.Sum(i => i.LineTotal) + _sale.Discount;
+                var subtotal = _sale.Items.Sum(i => i.LineTotal);
 
                 col.Item().AlignRight().PaddingTop(16).Column(c =>
                 {

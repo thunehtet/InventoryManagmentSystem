@@ -1,0 +1,127 @@
+/* ============================================================
+   SALES REPORT PAGE
+   ============================================================ */
+
+/* ── Filter bar extensions ─────────────────────────────────── */
+.rpt-filter-bar {
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.rpt-preset-btns {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.rpt-preset-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 14px;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    background: var(--surface-2, #f3f4f6);
+    color: var(--text-secondary, #6b7280);
+    text-decoration: none;
+    border: 1.5px solid transparent;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.rpt-preset-btn:hover { background: var(--surface-3, #e5e7eb); color: var(--text-primary, #111); }
+.rpt-preset-btn--active {
+    background: var(--primary-50, #eef2ff);
+    color: var(--primary-600, #4f46e5);
+    border-color: var(--primary-200, #c7d2fe);
+}
+
+.rpt-custom-range {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.rpt-date-input { max-width: 148px; padding: 7px 10px; font-size: 0.85rem; }
+.rpt-date-sep { color: var(--text-secondary, #9ca3af); font-weight: 600; }
+
+/* ── Summary cards ─────────────────────────────────────────── */
+.rpt-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.rpt-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px 20px;
+    border: 1.5px solid var(--border-color, #e5e7eb);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.rpt-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.rpt-card-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary, #6b7280);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.rpt-card-value {
+    font-size: 1.18rem;
+    font-weight: 700;
+    color: var(--text-primary, #111827);
+    line-height: 1.2;
+}
+
+/* colour variants */
+.rpt-card--blue  .rpt-card-icon { background: #eff6ff; color: #2563eb; }
+.rpt-card--indigo .rpt-card-icon { background: #eef2ff; color: #4f46e5; }
+.rpt-card--green  .rpt-card-icon { background: #f0fdf4; color: #16a34a; }
+.rpt-card--red    .rpt-card-icon { background: #fef2f2; color: #dc2626; }
+.rpt-card--orange .rpt-card-icon { background: #fff7ed; color: #ea580c; }
+
+/* ── Section title ─────────────────────────────────────────── */
+.rpt-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary, #111827);
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+
+/* ── Table footer totals row ───────────────────────────────── */
+.rpt-tfoot td {
+    border-top: 2px solid var(--border-color, #e5e7eb);
+    background: var(--surface-2, #f9fafb);
+    font-size: 0.88rem;
+}
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .rpt-summary-grid { grid-template-columns: 1fr 1fr; }
+    .rpt-date-input { max-width: 130px; }
+}

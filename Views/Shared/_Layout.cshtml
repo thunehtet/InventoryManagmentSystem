@@ -8,6 +8,11 @@
 @{
     bool hasSales = false, hasFinance = false, hasTextiles = false,
          hasCustomers = false, hasDashboard = false, hasSaleProfit = false;
+    // Staff visibility overrides set by Admin in TenantSettings
+    bool staffCanSeeDashboard = true, staffCanSeeFinance = false,
+         staffCanSeeProducts = true, staffCanSeeVariants = true,
+         staffCanSeeTextiles = true, staffCanSeeStockMovement = true, staffCanSeeInventory = true,
+         staffCanSeeSales = true, staffCanSeeCustomers = true;
     string workspaceName = "StockEasy";
     string? workspaceLogoUrl = null;
     string? currentUserProfileImageUrl = null;
@@ -31,6 +36,25 @@
             hasDashboard  = await FeatureService.HasFeatureAsync(_tid, "dashboard");
             hasFinance    = await FeatureService.HasFeatureAsync(_tid, "finance");
             hasTextiles   = await FeatureService.HasFeatureAsync(_tid, "textiles");
+
+            // Load staff visibility settings (only applied to non-Admin users)
+            if (!User.IsInRole("Admin"))
+            {
+                var _settings = await DbContext.TenantSettings.AsNoTracking()
+                    .FirstOrDefaultAsync(s => s.TenantId == _tid);
+                if (_settings != null)
+                {
+                    staffCanSeeDashboard    = _settings.StaffCanSeeDashboard;
+                    staffCanSeeFinance      = _settings.StaffCanSeeFinance;
+                    staffCanSeeProducts     = _settings.StaffCanSeeProducts;
+                    staffCanSeeVariants     = _settings.StaffCanSeeVariants;
+                    staffCanSeeTextiles     = _settings.StaffCanSeeTextiles;
+                    staffCanSeeStockMovement = _settings.StaffCanSeeStockMovement;
+                    staffCanSeeInventory    = _settings.StaffCanSeeInventory;
+                    staffCanSeeSales        = _settings.StaffCanSeeSales;
+                    staffCanSeeCustomers    = _settings.StaffCanSeeCustomers;
+                }
+            }
         }
         catch { }
     }
@@ -152,7 +176,8 @@
                     <span>@Localizer["Overview"]</span>
                 </a>
 
-                @if (User.IsInRole("Admin"))
+                @* Dashboard — Admin always sees it; Staff sees it only if admin allows *@
+                @if (User.IsInRole("Admin") || staffCanSeeDashboard)
                 {
                 @if (hasDashboard)
                 {
@@ -169,7 +194,11 @@
                     <i class="bi bi-lock-fill ms-auto nav-lock-icon"></i>
                 </span>
                 }
+                }
 
+                @* Finance Dashboard — Admin always sees it; Staff sees it only if admin allows *@
+                @if (User.IsInRole("Admin") || staffCanSeeFinance)
+                {
                 @if (hasFinance)
                 {
                 <a asp-controller="Finance" asp-action="Index" class="nav-link-modern">
@@ -189,16 +218,27 @@
 
                 <div class="nav-section-title">@Localizer["Inventory"]</div>
 
+                @* Products — Admin always sees it; Staff sees it only if admin allows *@
+                @if (User.IsInRole("Admin") || staffCanSeeProducts)
+                {
                 <a asp-controller="Products" asp-action="Index" class="nav-link-modern">
                     <i class="bi bi-box-seam-fill"></i>
                     <span>@Localizer["Products"]</span>
                 </a>
+                }
 
+                @* Variants — Admin always sees it; Staff sees it only if admin allows *@
+                @if (User.IsInRole("Admin") || staffCanSeeVariants)
+                {
                 <a asp-controller="ProductVariants" asp-action="Index" class="nav-link-modern">
                     <i class="bi bi-tags-fill"></i>
                     <span>@Localizer["Variants"]</span>
                 </a>
+                }
 
+                @* Purchases — Admin always sees it; Staff sees it only if admin allows *@
+                @if (User.IsInRole("Admin") || staffCanSeeTextiles)
+                {
                 @if (hasTextiles)
                 {
                 <a asp-controller="Purchases" asp-action="Index" class="nav-link-modern">
@@ -214,19 +254,31 @@
                     <i class="bi bi-lock-fill ms-auto nav-lock-icon"></i>
                 </span>
                 }
+                }
 
+                @* Stock Movement — Admin always sees it; Staff sees it only if admin allows *@
+                @if (User.IsInRole("Admin") || staffCanSeeStockMovement)
+                {
                 <a asp-controller="Stock" asp-action="Index" class="nav-link-modern">
                     <i class="bi bi-plus-circle-fill"></i>
                     <span>@Localizer["Stock Movement"]</span>
                 </a>
+                }
 
+                @* Inventory Log — Admin always sees it; Staff sees it only if admin allows *@
+                @if (User.IsInRole("Admin") || staffCanSeeInventory)
+                {
                 <a asp-controller="Stock" asp-action="Inventory" class="nav-link-modern">
                     <i class="bi bi-clock-history"></i>
                     <span>@Localizer["Inventory Log"]</span>
                 </a>
+                }
 
                 <div class="nav-section-title">@Localizer["Business"]</div>
 
+                @* Sales — Admin always sees it; Staff sees it only if admin allows *@
+                @if (User.IsInRole("Admin") || staffCanSeeSales)
+                {
                 @if (hasSales)
                 {
                 <a asp-controller="Sales" asp-action="Index" class="nav-link-modern">
@@ -242,7 +294,31 @@
                     <i class="bi bi-lock-fill ms-auto nav-lock-icon"></i>
                 </span>
                 }
+                }
 
+                @* Sales Report — Admin only *@
+                @if (User.IsInRole("Admin"))
+                {
+                @if (hasSales)
+                {
+                <a asp-controller="Reports" asp-action="Sales" class="nav-link-modern">
+                    <i class="bi bi-bar-chart-line-fill"></i>
+                    <span>@Localizer["Sales Report"]</span>
+                </a>
+                }
+                else
+                {
+                <span class="nav-link-modern nav-link-locked" title="Upgrade to Starter">
+                    <i class="bi bi-bar-chart-line-fill"></i>
+                    <span>@Localizer["Sales Report"]</span>
+                    <i class="bi bi-lock-fill ms-auto nav-lock-icon"></i>
+                </span>
+                }
+                }
+
+                @* Customers — Admin always sees it; Staff sees it only if admin allows *@
+                @if (User.IsInRole("Admin") || staffCanSeeCustomers)
+                {
                 @if (hasCustomers)
                 {
                 <a asp-controller="Customer" asp-action="Index" class="nav-link-modern">
@@ -257,6 +333,7 @@
                     <span>@Localizer["Customers"]</span>
                     <i class="bi bi-lock-fill ms-auto nav-lock-icon"></i>
                 </span>
+                }
                 }
 
                 @if (User.IsInRole("Admin"))
@@ -280,6 +357,11 @@
                 <a asp-controller="ApplicationUser" asp-action="Index" class="nav-link-modern">
                     <i class="bi bi-people-fill"></i>
                     <span>@Localizer["Manage Users"]</span>
+                </a>
+
+                <a asp-controller="TenantSettings" asp-action="Index" class="nav-link-modern">
+                    <i class="bi bi-gear-fill"></i>
+                    <span>@Localizer["Settings"]</span>
                 </a>
                 }
             </nav>
@@ -349,10 +431,13 @@
                                 <i class="bi bi-key-fill"></i>
                                 @Localizer["Change Password"]
                             </a>
-                            <a href="#" class="user-menu-item">
+                            @if (User.IsInRole("Admin"))
+                            {
+                            <a asp-controller="TenantSettings" asp-action="Index" class="user-menu-item">
                                 <i class="bi bi-gear"></i>
                                 @Localizer["Settings"]
                             </a>
+                            }
                             <div class="user-menu-divider"></div>
                             <!-- Language switch — always accessible, including on mobile -->
                             <div class="user-menu-lang-row">

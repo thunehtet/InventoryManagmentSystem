@@ -240,49 +240,21 @@
     border-radius: 999px;
     height: 7px;
     overflow: hidden;
+    min-width: 0;
 }
 
-.ov-usage-bar {
-    width: 100%;
+.ov-usage-fill {
     height: 100%;
-    border: none;
     border-radius: 999px;
-    background: transparent;
-    transition: all 0.6s ease;
+    background: linear-gradient(90deg, #6366f1, #7c3aed);
+    transition: width 0.6s ease;
     min-width: 3px;
-    appearance: none;
-    -webkit-appearance: none;
 }
 
-.ov-usage-bar::-webkit-progress-bar {
-    background: transparent;
-    border-radius: 999px;
-}
-
-.ov-usage-bar::-webkit-progress-value {
-    border-radius: 999px;
-    background: linear-gradient(90deg, #6366f1, #7c3aed);
-}
-
-.ov-usage-bar::-moz-progress-bar {
-    border-radius: 999px;
-    background: linear-gradient(90deg, #6366f1, #7c3aed);
-}
-
-.ov-usage-bar[data-pct="100"],
-.ov-usage-bar[data-pct="99"],
-.ov-usage-bar[data-pct="98"] {
-    background: transparent;
-}
-
-.ov-usage-bar[data-pct="100"]::-webkit-progress-value,
-.ov-usage-bar[data-pct="99"]::-webkit-progress-value,
-.ov-usage-bar[data-pct="98"]::-webkit-progress-value,
-.ov-usage-bar[data-pct="100"]::-moz-progress-bar,
-.ov-usage-bar[data-pct="99"]::-moz-progress-bar,
-.ov-usage-bar[data-pct="98"]::-moz-progress-bar {
-    background: linear-gradient(90deg, #f87171, #ef4444);
-}
+.ov-usage-fill--unlimited { background: linear-gradient(90deg, #059669, #10b981); }
+.ov-usage-fill--warn       { background: linear-gradient(90deg, #d97706, #f59e0b); }
+.ov-usage-fill--danger     { background: linear-gradient(90deg, #dc2626, #ef4444); }
+.ov-usage-fill--full       { background: linear-gradient(90deg, #b91c1c, #dc2626); }
 
 .ov-usage-num {
     font-size: 0.72rem;

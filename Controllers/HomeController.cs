@@ -48,6 +48,10 @@ public class HomeController : Controller
         var totalProducts = await _context.Products.CountAsync(x => x.TenantId == tenantId);
         var totalVariants = await _context.ProductVariants.CountAsync(x => x.TenantId == tenantId);
 
+        var tenantSettings = await _context.TenantSettings.AsNoTracking()
+            .FirstOrDefaultAsync(s => s.TenantId == tenantId);
+        var lowStockThreshold = tenantSettings?.LowStockThreshold ?? 10;
+
         var stockData = await _context.ProductVariants
             .Select(v => new
             {
@@ -56,7 +60,11 @@ public class HomeController : Controller
                     - (v.StockMovements.Where(m => m.MovementType == "OUT").Sum(m => (int?)m.Quantity) ?? 0)
             })
             .ToListAsync();
-        var lowStockCount = stockData.Count(x => x.Stock < 10);
+        var isAdmin = currentUser.IsTenantAdmin;
+        var alertEnabledForUser = isAdmin || (tenantSettings?.LowStockAlertEnabled != false);
+        var lowStockCount = alertEnabledForUser
+            ? stockData.Count(x => x.Stock < lowStockThreshold)
+            : 0;
 
         var recentActivities = await _context.StockMovements
             .Where(x => x.TenantId == tenantId)
@@ -175,6 +183,7 @@ public class HomeController : Controller
             TotalProducts = totalProducts,
             TotalVariants = totalVariants,
             LowStockCount = lowStockCount,
+            LowStockAlertVisible = alertEnabledForUser,
             RecentActivities = recentActivities,
 
             PlanName  = planName,
