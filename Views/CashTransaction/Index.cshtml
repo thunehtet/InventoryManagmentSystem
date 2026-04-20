@@ -1,7 +1,7 @@
 @using ClothInventoryApp.Dto.CashTransaction
 @model IEnumerable<ViewCashTransactionDto>
 @{
-    ViewData["Title"] = "Cash Transactions";
+    ViewData["Title"] = Localizer["Cash Transactions"];
     var currency = ViewData["Currency"] as string ?? "";
     var pg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel;
 }
@@ -11,59 +11,57 @@
         <div class="product-hero-content">
             <div class="hero-kicker">
                 <i class="bi bi-cash-stack"></i>
-                <span>Money Flow</span>
+                <span>@Localizer["Cashflow"]</span>
             </div>
-            <h1>Cash Transactions</h1>
-            <p>Track all money in and money out for your business.</p>
+            <h1>@Localizer["Cash Transactions"]</h1>
+            <p>@Localizer["Track all cash moving in and out of your business."]</p>
             <div class="hero-actions">
                 <a asp-action="Create" class="btn-modern-primary">
-                    <i class="bi bi-plus-circle"></i> Add Transaction
+                    <i class="bi bi-plus-circle"></i> @Localizer["Add Transaction"]
                 </a>
             </div>
         </div>
         <div class="product-hero-side">
             <div class="hero-stat-card">
                 <div class="hero-stat-icon"><i class="bi bi-wallet2"></i></div>
-                <div class="hero-stat-title">Total Records</div>
-                <div class="hero-stat-text">@(pg?.TotalCount ?? 0) transactions</div>
+                <div class="hero-stat-title">@Localizer["Total Records"]</div>
+                <div class="hero-stat-text">@string.Format(Localizer["{0} transactions"].Value, pg?.TotalCount ?? 0)</div>
             </div>
         </div>
     </div>
 
-    <!-- FILTER BAR -->
     <div class="list-filter-bar">
         <form method="get" asp-action="Index" class="filter-form">
             @if (pg != null) { <input type="hidden" name="size" value="@pg.PageSize" /> }
             <div class="filter-search-wrap">
                 <i class="bi bi-search filter-search-icon"></i>
                 <input type="text" name="search" value="@ViewBag.Search"
-                       class="filter-search-input" placeholder="Search category, type, reference…" autocomplete="off" />
+                       class="filter-search-input" placeholder="@Localizer["Search category, type, reference..."]" autocomplete="off" />
                 @if (!string.IsNullOrWhiteSpace(ViewBag.Search as string))
                 {
-                    <a href="@Url.Action("Index", new { size = pg?.PageSize ?? 10 })" class="filter-clear-btn" title="Clear">
+                    <a href="@Url.Action("Index", new { size = pg?.PageSize ?? 10 })" class="filter-clear-btn" title="@Localizer["Clear"]">
                         <i class="bi bi-x-circle-fill"></i>
                     </a>
                 }
             </div>
             <button type="submit" class="filter-search-btn">
-                <i class="bi bi-search"></i> Search
+                <i class="bi bi-search"></i> @Localizer["Search"]
             </button>
         </form>
     </div>
 
-    <!-- TABLE CARD -->
     <div class="product-table-card">
         <div class="table-responsive-modern">
             <table class="table-modern">
                 <thead>
                     <tr>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th>Category</th>
-                        <th>Amount</th>
-                        <th>Reference</th>
-                        <th>Remarks</th>
-                        <th>Actions</th>
+                        <th>@Localizer["Date"]</th>
+                        <th>@Localizer["Type"]</th>
+                        <th>@Localizer["Category"]</th>
+                        <th>@Localizer["Amount"]</th>
+                        <th>@Localizer["Reference"]</th>
+                        <th>@Localizer["Remarks"]</th>
+                        <th>@Localizer["Actions"]</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -72,7 +70,7 @@
                         <tr>
                             <td colspan="7" class="empty-state">
                                 <i class="bi bi-inbox"></i>
-                                <div>@(string.IsNullOrWhiteSpace(ViewBag.Search as string) ? "No transactions yet" : "No transactions match your search")</div>
+                                <div>@(string.IsNullOrWhiteSpace(ViewBag.Search as string) ? Localizer["No transactions yet"].Value : Localizer["No transactions match your search"].Value)</div>
                             </td>
                         </tr>
                     }
@@ -98,15 +96,15 @@
                                 </td>
                                 <td>@item.Category</td>
                                 <td class="fw-semibold">@item.Amount.ToString("N0") @currency</td>
-                                <td class="text-muted table-cell-sm">@(item.ReferenceNo ?? "—")</td>
-                                <td class="text-muted table-cell-sm">@(item.Remarks ?? "—")</td>
+                                <td class="text-muted table-cell-sm">@(item.ReferenceNo ?? "-")</td>
+                                <td class="text-muted table-cell-sm">@(item.Remarks ?? "-")</td>
                                 <td>
                                     <div class="table-actions">
-                                        <a asp-action="Details" asp-route-id="@item.Id" class="action-btn action-btn-view" title="Details"><i class="bi bi-eye-fill"></i></a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="action-btn action-btn-view" title="@Localizer["Details"]"><i class="bi bi-eye-fill"></i></a>
                                         @if (!isProtected)
                                         {
-                                            <a asp-action="Edit" asp-route-id="@item.Id" class="action-btn action-btn-edit" title="Edit"><i class="bi bi-pencil-fill"></i></a>
-                                            <a asp-action="Delete" asp-route-id="@item.Id" class="action-btn action-btn-delete" title="Delete"><i class="bi bi-trash-fill"></i></a>
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="action-btn action-btn-edit" title="@Localizer["Edit"]"><i class="bi bi-pencil-fill"></i></a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="action-btn action-btn-delete" title="@Localizer["Delete"]"><i class="bi bi-trash-fill"></i></a>
                                         }
                                     </div>
                                 </td>

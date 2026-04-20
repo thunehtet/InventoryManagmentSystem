@@ -1,7 +1,7 @@
 @model IEnumerable<ClothInventoryApp.Dto.InventoryViewModel>
 
 @{
-    ViewData["Title"] = "Inventory Log";
+    ViewData["Title"] = Localizer["Inventory Log"];
     bool isLowStock = ViewBag.LowStock == true;
     int lowStockThreshold = ViewBag.LowStockThreshold ?? 10;
     bool lowStockAlertVisible = ViewBag.LowStockAlertVisible ?? true;
@@ -13,27 +13,29 @@
         <div class="product-hero-content">
             <h1 class="product-hero-title">
                 <i class="bi bi-box-seam-fill"></i>
-                @(isLowStock ? "Low Stock Items" : "Inventory Log")
+                @(isLowStock ? Localizer["Low Stock Items"].Value : Localizer["Inventory Log"].Value)
             </h1>
             <p class="product-hero-sub">
-                @(isLowStock ? $"Variants with stock below {lowStockThreshold} units" : "Current stock balance per product variant")
+                @(isLowStock
+                    ? string.Format(Localizer["Variants with stock below {0} units"].Value, lowStockThreshold)
+                    : Localizer["Current stock balance for each product variant."].Value)
             </p>
         </div>
         <div class="d-flex gap-2 align-items-center">
             @if (isLowStock)
             {
                 <a asp-action="Inventory" class="btn-modern-secondary">
-                    <i class="bi bi-arrow-left"></i> All Stock
+                    <i class="bi bi-arrow-left"></i> @Localizer["All Stock"]
                 </a>
             }
             else if (lowStockAlertVisible)
             {
                 <a asp-action="Inventory" asp-route-lowstock="true" class="btn-modern-secondary">
-                    <i class="bi bi-exclamation-triangle-fill"></i> Low Stock
+                    <i class="bi bi-exclamation-triangle-fill"></i> @Localizer["Low Stock"]
                 </a>
             }
             <a asp-action="StockIn" class="btn-modern-primary">
-                <i class="bi bi-plus-circle-fill"></i> Stock In
+                <i class="bi bi-plus-circle-fill"></i> @Localizer["Stock In"]
             </a>
         </div>
     </div>
@@ -54,19 +56,19 @@
                        name="search"
                        value="@ViewBag.Search"
                        class="filter-search-input"
-                       placeholder="Search product, SKU, color, size..."
+                       placeholder="@Localizer["Search product, SKU, color, size..."]"
                        autocomplete="off" />
                 @if (!string.IsNullOrWhiteSpace(ViewBag.Search as string))
                 {
                     <a href="@Url.Action("Inventory", new { lowstock = isLowStock ? "true" : null, size = pg?.PageSize ?? 10 })"
                        class="filter-clear-btn"
-                       title="Clear">
+                       title="@Localizer["Clear"]">
                         <i class="bi bi-x-circle-fill"></i>
                     </a>
                 }
             </div>
             <button type="submit" class="filter-search-btn">
-                <i class="bi bi-search"></i> Search
+                <i class="bi bi-search"></i> @Localizer["Search"]
             </button>
         </form>
     </div>
@@ -76,12 +78,12 @@
             <table class="table-modern">
                 <thead>
                     <tr>
-                        <th>Product</th>
+                        <th>@Localizer["Product"]</th>
                         <th>SKU</th>
-                        <th>Color</th>
-                        <th>Size</th>
-                        <th>Current Stock</th>
-                        <th>Status</th>
+                        <th>@Localizer["Color"]</th>
+                        <th>@Localizer["Size"]</th>
+                        <th>@Localizer["Current Stock"]</th>
+                        <th>@Localizer["Status"]</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -90,7 +92,7 @@
                         <tr>
                             <td colspan="6" class="empty-state">
                                 <i class="bi bi-inbox"></i>
-                                <div>@(isLowStock ? "No low stock items found." : "No inventory records found.")</div>
+                                <div>@(isLowStock ? Localizer["No low stock items found."].Value : Localizer["No inventory records found."].Value)</div>
                             </td>
                         </tr>
                     }
@@ -109,15 +111,15 @@
                                 <td>
                                     @if (item.CurrentStock <= 0)
                                     {
-                                        <span class="badge-pill badge-out-of-stock">Out of Stock</span>
+                                        <span class="badge-pill badge-out-of-stock">@Localizer["Out of Stock"]</span>
                                     }
                                     else if (item.CurrentStock < lowStockThreshold)
                                     {
-                                        <span class="badge-pill badge-low-stock">Low Stock</span>
+                                        <span class="badge-pill badge-low-stock">@Localizer["Low Stock"]</span>
                                     }
                                     else
                                     {
-                                        <span class="badge-pill badge-in-stock">In Stock</span>
+                                        <span class="badge-pill badge-in-stock">@Localizer["In Stock"]</span>
                                     }
                                 </td>
                             </tr>

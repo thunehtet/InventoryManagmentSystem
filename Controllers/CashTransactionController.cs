@@ -3,6 +3,7 @@ using ClothInventoryApp.Dto.CashTransaction;
 using ClothInventoryApp.Filters;
 using ClothInventoryApp.Models;
 using ClothInventoryApp.Services.Tenant;
+using ClothInventoryApp.Services.Usage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -16,10 +17,12 @@ namespace ClothInventoryApp.Controllers
     {
         private static readonly string[] ManualCategories = { "Packaging Fee", "Transportation", "Other" };
         private static readonly string[] ProtectedCategories = { "Sale Income", "Sales", "Inventory Purchase", "Textile Purchase" };
+        private readonly IUsageTrackingService _usageTrackingService;
 
-        public CashTransactionController(AppDbContext context, ITenantProvider tenantProvider)
+        public CashTransactionController(AppDbContext context, ITenantProvider tenantProvider, IUsageTrackingService usageTrackingService)
             : base(context, tenantProvider)
         {
+            _usageTrackingService = usageTrackingService;
         }
 
         public async Task<IActionResult> Index(string? search, int page = 1, int size = 10)
@@ -100,9 +103,10 @@ namespace ClothInventoryApp.Controllers
             _context.CashTransactions.Add(item);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMsg"]      = "Transaction recorded.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Transaction recorded.");
             TempData["SuccessListUrl"]  = Url.Action("Index", "CashTransaction");
-            TempData["SuccessListLabel"]= "View Transactions";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Transactions");
+            await _usageTrackingService.TrackActionAsync(tenantId, "cashtransactions", "create", "CashTransaction", item.Id.ToString(), $"Created cash transaction {item.Category}.", cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 
@@ -115,7 +119,7 @@ namespace ClothInventoryApp.Controllers
 
             if (IsProtectedTransaction(item))
             {
-                TempData["Error"] = "This transaction is managed from its source record and cannot be edited here.";
+                TempData["Error"] = this.LocalizeShared("This transaction is managed from its source record and cannot be edited here.");
                 return RedirectToAction(nameof(Index));
             }
 
@@ -151,7 +155,7 @@ namespace ClothInventoryApp.Controllers
 
             if (IsProtectedTransaction(item))
             {
-                TempData["Error"] = "This transaction is managed from its source record and cannot be edited here.";
+                TempData["Error"] = this.LocalizeShared("This transaction is managed from its source record and cannot be edited here.");
                 return RedirectToAction(nameof(Index));
             }
 
@@ -171,10 +175,11 @@ namespace ClothInventoryApp.Controllers
 
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMsg"]      = "Transaction updated.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Transaction updated.");
             TempData["SuccessType"]     = "update";
             TempData["SuccessListUrl"]  = Url.Action("Index", "CashTransaction");
-            TempData["SuccessListLabel"]= "View Transactions";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Transactions");
+            await _usageTrackingService.TrackActionAsync(item.TenantId, "cashtransactions", "update", "CashTransaction", item.Id.ToString(), $"Updated cash transaction {item.Category}.", cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 
@@ -221,7 +226,7 @@ namespace ClothInventoryApp.Controllers
 
             if (IsProtectedCategory(item.Category))
             {
-                TempData["Error"] = "This transaction is managed from its source record and cannot be deleted here.";
+                TempData["Error"] = this.LocalizeShared("This transaction is managed from its source record and cannot be deleted here.");
                 return RedirectToAction(nameof(Index));
             }
 
@@ -239,17 +244,18 @@ namespace ClothInventoryApp.Controllers
 
             if (IsProtectedTransaction(item))
             {
-                TempData["Error"] = "This transaction is managed from its source record and cannot be deleted here.";
+                TempData["Error"] = this.LocalizeShared("This transaction is managed from its source record and cannot be deleted here.");
                 return RedirectToAction(nameof(Index));
             }
 
             _context.CashTransactions.Remove(item);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMsg"]      = "Transaction deleted.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Transaction deleted.");
             TempData["SuccessType"]     = "delete";
             TempData["SuccessListUrl"]  = Url.Action("Index", "CashTransaction");
-            TempData["SuccessListLabel"]= "View Transactions";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Transactions");
+            await _usageTrackingService.TrackActionAsync(item.TenantId, "cashtransactions", "delete", "CashTransaction", item.Id.ToString(), $"Deleted cash transaction {item.Category}.", cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 

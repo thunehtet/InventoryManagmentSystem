@@ -13,6 +13,7 @@ using ClothInventoryApp.Services.Stock;
 using ClothInventoryApp.Services.Subscription;
 using ClothInventoryApp.Services.Tenant;
 using ClothInventoryApp.Services.Time;
+using ClothInventoryApp.Services.Usage;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
@@ -31,7 +32,12 @@ builder.Services.AddLocalization(options => options.ResourcesPath = "");
 builder.Services.AddMemoryCache();
 builder.Services.AddControllersWithViews(options =>
     options.Filters.AddService<ClothInventoryApp.Filters.ActiveTenantFilter>())
-    .AddViewLocalization();
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization(options =>
+    {
+        options.DataAnnotationLocalizerProvider = (_, factory) =>
+            factory.Create(typeof(ClothInventoryApp.Resources.SharedResource));
+    });
 
 // Database
 // Railway provides MYSQLCONNSTR_DefaultConnection.
@@ -154,6 +160,7 @@ builder.Services.AddScoped<ITurnstileValidationService, TurnstileValidationServi
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+builder.Services.AddScoped<IUsageTrackingService, UsageTrackingService>();
 builder.Services.AddScoped<ClothInventoryApp.Filters.ActiveTenantFilter>();
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AppClaimsPrincipalFactory>();
 builder.Services.AddHostedService<ClothInventoryApp.Services.Subscription.SubscriptionExpiryService>();

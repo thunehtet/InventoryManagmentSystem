@@ -37,4 +37,625 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Upgrade Required" xml:space="preserve">
+    <value>Upgrade Required</value>
+  </data>
+  <data name="Add User" xml:space="preserve">
+    <value>Add User</value>
+  </data>
+  <data name="Delete User" xml:space="preserve">
+    <value>Delete User</value>
+  </data>
+  <data name="Edit User" xml:space="preserve">
+    <value>Edit User</value>
+  </data>
+  <data name="Create Cash Transaction" xml:space="preserve">
+    <value>Create Cash Transaction</value>
+  </data>
+  <data name="Delete Transaction" xml:space="preserve">
+    <value>Delete Transaction</value>
+  </data>
+  <data name="Transaction Details" xml:space="preserve">
+    <value>Transaction Details</value>
+  </data>
+  <data name="Edit Cash Transaction" xml:space="preserve">
+    <value>Edit Cash Transaction</value>
+  </data>
+  <data name="Cash Transactions" xml:space="preserve">
+    <value>Cash Transactions</value>
+  </data>
+  <data name="Add Customer" xml:space="preserve">
+    <value>Add Customer</value>
+  </data>
+  <data name="Delete Customer" xml:space="preserve">
+    <value>Delete Customer</value>
+  </data>
+  <data name="Edit Customer" xml:space="preserve">
+    <value>Edit Customer</value>
+  </data>
+  <data name="New Feature" xml:space="preserve">
+    <value>New Feature</value>
+  </data>
+  <data name="Delete Feature" xml:space="preserve">
+    <value>Delete Feature</value>
+  </data>
+  <data name="Edit Feature" xml:space="preserve">
+    <value>Edit Feature</value>
+  </data>
+  <data name="Features" xml:space="preserve">
+    <value>Features</value>
+  </data>
+  <data name="Inquiry Details" xml:space="preserve">
+    <value>Inquiry Details</value>
+  </data>
+  <data name="Inquiry Box" xml:space="preserve">
+    <value>Inquiry Box</value>
+  </data>
+  <data name="New Plan" xml:space="preserve">
+    <value>New Plan</value>
+  </data>
+  <data name="Delete Plan" xml:space="preserve">
+    <value>Delete Plan</value>
+  </data>
+  <data name="Edit Plan" xml:space="preserve">
+    <value>Edit Plan</value>
+  </data>
+  <data name="Assign Feature to Plan" xml:space="preserve">
+    <value>Assign Feature to Plan</value>
+  </data>
+  <data name="Remove Plan Feature" xml:space="preserve">
+    <value>Remove Plan Feature</value>
+  </data>
+  <data name="Plan Features" xml:space="preserve">
+    <value>Plan Features</value>
+  </data>
+  <data name="Product Details" xml:space="preserve">
+    <value>Product Details</value>
+  </data>
+  <data name="Edit Product" xml:space="preserve">
+    <value>Edit Product</value>
+  </data>
+  <data name="Variant Details" xml:space="preserve">
+    <value>Variant Details</value>
+  </data>
+  <data name="New Subscription" xml:space="preserve">
+    <value>New Subscription</value>
+  </data>
+  <data name="Delete Subscription" xml:space="preserve">
+    <value>Delete Subscription</value>
+  </data>
+  <data name="Edit Subscription" xml:space="preserve">
+    <value>Edit Subscription</value>
+  </data>
+  <data name="Subscription History" xml:space="preserve">
+    <value>Subscription History</value>
+  </data>
+  <data name="Review Payment Request" xml:space="preserve">
+    <value>Review Payment Request</value>
+  </data>
+  <data name="Payment Requests" xml:space="preserve">
+    <value>Payment Requests</value>
+  </data>
+  <data name="My Payment Requests" xml:space="preserve">
+    <value>My Payment Requests</value>
+  </data>
+  <data name="Plan Payment" xml:space="preserve">
+    <value>Plan Payment</value>
+  </data>
+  <data name="Upgrade Plans" xml:space="preserve">
+    <value>Upgrade Plans</value>
+  </data>
+  <data name="System Dashboard" xml:space="preserve">
+    <value>System Dashboard</value>
+  </data>
+  <data name="New Tenant" xml:space="preserve">
+    <value>New Tenant</value>
+  </data>
+  <data name="Delete Tenant" xml:space="preserve">
+    <value>Delete Tenant</value>
+  </data>
+  <data name="Edit Tenant" xml:space="preserve">
+    <value>Edit Tenant</value>
+  </data>
+  <data name="Tenant Management" xml:space="preserve">
+    <value>Tenant Management</value>
+  </data>
+  <data name="Tenant Feature Overrides" xml:space="preserve">
+    <value>Tenant Feature Overrides</value>
+  </data>
+  <data name="Manage Tenant Feature Overrides" xml:space="preserve">
+    <value>Manage Tenant Feature Overrides</value>
+  </data>
+  <data name="Workspace Settings" xml:space="preserve">
+    <value>Workspace Settings</value>
+  </data>
+  <data name="View Users" xml:space="preserve">
+    <value>View Users</value>
+  </data>
+  <data name="View Transactions" xml:space="preserve">
+    <value>View Transactions</value>
+  </data>
+  <data name="View Customers" xml:space="preserve">
+    <value>View Customers</value>
+  </data>
+  <data name="View Features" xml:space="preserve">
+    <value>View Features</value>
+  </data>
+  <data name="View All Inquiries" xml:space="preserve">
+    <value>View All Inquiries</value>
+  </data>
+  <data name="View Inquiries" xml:space="preserve">
+    <value>View Inquiries</value>
+  </data>
+  <data name="View Plans" xml:space="preserve">
+    <value>View Plans</value>
+  </data>
+  <data name="View Plan Features" xml:space="preserve">
+    <value>View Plan Features</value>
+  </data>
+  <data name="View Products" xml:space="preserve">
+    <value>View Products</value>
+  </data>
+  <data name="View Variants" xml:space="preserve">
+    <value>View Variants</value>
+  </data>
+  <data name="View Sales" xml:space="preserve">
+    <value>View Sales</value>
+  </data>
+  <data name="View Movements" xml:space="preserve">
+    <value>View Movements</value>
+  </data>
+  <data name="View Inventory" xml:space="preserve">
+    <value>View Inventory</value>
+  </data>
+  <data name="View Subscriptions" xml:space="preserve">
+    <value>View Subscriptions</value>
+  </data>
+  <data name="View All Requests" xml:space="preserve">
+    <value>View All Requests</value>
+  </data>
+  <data name="View My Requests" xml:space="preserve">
+    <value>View My Requests</value>
+  </data>
+  <data name="View Tenants" xml:space="preserve">
+    <value>View Tenants</value>
+  </data>
+  <data name="View Overrides" xml:space="preserve">
+    <value>View Overrides</value>
+  </data>
+  <data name="Back to Settings" xml:space="preserve">
+    <value>Back to Settings</value>
+  </data>
+  <data name="Add Variants for This Product" xml:space="preserve">
+    <value>Add Variants for This Product</value>
+  </data>
+  <data name="Next step: add size, color, and price variants so this product can be stocked and sold." xml:space="preserve">
+    <value>Next step: add size, color, and price variants so this product can be stocked and sold.</value>
+  </data>
+  <data name="Record Stock for This Variant" xml:space="preserve">
+    <value>Record Stock for This Variant</value>
+  </data>
+  <data name="Next step: record the opening stock so this variant is ready for sales." xml:space="preserve">
+    <value>Next step: record the opening stock so this variant is ready for sales.</value>
+  </data>
+  <data name="Record More Stock" xml:space="preserve">
+    <value>Record More Stock</value>
+  </data>
+  <data name="Accurate stock counts depend on recording every delivery. Add stock-in entries for each variant received to keep inventory up to date." xml:space="preserve">
+    <value>Accurate stock counts depend on recording every delivery. Add stock-in entries for each variant received to keep inventory up to date.</value>
+  </data>
+  <data name="Settings saved successfully." xml:space="preserve">
+    <value>Settings saved successfully.</value>
+  </data>
+  <data name="Telegram disconnected." xml:space="preserve">
+    <value>Telegram disconnected.</value>
+  </data>
+  <data name="You cannot delete your own account." xml:space="preserve">
+    <value>You cannot delete your own account.</value>
+  </data>
+  <data name="This transaction is managed from its source record and cannot be edited here." xml:space="preserve">
+    <value>This transaction is managed from its source record and cannot be edited here.</value>
+  </data>
+  <data name="This transaction is managed from its source record and cannot be deleted here." xml:space="preserve">
+    <value>This transaction is managed from its source record and cannot be deleted here.</value>
+  </data>
+  <data name="Cannot delete: this feature is assigned to one or more plans. Remove plan assignments first." xml:space="preserve">
+    <value>Cannot delete: this feature is assigned to one or more plans. Remove plan assignments first.</value>
+  </data>
+  <data name="Only pending inquiries can be approved." xml:space="preserve">
+    <value>Only pending inquiries can be approved.</value>
+  </data>
+  <data name="Only pending inquiries can be rejected." xml:space="preserve">
+    <value>Only pending inquiries can be rejected.</value>
+  </data>
+  <data name="This email already has an account." xml:space="preserve">
+    <value>This email already has an account.</value>
+  </data>
+  <data name="The free plan is not configured yet." xml:space="preserve">
+    <value>The free plan is not configured yet.</value>
+  </data>
+  <data name="Account created, but the approval email could not be sent." xml:space="preserve">
+    <value>Account created, but the approval email could not be sent.</value>
+  </data>
+  <data name="Cannot delete: subscriptions are linked to this plan." xml:space="preserve">
+    <value>Cannot delete: subscriptions are linked to this plan.</value>
+  </data>
+  <data name="Failed to delete product. Please try again." xml:space="preserve">
+    <value>Failed to delete product. Please try again.</value>
+  </data>
+  <data name="Failed to delete sale. Please try again." xml:space="preserve">
+    <value>Failed to delete sale. Please try again.</value>
+  </data>
+  <data name="This stock movement was created by a sale and cannot be edited here. Update the sale instead." xml:space="preserve">
+    <value>This stock movement was created by a sale and cannot be edited here. Update the sale instead.</value>
+  </data>
+  <data name="This stock movement was created by a sale and cannot be deleted here. Delete or void the sale instead." xml:space="preserve">
+    <value>This stock movement was created by a sale and cannot be deleted here. Delete or void the sale instead.</value>
+  </data>
+  <data name="This stock movement cannot be deleted because doing so would make stock go below zero." xml:space="preserve">
+    <value>This stock movement cannot be deleted because doing so would make stock go below zero.</value>
+  </data>
+  <data name="Only pending requests can be approved." xml:space="preserve">
+    <value>Only pending requests can be approved.</value>
+  </data>
+  <data name="Only pending requests can be rejected." xml:space="preserve">
+    <value>Only pending requests can be rejected.</value>
+  </data>
+  <data name="Subscription activated, but the approval email could not be sent." xml:space="preserve">
+    <value>Subscription activated, but the approval email could not be sent.</value>
+  </data>
+  <data name="Request rejected, but the rejection email could not be sent." xml:space="preserve">
+    <value>Request rejected, but the rejection email could not be sent.</value>
+  </data>
+  <data name="The free plan is assigned after signup approval and does not require payment." xml:space="preserve">
+    <value>The free plan is assigned after signup approval and does not require payment.</value>
+  </data>
+  <data name="Yearly billing is not available for the selected plan." xml:space="preserve">
+    <value>Yearly billing is not available for the selected plan.</value>
+  </data>
+  <data name="The free plan does not require a payment request." xml:space="preserve">
+    <value>The free plan does not require a payment request.</value>
+  </data>
+  <data name="Tenant created, but the credential email could not be sent." xml:space="preserve">
+    <value>Tenant created, but the credential email could not be sent.</value>
+  </data>
+  <data name="Cannot delete: users are linked to this tenant. Deactivate it instead." xml:space="preserve">
+    <value>Cannot delete: users are linked to this tenant. Deactivate it instead.</value>
+  </data>
+  <data name="Current Password" xml:space="preserve">
+    <value>Current Password</value>
+  </data>
+  <data name="Confirm New Password" xml:space="preserve">
+    <value>Confirm New Password</value>
+  </data>
+  <data name="Email Address" xml:space="preserve">
+    <value>Email Address</value>
+  </data>
+  <data name="Email or Username" xml:space="preserve">
+    <value>Email or Username</value>
+  </data>
+  <data name="Remember Me" xml:space="preserve">
+    <value>Remember Me</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="Profile Photo" xml:space="preserve">
+    <value>Profile Photo</value>
+  </data>
+  <data name="Brand Logo" xml:space="preserve">
+    <value>Brand Logo</value>
+  </data>
+  <data name="Confirm Password" xml:space="preserve">
+    <value>Confirm Password</value>
+  </data>
+  <data name="Full Name" xml:space="preserve">
+    <value>Full Name</value>
+  </data>
+  <data name="Tenant Admin" xml:space="preserve">
+    <value>Tenant Admin</value>
+  </data>
+  <data name="Super Admin" xml:space="preserve">
+    <value>Super Admin</value>
+  </data>
+  <data name="Transaction Date" xml:space="preserve">
+    <value>Transaction Date</value>
+  </data>
+  <data name="Reference No" xml:space="preserve">
+    <value>Reference No</value>
+  </data>
+  <data name="Facebook Account" xml:space="preserve">
+    <value>Facebook Account</value>
+  </data>
+  <data name="Product Variant" xml:space="preserve">
+    <value>Product Variant</value>
+  </data>
+  <data name="Cost Price" xml:space="preserve">
+    <value>Cost Price</value>
+  </data>
+  <data name="Selling Price" xml:space="preserve">
+    <value>Selling Price</value>
+  </data>
+  <data name="Unit Price" xml:space="preserve">
+    <value>Unit Price</value>
+  </data>
+  <data name="Movement Type" xml:space="preserve">
+    <value>Movement Type</value>
+  </data>
+  <data name="Movement Date" xml:space="preserve">
+    <value>Movement Date</value>
+  </data>
+  <data name="Feature Code" xml:space="preserve">
+    <value>Feature Code</value>
+  </data>
+  <data name="Feature Name" xml:space="preserve">
+    <value>Feature Name</value>
+  </data>
+  <data name="Monthly Price" xml:space="preserve">
+    <value>Monthly Price</value>
+  </data>
+  <data name="Yearly Price" xml:space="preserve">
+    <value>Yearly Price</value>
+  </data>
+  <data name="Max Users" xml:space="preserve">
+    <value>Max Users</value>
+  </data>
+  <data name="Max Products" xml:space="preserve">
+    <value>Max Products</value>
+  </data>
+  <data name="Max Monthly Sales" xml:space="preserve">
+    <value>Max Monthly Sales</value>
+  </data>
+  <data name="Max Monthly PDF Invoices" xml:space="preserve">
+    <value>Max Monthly PDF Invoices</value>
+  </data>
+  <data name="Max Monthly Receipt Shares" xml:space="preserve">
+    <value>Max Monthly Receipt Shares</value>
+  </data>
+  <data name="Max Monthly Customer Invites" xml:space="preserve">
+    <value>Max Monthly Customer Invites</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="Start Date" xml:space="preserve">
+    <value>Start Date</value>
+  </data>
+  <data name="End Date" xml:space="preserve">
+    <value>End Date</value>
+  </data>
+  <data name="Billing Cycle" xml:space="preserve">
+    <value>Billing Cycle</value>
+  </data>
+  <data name="Business Type" xml:space="preserve">
+    <value>Business Type</value>
+  </data>
+  <data name="Logo URL" xml:space="preserve">
+    <value>Logo URL</value>
+  </data>
+  <data name="Contact Email" xml:space="preserve">
+    <value>Contact Email</value>
+  </data>
+  <data name="Contact Phone" xml:space="preserve">
+    <value>Contact Phone</value>
+  </data>
+  <data name="Purchase From" xml:space="preserve">
+    <value>Purchase From</value>
+  </data>
+  <data name="Purchase Date" xml:space="preserve">
+    <value>Purchase Date</value>
+  </data>
+  <data name="This variant cannot be deleted because it still has stock on hand." xml:space="preserve">
+    <value>This variant cannot be deleted because it still has stock on hand.</value>
+  </data>
+  <data name="This variant cannot be deleted because it already has stock movement history." xml:space="preserve">
+    <value>This variant cannot be deleted because it already has stock movement history.</value>
+  </data>
+  <data name="Cashflow" xml:space="preserve">
+    <value>Cashflow</value>
+  </data>
+  <data name="Track all cash moving in and out of your business." xml:space="preserve">
+    <value>Track all cash moving in and out of your business.</value>
+  </data>
+  <data name="{0} transactions" xml:space="preserve">
+    <value>{0} transactions</value>
+  </data>
+  <data name="Search category, type, reference..." xml:space="preserve">
+    <value>Search category, type, reference...</value>
+  </data>
+  <data name="No transactions yet" xml:space="preserve">
+    <value>No transactions yet</value>
+  </data>
+  <data name="No transactions match your search" xml:space="preserve">
+    <value>No transactions match your search</value>
+  </data>
+  <data name="Record money received or money spent." xml:space="preserve">
+    <value>Record money received or money spent.</value>
+  </data>
+  <data name="-- Select Type --" xml:space="preserve">
+    <value>-- Select Type --</value>
+  </data>
+  <data name="-- Select Category --" xml:space="preserve">
+    <value>-- Select Category --</value>
+  </data>
+  <data name="Save Transaction" xml:space="preserve">
+    <value>Save Transaction</value>
+  </data>
+  <data name="Update Transaction" xml:space="preserve">
+    <value>Update Transaction</value>
+  </data>
+  <data name="Add and manage user accounts for your workspace." xml:space="preserve">
+    <value>Add and manage user accounts for your workspace.</value>
+  </data>
+  <data name="User limit reached. Upgrade your plan to add more users." xml:space="preserve">
+    <value>User limit reached. Upgrade your plan to add more users.</value>
+  </data>
+  <data name="Team Members" xml:space="preserve">
+    <value>Team Members</value>
+  </data>
+  <data name="{0} / {1} users" xml:space="preserve">
+    <value>{0} / {1} users</value>
+  </data>
+  <data name="{0} users" xml:space="preserve">
+    <value>{0} users</value>
+  </data>
+  <data name="Plan limit reached" xml:space="preserve">
+    <value>Plan limit reached</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="Last Login" xml:space="preserve">
+    <value>Last Login</value>
+  </data>
+  <data name="No users found." xml:space="preserve">
+    <value>No users found.</value>
+  </data>
+  <data name="You" xml:space="preserve">
+    <value>You</value>
+  </data>
+  <data name="Since" xml:space="preserve">
+    <value>Since</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>Never</value>
+  </data>
+  <data name="Workspace" xml:space="preserve">
+    <value>Workspace</value>
+  </data>
+  <data name="Control staff access and low-stock alerts for your workspace." xml:space="preserve">
+    <value>Control staff access and low-stock alerts for your workspace.</value>
+  </data>
+  <data name="Back to Overview" xml:space="preserve">
+    <value>Back to Overview</value>
+  </data>
+  <data name="Admin Only" xml:space="preserve">
+    <value>Admin Only</value>
+  </data>
+  <data name="These settings affect staff accounts only. Admins always keep full access." xml:space="preserve">
+    <value>These settings affect staff accounts only. Admins always keep full access.</value>
+  </data>
+  <data name="Staff Access Control" xml:space="preserve">
+    <value>Staff Access Control</value>
+  </data>
+  <data name="Choose which sections staff can open. Hidden sections are removed completely from staff navigation." xml:space="preserve">
+    <value>Choose which sections staff can open. Hidden sections are removed completely from staff navigation.</value>
+  </data>
+  <data name="View overview metrics, sales trends, and business highlights." xml:space="preserve">
+    <value>View overview metrics, sales trends, and business highlights.</value>
+  </data>
+  <data name="View income, expenses, profit, and cashflow pages." xml:space="preserve">
+    <value>View income, expenses, profit, and cashflow pages.</value>
+  </data>
+  <data name="View product list and product details." xml:space="preserve">
+    <value>View product list and product details.</value>
+  </data>
+  <data name="View product variants such as SKU, size, and color." xml:space="preserve">
+    <value>View product variants such as SKU, size, and color.</value>
+  </data>
+  <data name="View purchase records for textiles and materials." xml:space="preserve">
+    <value>View purchase records for textiles and materials.</value>
+  </data>
+  <data name="View stock in, stock out, and movement history." xml:space="preserve">
+    <value>View stock in, stock out, and movement history.</value>
+  </data>
+  <data name="View current stock balance for each variant." xml:space="preserve">
+    <value>View current stock balance for each variant.</value>
+  </data>
+  <data name="View sales history, invoices, and sale records." xml:space="preserve">
+    <value>View sales history, invoices, and sale records.</value>
+  </data>
+  <data name="View customer profiles, contacts, and purchase history." xml:space="preserve">
+    <value>View customer profiles, contacts, and purchase history.</value>
+  </data>
+  <data name="Save Settings" xml:space="preserve">
+    <value>Save Settings</value>
+  </data>
+  <data name="Variants at or below this threshold are marked as low stock across the app and in Telegram alerts." xml:space="preserve">
+    <value>Variants at or below this threshold are marked as low stock across the app and in Telegram alerts.</value>
+  </data>
+  <data name="Enable for Staff" xml:space="preserve">
+    <value>Enable for Staff</value>
+  </data>
+  <data name="Show low-stock warning badges to staff users." xml:space="preserve">
+    <value>Show low-stock warning badges to staff users.</value>
+  </data>
+  <data name="How It Works" xml:space="preserve">
+    <value>How It Works</value>
+  </data>
+  <data name="Hidden sections disappear from staff navigation and staff cannot open them directly. Admins always keep full access." xml:space="preserve">
+    <value>Hidden sections disappear from staff navigation and staff cannot open them directly. Admins always keep full access.</value>
+  </data>
+  <data name="Low Stock Items" xml:space="preserve">
+    <value>Low Stock Items</value>
+  </data>
+  <data name="Variants with stock below {0} units" xml:space="preserve">
+    <value>Variants with stock below {0} units</value>
+  </data>
+  <data name="Current stock balance for each product variant." xml:space="preserve">
+    <value>Current stock balance for each product variant.</value>
+  </data>
+  <data name="All Stock" xml:space="preserve">
+    <value>All Stock</value>
+  </data>
+  <data name="Search product, SKU, color, size..." xml:space="preserve">
+    <value>Search product, SKU, color, size...</value>
+  </data>
+  <data name="Current Stock" xml:space="preserve">
+    <value>Current Stock</value>
+  </data>
+  <data name="No low stock items found." xml:space="preserve">
+    <value>No low stock items found.</value>
+  </data>
+  <data name="No inventory records found." xml:space="preserve">
+    <value>No inventory records found.</value>
+  </data>
+  <data name="This action cannot be undone." xml:space="preserve">
+    <value>This action cannot be undone.</value>
+  </data>
+  <data name="Back to Tenants" xml:space="preserve">
+    <value>Back to Tenants</value>
+  </data>
+  <data name="Delete '{0}'?" xml:space="preserve">
+    <value>Delete '{0}'?</value>
+  </data>
+  <data name="This will permanently remove the workspace and all its data." xml:space="preserve">
+    <value>This will permanently remove the workspace and all its data.</value>
+  </data>
+  <data name="This tenant has {0} linked user(s). You can deactivate it, or force delete it together with all related users and tenant data." xml:space="preserve">
+    <value>This tenant has {0} linked user(s). You can deactivate it, or force delete it together with all related users and tenant data.</value>
+  </data>
+  <data name="This tenant has no users and can be safely deleted." xml:space="preserve">
+    <value>This tenant has no users and can be safely deleted.</value>
+  </data>
+  <data name="Not available" xml:space="preserve">
+    <value>Not available</value>
+  </data>
+  <data name="Linked Users" xml:space="preserve">
+    <value>Linked Users</value>
+  </data>
+  <data name="Delete Permanently" xml:space="preserve">
+    <value>Delete Permanently</value>
+  </data>
+  <data name="Deactivate Instead" xml:space="preserve">
+    <value>Deactivate Instead</value>
+  </data>
+  <data name="Force Delete Tenant" xml:space="preserve">
+    <value>Force Delete Tenant</value>
+  </data>
+  <data name="Force delete removes the tenant, linked users, subscriptions, inventory, sales, customers, expenses, uploads, and related records." xml:space="preserve">
+    <value>Force delete removes the tenant, linked users, subscriptions, inventory, sales, customers, expenses, uploads, and related records.</value>
+  </data>
+  <data name="This tenant contains a SuperAdmin account and cannot be force deleted." xml:space="preserve">
+    <value>This tenant contains a SuperAdmin account and cannot be force deleted.</value>
+  </data>
+  <data name="Force delete failed for tenant '{0}'." xml:space="preserve">
+    <value>Force delete failed for tenant '{0}'.</value>
+  </data>
+  <data name="Tenant '{0}' and all related users/data were permanently deleted." xml:space="preserve">
+    <value>Tenant '{0}' and all related users/data were permanently deleted.</value>
+  </data>
 </root>

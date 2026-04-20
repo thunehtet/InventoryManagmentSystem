@@ -53,7 +53,7 @@ namespace ClothInventoryApp.Controllers
             await _db.SaveChangesAsync();
             TempData["SuccessMsg"]      = this.LocalizeShared("Feature '{0}' created.", dto.Name);
             TempData["SuccessListUrl"]  = Url.Action("Index", "Feature");
-            TempData["SuccessListLabel"]= "View Features";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Features");
             return RedirectToAction(nameof(Index));
         }
 
@@ -85,7 +85,7 @@ namespace ClothInventoryApp.Controllers
             TempData["SuccessMsg"]      = this.LocalizeShared("Feature '{0}' updated.", f.Name);
             TempData["SuccessType"]     = "update";
             TempData["SuccessListUrl"]  = Url.Action("Index", "Feature");
-            TempData["SuccessListLabel"]= "View Features";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Features");
             return RedirectToAction(nameof(Index));
         }
 
@@ -107,7 +107,7 @@ namespace ClothInventoryApp.Controllers
             if (f == null) return NotFound();
             if (f.PlanFeatures.Any())
             {
-                TempData["Error"] = "Cannot delete: this feature is assigned to one or more plans. Remove plan assignments first.";
+                TempData["Error"] = this.LocalizeShared("Cannot delete: this feature is assigned to one or more plans. Remove plan assignments first.");
                 return RedirectToAction(nameof(Index));
             }
             _db.Features.Remove(f);
@@ -115,7 +115,7 @@ namespace ClothInventoryApp.Controllers
             TempData["SuccessMsg"]      = this.LocalizeShared("Feature '{0}' deleted.", f.Name);
             TempData["SuccessType"]     = "delete";
             TempData["SuccessListUrl"]  = Url.Action("Index", "Feature");
-            TempData["SuccessListLabel"]= "View Features";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Features");
             return RedirectToAction(nameof(Index));
         }
     }

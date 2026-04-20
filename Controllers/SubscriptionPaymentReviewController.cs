@@ -127,7 +127,7 @@ namespace ClothInventoryApp.Controllers
 
             if (!string.Equals(request.Status, "Pending", StringComparison.OrdinalIgnoreCase))
             {
-                TempData["Error"] = "Only pending requests can be approved.";
+                TempData["Error"] = this.LocalizeShared("Only pending requests can be approved.");
                 return RedirectToAction(nameof(Details), new { id });
             }
 
@@ -215,7 +215,7 @@ namespace ClothInventoryApp.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to send approval email for payment request {RequestId}.", request.Id);
-                TempData["Warning"] = "Subscription activated, but the approval email could not be sent.";
+                TempData["Warning"] = this.LocalizeShared("Subscription activated, but the approval email could not be sent.");
             }
 
             if (!string.IsNullOrWhiteSpace(request.RequestedByUser?.TelegramChatId))
@@ -225,10 +225,10 @@ namespace ClothInventoryApp.Controllers
                 await _telegramService.SendMessageAsync(request.RequestedByUser.TelegramChatId, msg, HttpContext.RequestAborted);
             }
 
-            TempData["SuccessMsg"]      = "Payment request approved and subscription activated.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Payment request approved and subscription activated.");
             TempData["SuccessType"]     = "update";
             TempData["SuccessListUrl"]  = Url.Action("Index", "SubscriptionPaymentReview");
-            TempData["SuccessListLabel"]= "View All Requests";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View All Requests");
             return RedirectToAction(nameof(Details), new { id });
         }
 
@@ -243,7 +243,7 @@ namespace ClothInventoryApp.Controllers
 
             if (!string.Equals(request.Status, "Pending", StringComparison.OrdinalIgnoreCase))
             {
-                TempData["Error"] = "Only pending requests can be rejected.";
+                TempData["Error"] = this.LocalizeShared("Only pending requests can be rejected.");
                 return RedirectToAction(nameof(Details), new { id });
             }
 
@@ -271,7 +271,7 @@ namespace ClothInventoryApp.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to send rejection email for payment request {RequestId}.", request.Id);
-                TempData["Warning"] = "Request rejected, but the rejection email could not be sent.";
+                TempData["Warning"] = this.LocalizeShared("Request rejected, but the rejection email could not be sent.");
             }
 
             if (!string.IsNullOrWhiteSpace(request.RequestedByUser?.TelegramChatId))
@@ -282,10 +282,10 @@ namespace ClothInventoryApp.Controllers
                 await _telegramService.SendMessageAsync(request.RequestedByUser.TelegramChatId, msg, HttpContext.RequestAborted);
             }
 
-            TempData["SuccessMsg"]      = "Payment request rejected.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Payment request rejected.");
             TempData["SuccessType"]     = "delete";
             TempData["SuccessListUrl"]  = Url.Action("Index", "SubscriptionPaymentReview");
-            TempData["SuccessListLabel"]= "View All Requests";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View All Requests");
             return RedirectToAction(nameof(Details), new { id });
         }
 

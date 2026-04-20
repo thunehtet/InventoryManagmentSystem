@@ -112,7 +112,7 @@ namespace ClothInventoryApp.Controllers
 
             if (!string.Equals(inquiry.Status, "Pending", StringComparison.OrdinalIgnoreCase))
             {
-                TempData["Error"] = "Only pending inquiries can be approved.";
+                TempData["Error"] = this.LocalizeShared("Only pending inquiries can be approved.");
                 return RedirectToAction(nameof(Details), new { id });
             }
 
@@ -121,14 +121,14 @@ namespace ClothInventoryApp.Controllers
                 u.NormalizedEmail == normalizedEmail ||
                 u.NormalizedUserName == normalizedEmail))
             {
-                TempData["Error"] = "This email already has an account.";
+                TempData["Error"] = this.LocalizeShared("This email already has an account.");
                 return RedirectToAction(nameof(Details), new { id });
             }
 
             var freePlan = await _db.Plans.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.Code == "FREE" && p.IsActive);
             if (freePlan == null)
             {
-                TempData["Error"] = "The free plan is not configured yet.";
+                TempData["Error"] = this.LocalizeShared("The free plan is not configured yet.");
                 return RedirectToAction(nameof(Details), new { id });
             }
 
@@ -230,7 +230,7 @@ namespace ClothInventoryApp.Controllers
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Failed to send approval email for inquiry {InquiryId}.", inquiry.Id);
-                    TempData["Warning"] = "Account created, but the approval email could not be sent.";
+                    TempData["Warning"] = this.LocalizeShared("Account created, but the approval email could not be sent.");
                 }
 
                 TempData["SuccessMsg"]      = this.LocalizeShared(
@@ -240,7 +240,7 @@ namespace ClothInventoryApp.Controllers
                     tempPassword);
                 TempData["SuccessType"]     = "update";
                 TempData["SuccessListUrl"]  = Url.Action("Index", "InquiryBox");
-                TempData["SuccessListLabel"]= "View All Inquiries";
+                TempData["SuccessListLabel"]= this.LocalizeShared("View All Inquiries");
                 return RedirectToAction(nameof(Details), new { id });
             }
             catch
@@ -259,7 +259,7 @@ namespace ClothInventoryApp.Controllers
 
             if (!string.Equals(inquiry.Status, "Pending", StringComparison.OrdinalIgnoreCase))
             {
-                TempData["Error"] = "Only pending inquiries can be rejected.";
+                TempData["Error"] = this.LocalizeShared("Only pending inquiries can be rejected.");
                 return RedirectToAction(nameof(Details), new { id });
             }
 
@@ -275,10 +275,10 @@ namespace ClothInventoryApp.Controllers
             inquiry.IsRead = true;
 
             await _db.SaveChangesAsync();
-            TempData["SuccessMsg"]      = "Inquiry rejected.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Inquiry rejected.");
             TempData["SuccessType"]     = "delete";
             TempData["SuccessListUrl"]  = Url.Action("Index", "InquiryBox");
-            TempData["SuccessListLabel"]= "View All Inquiries";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View All Inquiries");
             return RedirectToAction(nameof(Details), new { id });
         }
 
@@ -291,10 +291,10 @@ namespace ClothInventoryApp.Controllers
                 _db.ContactInquiries.Remove(item);
                 await _db.SaveChangesAsync();
             }
-            TempData["SuccessMsg"]      = "Inquiry deleted.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Inquiry deleted.");
             TempData["SuccessType"]     = "delete";
             TempData["SuccessListUrl"]  = Url.Action("Index", "InquiryBox");
-            TempData["SuccessListLabel"]= "View Inquiries";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Inquiries");
             return RedirectToAction(nameof(Index));
         }
 

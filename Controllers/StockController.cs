@@ -4,6 +4,7 @@ using ClothInventoryApp.Dto.Stock;
 using ClothInventoryApp.Models;
 using ClothInventoryApp.Services.Stock;
 using ClothInventoryApp.Services.Tenant;
+using ClothInventoryApp.Services.Usage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -17,15 +18,18 @@ namespace ClothInventoryApp.Controllers
         private readonly AppDbContext _context;
         private readonly ITenantProvider _tenantProvider;
         private readonly IStockService _stockService;
+        private readonly IUsageTrackingService _usageTrackingService;
 
         public StockController(
             AppDbContext context,
             ITenantProvider tenantProvider,
-            IStockService stockService)
+            IStockService stockService,
+            IUsageTrackingService usageTrackingService)
         {
             _context = context;
             _tenantProvider = tenantProvider;
             _stockService = stockService;
+            _usageTrackingService = usageTrackingService;
         }
         
 
@@ -129,9 +133,10 @@ namespace ClothInventoryApp.Controllers
             _context.StockMovements.Add(stockMovement);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMsg"]      = "Stock movement saved.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Stock movement saved.");
             TempData["SuccessListUrl"]  = Url.Action("Index", "Stock");
-            TempData["SuccessListLabel"]= "View Movements";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Movements");
+            await _usageTrackingService.TrackActionAsync(tenantId, "stock", "create", "StockMovement", stockMovement.Id.ToString(), $"Created {stockMovement.MovementType} stock movement.", cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 
@@ -145,7 +150,7 @@ namespace ClothInventoryApp.Controllers
 
             if (stockMovement.SaleId != null)
             {
-                TempData["Error"] = "This stock movement was created by a sale and cannot be edited here. Update the sale instead.";
+                TempData["Error"] = this.LocalizeShared("This stock movement was created by a sale and cannot be edited here. Update the sale instead.");
                 return RedirectToAction(nameof(Index));
             }
 
@@ -183,7 +188,7 @@ namespace ClothInventoryApp.Controllers
 
             if (stockMovement.SaleId != null)
             {
-                TempData["Error"] = "This stock movement was created by a sale and cannot be edited here. Update the sale instead.";
+                TempData["Error"] = this.LocalizeShared("This stock movement was created by a sale and cannot be edited here. Update the sale instead.");
                 return RedirectToAction(nameof(Index));
             }
 
@@ -213,10 +218,11 @@ namespace ClothInventoryApp.Controllers
             _context.StockMovements.Update(stockMovement);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMsg"]      = "Stock movement updated.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Stock movement updated.");
             TempData["SuccessType"]     = "update";
             TempData["SuccessListUrl"]  = Url.Action("Index", "Stock");
-            TempData["SuccessListLabel"]= "View Movements";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Movements");
+            await _usageTrackingService.TrackActionAsync(stockMovement.TenantId, "stock", "update", "StockMovement", stockMovement.Id.ToString(), $"Updated {stockMovement.MovementType} stock movement.", cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 
@@ -296,23 +302,24 @@ namespace ClothInventoryApp.Controllers
 
             if (stockMovement.SaleId != null)
             {
-                TempData["Error"] = "This stock movement was created by a sale and cannot be deleted here. Delete or void the sale instead.";
+                TempData["Error"] = this.LocalizeShared("This stock movement was created by a sale and cannot be deleted here. Delete or void the sale instead.");
                 return RedirectToAction(nameof(Delete), new { id });
             }
 
             if (!await CanDeleteMovementAsync(stockMovement))
             {
-                TempData["Error"] = "This stock movement cannot be deleted because doing so would make stock go below zero.";
+                TempData["Error"] = this.LocalizeShared("This stock movement cannot be deleted because doing so would make stock go below zero.");
                 return RedirectToAction(nameof(Delete), new { id });
             }
 
             _context.StockMovements.Remove(stockMovement);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMsg"]      = "Stock movement deleted.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Stock movement deleted.");
             TempData["SuccessType"]     = "delete";
             TempData["SuccessListUrl"]  = Url.Action("Index", "Stock");
-            TempData["SuccessListLabel"]= "View Movements";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Movements");
+            await _usageTrackingService.TrackActionAsync(stockMovement.TenantId, "stock", "delete", "StockMovement", stockMovement.Id.ToString(), $"Deleted {stockMovement.MovementType} stock movement.", cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 
@@ -382,12 +389,13 @@ namespace ClothInventoryApp.Controllers
             _context.StockMovements.Add(movement);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMsg"]      = "Stock recorded successfully.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Stock recorded successfully.");
             TempData["SuccessListUrl"]  = Url.Action("Inventory", "Stock");
-            TempData["SuccessListLabel"]= "View Inventory";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Inventory");
             TempData["SuccessAddUrl"]   = Url.Action("StockIn", "Stock");
-            TempData["SuccessAddLabel"] = "Record More Stock";
-            TempData["SuccessAddHint"]  = "Accurate stock counts depend on recording every delivery. Add stock-in entries for each variant received to keep inventory up to date.";
+            TempData["SuccessAddLabel"] = this.LocalizeShared("Record More Stock");
+            TempData["SuccessAddHint"]  = this.LocalizeShared("Accurate stock counts depend on recording every delivery. Add stock-in entries for each variant received to keep inventory up to date.");
+            await _usageTrackingService.TrackActionAsync(tenantId, "stock", "create", "StockMovement", movement.Id.ToString(), "Recorded stock-in movement.", cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Inventory));
         }
 
@@ -439,9 +447,10 @@ namespace ClothInventoryApp.Controllers
             _context.StockMovements.Add(movement);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMsg"]      = "Stock-out recorded.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Stock-out recorded.");
             TempData["SuccessListUrl"]  = Url.Action("Inventory", "Stock");
-            TempData["SuccessListLabel"]= "View Inventory";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Inventory");
+            await _usageTrackingService.TrackActionAsync(tenantId, "stock", "create", "StockMovement", movement.Id.ToString(), "Recorded stock-out movement.", cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Inventory));
         }
 

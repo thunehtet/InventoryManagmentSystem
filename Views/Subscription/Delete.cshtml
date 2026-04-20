@@ -1,6 +1,6 @@
 @model ClothInventoryApp.Models.TenantSubscription
 @{
-    ViewData["Title"] = "Delete Subscription";
+    ViewData["Title"] = Localizer["Delete Subscription"];
     var isExpired = Model.EndDate < DateTime.UtcNow;
 }
 

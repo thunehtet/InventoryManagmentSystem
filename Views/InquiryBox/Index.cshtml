@@ -1,6 +1,6 @@
 @model IEnumerable<ClothInventoryApp.Models.ContactInquiry>
 @{
-    ViewData["Title"] = "Inquiry Box";
+    ViewData["Title"] = Localizer["Inquiry Box"];
     var filter = (string)(ViewBag.Filter ?? "all");
     int unread = (int)(ViewBag.UnreadCount ?? 0);
     int pending = (int)(ViewBag.PendingCount ?? 0);

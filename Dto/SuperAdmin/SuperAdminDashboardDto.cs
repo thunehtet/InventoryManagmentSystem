@@ -8,9 +8,16 @@ namespace ClothInventoryApp.Dto.SuperAdmin
         public int ActiveSubscriptions { get; set; }
         public int MonthlyRevenue { get; set; }
         public int NewTenantsThisMonth { get; set; }
+        public int TodayLoginCount { get; set; }
+        public int TodayActionCount { get; set; }
+        public int ActiveTenants30Days { get; set; }
+        public int DormantTenants { get; set; }
 
         public List<PlanDistributionItem> PlanDistribution { get; set; } = new();
         public List<RecentTenantItem> RecentTenants { get; set; } = new();
+        public List<TenantUsageCardDto> TopTenantUsage { get; set; } = new();
+        public List<TenantUsageCardDto> DormantTenantList { get; set; } = new();
+        public List<RecentUserActivityDto> RecentActivities { get; set; } = new();
     }
 
     public class PlanDistributionItem

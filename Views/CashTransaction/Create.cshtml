@@ -1,16 +1,16 @@
-﻿@using ClothInventoryApp.Dto.CashTransaction
+@using ClothInventoryApp.Dto.CashTransaction
 @model CreateCashTransactionDto
 
 @{
-    ViewData["Title"] = "Create Cash Transaction";
+    ViewData["Title"] = Localizer["Create Cash Transaction"];
 }
 
 <div class="create-product-shell">
     <div class="create-main-card">
         <div class="section-header">
             <div>
-                <h3>Add Cash Transaction</h3>
-                <p>Record money in or money out.</p>
+                <h3>@Localizer["Add Transaction"]</h3>
+                <p>@Localizer["Record money received or money spent."]</p>
             </div>
         </div>
 
@@ -26,14 +26,14 @@
                 <div class="form-group-modern">
                     <label asp-for="Type" class="form-label-modern"></label>
                     <select asp-for="Type" asp-items="ViewBag.Types" class="input-modern">
-                        <option value="">-- Select Type --</option>
+                        <option value="">@Localizer["-- Select Type --"]</option>
                     </select>
                 </div>
 
                 <div class="form-group-modern form-group-full">
                     <label asp-for="Category" class="form-label-modern"></label>
                     <select asp-for="Category" asp-items="ViewBag.Categories" class="input-modern">
-                        <option value="">-- Select Category --</option>
+                        <option value="">@Localizer["-- Select Category --"]</option>
                     </select>
                 </div>
 
@@ -54,7 +54,7 @@
             </div>
 
             <div class="form-footer-modern">
-                <button type="submit" class="btn-modern-primary btn-modern-lg">Save Transaction</button>
+                <button type="submit" class="btn-modern-primary btn-modern-lg">@Localizer["Save Transaction"]</button>
                 <a asp-action="Index" class="btn-modern-outline btn-modern-lg">@Localizer["Cancel"]</a>
             </div>
         </form>

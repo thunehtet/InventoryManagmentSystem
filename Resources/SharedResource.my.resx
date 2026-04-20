@@ -1710,4 +1710,517 @@
   <data name="Receipt from {0}" xml:space="preserve">
     <value>{0} မှ ပြေစာ</value>
   </data>
+  <data name="Upgrade Required" xml:space="preserve">
+    <value>အဆင့်မြှင့်ရန် လိုအပ်သည်</value>
+  </data>
+  <data name="Add User" xml:space="preserve">
+    <value>အသုံးပြုသူ ထည့်ရန်</value>
+  </data>
+  <data name="Delete User" xml:space="preserve">
+    <value>အသုံးပြုသူ ဖျက်ရန်</value>
+  </data>
+  <data name="Edit User" xml:space="preserve">
+    <value>အသုံးပြုသူ ပြင်ဆင်ရန်</value>
+  </data>
+  <data name="Create Cash Transaction" xml:space="preserve">
+    <value>ငွေလွှဲမှတ်တမ်း ဖန်တီးရန်</value>
+  </data>
+  <data name="Delete Transaction" xml:space="preserve">
+    <value>ငွေလွှဲမှတ်တမ်း ဖျက်ရန်</value>
+  </data>
+  <data name="Transaction Details" xml:space="preserve">
+    <value>ငွေလွှဲအသေးစိတ်</value>
+  </data>
+  <data name="Edit Cash Transaction" xml:space="preserve">
+    <value>ငွေလွှဲမှတ်တမ်း ပြင်ဆင်ရန်</value>
+  </data>
+  <data name="Cash Transactions" xml:space="preserve">
+    <value>ငွေလွှဲမှတ်တမ်းများ</value>
+  </data>
+  <data name="Delete Customer" xml:space="preserve">
+    <value>ဖောက်သည် ဖျက်ရန်</value>
+  </data>
+  <data name="Edit Customer" xml:space="preserve">
+    <value>ဖောက်သည် ပြင်ဆင်ရန်</value>
+  </data>
+  <data name="New Feature" xml:space="preserve">
+    <value>Feature အသစ်</value>
+  </data>
+  <data name="Delete Feature" xml:space="preserve">
+    <value>Feature ဖျက်ရန်</value>
+  </data>
+  <data name="Edit Feature" xml:space="preserve">
+    <value>Feature ပြင်ဆင်ရန်</value>
+  </data>
+  <data name="Inquiry Details" xml:space="preserve">
+    <value>စုံစမ်းမှု အသေးစိတ်</value>
+  </data>
+  <data name="New Plan" xml:space="preserve">
+    <value>Plan အသစ်</value>
+  </data>
+  <data name="Delete Plan" xml:space="preserve">
+    <value>Plan ဖျက်ရန်</value>
+  </data>
+  <data name="Edit Plan" xml:space="preserve">
+    <value>Plan ပြင်ဆင်ရန်</value>
+  </data>
+  <data name="Assign Feature to Plan" xml:space="preserve">
+    <value>Plan သို့ Feature သတ်မှတ်ရန်</value>
+  </data>
+  <data name="Remove Plan Feature" xml:space="preserve">
+    <value>Plan Feature ဖယ်ရှားရန်</value>
+  </data>
+  <data name="Product Details" xml:space="preserve">
+    <value>ကုန်ပစ္စည်း အသေးစိတ်</value>
+  </data>
+  <data name="Edit Product" xml:space="preserve">
+    <value>ကုန်ပစ္စည်း ပြင်ဆင်ရန်</value>
+  </data>
+  <data name="Variant Details" xml:space="preserve">
+    <value>Variant အသေးစိတ်</value>
+  </data>
+  <data name="New Subscription" xml:space="preserve">
+    <value>Subscription အသစ်</value>
+  </data>
+  <data name="Delete Subscription" xml:space="preserve">
+    <value>Subscription ဖျက်ရန်</value>
+  </data>
+  <data name="Edit Subscription" xml:space="preserve">
+    <value>Subscription ပြင်ဆင်ရန်</value>
+  </data>
+  <data name="Subscription History" xml:space="preserve">
+    <value>Subscription မှတ်တမ်း</value>
+  </data>
+  <data name="Review Payment Request" xml:space="preserve">
+    <value>ငွေပေးချေမှု တောင်းဆိုချက် စစ်ဆေးရန်</value>
+  </data>
+  <data name="Payment Requests" xml:space="preserve">
+    <value>ငွေပေးချေမှု တောင်းဆိုချက်များ</value>
+  </data>
+  <data name="My Payment Requests" xml:space="preserve">
+    <value>ကျွန်ုပ်၏ ငွေပေးချေမှု တောင်းဆိုချက်များ</value>
+  </data>
+  <data name="Plan Payment" xml:space="preserve">
+    <value>Plan ငွေပေးချေမှု</value>
+  </data>
+  <data name="Upgrade Plans" xml:space="preserve">
+    <value>အဆင့်မြှင့် Plan များ</value>
+  </data>
+  <data name="System Dashboard" xml:space="preserve">
+    <value>စနစ် Dashboard</value>
+  </data>
+  <data name="New Tenant" xml:space="preserve">
+    <value>Tenant အသစ်</value>
+  </data>
+  <data name="Delete Tenant" xml:space="preserve">
+    <value>Tenant ဖျက်ရန်</value>
+  </data>
+  <data name="Edit Tenant" xml:space="preserve">
+    <value>Tenant ပြင်ဆင်ရန်</value>
+  </data>
+  <data name="Tenant Management" xml:space="preserve">
+    <value>Tenant စီမံခန့်ခွဲမှု</value>
+  </data>
+  <data name="Tenant Feature Overrides" xml:space="preserve">
+    <value>Tenant Feature Overrides</value>
+  </data>
+  <data name="Manage Tenant Feature Overrides" xml:space="preserve">
+    <value>Tenant Feature Overrides စီမံရန်</value>
+  </data>
+  <data name="Workspace Settings" xml:space="preserve">
+    <value>Workspace ဆက်တင်များ</value>
+  </data>
+  <data name="Back to Settings" xml:space="preserve">
+    <value>ဆက်တင်များသို့ ပြန်ရန်</value>
+  </data>
+  <data name="Settings saved successfully." xml:space="preserve">
+    <value>ဆက်တင်များကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ။</value>
+  </data>
+  <data name="Telegram disconnected." xml:space="preserve">
+    <value>Telegram ချိတ်ဆက်မှု ဖြုတ်ပြီးပါပြီ။</value>
+  </data>
+  <data name="You cannot delete your own account." xml:space="preserve">
+    <value>သင့်ကိုယ်ပိုင် account ကို ဖျက်၍မရပါ။</value>
+  </data>
+  <data name="This transaction is managed from its source record and cannot be edited here." xml:space="preserve">
+    <value>ဤငွေလွှဲမှတ်တမ်းကို မူလစာရင်းမှ စီမံနေသောကြောင့် ဤနေရာတွင် ပြင်ဆင်၍မရပါ။</value>
+  </data>
+  <data name="This transaction is managed from its source record and cannot be deleted here." xml:space="preserve">
+    <value>ဤငွေလွှဲမှတ်တမ်းကို မူလစာရင်းမှ စီမံနေသောကြောင့် ဤနေရာတွင် ဖျက်၍မရပါ။</value>
+  </data>
+  <data name="Cannot delete: this feature is assigned to one or more plans. Remove plan assignments first." xml:space="preserve">
+    <value>မဖျက်နိုင်ပါ - ဤ feature ကို plan တစ်ခု သို့မဟုတ် အများအပြားတွင် သတ်မှတ်ထားသည်။ အရင်ဆုံး plan assignment များကို ဖယ်ရှားပါ။</value>
+  </data>
+  <data name="Only pending inquiries can be approved." xml:space="preserve">
+    <value>Pending inquiry များကိုသာ အတည်ပြုနိုင်ပါသည်။</value>
+  </data>
+  <data name="Only pending inquiries can be rejected." xml:space="preserve">
+    <value>Pending inquiry များကိုသာ ပယ်ချနိုင်ပါသည်။</value>
+  </data>
+  <data name="This email already has an account." xml:space="preserve">
+    <value>ဤ email ဖြင့် account ရှိပြီးသားဖြစ်ပါသည်။</value>
+  </data>
+  <data name="The free plan is not configured yet." xml:space="preserve">
+    <value>Free plan ကို မသတ်မှတ်ရသေးပါ။</value>
+  </data>
+  <data name="Account created, but the approval email could not be sent." xml:space="preserve">
+    <value>Account ဖန်တီးပြီးသော်လည်း အတည်ပြု email မပို့နိုင်ခဲ့ပါ။</value>
+  </data>
+  <data name="Cannot delete: subscriptions are linked to this plan." xml:space="preserve">
+    <value>မဖျက်နိုင်ပါ - ဤ plan နှင့် subscription များ ချိတ်ဆက်ထားပါသည်။</value>
+  </data>
+  <data name="Failed to delete product. Please try again." xml:space="preserve">
+    <value>ကုန်ပစ္စည်း ဖျက်ရာတွင် မအောင်မြင်ပါ။ ထပ်စမ်းကြည့်ပါ။</value>
+  </data>
+  <data name="Failed to delete sale. Please try again." xml:space="preserve">
+    <value>အရောင်းမှတ်တမ်း ဖျက်ရာတွင် မအောင်မြင်ပါ။ ထပ်စမ်းကြည့်ပါ။</value>
+  </data>
+  <data name="This stock movement was created by a sale and cannot be edited here. Update the sale instead." xml:space="preserve">
+    <value>ဤ stock movement ကို sale မှ ဖန်တီးထားသောကြောင့် ဤနေရာတွင် ပြင်ဆင်၍မရပါ။ အစား sale ကို ပြင်ဆင်ပါ။</value>
+  </data>
+  <data name="This stock movement was created by a sale and cannot be deleted here. Delete or void the sale instead." xml:space="preserve">
+    <value>ဤ stock movement ကို sale မှ ဖန်တီးထားသောကြောင့် ဤနေရာတွင် ဖျက်၍မရပါ။ အစား sale ကို ဖျက်ပါ သို့မဟုတ် void လုပ်ပါ။</value>
+  </data>
+  <data name="This stock movement cannot be deleted because doing so would make stock go below zero." xml:space="preserve">
+    <value>ဤ stock movement ကို ဖျက်၍မရပါ။ ဖျက်ပါက stock သည် သုညအောက်သို့ ကျသွားမည်ဖြစ်သည်။</value>
+  </data>
+  <data name="Only pending requests can be approved." xml:space="preserve">
+    <value>Pending request များကိုသာ အတည်ပြုနိုင်ပါသည်။</value>
+  </data>
+  <data name="Only pending requests can be rejected." xml:space="preserve">
+    <value>Pending request များကိုသာ ပယ်ချနိုင်ပါသည်။</value>
+  </data>
+  <data name="Subscription activated, but the approval email could not be sent." xml:space="preserve">
+    <value>Subscription ကို ဖွင့်ထားပြီးသော်လည်း approval email မပို့နိုင်ခဲ့ပါ။</value>
+  </data>
+  <data name="Request rejected, but the rejection email could not be sent." xml:space="preserve">
+    <value>Request ကို ပယ်ချပြီးသော်လည်း rejection email မပို့နိုင်ခဲ့ပါ။</value>
+  </data>
+  <data name="The free plan is assigned after signup approval and does not require payment." xml:space="preserve">
+    <value>Free plan ကို signup approval ပြီးနောက် သတ်မှတ်ပေးမည်ဖြစ်ပြီး ငွေပေးချေမှု မလိုအပ်ပါ။</value>
+  </data>
+  <data name="Yearly billing is not available for the selected plan." xml:space="preserve">
+    <value>ရွေးချယ်ထားသော plan အတွက် yearly billing မရနိုင်ပါ။</value>
+  </data>
+  <data name="The free plan does not require a payment request." xml:space="preserve">
+    <value>Free plan အတွက် payment request မလိုအပ်ပါ။</value>
+  </data>
+  <data name="Tenant created, but the credential email could not be sent." xml:space="preserve">
+    <value>Tenant ဖန်တီးပြီးသော်လည်း credential email မပို့နိုင်ခဲ့ပါ။</value>
+  </data>
+  <data name="Cannot delete: users are linked to this tenant. Deactivate it instead." xml:space="preserve">
+    <value>မဖျက်နိုင်ပါ - ဤ tenant နှင့် users များ ချိတ်ဆက်ထားပါသည်။ အစား deactivate လုပ်ပါ။</value>
+  </data>
+  <data name="Current Password" xml:space="preserve">
+    <value>လက်ရှိ စကားဝှက်</value>
+  </data>
+  <data name="Confirm New Password" xml:space="preserve">
+    <value>စကားဝှက်အသစ် အတည်ပြုရန်</value>
+  </data>
+  <data name="Email Address" xml:space="preserve">
+    <value>Email လိပ်စာ</value>
+  </data>
+  <data name="Remember Me" xml:space="preserve">
+    <value>ကျွန်ုပ်ကို မှတ်ထားပါ</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>အသုံးပြုသူအမည်</value>
+  </data>
+  <data name="Profile Photo" xml:space="preserve">
+    <value>Profile Photo</value>
+  </data>
+  <data name="Brand Logo" xml:space="preserve">
+    <value>Brand Logo</value>
+  </data>
+  <data name="Confirm Password" xml:space="preserve">
+    <value>စကားဝှက် အတည်ပြုရန်</value>
+  </data>
+  <data name="Full Name" xml:space="preserve">
+    <value>အမည်အပြည့်အစုံ</value>
+  </data>
+  <data name="Tenant Admin" xml:space="preserve">
+    <value>Tenant Admin</value>
+  </data>
+  <data name="Super Admin" xml:space="preserve">
+    <value>Super Admin</value>
+  </data>
+  <data name="Transaction Date" xml:space="preserve">
+    <value>ငွေလွှဲရက်စွဲ</value>
+  </data>
+  <data name="Reference No" xml:space="preserve">
+    <value>Reference နံပါတ်</value>
+  </data>
+  <data name="Facebook Account" xml:space="preserve">
+    <value>Facebook အကောင့်</value>
+  </data>
+  <data name="Unit Price" xml:space="preserve">
+    <value>တစ်ခုချင်းစျေးနှုန်း</value>
+  </data>
+  <data name="Feature Code" xml:space="preserve">
+    <value>Feature Code</value>
+  </data>
+  <data name="Feature Name" xml:space="preserve">
+    <value>Feature အမည်</value>
+  </data>
+  <data name="Monthly Price" xml:space="preserve">
+    <value>လစဉ် စျေးနှုန်း</value>
+  </data>
+  <data name="Yearly Price" xml:space="preserve">
+    <value>နှစ်စဉ် စျေးနှုန်း</value>
+  </data>
+  <data name="Max Users" xml:space="preserve">
+    <value>အသုံးပြုသူ အများဆုံး</value>
+  </data>
+  <data name="Max Products" xml:space="preserve">
+    <value>ကုန်ပစ္စည်း အများဆုံး</value>
+  </data>
+  <data name="Max Monthly Sales" xml:space="preserve">
+    <value>လစဉ် အရောင်း အများဆုံး</value>
+  </data>
+  <data name="Max Monthly PDF Invoices" xml:space="preserve">
+    <value>လစဉ် PDF Invoice အများဆုံး</value>
+  </data>
+  <data name="Max Monthly Receipt Shares" xml:space="preserve">
+    <value>လစဉ် Receipt Share အများဆုံး</value>
+  </data>
+  <data name="Max Monthly Customer Invites" xml:space="preserve">
+    <value>လစဉ် Customer Invite အများဆုံး</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>ဖွင့်ထားသည်</value>
+  </data>
+  <data name="Start Date" xml:space="preserve">
+    <value>စတင်ရက်</value>
+  </data>
+  <data name="End Date" xml:space="preserve">
+    <value>ပြီးဆုံးရက်</value>
+  </data>
+  <data name="Billing Cycle" xml:space="preserve">
+    <value>ငွေပေးချေမှု ကာလ</value>
+  </data>
+  <data name="Business Type" xml:space="preserve">
+    <value>လုပ်ငန်းအမျိုးအစား</value>
+  </data>
+  <data name="Logo URL" xml:space="preserve">
+    <value>Logo URL</value>
+  </data>
+  <data name="Contact Email" xml:space="preserve">
+    <value>ဆက်သွယ်ရန် Email</value>
+  </data>
+  <data name="Contact Phone" xml:space="preserve">
+    <value>ဆက်သွယ်ရန် ဖုန်း</value>
+  </data>
+  <data name="This variant cannot be deleted because it still has stock on hand." xml:space="preserve">
+    <value>ဤ variant ကို ဖျက်၍မရပါ။ လက်ကျန် stock ရှိနေသေးပါသည်။</value>
+  </data>
+  <data name="This variant cannot be deleted because it already has stock movement history." xml:space="preserve">
+    <value>ဤ variant ကို ဖျက်၍မရပါ။ stock movement မှတ်တမ်း ရှိပြီးသားဖြစ်ပါသည်။</value>
+  </data>
+  <data name="Cashflow" xml:space="preserve">
+    <value>ငွေဝင်ငွေထွက်</value>
+  </data>
+  <data name="Track all cash moving in and out of your business." xml:space="preserve">
+    <value>လုပ်ငန်း၏ ငွေဝင်ငွေထွက်အားလုံးကို စနစ်တကျ စောင့်ကြည့်နိုင်ပါသည်။</value>
+  </data>
+  <data name="{0} transactions" xml:space="preserve">
+    <value>မှတ်တမ်း {0} ခု</value>
+  </data>
+  <data name="Search category, type, reference..." xml:space="preserve">
+    <value>အမျိုးအစား၊ type၊ reference ဖြင့် ရှာပါ...</value>
+  </data>
+  <data name="No transactions yet" xml:space="preserve">
+    <value>ငွေလွှဲမှတ်တမ်း မရှိသေးပါ။</value>
+  </data>
+  <data name="No transactions match your search" xml:space="preserve">
+    <value>ရှာဖွေမှုနှင့် ကိုက်ညီသော ငွေလွှဲမှတ်တမ်း မရှိပါ။</value>
+  </data>
+  <data name="Record money received or money spent." xml:space="preserve">
+    <value>လက်ခံရရှိသည့်ငွေ သို့မဟုတ် သုံးစွဲသည့်ငွေကို မှတ်တမ်းတင်ပါ။</value>
+  </data>
+  <data name="-- Select Type --" xml:space="preserve">
+    <value>-- အမျိုးအစား ရွေးပါ --</value>
+  </data>
+  <data name="-- Select Category --" xml:space="preserve">
+    <value>-- ခေါင်းစဉ် ရွေးပါ --</value>
+  </data>
+  <data name="Save Transaction" xml:space="preserve">
+    <value>မှတ်တမ်း သိမ်းရန်</value>
+  </data>
+  <data name="Update Transaction" xml:space="preserve">
+    <value>မှတ်တမ်း ပြင်ဆင်ရန်</value>
+  </data>
+  <data name="Add and manage user accounts for your workspace." xml:space="preserve">
+    <value>သင့် workspace အတွက် အသုံးပြုသူ account များကို ထည့်သွင်းပြီး စီမံနိုင်ပါသည်။</value>
+  </data>
+  <data name="User limit reached. Upgrade your plan to add more users." xml:space="preserve">
+    <value>အသုံးပြုသူအရေအတွက် ကန့်သတ်ချက်ပြည့်သွားပါပြီ။ အသုံးပြုသူထပ်ထည့်ရန် plan အဆင့်မြှင့်ပါ။</value>
+  </data>
+  <data name="Team Members" xml:space="preserve">
+    <value>အဖွဲ့ဝင်များ</value>
+  </data>
+  <data name="{0} / {1} users" xml:space="preserve">
+    <value>အသုံးပြုသူ {0} / {1} ယောက်</value>
+  </data>
+  <data name="{0} users" xml:space="preserve">
+    <value>အသုံးပြုသူ {0} ယောက်</value>
+  </data>
+  <data name="Plan limit reached" xml:space="preserve">
+    <value>Plan ကန့်သတ်ချက် ပြည့်သွားပါပြီ</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>အသုံးပြုသူ</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>အခန်းကဏ္ဍ</value>
+  </data>
+  <data name="Last Login" xml:space="preserve">
+    <value>နောက်ဆုံး Login</value>
+  </data>
+  <data name="No users found." xml:space="preserve">
+    <value>အသုံးပြုသူ မတွေ့ပါ။</value>
+  </data>
+  <data name="You" xml:space="preserve">
+    <value>သင်</value>
+  </data>
+  <data name="Since" xml:space="preserve">
+    <value>စတင်ပြီး</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>မရှိသေး</value>
+  </data>
+  <data name="Workspace" xml:space="preserve">
+    <value>လုပ်ငန်းနေရာ</value>
+  </data>
+  <data name="Control staff access and low-stock alerts for your workspace." xml:space="preserve">
+    <value>သင့် workspace အတွက် staff အသုံးပြုခွင့်နှင့် stock နည်းသတိပေးချက်များကို စီမံနိုင်ပါသည်။</value>
+  </data>
+  <data name="Back to Overview" xml:space="preserve">
+    <value>အကျဉ်းချုပ်သို့ ပြန်ရန်</value>
+  </data>
+  <data name="Admin Only" xml:space="preserve">
+    <value>Admin များအတွက်သာ</value>
+  </data>
+  <data name="These settings affect staff accounts only. Admins always keep full access." xml:space="preserve">
+    <value>ဤ setting များသည် staff account များအပေါ်သာ သက်ရောက်ပါသည်။ Admin များသည် အမြဲတမ်း အပြည့်အဝ အသုံးပြုခွင့် ရှိပါသည်။</value>
+  </data>
+  <data name="Staff Access Control" xml:space="preserve">
+    <value>Staff အသုံးပြုခွင့် စီမံမှု</value>
+  </data>
+  <data name="Choose which sections staff can open. Hidden sections are removed completely from staff navigation." xml:space="preserve">
+    <value>Staff များ ဖွင့်ကြည့်နိုင်မည့် section များကို ရွေးချယ်ပါ။ ဖျောက်ထားသော section များသည် staff navigation မှ လုံးဝပျောက်သွားမည်ဖြစ်သည်။</value>
+  </data>
+  <data name="View overview metrics, sales trends, and business highlights." xml:space="preserve">
+    <value>အကျဉ်းချုပ်ကိန်းဂဏန်းများ၊ အရောင်းလမ်းကြောင်းများနှင့် လုပ်ငန်းအခြေအနေကို ကြည့်နိုင်ပါသည်။</value>
+  </data>
+  <data name="View income, expenses, profit, and cashflow pages." xml:space="preserve">
+    <value>ဝင်ငွေ၊ အသုံးစရိတ်၊ အမြတ်နှင့် ငွေဝင်ငွေထွက် စာမျက်နှာများကို ကြည့်နိုင်ပါသည်။</value>
+  </data>
+  <data name="View product list and product details." xml:space="preserve">
+    <value>ကုန်ပစ္စည်းစာရင်းနှင့် အသေးစိတ်ကို ကြည့်နိုင်ပါသည်။</value>
+  </data>
+  <data name="View product variants such as SKU, size, and color." xml:space="preserve">
+    <value>SKU၊ size နှင့် color ကဲ့သို့သော variant များကို ကြည့်နိုင်ပါသည်။</value>
+  </data>
+  <data name="View purchase records for textiles and materials." xml:space="preserve">
+    <value>အထည်နှင့် ပစ္စည်းဝယ်ယူမှု မှတ်တမ်းများကို ကြည့်နိုင်ပါသည်။</value>
+  </data>
+  <data name="View stock in, stock out, and movement history." xml:space="preserve">
+    <value>stock in၊ stock out နှင့် movement history ကို ကြည့်နိုင်ပါသည်။</value>
+  </data>
+  <data name="View current stock balance for each variant." xml:space="preserve">
+    <value>variant တစ်ခုချင်းစီ၏ လက်ကျန် stock ကို ကြည့်နိုင်ပါသည်။</value>
+  </data>
+  <data name="View sales history, invoices, and sale records." xml:space="preserve">
+    <value>အရောင်းမှတ်တမ်းများ၊ invoice များနှင့် sale record များကို ကြည့်နိုင်ပါသည်။</value>
+  </data>
+  <data name="View customer profiles, contacts, and purchase history." xml:space="preserve">
+    <value>ဖောက်သည် profile များ၊ ဆက်သွယ်ရန်အချက်အလက်များနှင့် ဝယ်ယူမှုမှတ်တမ်းများကို ကြည့်နိုင်ပါသည်။</value>
+  </data>
+  <data name="Save Settings" xml:space="preserve">
+    <value>ဆက်တင်များ သိမ်းရန်</value>
+  </data>
+  <data name="Variants at or below this threshold are marked as low stock across the app and in Telegram alerts." xml:space="preserve">
+    <value>ဤကန့်သတ်ချက်နှင့်ညီ သို့မဟုတ် ထိုထက်နည်းသော variant များကို app အနှံ့ low stock အဖြစ် ပြသမည်ဖြစ်ပြီး Telegram alert တွင်လည်း အသိပေးမည်ဖြစ်သည်။</value>
+  </data>
+  <data name="Enable for Staff" xml:space="preserve">
+    <value>Staff အတွက် ဖွင့်ရန်</value>
+  </data>
+  <data name="Show low-stock warning badges to staff users." xml:space="preserve">
+    <value>staff အသုံးပြုသူများအား low-stock သတိပေး badge များ ပြသပါ။</value>
+  </data>
+  <data name="How It Works" xml:space="preserve">
+    <value>လုပ်ဆောင်ပုံ</value>
+  </data>
+  <data name="Hidden sections disappear from staff navigation and staff cannot open them directly. Admins always keep full access." xml:space="preserve">
+    <value>ဖျောက်ထားသော section များသည် staff navigation မှ ပျောက်သွားမည်ဖြစ်ပြီး staff များ တိုက်ရိုက်ဖွင့်၍မရပါ။ Admin များသည် အမြဲတမ်း အပြည့်အဝ အသုံးပြုခွင့် ရှိပါသည်။</value>
+  </data>
+  <data name="Low Stock Items" xml:space="preserve">
+    <value>Stock နည်းနေသော ပစ္စည်းများ</value>
+  </data>
+  <data name="Variants with stock below {0} units" xml:space="preserve">
+    <value>stock {0} ခုအောက် လက်ကျန်ရှိသော variant များ</value>
+  </data>
+  <data name="Current stock balance for each product variant." xml:space="preserve">
+    <value>ကုန်ပစ္စည်း variant တစ်ခုချင်းစီ၏ လက်ကျန် stock ကို ပြသထားပါသည်။</value>
+  </data>
+  <data name="All Stock" xml:space="preserve">
+    <value>Stock အားလုံး</value>
+  </data>
+  <data name="Search product, SKU, color, size..." xml:space="preserve">
+    <value>ကုန်ပစ္စည်း၊ SKU၊ color၊ size ဖြင့် ရှာပါ...</value>
+  </data>
+  <data name="Current Stock" xml:space="preserve">
+    <value>လက်ရှိ Stock</value>
+  </data>
+  <data name="No low stock items found." xml:space="preserve">
+    <value>stock နည်းနေသော ပစ္စည်း မတွေ့ပါ။</value>
+  </data>
+  <data name="No inventory records found." xml:space="preserve">
+    <value>inventory မှတ်တမ်း မတွေ့ပါ။</value>
+  </data>
+  <data name="This action cannot be undone." xml:space="preserve">
+    <value>ဤလုပ်ဆောင်ချက်ကို ပြန်မဖြုတ်နိုင်ပါ။</value>
+  </data>
+  <data name="Back to Tenants" xml:space="preserve">
+    <value>Tenant စာရင်းသို့ ပြန်ရန်</value>
+  </data>
+  <data name="Delete '{0}'?" xml:space="preserve">
+    <value>'{0}' ကို ဖျက်မလား။</value>
+  </data>
+  <data name="This will permanently remove the workspace and all its data." xml:space="preserve">
+    <value>ဤလုပ်ဆောင်ချက်သည် workspace နှင့် ဆက်စပ်ဒေတာအားလုံးကို အပြီးတိုင် ဖျက်ပစ်မည်ဖြစ်သည်။</value>
+  </data>
+  <data name="This tenant has {0} linked user(s). You can deactivate it, or force delete it together with all related users and tenant data." xml:space="preserve">
+    <value>ဤ tenant တွင် ချိတ်ဆက်ထားသော user {0} ယောက် ရှိနေပါသည်။ Deactivate လုပ်ထားနိုင်သလို၊ ဆက်စပ် user များနှင့် tenant data အားလုံးကို force delete လုပ်နိုင်ပါသည်။</value>
+  </data>
+  <data name="This tenant has no users and can be safely deleted." xml:space="preserve">
+    <value>ဤ tenant တွင် user မရှိသောကြောင့် စိတ်ချစွာ ဖျက်နိုင်ပါသည်။</value>
+  </data>
+  <data name="Not available" xml:space="preserve">
+    <value>မရှိပါ</value>
+  </data>
+  <data name="Linked Users" xml:space="preserve">
+    <value>ချိတ်ဆက်ထားသော User များ</value>
+  </data>
+  <data name="Delete Permanently" xml:space="preserve">
+    <value>အပြီးတိုင် ဖျက်ရန်</value>
+  </data>
+  <data name="Deactivate Instead" xml:space="preserve">
+    <value>Deactivate လုပ်မည်</value>
+  </data>
+  <data name="Force Delete Tenant" xml:space="preserve">
+    <value>Tenant ကို Force Delete လုပ်ရန်</value>
+  </data>
+  <data name="Force delete removes the tenant, linked users, subscriptions, inventory, sales, customers, expenses, uploads, and related records." xml:space="preserve">
+    <value>Force delete လုပ်ပါက tenant၊ ချိတ်ဆက်ထားသော user များ၊ subscription များ၊ inventory၊ sales၊ customer များ၊ expense များ၊ upload များနှင့် ဆက်စပ်မှတ်တမ်းများအားလုံးကို ဖျက်ပစ်မည်ဖြစ်သည်။</value>
+  </data>
+  <data name="This tenant contains a SuperAdmin account and cannot be force deleted." xml:space="preserve">
+    <value>ဤ tenant တွင် SuperAdmin account ပါရှိနေသောကြောင့် force delete မလုပ်နိုင်ပါ။</value>
+  </data>
+  <data name="Force delete failed for tenant '{0}'." xml:space="preserve">
+    <value>Tenant '{0}' ကို force delete လုပ်ရာတွင် မအောင်မြင်ပါ။</value>
+  </data>
+  <data name="Tenant '{0}' and all related users/data were permanently deleted." xml:space="preserve">
+    <value>Tenant '{0}' နှင့် ဆက်စပ် user/data အားလုံးကို အပြီးတိုင် ဖျက်ပြီးပါပြီ။</value>
+  </data>
 </root>

@@ -509,6 +509,75 @@
     cursor: default;
 }
 
+.staff-toggles-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.staff-toggles-list .status-toggle-card {
+    cursor: pointer;
+    user-select: none;
+}
+
+.settings-icon-dashboard {
+    color: #6366f1;
+}
+
+.settings-icon-finance {
+    color: #10b981;
+}
+
+.settings-icon-products {
+    color: #0891b2;
+}
+
+.settings-icon-variants {
+    color: #7c3aed;
+}
+
+.settings-icon-purchases {
+    color: #f59e0b;
+}
+
+.settings-icon-stock {
+    color: #16a34a;
+}
+
+.settings-icon-inventory {
+    color: #64748b;
+}
+
+.settings-icon-sales {
+    color: #3b82f6;
+}
+
+.settings-icon-customers {
+    color: #8b5cf6;
+}
+
+.settings-icon-alert {
+    color: #ef4444;
+}
+
+.settings-threshold-wrap {
+    width: 110px;
+}
+
+.settings-threshold-input {
+    height: 40px;
+    font-size: 0.9rem;
+    padding-left: 36px;
+}
+
+.settings-staff-toggle {
+    margin-top: 4px;
+}
+
+.settings-help-text {
+    margin: 0;
+}
+
 .textarea-modern {
     height: auto;
     padding-top: .75rem;

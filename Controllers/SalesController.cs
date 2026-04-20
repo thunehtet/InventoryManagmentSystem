@@ -6,6 +6,7 @@ using ClothInventoryApp.Services.Feature;
 using ClothInventoryApp.Services.Stock;
 using ClothInventoryApp.Services.Subscription;
 using ClothInventoryApp.Services.Tenant;
+using ClothInventoryApp.Services.Usage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -23,18 +24,21 @@ namespace ClothInventoryApp.Controllers
         private readonly IFeatureService _featureService;
         private readonly IStockService _stockService;
         private readonly ISubscriptionService _subscriptionService;
+        private readonly IUsageTrackingService _usageTrackingService;
 
         public SalesController(
             AppDbContext context,
             ITenantProvider tenantProvider,
             IFeatureService featureService,
             IStockService stockService,
-            ISubscriptionService subscriptionService)
+            ISubscriptionService subscriptionService,
+            IUsageTrackingService usageTrackingService)
             : base(context, tenantProvider)
         {
             _featureService = featureService;
             _stockService = stockService;
             _subscriptionService = subscriptionService;
+            _usageTrackingService = usageTrackingService;
         }
        
 
@@ -264,9 +268,10 @@ namespace ClothInventoryApp.Controllers
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                TempData["SuccessMsg"]      = "Sale recorded successfully.";
+                TempData["SuccessMsg"]      = this.LocalizeShared("Sale recorded successfully.");
                 TempData["SuccessListUrl"]  = Url.Action("Index", "Sales");
-                TempData["SuccessListLabel"]= "View Sales";
+                TempData["SuccessListLabel"]= this.LocalizeShared("View Sales");
+                await _usageTrackingService.TrackActionAsync(tenantId, "sales", "create", "Sale", sale.Id.ToString(), $"Recorded sale {sale.Id}.", cancellationToken: HttpContext.RequestAborted);
                 return RedirectToAction(nameof(Index));
             }
             catch (InvalidOperationException ex)
@@ -472,10 +477,15 @@ namespace ClothInventoryApp.Controllers
             catch
             {
                 await tx.RollbackAsync();
-                TempData["Error"] = "Failed to delete sale. Please try again.";
+                TempData["Error"] = this.LocalizeShared("Failed to delete sale. Please try again.");
                 return RedirectToAction(nameof(Delete), new { id });
             }
 
+            TempData["SuccessMsg"]      = this.LocalizeShared("Sale deleted.");
+            TempData["SuccessType"]     = "delete";
+            TempData["SuccessListUrl"]  = Url.Action("Index", "Sales");
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Sales");
+            await _usageTrackingService.TrackActionAsync(sale.TenantId, "sales", "delete", "Sale", sale.Id.ToString(), $"Deleted sale {sale.Id}.", cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 

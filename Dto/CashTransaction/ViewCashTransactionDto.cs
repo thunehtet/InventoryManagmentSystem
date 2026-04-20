@@ -7,7 +7,7 @@
         public string Type { get; set; } = string.Empty;
         public string Category { get; set; } = string.Empty;
         public int Amount { get; set; }
-        public string ReferenceNo { get; set; } = string.Empty;
-        public string Remarks { get; set; } = string.Empty;
+        public string? ReferenceNo { get; set; }
+        public string? Remarks { get; set; }
     }
 }

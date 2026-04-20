@@ -1,6 +1,6 @@
 @model IEnumerable<ClothInventoryApp.Dto.SuperAdmin.SubscriptionPaymentRequestReviewDto>
 @{
-    ViewData["Title"] = "Payment Requests";
+    ViewData["Title"] = Localizer["Payment Requests"];
     var pg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel;
     var selectedStatus = ViewBag.Status as string ?? "Pending";
 }

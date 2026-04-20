@@ -128,7 +128,7 @@ namespace ClothInventoryApp.Controllers
                 ? "Subscription created."
                 : this.LocalizeShared("Subscription created. Note: {0}", replacedMsg);
             TempData["SuccessListUrl"]  = Url.Action("Index", "Subscription");
-            TempData["SuccessListLabel"]= "View Subscriptions";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Subscriptions");
             return RedirectToAction(nameof(Index));
         }
 
@@ -205,10 +205,10 @@ namespace ClothInventoryApp.Controllers
                     await _subscriptionService.ResetMonthlyFeatureUsageAsync(dto.TenantId);
             }
 
-            TempData["SuccessMsg"]      = "Subscription updated.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Subscription updated.");
             TempData["SuccessType"]     = "update";
             TempData["SuccessListUrl"]  = Url.Action("Index", "Subscription");
-            TempData["SuccessListLabel"]= "View Subscriptions";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Subscriptions");
             return RedirectToAction(nameof(Index));
         }
 
@@ -275,10 +275,10 @@ namespace ClothInventoryApp.Controllers
                 }
             }
 
-            TempData["SuccessMsg"]      = "Subscription deleted.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Subscription deleted.");
             TempData["SuccessType"]     = "delete";
             TempData["SuccessListUrl"]  = Url.Action("Index", "Subscription");
-            TempData["SuccessListLabel"]= "View Subscriptions";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Subscriptions");
             return RedirectToAction(nameof(Index));
         }
 

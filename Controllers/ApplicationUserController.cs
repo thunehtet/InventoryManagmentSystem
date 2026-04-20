@@ -3,6 +3,7 @@ using ClothInventoryApp.Dtos.ApplicationUser;
 using ClothInventoryApp.Models;
 using ClothInventoryApp.Services.Subscription;
 using ClothInventoryApp.Services.Tenant;
+using ClothInventoryApp.Services.Usage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,17 +20,20 @@ namespace ClothInventoryApp.Controllers
         private readonly AppDbContext _context;
         private readonly ITenantProvider _tenantProvider;
         private readonly ISubscriptionService _subscriptionService;
+        private readonly IUsageTrackingService _usageTrackingService;
 
         public ApplicationUserController(
             UserManager<ApplicationUser> userManager,
             AppDbContext context,
             ITenantProvider tenantProvider,
-            ISubscriptionService subscriptionService)
+            ISubscriptionService subscriptionService,
+            IUsageTrackingService usageTrackingService)
         {
             _userManager = userManager;
             _context = context;
             _tenantProvider = tenantProvider;
             _subscriptionService = subscriptionService;
+            _usageTrackingService = usageTrackingService;
         }
 
         // ── Helpers ──────────────────────────────────────────────────
@@ -141,7 +145,8 @@ namespace ClothInventoryApp.Controllers
 
             TempData["SuccessMsg"]      = this.LocalizeShared("User {0} created. Default password has been set.", dto.Email);
             TempData["SuccessListUrl"]  = Url.Action("Index", "ApplicationUser");
-            TempData["SuccessListLabel"]= "View Users";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Users");
+            await _usageTrackingService.TrackActionAsync(dto.TenantId, "users", "create", "ApplicationUser", user.Id, $"Created user {dto.Email}.", cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 
@@ -219,10 +224,11 @@ namespace ClothInventoryApp.Controllers
                 }
             }
 
-            TempData["SuccessMsg"]      = "User updated successfully.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("User updated successfully.");
             TempData["SuccessType"]     = "update";
             TempData["SuccessListUrl"]  = Url.Action("Index", "ApplicationUser");
-            TempData["SuccessListLabel"]= "View Users";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Users");
+            await _usageTrackingService.TrackActionAsync(tenantId, "users", "update", "ApplicationUser", user.Id, $"Updated user {user.Email}.", cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 
@@ -255,15 +261,16 @@ namespace ClothInventoryApp.Controllers
             var currentUserId = _userManager.GetUserId(User);
             if (user.Id == currentUserId)
             {
-                TempData["Error"] = "You cannot delete your own account.";
+                TempData["Error"] = this.LocalizeShared("You cannot delete your own account.");
                 return RedirectToAction(nameof(Index));
             }
 
             await _userManager.DeleteAsync(user);
-            TempData["SuccessMsg"]      = "User deleted.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("User deleted.");
             TempData["SuccessType"]     = "delete";
             TempData["SuccessListUrl"]  = Url.Action("Index", "ApplicationUser");
-            TempData["SuccessListLabel"]= "View Users";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Users");
+            await _usageTrackingService.TrackActionAsync(tenantId, "users", "delete", "ApplicationUser", user.Id, $"Deleted user {user.Email}.", cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
     }

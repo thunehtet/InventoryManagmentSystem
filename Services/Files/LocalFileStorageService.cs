@@ -23,11 +23,13 @@ namespace ClothInventoryApp.Services.Files
         private const long MaxImageSizeBytes = 5 * 1024 * 1024;
 
         private readonly IWebHostEnvironment _environment;
+        private readonly IConfiguration _configuration;
         private readonly AppDbContext _db;
 
-        public LocalFileStorageService(IWebHostEnvironment environment, AppDbContext db)
+        public LocalFileStorageService(IWebHostEnvironment environment, IConfiguration configuration, AppDbContext db)
         {
             _environment = environment;
+            _configuration = configuration;
             _db = db;
         }
 
@@ -44,7 +46,7 @@ namespace ClothInventoryApp.Services.Files
             var safeExtension = extension.ToLowerInvariant();
             var storedFileName = $"{Guid.NewGuid():N}{safeExtension}";
             var relativeDirectory = Path.Combine("uploads", category, DateTime.UtcNow.ToString("yyyy"), DateTime.UtcNow.ToString("MM"));
-            var absoluteDirectory = Path.Combine(_environment.WebRootPath, relativeDirectory);
+            var absoluteDirectory = Path.Combine(GetStorageRootPath(), relativeDirectory);
             Directory.CreateDirectory(absoluteDirectory);
 
             var absolutePath = Path.Combine(absoluteDirectory, storedFileName);
@@ -72,6 +74,17 @@ namespace ClothInventoryApp.Services.Files
         }
 
         public string GetPublicUrl(UploadedFile file) => "/" + file.RelativePath.TrimStart('/');
+
+        private string GetStorageRootPath()
+        {
+            var configuredRoot = _configuration["FILE_STORAGE_ROOT"];
+            if (!string.IsNullOrWhiteSpace(configuredRoot))
+            {
+                return configuredRoot;
+            }
+
+            return _environment.WebRootPath;
+        }
 
         private static void ValidateImage(IFormFile file, string category)
         {

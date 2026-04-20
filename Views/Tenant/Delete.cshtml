@@ -1,6 +1,6 @@
 @model ClothInventoryApp.Models.Tenant
 @{
-    ViewData["Title"] = "Delete Tenant";
+    ViewData["Title"] = Localizer["Delete Tenant"];
 }
 
 @section Styles {
@@ -10,11 +10,11 @@
 <div class="superadmin-shell">
     <div class="product-hero">
         <div class="product-hero-content">
-            <h1 class="product-hero-title"><i class="bi bi-trash3-fill"></i> Delete Tenant</h1>
-            <p class="product-hero-sub">This action cannot be undone</p>
+            <h1 class="product-hero-title"><i class="bi bi-trash3-fill"></i> @Localizer["Delete Tenant"]</h1>
+            <p class="product-hero-sub">@Localizer["This action cannot be undone."]</p>
         </div>
         <a asp-action="Index" class="sa-btn-back">
-            <i class="bi bi-arrow-left"></i> Back to Tenants
+            <i class="bi bi-arrow-left"></i> @Localizer["Back to Tenants"]
         </a>
     </div>
 
@@ -24,18 +24,18 @@
                 <i class="bi bi-exclamation-triangle-fill"></i>
             </div>
             <div>
-                <div class="sa-delete-title">Delete "@Model.Name"?</div>
+                <div class="sa-delete-title">@Localizer["Delete '{0}'?", Model.Name]</div>
                 <div class="sa-delete-sub">
-                    This will permanently remove the workspace and all its data.
+                    @Localizer["This will permanently remove the workspace and all its data."]
                     @if (Model.Users.Any())
                     {
                         <span class="fw-semibold superadmin-text-danger">
-                            This tenant has @Model.Users.Count linked user(s) — deactivate it instead.
+                            @Localizer["This tenant has {0} linked user(s). You can deactivate it, or force delete it together with all related users and tenant data.", Model.Users.Count]
                         </span>
                     }
                     else
                     {
-                        <span>This tenant has no users and can be safely deleted.</span>
+                        <span>@Localizer["This tenant has no users and can be safely deleted."]</span>
                     }
                 </div>
             </div>
@@ -43,45 +43,56 @@
 
         <div class="sa-detail-rows">
             <div class="sa-detail-row">
-                <span class="sa-detail-label">Name</span>
+                <span class="sa-detail-label">@Localizer["Name"]</span>
                 <span class="sa-detail-value fw-semibold">@Model.Name</span>
             </div>
             <div class="sa-detail-row">
-                <span class="sa-detail-label">Code</span>
+                <span class="sa-detail-label">@Localizer["Code"]</span>
                 <span class="sa-detail-value"><span class="sa-detail-mono">@Model.Code</span></span>
             </div>
             <div class="sa-detail-row">
-                <span class="sa-detail-label">Contact Email</span>
-                <span class="sa-detail-value">@(Model.ContactEmail ?? "—")</span>
+                <span class="sa-detail-label">@Localizer["Contact Email"]</span>
+                <span class="sa-detail-value">@(Model.ContactEmail ?? Localizer["Not available"].Value)</span>
             </div>
             <div class="sa-detail-row">
-                <span class="sa-detail-label">Linked Users</span>
+                <span class="sa-detail-label">@Localizer["Linked Users"]</span>
                 <span class="sa-detail-value @(Model.Users.Any() ? "text-danger fw-bold" : "")">@Model.Users.Count</span>
             </div>
         </div>
 
-        <div class="sa-form-actions">
-            <a asp-action="Index" class="sa-btn-cancel">
-                <i class="bi bi-x-lg"></i> Cancel
+        <div class="sa-form-actions sa-form-actions-delete">
+            <a asp-action="Index" class="sa-btn-cancel sa-action-control">
+                <i class="bi bi-x-lg"></i> @Localizer["Cancel"]
             </a>
             @if (!Model.Users.Any())
             {
-                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="m-0">
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="m-0 sa-action-form">
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="sa-btn-danger">
-                        <i class="bi bi-trash3"></i> Delete Permanently
+                    <button type="submit" class="sa-btn-danger sa-action-control">
+                        <i class="bi bi-trash3"></i> @Localizer["Delete Permanently"]
                     </button>
                 </form>
             }
             else
             {
-                <form asp-action="ToggleStatus" asp-route-id="@Model.Id" method="post" class="m-0">
+                <form asp-action="ToggleStatus" asp-route-id="@Model.Id" method="post" class="m-0 sa-action-form">
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="sa-btn-save">
-                        <i class="bi bi-slash-circle"></i> Deactivate Instead
+                    <button type="submit" class="sa-btn-save sa-action-control">
+                        <i class="bi bi-slash-circle"></i> @Localizer["Deactivate Instead"]
+                    </button>
+                </form>
+                <form asp-action="ForceDelete" asp-route-id="@Model.Id" method="post" class="m-0 sa-action-form">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="sa-btn-danger sa-action-control">
+                        <i class="bi bi-exclamation-octagon"></i> @Localizer["Force Delete Tenant"]
                     </button>
                 </form>
             }
         </div>
+
+        @if (Model.Users.Any())
+        {
+            <p class="sa-delete-sub">@Localizer["Force delete removes the tenant, linked users, subscriptions, inventory, sales, customers, expenses, uploads, and related records."]</p>
+        }
     </div>
 </div>

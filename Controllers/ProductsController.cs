@@ -5,6 +5,7 @@ using ClothInventoryApp.Models;
 using ClothInventoryApp.Resources;
 using ClothInventoryApp.Services.Subscription;
 using ClothInventoryApp.Services.Tenant;
+using ClothInventoryApp.Services.Usage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,17 +20,20 @@ namespace ClothInventoryApp.Controllers
         private readonly ITenantProvider _tenantProvider;
         private readonly ISubscriptionService _subscriptionService;
         private readonly IStringLocalizer<SharedResource> _localizer;
+        private readonly IUsageTrackingService _usageTrackingService;
 
         public ProductsController(
             AppDbContext context,
             ITenantProvider tenantProvider,
             ISubscriptionService subscriptionService,
-            IStringLocalizer<SharedResource> localizer)
+            IStringLocalizer<SharedResource> localizer,
+            IUsageTrackingService usageTrackingService)
         {
             _context = context;
             _tenantProvider = tenantProvider;
             _subscriptionService = subscriptionService;
             _localizer = localizer;
+            _usageTrackingService = usageTrackingService;
         }
 
         public async Task<IActionResult> Index(string? search, int page = 1, int size = 10)
@@ -106,10 +110,11 @@ namespace ClothInventoryApp.Controllers
 
             TempData["SuccessMsg"]      = this.LocalizeShared("Product '{0}' added to catalog.", product.Name);
             TempData["SuccessListUrl"]  = Url.Action("Index", "Products");
-            TempData["SuccessListLabel"]= "View Products";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Products");
             TempData["SuccessAddUrl"]   = Url.Action("Create", "ProductVariants", new { productId = product.Id });
-            TempData["SuccessAddLabel"] = "Add Variants for This Product";
-            TempData["SuccessAddHint"]  = "Next step: add size, color, and price variants so this product can be stocked and sold.";
+            TempData["SuccessAddLabel"] = this.LocalizeShared("Add Variants for This Product");
+            TempData["SuccessAddHint"]  = this.LocalizeShared("Next step: add size, color, and price variants so this product can be stocked and sold.");
+            await _usageTrackingService.TrackActionAsync(tenantId, "products", "create", "Product", product.Id.ToString(), $"Created product {product.Name}.", cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 
@@ -176,7 +181,8 @@ namespace ClothInventoryApp.Controllers
             TempData["SuccessMsg"]      = this.LocalizeShared("Product '{0}' updated.", product.Name);
             TempData["SuccessType"]     = "update";
             TempData["SuccessListUrl"]  = Url.Action("Index", "Products");
-            TempData["SuccessListLabel"]= "View Products";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Products");
+            await _usageTrackingService.TrackActionAsync(product.TenantId, "products", "update", "Product", product.Id.ToString(), $"Updated product {product.Name}.", cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 
@@ -232,14 +238,15 @@ namespace ClothInventoryApp.Controllers
             catch
             {
                 await tx.RollbackAsync();
-                TempData["Error"] = "Failed to delete product. Please try again.";
+                TempData["Error"] = this.LocalizeShared("Failed to delete product. Please try again.");
                 return RedirectToAction(nameof(Delete), new { id });
             }
 
             TempData["SuccessMsg"]      = this.LocalizeShared("Product '{0}' deleted.", product.Name);
             TempData["SuccessType"]     = "delete";
             TempData["SuccessListUrl"]  = Url.Action("Index", "Products");
-            TempData["SuccessListLabel"]= "View Products";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Products");
+            await _usageTrackingService.TrackActionAsync(product.TenantId, "products", "delete", "Product", product.Id.ToString(), $"Deleted product {product.Name}.", cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 

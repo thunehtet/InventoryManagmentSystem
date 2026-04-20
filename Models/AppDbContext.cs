@@ -55,6 +55,9 @@ namespace ClothInventoryApp.Data
         public DbSet<SubscriptionPaymentRequest> SubscriptionPaymentRequests => Set<SubscriptionPaymentRequest>();
         public DbSet<TenantFeatureUsage> TenantFeatureUsages => Set<TenantFeatureUsage>();
         public DbSet<TelegramLinkToken> TelegramLinkTokens => Set<TelegramLinkToken>();
+        public DbSet<UserLoginAudit> UserLoginAudits => Set<UserLoginAudit>();
+        public DbSet<UserActivityLog> UserActivityLogs => Set<UserActivityLog>();
+        public DbSet<TenantDailyUsage> TenantDailyUsages => Set<TenantDailyUsage>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -339,6 +342,54 @@ namespace ClothInventoryApp.Data
                 .WithMany()
                 .HasForeignKey(x => x.TenantId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<UserLoginAudit>()
+                .HasOne(x => x.Tenant)
+                .WithMany()
+                .HasForeignKey(x => x.TenantId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<UserLoginAudit>()
+                .HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<UserLoginAudit>()
+                .HasIndex(x => new { x.TenantId, x.AttemptedAt });
+
+            modelBuilder.Entity<UserLoginAudit>()
+                .HasIndex(x => new { x.UserId, x.AttemptedAt });
+
+            modelBuilder.Entity<UserActivityLog>()
+                .HasOne(x => x.Tenant)
+                .WithMany()
+                .HasForeignKey(x => x.TenantId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<UserActivityLog>()
+                .HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<UserActivityLog>()
+                .HasIndex(x => new { x.TenantId, x.CreatedAt });
+
+            modelBuilder.Entity<UserActivityLog>()
+                .HasIndex(x => new { x.UserId, x.CreatedAt });
+
+            modelBuilder.Entity<TenantDailyUsage>()
+                .HasKey(x => new { x.TenantId, x.UsageDate });
+
+            modelBuilder.Entity<TenantDailyUsage>()
+                .HasOne(x => x.Tenant)
+                .WithMany()
+                .HasForeignKey(x => x.TenantId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<TenantDailyUsage>()
+                .HasIndex(x => x.UsageDate);
         }
     }
 }

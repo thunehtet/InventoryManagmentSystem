@@ -1,7 +1,7 @@
 @using ClothInventoryApp.Dto.ProductVariant
 @model IEnumerable<ViewProductVariantDto>
 @{
-    ViewData["Title"] = "Product Variants";
+    ViewData["Title"] = Localizer["Product Variants"];
     var currency = ViewData["Currency"] as string ?? "";
     var pg = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel;
 }

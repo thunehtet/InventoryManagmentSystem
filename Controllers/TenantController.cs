@@ -140,13 +140,13 @@ namespace ClothInventoryApp.Controllers
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Failed to send tenant admin credentials for tenant {TenantCode}.", dto.Code);
-                    TempData["Warning"] = "Tenant created, but the credential email could not be sent.";
+                    TempData["Warning"] = this.LocalizeShared("Tenant created, but the credential email could not be sent.");
                 }
             }
 
             TempData["SuccessMsg"]      = this.LocalizeShared("Tenant '{0}' created. Admin login: {1} / {2}", tenant.Name, username ?? string.Empty, tempPassword);
             TempData["SuccessListUrl"]  = Url.Action("Index", "Tenant");
-            TempData["SuccessListLabel"]= "View Tenants";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Tenants");
             return RedirectToAction(nameof(Index));
         }
 
@@ -186,7 +186,7 @@ namespace ClothInventoryApp.Controllers
             TempData["SuccessMsg"]      = this.LocalizeShared("Tenant '{0}' updated.", t.Name);
             TempData["SuccessType"]     = "update";
             TempData["SuccessListUrl"]  = Url.Action("Index", "Tenant");
-            TempData["SuccessListLabel"]= "View Tenants";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Tenants");
             return RedirectToAction(nameof(Index));
         }
 
@@ -218,7 +218,7 @@ namespace ClothInventoryApp.Controllers
             if (t == null) return NotFound();
             if (t.Users.Any())
             {
-                TempData["Error"] = "Cannot delete: users are linked to this tenant. Deactivate it instead.";
+                TempData["Error"] = this.LocalizeShared("Cannot delete: users are linked to this tenant. Deactivate it instead.");
                 return RedirectToAction(nameof(Index));
             }
             _db.Tenants.Remove(t);
@@ -226,7 +226,118 @@ namespace ClothInventoryApp.Controllers
             TempData["SuccessMsg"]      = this.LocalizeShared("Tenant '{0}' deleted.", t.Name);
             TempData["SuccessType"]     = "delete";
             TempData["SuccessListUrl"]  = Url.Action("Index", "Tenant");
-            TempData["SuccessListLabel"]= "View Tenants";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Tenants");
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForceDelete(Guid id)
+        {
+            var tenant = await _db.Tenants.IgnoreQueryFilters()
+                .Include(x => x.Users)
+                .FirstOrDefaultAsync(x => x.Id == id);
+            if (tenant == null) return NotFound();
+
+            if (tenant.Users.Any(u => u.IsSuperAdmin))
+            {
+                TempData["Error"] = this.LocalizeShared("This tenant contains a SuperAdmin account and cannot be force deleted.");
+                return RedirectToAction(nameof(Delete), new { id });
+            }
+
+            var userIds = tenant.Users.Select(u => u.Id).ToList();
+
+            await using var transaction = await _db.Database.BeginTransactionAsync();
+            try
+            {
+                await _db.SubscriptionPaymentRequests.IgnoreQueryFilters()
+                    .Where(x => x.TenantId == id)
+                    .ExecuteDeleteAsync();
+
+                await _db.PastSubscriptions.IgnoreQueryFilters()
+                    .Where(x => x.TenantId == id)
+                    .ExecuteDeleteAsync();
+
+                await _db.TenantSubscriptions.IgnoreQueryFilters()
+                    .Where(x => x.TenantId == id)
+                    .ExecuteDeleteAsync();
+
+                await _db.CustomerInviteLinks.IgnoreQueryFilters()
+                    .Where(x => x.TenantId == id)
+                    .ExecuteDeleteAsync();
+
+                await _db.SaleItems.IgnoreQueryFilters()
+                    .Where(x => x.TenantId == id)
+                    .ExecuteDeleteAsync();
+
+                await _db.StockMovements.IgnoreQueryFilters()
+                    .Where(x => x.TenantId == id)
+                    .ExecuteDeleteAsync();
+
+                await _db.CashTransactions.IgnoreQueryFilters()
+                    .Where(x => x.TenantId == id)
+                    .ExecuteDeleteAsync();
+
+                await _db.Sales.IgnoreQueryFilters()
+                    .Where(x => x.TenantId == id)
+                    .ExecuteDeleteAsync();
+
+                await _db.Customers.IgnoreQueryFilters()
+                    .Where(x => x.TenantId == id)
+                    .ExecuteDeleteAsync();
+
+                await _db.ProductVariants.IgnoreQueryFilters()
+                    .Where(x => x.TenantId == id)
+                    .ExecuteDeleteAsync();
+
+                await _db.Products.IgnoreQueryFilters()
+                    .Where(x => x.TenantId == id)
+                    .ExecuteDeleteAsync();
+
+                await _db.Textile.IgnoreQueryFilters()
+                    .Where(x => x.TenantId == id)
+                    .ExecuteDeleteAsync();
+
+                await _db.UploadedFiles.IgnoreQueryFilters()
+                    .Where(x => x.TenantId == id)
+                    .ExecuteDeleteAsync();
+
+                if (userIds.Count > 0)
+                {
+                    await _db.TelegramLinkTokens.IgnoreQueryFilters()
+                        .Where(x => userIds.Contains(x.UserId))
+                        .ExecuteDeleteAsync();
+                }
+
+                foreach (var user in tenant.Users.ToList())
+                {
+                    var deleteResult = await _userManager.DeleteAsync(user);
+                    if (!deleteResult.Succeeded)
+                    {
+                        var errors = string.Join(" ", deleteResult.Errors.Select(x => x.Description));
+                        throw new InvalidOperationException($"Failed to delete tenant user '{user.Email ?? user.UserName ?? user.Id}': {errors}");
+                    }
+                }
+
+                _db.Tenants.Remove(tenant);
+                await _db.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                _logger.LogError(ex, "Force delete failed for tenant {TenantId}.", id);
+                TempData["Error"] = this.LocalizeShared("Force delete failed for tenant '{0}'.", tenant.Name);
+                return RedirectToAction(nameof(Delete), new { id });
+            }
+
+            _cache.Remove(ActiveTenantFilter.CacheKey(tenant.Id));
+
+            TempData["SuccessMsg"] = this.LocalizeShared(
+                "Tenant '{0}' and all related users/data were permanently deleted.",
+                tenant.Name);
+            TempData["SuccessType"] = "delete";
+            TempData["SuccessListUrl"] = Url.Action("Index", "Tenant");
+            TempData["SuccessListLabel"] = this.LocalizeShared("View Tenants");
             return RedirectToAction(nameof(Index));
         }
 
@@ -243,7 +354,7 @@ namespace ClothInventoryApp.Controllers
                 : this.LocalizeShared("{0} deactivated.", t.Name);
             TempData["SuccessType"]     = t.IsActive ? "update" : "delete";
             TempData["SuccessListUrl"]  = Url.Action("Index", "Tenant");
-            TempData["SuccessListLabel"]= "View Tenants";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Tenants");
             return RedirectToAction(nameof(Index));
         }
     }

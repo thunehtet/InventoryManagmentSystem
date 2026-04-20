@@ -57,7 +57,7 @@ namespace ClothInventoryApp.Controllers
             await _db.SaveChangesAsync();
             TempData["SuccessMsg"]      = this.LocalizeShared("Plan '{0}' created.", dto.Name);
             TempData["SuccessListUrl"]  = Url.Action("Index", "Plan");
-            TempData["SuccessListLabel"]= "View Plans";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Plans");
             return RedirectToAction(nameof(Index));
         }
 
@@ -101,7 +101,7 @@ namespace ClothInventoryApp.Controllers
             TempData["SuccessMsg"]      = this.LocalizeShared("Plan '{0}' updated.", p.Name);
             TempData["SuccessType"]     = "update";
             TempData["SuccessListUrl"]  = Url.Action("Index", "Plan");
-            TempData["SuccessListLabel"]= "View Plans";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Plans");
             return RedirectToAction(nameof(Index));
         }
 
@@ -123,7 +123,7 @@ namespace ClothInventoryApp.Controllers
             if (p == null) return NotFound();
             if (p.TenantSubscriptions.Any())
             {
-                TempData["Error"] = "Cannot delete: subscriptions are linked to this plan.";
+                TempData["Error"] = this.LocalizeShared("Cannot delete: subscriptions are linked to this plan.");
                 return RedirectToAction(nameof(Index));
             }
             _db.Plans.Remove(p);
@@ -131,7 +131,7 @@ namespace ClothInventoryApp.Controllers
             TempData["SuccessMsg"]      = this.LocalizeShared("Plan '{0}' deleted.", p.Name);
             TempData["SuccessType"]     = "delete";
             TempData["SuccessListUrl"]  = Url.Action("Index", "Plan");
-            TempData["SuccessListLabel"]= "View Plans";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Plans");
             return RedirectToAction(nameof(Index));
         }
     }

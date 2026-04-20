@@ -4,6 +4,7 @@ using ClothInventoryApp.Models;
 using ClothInventoryApp.Options;
 using ClothInventoryApp.Services.Email;
 using ClothInventoryApp.Services.Files;
+using ClothInventoryApp.Services.Usage;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -27,6 +28,7 @@ namespace ClothInventoryApp.Controllers
         private readonly IEmailService _emailService;
         private readonly AppDbContext _db;
         private readonly IFileStorageService _fileStorageService;
+        private readonly IUsageTrackingService _usageTrackingService;
         private readonly TelegramSettings _telegramSettings;
         private readonly ILogger<AccountController> _logger;
 
@@ -36,6 +38,7 @@ namespace ClothInventoryApp.Controllers
             IEmailService emailService,
             AppDbContext db,
             IFileStorageService fileStorageService,
+            IUsageTrackingService usageTrackingService,
             IOptions<TelegramSettings> telegramSettings,
             ILogger<AccountController> logger)
         {
@@ -44,6 +47,7 @@ namespace ClothInventoryApp.Controllers
             _emailService = emailService;
             _db = db;
             _fileStorageService = fileStorageService;
+            _usageTrackingService = usageTrackingService;
             _telegramSettings = telegramSettings.Value;
             _logger = logger;
         }
@@ -76,6 +80,7 @@ namespace ClothInventoryApp.Controllers
 
             if (user == null || !user.IsActive)
             {
+                await _usageTrackingService.TrackLoginAsync(user, dto.UserNameOrEmail, false, HttpContext.RequestAborted);
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                 return View(dto);
             }
@@ -92,6 +97,7 @@ namespace ClothInventoryApp.Controllers
 
                 if (!tenantActive)
                 {
+                    await _usageTrackingService.TrackLoginAsync(user, dto.UserNameOrEmail, false, HttpContext.RequestAborted);
                     ModelState.AddModelError(string.Empty, "Your account has been suspended. Please contact support.");
                     return View(dto);
                 }
@@ -104,12 +110,14 @@ namespace ClothInventoryApp.Controllers
 
             if (result.IsLockedOut)
             {
+                await _usageTrackingService.TrackLoginAsync(user, dto.UserNameOrEmail, false, HttpContext.RequestAborted);
                 ModelState.AddModelError(string.Empty, "Account locked. Too many failed attempts — try again in 15 minutes.");
                 return View(dto);
             }
 
             if (!result.Succeeded)
             {
+                await _usageTrackingService.TrackLoginAsync(user, dto.UserNameOrEmail, false, HttpContext.RequestAborted);
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                 return View(dto);
             }
@@ -126,9 +134,7 @@ namespace ClothInventoryApp.Controllers
             };
 
             await _signInManager.SignInAsync(user, authenticationProperties);
-
-            user.LastLoginAt = DateTime.UtcNow;
-            await _userManager.UpdateAsync(user);
+            await _usageTrackingService.TrackLoginAsync(user, dto.UserNameOrEmail, true, HttpContext.RequestAborted);
 
             if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
                 return Redirect(returnUrl);
@@ -186,7 +192,7 @@ namespace ClothInventoryApp.Controllers
             }
 
             await _signInManager.RefreshSignInAsync(user);
-            TempData["SuccessMsg"] = "Password changed successfully.";
+            TempData["SuccessMsg"] = this.LocalizeShared("Password changed successfully.");
 
             if (user.IsSuperAdmin)
                 return RedirectToAction("Index", "SuperAdmin");
@@ -323,7 +329,7 @@ namespace ClothInventoryApp.Controllers
             await _db.SaveChangesAsync(cancellationToken);
             await _signInManager.RefreshSignInAsync(user);
 
-            TempData["SuccessMsg"]  = "Profile updated successfully.";
+            TempData["SuccessMsg"]  = this.LocalizeShared("Profile updated successfully.");
             TempData["SuccessType"] = "update";
             return RedirectToAction(nameof(Profile));
         }
@@ -480,7 +486,7 @@ namespace ClothInventoryApp.Controllers
             _db.TelegramLinkTokens.RemoveRange(tokens);
             await _db.SaveChangesAsync(cancellationToken);
 
-            TempData["SuccessMsg"] = "Telegram disconnected.";
+            TempData["SuccessMsg"] = this.LocalizeShared("Telegram disconnected.");
             TempData["SuccessType"] = "update";
             return RedirectToAction(nameof(Profile));
         }

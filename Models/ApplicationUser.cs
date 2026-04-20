@@ -17,7 +17,7 @@ namespace ClothInventoryApp.Models
         public bool IsTenantAdmin { get; set; } = false;
         public bool IsSuperAdmin { get; set; } = false;
 
-        public string Type { get; set; }
+        public string Type { get; set; } = string.Empty;
 
         //  Status
         public bool IsActive { get; set; } = true;
@@ -26,6 +26,7 @@ namespace ClothInventoryApp.Models
         //  Audit Fields
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? LastLoginAt { get; set; }
+        public DateTime? LastActivityAt { get; set; }
 
         public bool CanChangeLoginIdentity { get; set; } = true;
         public DateTime? LoginIdentityChangedAt { get; set; }

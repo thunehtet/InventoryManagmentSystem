@@ -1,0 +1,186 @@
+@model ClothInventoryApp.Dto.SuperAdmin.TenantUsageDetailDto
+@{
+    ViewData["Title"] = Localizer["Tenant Usage"];
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/superadmin.css" asp-append-version="true" />
+}
+
+<div class="superadmin-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <h1 class="product-hero-title"><i class="bi bi-activity"></i> @Model.TenantName</h1>
+            <p class="product-hero-sub">@Localizer["Usage summary, user activity, and 30-day trend for this workspace."]</p>
+        </div>
+        <a asp-action="Index" class="sa-btn-back">
+            <i class="bi bi-arrow-left"></i> @Localizer["Back to Dashboard"]
+        </a>
+    </div>
+
+    <div class="superadmin-stats-grid">
+        <div class="superadmin-stat-card">
+            <div class="superadmin-stat-icon red"><i class="bi bi-people-fill"></i></div>
+            <div>
+                <div class="superadmin-stat-label">@Localizer["Total Users"]</div>
+                <div class="superadmin-stat-value">@Model.TotalUsers</div>
+                <div class="superadmin-stat-note">@Model.ActiveUsers30Days @Localizer["active in last 30 days"]</div>
+            </div>
+        </div>
+        <div class="superadmin-stat-card">
+            <div class="superadmin-stat-icon blue"><i class="bi bi-box-arrow-in-right"></i></div>
+            <div>
+                <div class="superadmin-stat-label">@Localizer["30-Day Logins"]</div>
+                <div class="superadmin-stat-value">@Model.LoginCount30Days</div>
+                <div class="superadmin-stat-note">@Localizer["Successful sign-ins"]</div>
+            </div>
+        </div>
+        <div class="superadmin-stat-card">
+            <div class="superadmin-stat-icon green"><i class="bi bi-lightning-charge-fill"></i></div>
+            <div>
+                <div class="superadmin-stat-label">@Localizer["30-Day Actions"]</div>
+                <div class="superadmin-stat-value">@Model.TotalActions30Days</div>
+                <div class="superadmin-stat-note">@Localizer["Tracked business actions"]</div>
+            </div>
+        </div>
+        <div class="superadmin-stat-card">
+            <div class="superadmin-stat-icon orange"><i class="bi bi-clock-history"></i></div>
+            <div>
+                <div class="superadmin-stat-label">@Localizer["Last Activity"]</div>
+                <div class="superadmin-stat-value usage-stat-date">@(Model.LastActivityAt.HasValue ? Html.TenantDate(Model.LastActivityAt, "dd MMM") : Localizer["Never"].Value)</div>
+                <div class="superadmin-stat-note">@(Model.LastActivityAt.HasValue ? Html.TenantDate(Model.LastActivityAt, "HH:mm") : string.Empty)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="superadmin-grid">
+        <div class="superadmin-panel">
+            <div class="superadmin-panel-header">
+                <h3>@Localizer["Usage Trend"]</h3>
+                <p>@Localizer["Daily activity for the last 30 days"]</p>
+            </div>
+
+            <div class="usage-trend-list">
+                @foreach (var day in Model.DailyUsage.OrderByDescending(x => x.UsageDate).Take(14))
+                {
+                    var maxActions = Math.Max(1, Model.DailyUsage.Max(x => x.Actions));
+                    var pct = (double)day.Actions / maxActions * 100;
+                    <div class="usage-trend-row">
+                        <div class="usage-trend-date">@Html.TenantDate(day.UsageDate, "dd MMM")</div>
+                        <div class="usage-trend-bar-wrap">
+                            <progress class="plan-dist-bar" max="100" value="@pct.ToString("F0")">@pct.ToString("F0")%</progress>
+                        </div>
+                        <div class="usage-trend-stats">
+                            <span>@day.Actions @Localizer["actions"]</span>
+                            <span>@day.Logins @Localizer["logins"]</span>
+                            <span>@day.ActiveUsers @Localizer["users"]</span>
+                        </div>
+                    </div>
+                }
+                @if (!Model.DailyUsage.Any())
+                {
+                    <div class="usage-empty">@Localizer["No usage data yet."]</div>
+                }
+            </div>
+        </div>
+
+        <div class="superadmin-panel">
+            <div class="superadmin-panel-header">
+                <h3>@Localizer["Workspace Info"]</h3>
+                <p>@Localizer["Core tenant profile and status"]</p>
+            </div>
+
+            <div class="sa-detail-rows usage-detail-rows">
+                <div class="sa-detail-row">
+                    <span class="sa-detail-label">@Localizer["Code"]</span>
+                    <span class="sa-detail-value"><span class="sa-detail-mono">@Model.TenantCode</span></span>
+                </div>
+                <div class="sa-detail-row">
+                    <span class="sa-detail-label">@Localizer["Contact Email"]</span>
+                    <span class="sa-detail-value">@(Model.ContactEmail ?? Localizer["Not available"].Value)</span>
+                </div>
+                <div class="sa-detail-row">
+                    <span class="sa-detail-label">@Localizer["Status"]</span>
+                    <span class="sa-detail-value">@(Model.IsActive ? Localizer["Active"].Value : Localizer["Inactive"].Value)</span>
+                </div>
+                <div class="sa-detail-row">
+                    <span class="sa-detail-label">@Localizer["Joined"]</span>
+                    <span class="sa-detail-value">@Html.TenantDate(Model.CreatedAt, "dd MMM yyyy")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="superadmin-grid">
+        <div class="superadmin-panel">
+            <div class="superadmin-panel-header">
+                <h3>@Localizer["Users"]</h3>
+                <p>@Localizer["Login and activity summary by user"]</p>
+            </div>
+            <div class="table-responsive">
+                <table class="superadmin-table">
+                    <thead>
+                        <tr>
+                            <th>@Localizer["User"]</th>
+                            <th>@Localizer["Role"]</th>
+                            <th>@Localizer["Logins"]</th>
+                            <th>@Localizer["Actions"]</th>
+                            <th>@Localizer["Last Login"]</th>
+                            <th>@Localizer["Last Activity"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Users)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="fw-semibold text-dark">@user.FullName</div>
+                                    <div class="text-muted small">@user.Email</div>
+                                </td>
+                                <td>@(user.IsTenantAdmin ? Localizer["Admin"].Value : Localizer["Staff"].Value)</td>
+                                <td>@user.LoginCount30Days</td>
+                                <td>@user.ActionCount30Days</td>
+                                <td>@(user.LastLoginAt.HasValue ? Html.TenantDate(user.LastLoginAt, "dd MMM yyyy HH:mm") : Localizer["Never"].Value)</td>
+                                <td>@(user.LastActivityAt.HasValue ? Html.TenantDate(user.LastActivityAt, "dd MMM yyyy HH:mm") : Localizer["Never"].Value)</td>
+                            </tr>
+                        }
+                        @if (!Model.Users.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">@Localizer["No users found."]</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="superadmin-panel">
+            <div class="superadmin-panel-header">
+                <h3>@Localizer["Recent Activity"]</h3>
+                <p>@Localizer["Latest actions from this workspace"]</p>
+            </div>
+            <div class="usage-activity-list">
+                @foreach (var item in Model.RecentActivities)
+                {
+                    <div class="usage-activity-item">
+                        <div class="usage-activity-icon">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+                        <div class="usage-activity-content">
+                            <div class="usage-activity-title">@(item.Description ?? $"{item.Feature} / {item.Action}")</div>
+                            <div class="usage-activity-meta">
+                                <span>@(item.UserName ?? Localizer["Unknown User"].Value)</span>
+                                <span>@Html.TenantDate(item.CreatedAt, "dd MMM yyyy HH:mm")</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (!Model.RecentActivities.Any())
+                {
+                    <div class="usage-empty">@Localizer["No activity recorded yet."]</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -4,6 +4,7 @@ using ClothInventoryApp.Filters;
 using ClothInventoryApp.Models;
 using ClothInventoryApp.Services.Subscription;
 using ClothInventoryApp.Services.Tenant;
+using ClothInventoryApp.Services.Usage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,14 +17,17 @@ namespace ClothInventoryApp.Controllers
     public class CustomerController : TenantAwareController
     {
         private readonly ISubscriptionService _subscriptionService;
+        private readonly IUsageTrackingService _usageTrackingService;
 
         public CustomerController(
             AppDbContext context,
             ITenantProvider tenantProvider,
-            ISubscriptionService subscriptionService)
+            ISubscriptionService subscriptionService,
+            IUsageTrackingService usageTrackingService)
             : base(context, tenantProvider)
         {
             _subscriptionService = subscriptionService;
+            _usageTrackingService = usageTrackingService;
         }
 
         public async Task<IActionResult> Index(string? search, int page = 1, int size = 10)
@@ -144,7 +148,7 @@ namespace ClothInventoryApp.Controllers
             if (!ModelState.IsValid) return View(dto);
 
             var tenantId = _tenantProvider.GetTenantId();
-            _context.Customers.Add(new Customer
+            var customer = new Customer
             {
                 TenantId = tenantId,
                 Name = dto.Name,
@@ -155,11 +159,13 @@ namespace ClothInventoryApp.Controllers
                 Notes = dto.Notes,
                 IsActive = dto.IsActive,
                 CreatedAt = DateTime.UtcNow
-            });
+            };
+            _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
             TempData["SuccessMsg"]      = this.LocalizeShared("Customer '{0}' added.", dto.Name);
             TempData["SuccessListUrl"]  = Url.Action("Index", "Customer");
-            TempData["SuccessListLabel"]= "View Customers";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Customers");
+            await _usageTrackingService.TrackActionAsync(tenantId, "customers", "create", "Customer", customer.Id.ToString(), $"Created customer {dto.Name}.", cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 
@@ -191,7 +197,8 @@ namespace ClothInventoryApp.Controllers
             TempData["SuccessMsg"]      = this.LocalizeShared("Customer '{0}' updated.", c.Name);
             TempData["SuccessType"]     = "update";
             TempData["SuccessListUrl"]  = Url.Action("Index", "Customer");
-            TempData["SuccessListLabel"]= "View Customers";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Customers");
+            await _usageTrackingService.TrackActionAsync(c.TenantId, "customers", "update", "Customer", c.Id.ToString(), $"Updated customer {c.Name}.", cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 
@@ -223,7 +230,8 @@ namespace ClothInventoryApp.Controllers
             TempData["SuccessMsg"]      = this.LocalizeShared("Customer '{0}' deleted.", c.Name);
             TempData["SuccessType"]     = "delete";
             TempData["SuccessListUrl"]  = Url.Action("Index", "Customer");
-            TempData["SuccessListLabel"]= "View Customers";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Customers");
+            await _usageTrackingService.TrackActionAsync(c.TenantId, "customers", "delete", "Customer", c.Id.ToString(), $"Deleted customer {c.Name}.", cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 
@@ -256,9 +264,17 @@ namespace ClothInventoryApp.Controllers
             _context.CustomerInviteLinks.Add(link);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMsg"]      = "Customer invite link created.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Customer invite link created.");
             TempData["SuccessListUrl"]  = Url.Action("Index", "Customer");
-            TempData["SuccessListLabel"]= "View Customers";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Customers");
+            await _usageTrackingService.TrackActionAsync(
+                tenantId,
+                "customers",
+                "create-invite",
+                "CustomerInviteLink",
+                link.Id.ToString(),
+                "Created customer invite link.",
+                cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 
@@ -273,10 +289,18 @@ namespace ClothInventoryApp.Controllers
             link.IsActive = false;
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMsg"]      = "Customer invite link revoked.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Customer invite link revoked.");
             TempData["SuccessType"]     = "delete";
             TempData["SuccessListUrl"]  = Url.Action("Index", "Customer");
-            TempData["SuccessListLabel"]= "View Customers";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Customers");
+            await _usageTrackingService.TrackActionAsync(
+                link.TenantId,
+                "customers",
+                "revoke-invite",
+                "CustomerInviteLink",
+                link.Id.ToString(),
+                "Revoked customer invite link.",
+                cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 

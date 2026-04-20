@@ -87,14 +87,14 @@ namespace ClothInventoryApp.Controllers
             if (plan == null) return NotFound();
             if (string.Equals(plan.Code, "FREE", StringComparison.OrdinalIgnoreCase))
             {
-                TempData["Error"] = "The free plan is assigned after signup approval and does not require payment.";
+                TempData["Error"] = this.LocalizeShared("The free plan is assigned after signup approval and does not require payment.");
                 return RedirectToAction(nameof(Plans));
             }
 
             billingCycle = NormalizeBillingCycle(billingCycle);
             if (billingCycle == "Yearly" && !plan.PriceYearly.HasValue)
             {
-                TempData["Error"] = "Yearly billing is not available for the selected plan.";
+                TempData["Error"] = this.LocalizeShared("Yearly billing is not available for the selected plan.");
                 return RedirectToAction(nameof(Plans));
             }
 
@@ -132,7 +132,7 @@ namespace ClothInventoryApp.Controllers
             if (plan == null) return NotFound();
             if (string.Equals(plan.Code, "FREE", StringComparison.OrdinalIgnoreCase))
             {
-                TempData["Error"] = "The free plan does not require a payment request.";
+                TempData["Error"] = this.LocalizeShared("The free plan does not require a payment request.");
                 return RedirectToAction(nameof(Plans));
             }
 
@@ -214,9 +214,9 @@ namespace ClothInventoryApp.Controllers
                 await _telegramService.SendMessageAsync(superAdmin.TelegramChatId, msg, cancellationToken);
             }
 
-            TempData["SuccessMsg"]      = "Payment request submitted. SuperAdmin will review it before activating the subscription.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Payment request submitted. SuperAdmin will review it before activating the subscription.");
             TempData["SuccessListUrl"]  = Url.Action("MyRequests", "SubscriptionRequest");
-            TempData["SuccessListLabel"]= "View My Requests";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View My Requests");
             return RedirectToAction(nameof(MyRequests));
         }
 

@@ -81,9 +81,9 @@ namespace ClothInventoryApp.Controllers
 
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMsg"]       = "Settings saved successfully.";
+            TempData["SuccessMsg"]       = this.LocalizeShared("Settings saved successfully.");
             TempData["SuccessListUrl"]   = Url.Action("Index", "TenantSettings");
-            TempData["SuccessListLabel"] = "Back to Settings";
+            TempData["SuccessListLabel"] = this.LocalizeShared("Back to Settings");
 
             return RedirectToAction("Index");
         }

@@ -3,6 +3,7 @@ using ClothInventoryApp.Dto.ProductVariant;
 using ClothInventoryApp.Models;
 using ClothInventoryApp.Services.Subscription;
 using ClothInventoryApp.Services.Tenant;
+using ClothInventoryApp.Services.Usage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,11 +15,13 @@ namespace ClothInventoryApp.Controllers
     public class ProductVariantsController : TenantAwareController
     {
         private readonly ISubscriptionService _subscriptionService;
+        private readonly IUsageTrackingService _usageTrackingService;
 
-        public ProductVariantsController(AppDbContext context, ITenantProvider tenantProvider, ISubscriptionService subscriptionService)
+        public ProductVariantsController(AppDbContext context, ITenantProvider tenantProvider, ISubscriptionService subscriptionService, IUsageTrackingService usageTrackingService)
             : base(context, tenantProvider)
         {
             _subscriptionService = subscriptionService;
+            _usageTrackingService = usageTrackingService;
         }
 
         public async Task<IActionResult> Index(string? search, int page = 1, int size = 10)
@@ -119,12 +122,13 @@ namespace ClothInventoryApp.Controllers
             _context.ProductVariants.Add(variant);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMsg"]      = "Variant added successfully.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Variant added successfully.");
             TempData["SuccessListUrl"]  = Url.Action("Index", "ProductVariants");
-            TempData["SuccessListLabel"]= "View Variants";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Variants");
             TempData["SuccessAddUrl"]   = Url.Action("StockIn", "Stock", new { variantId = variant.Id });
-            TempData["SuccessAddLabel"] = "Record Stock for This Variant";
-            TempData["SuccessAddHint"]  = "Next step: record the opening stock so this variant is ready for sales.";
+            TempData["SuccessAddLabel"] = this.LocalizeShared("Record Stock for This Variant");
+            TempData["SuccessAddHint"]  = this.LocalizeShared("Next step: record the opening stock so this variant is ready for sales.");
+            await _usageTrackingService.TrackActionAsync(tenantId, "variants", "create", "ProductVariant", variant.Id.ToString(), $"Created variant {variant.SKU}.", cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 
@@ -197,10 +201,11 @@ namespace ClothInventoryApp.Controllers
             _context.ProductVariants.Update(variant);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMsg"]      = "Variant updated.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Variant updated.");
             TempData["SuccessType"]     = "update";
             TempData["SuccessListUrl"]  = Url.Action("Index", "ProductVariants");
-            TempData["SuccessListLabel"]= "View Variants";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Variants");
+            await _usageTrackingService.TrackActionAsync(variant.TenantId, "variants", "update", "ProductVariant", variant.Id.ToString(), $"Updated variant {variant.SKU}.", cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 
@@ -274,10 +279,11 @@ namespace ClothInventoryApp.Controllers
             _context.ProductVariants.Remove(variant);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMsg"]      = "Variant deleted.";
+            TempData["SuccessMsg"]      = this.LocalizeShared("Variant deleted.");
             TempData["SuccessType"]     = "delete";
             TempData["SuccessListUrl"]  = Url.Action("Index", "ProductVariants");
-            TempData["SuccessListLabel"]= "View Variants";
+            TempData["SuccessListLabel"]= this.LocalizeShared("View Variants");
+            await _usageTrackingService.TrackActionAsync(variant.TenantId, "variants", "delete", "ProductVariant", variant.Id.ToString(), $"Deleted variant {variant.SKU}.", cancellationToken: HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 
@@ -312,14 +318,14 @@ namespace ClothInventoryApp.Controllers
                 .SumAsync(m => m.MovementType == "IN" ? m.Quantity : m.MovementType == "OUT" ? -m.Quantity : 0);
             if (stockDelta != 0)
             {
-                return (false, "This variant cannot be deleted because it still has stock on hand.");
+                return (false, this.LocalizeShared("This variant cannot be deleted because it still has stock on hand."));
             }
 
             var hasStockHistory = await _context.StockMovements
                 .AnyAsync(m => m.ProductVariantId == variantId);
             if (hasStockHistory)
             {
-                return (false, "This variant cannot be deleted because it already has stock movement history.");
+                return (false, this.LocalizeShared("This variant cannot be deleted because it already has stock movement history."));
             }
 
             return (true, null);
