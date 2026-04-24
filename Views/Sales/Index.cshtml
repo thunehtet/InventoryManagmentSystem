@@ -10,6 +10,8 @@
 }
 
 <div class="product-index-shell">
+    @await Html.PartialAsync("_PlanLimitWarnings", ViewBag.PlanLimitWarnings as IEnumerable<ClothInventoryApp.Dto.Subscription.PlanLimitWarningDto>)
+
     <div class="product-hero">
         <div class="product-hero-content">
             <div class="hero-kicker">

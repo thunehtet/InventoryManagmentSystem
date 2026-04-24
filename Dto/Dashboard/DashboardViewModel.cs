@@ -1,5 +1,7 @@
 namespace ClothInventoryApp.Dto.Dashboard
 {
+    using ClothInventoryApp.Dto.Subscription;
+
     public class DashboardViewModel
     {
         public int TotalProducts { get; set; }
@@ -16,6 +18,7 @@ namespace ClothInventoryApp.Dto.Dashboard
 
         public List<RecentActivityDto> RecentActivities { get; set; } = new();
         public List<AttentionItemDto> AttentionItems { get; set; } = new();
+        public List<PlanLimitWarningDto> PlanLimitWarnings { get; set; } = new();
 
         public List<SalesTrendPoint> DailyTrend { get; set; } = new();
         public List<SalesTrendPoint> MonthlyTrend { get; set; } = new();

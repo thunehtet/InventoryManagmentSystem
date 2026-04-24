@@ -7,6 +7,8 @@
 }
 
 <div class="product-index-shell">
+    @await Html.PartialAsync("_PlanLimitWarnings", ViewBag.PlanLimitWarnings as IEnumerable<ClothInventoryApp.Dto.Subscription.PlanLimitWarningDto>)
+
     <div class="product-hero">
         <div class="product-hero-content">
             <div class="hero-kicker">
@@ -60,6 +62,7 @@
                 <thead>
                     <tr>
                         <th>@Localizer["Product"]</th>
+                        <th>@Localizer["Image"]</th>
                         <th>SKU</th>
                         <th>@Localizer["Size"]</th>
                         <th>@Localizer["Color"]</th>
@@ -77,7 +80,7 @@
                     @if (!Model.Any())
                     {
                         <tr>
-                            <td colspan="7" class="empty-state">
+                            <td colspan="8" class="empty-state">
                                 <i class="bi bi-inbox"></i>
                                 <div>@(string.IsNullOrWhiteSpace(ViewBag.Search as string) ? Localizer["No variants yet"].Value : Localizer["No variants match your search"].Value)</div>
                                 @if (User.IsInRole("Admin") && string.IsNullOrWhiteSpace(ViewBag.Search as string))
@@ -93,6 +96,19 @@
                         {
                             <tr>
                                 <td>@item.ProductName</td>
+                                <td>
+                                    @{
+                                        var primaryImage = item.Images.FirstOrDefault()?.ImageUrl;
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(primaryImage))
+                                    {
+                                        <img src="@primaryImage" alt="@item.SKU" class="variant-table-thumb" />
+                                    }
+                                    else
+                                    {
+                                        <span class="variant-table-thumb variant-table-thumb--empty"><i class="bi bi-image"></i></span>
+                                    }
+                                </td>
                                 <td class="fw-semibold">@item.SKU</td>
                                 <td>@item.Size</td>
                                 <td>@item.Color</td>

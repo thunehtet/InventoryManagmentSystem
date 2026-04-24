@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace ClothInventoryApp.Dto.ProductVariant
 {
@@ -10,15 +11,13 @@ namespace ClothInventoryApp.Dto.ProductVariant
         [Display(Name = "Product")]
         public Guid ProductId { get; set; }
 
-        [Required]
         [StringLength(100)]
+        [Display(Name = "Internal Code / Barcode")]
         public string SKU { get; set; } = string.Empty;
 
-        [Required]
         [StringLength(50)]
         public string Size { get; set; } = string.Empty;
 
-        [Required]
         [StringLength(50)]
         public string Color { get; set; } = string.Empty;
 
@@ -29,5 +28,8 @@ namespace ClothInventoryApp.Dto.ProductVariant
         [Range(0, 999999999)]
         [Display(Name = "Selling Price")]
         public int SellingPrice { get; set; }
+
+        [Display(Name = "Variant images")]
+        public List<IFormFile> Images { get; set; } = new();
     }
 }

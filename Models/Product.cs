@@ -12,5 +12,9 @@ public class Product
     public string Brand { get; set; } = "";
     public bool IsActive { get; set; } = true;
 
+    // E-commerce fields - optional public shop fallback content.
+    public string? ImageUrl { get; set; }
+    public string? Description { get; set; }
+
     public List<ProductVariant> Variants { get; set; } = new();
 }

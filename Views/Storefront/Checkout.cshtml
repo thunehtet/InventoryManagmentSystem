@@ -1,0 +1,123 @@
+@using ClothInventoryApp.Dto.Storefront
+@model CheckoutDto
+@{
+    Layout = "_ShopLayout";
+    ViewBag.Title = Localizer["Checkout"].Value;
+    var tenantCode = ViewBag.TenantCode as string ?? "";
+    var currency = ViewBag.Currency as string ?? "";
+    var cartView = ViewBag.CartView as CartViewDto ?? new CartViewDto();
+}
+
+<section class="shop-container shop-checkout-page">
+    <h1 class="shop-page-title">@Localizer["Checkout"]</h1>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="shop-alert shop-alert--error">
+            <i class="bi bi-exclamation-triangle"></i>
+            @Localizer["Please fix the errors below and try again."]
+            <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+        </div>
+    }
+
+    <div class="shop-checkout-grid">
+        <form method="post" action="/shop/@tenantCode/checkout" class="shop-checkout-form">
+            @Html.AntiForgeryToken()
+
+            <h2 class="shop-form-title">@Localizer["Delivery details"]</h2>
+            <p class="shop-form-sub">@Localizer["Payment will be collected on delivery."]</p>
+
+            <div class="shop-field">
+                <label asp-for="CustomerName"></label>
+                <input asp-for="CustomerName" placeholder='@Localizer["Your full name"]' autocomplete="name" />
+                <span asp-validation-for="CustomerName" class="field-validation-error"></span>
+            </div>
+
+            <div class="shop-field-row">
+                <div class="shop-field">
+                    <label asp-for="CustomerPhone"></label>
+                    <input asp-for="CustomerPhone" placeholder='@Localizer["09 xxx xxx xxx"]' autocomplete="tel" />
+                    <span asp-validation-for="CustomerPhone" class="field-validation-error"></span>
+                </div>
+                <div class="shop-field">
+                    <label asp-for="CustomerEmail"></label>
+                    <input asp-for="CustomerEmail" type="email" placeholder='@Localizer["you@example.com"]' autocomplete="email" />
+                    <span asp-validation-for="CustomerEmail" class="field-validation-error"></span>
+                </div>
+            </div>
+
+            <div class="shop-field">
+                <label asp-for="ShippingAddress"></label>
+                <textarea asp-for="ShippingAddress" rows="3" placeholder='@Localizer["Street, township, city, postal code"]' autocomplete="street-address"></textarea>
+                <span asp-validation-for="ShippingAddress" class="field-validation-error"></span>
+            </div>
+
+            <div class="shop-field">
+                <label asp-for="CustomerNotes"></label>
+                <textarea asp-for="CustomerNotes" rows="2" placeholder='@Localizer["Any special instructions for the seller"]'></textarea>
+                <span asp-validation-for="CustomerNotes" class="field-validation-error"></span>
+            </div>
+
+            <button type="submit" class="shop-btn shop-btn--primary shop-btn--block">
+                @Localizer["Place order (Cash on delivery)"]
+            </button>
+        </form>
+
+        <aside class="shop-cart-summary">
+            <h3>@Localizer["Your order"]</h3>
+            <ul class="shop-summary-items">
+                @foreach (var line in cartView.Lines)
+                {
+                    var color = DisplayOption(line.Color);
+                    var size = DisplayOption(line.Size);
+                    <li>
+                        <span class="shop-summary-qty">@line.Quantity x</span>
+                        <span class="shop-summary-name">@line.ProductName
+                            @if (!string.IsNullOrWhiteSpace(color) || !string.IsNullOrWhiteSpace(size))
+                            {
+                                <small>(@color @size)</small>
+                            }
+                        </span>
+                        <span class="shop-summary-amt">@currency @line.LineTotal</span>
+                    </li>
+                }
+            </ul>
+            <div class="shop-summary-row">
+                <span>@Localizer["Subtotal"]</span>
+                <span>@currency @cartView.Subtotal</span>
+            </div>
+            <div class="shop-summary-row">
+                <span>@Localizer["Shipping"]</span>
+                <span>
+                    @if (cartView.ShippingFee > 0)
+                    {
+                        <text>@currency @cartView.ShippingFee</text>
+                    }
+                    else
+                    {
+                        <text>@Localizer["Free"]</text>
+                    }
+                </span>
+            </div>
+            <div class="shop-summary-row shop-summary-total">
+                <span>@Localizer["Total"]</span>
+                <span>@currency @cartView.Total</span>
+            </div>
+        </aside>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+@functions {
+    private static string DisplayOption(string? value)
+    {
+        var trimmed = value?.Trim();
+        return string.IsNullOrWhiteSpace(trimmed) ||
+            string.Equals(trimmed, "Default", StringComparison.OrdinalIgnoreCase)
+                ? string.Empty
+                : trimmed;
+    }
+}

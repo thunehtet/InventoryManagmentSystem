@@ -7,7 +7,11 @@
 @inject AppDbContext DbContext
 @{
     bool hasSales = false, hasFinance = false, hasTextiles = false,
-         hasCustomers = false, hasDashboard = false, hasSaleProfit = false;
+         hasCustomers = false, hasDashboard = false, hasSaleProfit = false,
+         hasStorefront = false;
+    bool storefrontEnabled = false;
+    string? storefrontPublicUrl = null;
+    string? storefrontTenantCode = null;
     // Staff visibility overrides set by Admin in TenantSettings
     bool staffCanSeeDashboard = true, staffCanSeeFinance = false,
          staffCanSeeProducts = true, staffCanSeeVariants = true,
@@ -36,6 +40,19 @@
             hasDashboard  = await FeatureService.HasFeatureAsync(_tid, "dashboard");
             hasFinance    = await FeatureService.HasFeatureAsync(_tid, "finance");
             hasTextiles   = await FeatureService.HasFeatureAsync(_tid, "textiles");
+            hasStorefront = await FeatureService.HasFeatureAsync(_tid, "storefront");
+
+            if (hasStorefront && tenant != null)
+            {
+                var sfSetting = await DbContext.TenantSettings.AsNoTracking()
+                    .FirstOrDefaultAsync(s => s.TenantId == _tid);
+                storefrontEnabled = sfSetting?.StorefrontEnabled ?? false;
+                if (storefrontEnabled && !string.IsNullOrWhiteSpace(tenant.Code))
+                {
+                    storefrontTenantCode = tenant.Code;
+                    storefrontPublicUrl  = $"/shop/{tenant.Code}";
+                }
+            }
 
             // Load staff visibility settings (only applied to non-Admin users)
             if (!User.IsInRole("Admin"))
@@ -299,6 +316,22 @@
                 @* Sales Report — Admin only *@
                 @if (User.IsInRole("Admin"))
                 {
+                @if (hasStorefront)
+                {
+                <a asp-controller="Orders" asp-action="Index" class="nav-link-modern">
+                    <i class="bi bi-shop-window"></i>
+                    <span>@Localizer["E-commerce Orders"]</span>
+                </a>
+                }
+                else
+                {
+                <span class="nav-link-modern nav-link-locked" title="Upgrade to Pro">
+                    <i class="bi bi-shop-window"></i>
+                    <span>@Localizer["E-commerce Orders"]</span>
+                    <i class="bi bi-lock-fill ms-auto nav-lock-icon"></i>
+                </span>
+                }
+
                 @if (hasSales)
                 {
                 <a asp-controller="Reports" asp-action="Sales" class="nav-link-modern">
@@ -542,6 +575,13 @@
                 <a href="/Finance/Index" class="mob-nav-item">
                     <i class="bi bi-cash-coin"></i>
                     <span>@Localizer["Finance"]</span>
+                </a>
+                }
+                else if (User.IsInRole("Admin") && hasStorefront)
+                {
+                <a href="/Orders/Index" class="mob-nav-item">
+                    <i class="bi bi-shop-window"></i>
+                    <span>@Localizer["Orders"]</span>
                 </a>
                 }
                 else

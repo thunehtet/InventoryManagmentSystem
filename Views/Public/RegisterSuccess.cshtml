@@ -4,12 +4,12 @@
     var tenantLogoUrl = ViewBag.TenantLogoUrl as string;
 }
 <!DOCTYPE html>
-<html lang="en">
+<html lang="@CultureInfo.CurrentUICulture.Name">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="~/images/websitelogo.png" asp-append-version="true" />
-    <title>Registered! - @tenantName</title>
+    <title>@Localizer["Registered!"] - @tenantName</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -36,17 +36,17 @@
                     <div class="public-tenant-label">@tenantName</div>
                 </div>
                 <div class="public-powered-by">
-                    <span>Powered by</span>
+                    <span>@Localizer["Powered by"]</span>
                     <img src="~/images/websitelogo.png" alt="StockEasy" />
                 </div>
             </div>
             <div class="public-check-icon">
                 <i class="bi bi-check-lg"></i>
             </div>
-            <h1 class="public-card-title">You're registered!</h1>
+            <h1 class="public-card-title">@Localizer["You're registered!"]</h1>
             <p class="public-card-subtitle">
-                Thanks for registering with <strong>@tenantName</strong>.<br />
-                Your details have been saved.
+                @Localizer["Thanks for registering with"] <strong>@tenantName</strong>.<br />
+                @Localizer["Your details have been saved."]
             </p>
         </div>
     </div>

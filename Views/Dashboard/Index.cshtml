@@ -7,6 +7,8 @@
 }
 
 <div class="dashboard-shell">
+    @await Html.PartialAsync("_PlanLimitWarnings", Model.PlanLimitWarnings)
+
     <section class="dashboard-hero">
         <div class="dashboard-hero-content">
             <div class="hero-badge-modern">
@@ -347,6 +349,7 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/pages/dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/product-index.css" asp-append-version="true" />
 }
 
 @section Scripts {

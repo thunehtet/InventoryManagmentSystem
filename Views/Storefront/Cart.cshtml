@@ -1,0 +1,117 @@
+@using ClothInventoryApp.Dto.Storefront
+@model CartViewDto
+@{
+    Layout = "_ShopLayout";
+    ViewBag.Title = Localizer["Your cart"].Value;
+    var tenantCode = ViewBag.TenantCode as string ?? "";
+    var currency = ViewBag.Currency as string ?? "";
+}
+
+<section class="shop-container shop-cart-page">
+    <h1 class="shop-page-title">@Localizer["Your cart"]</h1>
+
+    @if (Model.Lines.Count == 0)
+    {
+        <div class="shop-empty">
+            <i class="bi bi-bag"></i>
+            <p>@Localizer["Your cart is empty."]</p>
+            <a class="shop-btn shop-btn--primary" href="/shop/@tenantCode/products">@Localizer["Start shopping"]</a>
+        </div>
+    }
+    else
+    {
+        <div class="shop-cart-grid">
+            <div class="shop-cart-list">
+                @foreach (var line in Model.Lines)
+                {
+                    <div class="shop-cart-item">
+                        <div class="shop-cart-img">
+                            @if (!string.IsNullOrWhiteSpace(line.ImageUrl))
+                            {
+                                <img src="@line.ImageUrl" alt="@line.ProductName" />
+                            }
+                            else
+                            {
+                                <div class="shop-cart-img-placeholder"><i class="bi bi-image"></i></div>
+                            }
+                        </div>
+                        <div class="shop-cart-meta">
+                            <a class="shop-cart-name" href="/shop/@tenantCode/p/@line.ProductId">@line.ProductName</a>
+                            <div class="shop-cart-variant">
+                                @{
+                                    var color = DisplayOption(line.Color);
+                                    var size = DisplayOption(line.Size);
+                                }
+                                @if (!string.IsNullOrWhiteSpace(color))
+                                {
+                                    <span class="shop-variant-pill">@color</span>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(size))
+                                {
+                                    <span class="shop-variant-pill">@size</span>
+                                }
+                            </div>
+                            <div class="shop-cart-price">@currency @line.UnitPrice</div>
+                        </div>
+                        <form method="post" action="/shop/@tenantCode/cart/update" class="shop-cart-qty">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="variantId" value="@line.VariantId" />
+                            <input type="number" name="quantity" value="@line.Quantity" min="0" max="@line.Stock" />
+                            <button type="submit" class="shop-btn shop-btn--ghost shop-btn--sm">@Localizer["Update"]</button>
+                        </form>
+                        <div class="shop-cart-linetotal">@currency @line.LineTotal</div>
+                        <form method="post" action="/shop/@tenantCode/cart/remove" class="shop-cart-remove">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="variantId" value="@line.VariantId" />
+                            <button type="submit" class="shop-btn shop-btn--icon" title='@Localizer["Remove"]'>
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                }
+            </div>
+
+            <aside class="shop-cart-summary">
+                <h3>@Localizer["Order summary"]</h3>
+                <div class="shop-summary-row">
+                    <span>@Localizer["Subtotal"]</span>
+                    <span>@currency @Model.Subtotal</span>
+                </div>
+                <div class="shop-summary-row">
+                    <span>@Localizer["Shipping"]</span>
+                    <span>
+                        @if (Model.ShippingFee > 0)
+                        {
+                            <text>@currency @Model.ShippingFee</text>
+                        }
+                        else
+                        {
+                            <text>@Localizer["Free"]</text>
+                        }
+                    </span>
+                </div>
+                <div class="shop-summary-row shop-summary-total">
+                    <span>@Localizer["Total"]</span>
+                    <span>@currency @Model.Total</span>
+                </div>
+                <a class="shop-btn shop-btn--primary shop-btn--block" href="/shop/@tenantCode/checkout">
+                    @Localizer["Checkout"] <i class="bi bi-arrow-right"></i>
+                </a>
+                <a class="shop-btn shop-btn--ghost shop-btn--block" href="/shop/@tenantCode/products">
+                    @Localizer["Continue shopping"]
+                </a>
+            </aside>
+        </div>
+    }
+</section>
+
+@functions {
+    private static string DisplayOption(string? value)
+    {
+        var trimmed = value?.Trim();
+        return string.IsNullOrWhiteSpace(trimmed) ||
+            string.Equals(trimmed, "Default", StringComparison.OrdinalIgnoreCase)
+                ? string.Empty
+                : trimmed;
+    }
+}

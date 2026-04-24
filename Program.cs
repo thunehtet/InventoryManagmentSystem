@@ -6,6 +6,7 @@ using ClothInventoryApp.Services.Feature;
 using ClothInventoryApp.Services.Email;
 using ClothInventoryApp.Services.Files;
 using ClothInventoryApp.Services.Identity;
+using ClothInventoryApp.Services.ProductImport;
 using ClothInventoryApp.Services.Security;
 using ClothInventoryApp.Services.Telegram;
 using ClothInventoryApp.Options;
@@ -30,6 +31,18 @@ RegisterQuestPdfFonts(env.ContentRootPath);
 // MVC + Localization
 builder.Services.AddLocalization(options => options.ResourcesPath = "");
 builder.Services.AddMemoryCache();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.Cookie.Name = ".StockEasy.Cart";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
+        ? CookieSecurePolicy.SameAsRequest
+        : CookieSecurePolicy.Always;
+    options.IdleTimeout = TimeSpan.FromDays(7);
+});
 builder.Services.AddControllersWithViews(options =>
     options.Filters.AddService<ClothInventoryApp.Filters.ActiveTenantFilter>())
     .AddViewLocalization()
@@ -139,6 +152,22 @@ builder.Services.AddRateLimiter(options =>
             });
     });
 
+    options.AddPolicy("storefront-checkout", httpContext =>
+    {
+        var partitionKey = httpContext.Connection.RemoteIpAddress?.ToString()
+            ?? "unknown-public-client";
+
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey,
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 10,
+                Window = TimeSpan.FromMinutes(10),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            });
+    });
+
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 });
 
@@ -158,8 +187,10 @@ builder.Services.AddScoped<ITelegramService, TelegramService>();
 builder.Services.AddScoped<ITemporaryCredentialService, TemporaryCredentialService>();
 builder.Services.AddScoped<ITurnstileValidationService, TurnstileValidationService>();
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+builder.Services.AddScoped<IProductImportService, ProductImportService>();
 builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+builder.Services.AddScoped<ClothInventoryApp.Services.Storefront.ICartService, ClothInventoryApp.Services.Storefront.CartService>();
 builder.Services.AddScoped<IUsageTrackingService, UsageTrackingService>();
 builder.Services.AddScoped<ClothInventoryApp.Filters.ActiveTenantFilter>();
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AppClaimsPrincipalFactory>();
@@ -213,7 +244,7 @@ app.UseHttpsRedirection();
 
 var supportedCultures = new[] { "en", "my-MM" };
 var localizationOptions = new RequestLocalizationOptions()
-    .SetDefaultCulture("en")
+    .SetDefaultCulture("my-MM")
     .AddSupportedCultures(supportedCultures)
     .AddSupportedUICultures(supportedCultures);
 
@@ -226,6 +257,7 @@ app.UseRequestLocalization(localizationOptions);
 app.UseStaticFiles();
 app.UseRouting();
 app.UseRateLimiter();
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -283,6 +315,7 @@ app.Use(async (context, next) =>
         !path.StartsWith("/Account/ChangePassword", StringComparison.OrdinalIgnoreCase) &&
         !path.StartsWith("/Account/Logout", StringComparison.OrdinalIgnoreCase) &&
         !path.StartsWith("/p/", StringComparison.OrdinalIgnoreCase) &&
+        !path.StartsWith("/shop/", StringComparison.OrdinalIgnoreCase) &&
         !path.StartsWith("/css", StringComparison.OrdinalIgnoreCase) &&
         !path.StartsWith("/js", StringComparison.OrdinalIgnoreCase) &&
         !path.StartsWith("/lib", StringComparison.OrdinalIgnoreCase) &&

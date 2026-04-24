@@ -1,6 +1,7 @@
 @model ClothInventoryApp.Dto.TenantSettings.TenantSettingsEditDto
 @{
     ViewData["Title"] = Localizer["Workspace Settings"];
+    var hasEcommerceFeature = ViewBag.HasEcommerceFeature is bool hasFeature && hasFeature;
 }
 
 <div class="create-product-shell">
@@ -207,6 +208,76 @@
                     <p class="side-info-text settings-help-text">
                         @Localizer["Hidden sections disappear from staff navigation and staff cannot open them directly. Admins always keep full access."]
                     </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-ecommerce-card">
+            <div class="section-header">
+                <div>
+                    <h3><i class="bi bi-shop me-2"></i>@Localizer["E-commerce"]</h3>
+                    <p>@Localizer["Enable your public shop and control the text shown to customers."]</p>
+                </div>
+            </div>
+
+            @if (!hasEcommerceFeature)
+            {
+                <div class="validation-summary-modern">
+                    @Localizer["E-commerce is not included in your active plan. Upgrade or ask SuperAdmin to enable this feature before using the public shop link."]
+                </div>
+            }
+
+            <div class="settings-ecommerce-grid">
+                <div class="settings-ecommerce-main">
+                    <label class="status-toggle-card settings-ecommerce-toggle" for="StorefrontEnabled">
+                        <div class="status-toggle-copy">
+                            <div class="status-toggle-title">
+                                <i class="bi bi-bag-check-fill me-2 settings-icon settings-icon-sales"></i>@Localizer["Public shop enabled"]
+                            </div>
+                            <div class="status-toggle-text">@Localizer["Customers can browse products, add to cart, and place orders online."]</div>
+                        </div>
+                        <div class="status-toggle-switch">
+                            <input asp-for="StorefrontEnabled" class="form-check-input modern-switch" id="StorefrontEnabled" type="checkbox" disabled="@(!hasEcommerceFeature)" />
+                        </div>
+                    </label>
+                    @if (!hasEcommerceFeature)
+                    {
+                        <input type="hidden" asp-for="StorefrontEnabled" value="false" />
+                    }
+
+                    @if (ViewBag.ShopUrl is string shopUrl && !string.IsNullOrWhiteSpace(shopUrl))
+                    {
+                        <div class="settings-shop-link-card">
+                            <span class="info-label">@Localizer["Shop Link"]</span>
+                            <a href="@shopUrl" target="_blank" rel="noopener" class="settings-shop-link">@shopUrl</a>
+                        </div>
+                    }
+                    else if (hasEcommerceFeature)
+                    {
+                        <div class="settings-shop-link-card settings-shop-link-card-muted">
+                            @Localizer["Enable the public shop and save settings to generate the shop link."]
+                        </div>
+                    }
+                </div>
+
+                <div class="settings-ecommerce-fields">
+                    <div class="form-group-modern">
+                        <label asp-for="StorefrontTagline" class="form-label-modern"></label>
+                        <input asp-for="StorefrontTagline" class="input-modern" placeholder="@Localizer["e.g. Everyday wear, delivered fast"]" />
+                        <span asp-validation-for="StorefrontTagline" class="field-validation-modern"></span>
+                    </div>
+
+                    <div class="form-group-modern">
+                        <label asp-for="StorefrontShippingFee" class="form-label-modern"></label>
+                        <input asp-for="StorefrontShippingFee" class="input-modern" type="number" min="0" step="1" placeholder="0" />
+                        <span asp-validation-for="StorefrontShippingFee" class="field-validation-modern"></span>
+                    </div>
+
+                    <div class="form-group-modern form-group-full">
+                        <label asp-for="StorefrontDescription" class="form-label-modern"></label>
+                        <textarea asp-for="StorefrontDescription" class="input-modern settings-ecommerce-description" rows="4" placeholder="@Localizer["Short introduction for your online shop"]"></textarea>
+                        <span asp-validation-for="StorefrontDescription" class="field-validation-modern"></span>
+                    </div>
                 </div>
             </div>
         </div>

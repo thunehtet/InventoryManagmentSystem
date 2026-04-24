@@ -33,6 +33,7 @@ namespace ClothInventoryApp.Data
 
         public DbSet<Product> Products => Set<Product>();
         public DbSet<ProductVariant> ProductVariants => Set<ProductVariant>();
+        public DbSet<ProductVariantImage> ProductVariantImages => Set<ProductVariantImage>();
         public DbSet<StockMovement> StockMovements => Set<StockMovement>();
         public DbSet<Sale> Sales => Set<Sale>();
         public DbSet<SaleItem> SaleItems => Set<SaleItem>();
@@ -58,6 +59,8 @@ namespace ClothInventoryApp.Data
         public DbSet<UserLoginAudit> UserLoginAudits => Set<UserLoginAudit>();
         public DbSet<UserActivityLog> UserActivityLogs => Set<UserActivityLog>();
         public DbSet<TenantDailyUsage> TenantDailyUsages => Set<TenantDailyUsage>();
+        public DbSet<ShopOrder> ShopOrders => Set<ShopOrder>();
+        public DbSet<ShopOrderItem> ShopOrderItems => Set<ShopOrderItem>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -67,6 +70,9 @@ namespace ClothInventoryApp.Data
                 .HasQueryFilter(x => x.TenantId == CurrentTenantId);
 
             modelBuilder.Entity<ProductVariant>()
+                .HasQueryFilter(x => x.TenantId == CurrentTenantId);
+
+            modelBuilder.Entity<ProductVariantImage>()
                 .HasQueryFilter(x => x.TenantId == CurrentTenantId);
 
             modelBuilder.Entity<StockMovement>()
@@ -119,6 +125,21 @@ namespace ClothInventoryApp.Data
                 .WithMany(p => p.Variants)
                 .HasForeignKey(v => v.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ProductVariantImage>()
+                .HasOne(i => i.Tenant)
+                .WithMany()
+                .HasForeignKey(i => i.TenantId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ProductVariantImage>()
+                .HasOne(i => i.ProductVariant)
+                .WithMany(v => v.Images)
+                .HasForeignKey(i => i.ProductVariantId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ProductVariantImage>()
+                .HasIndex(i => new { i.TenantId, i.ProductVariantId, i.SortOrder });
 
             modelBuilder.Entity<SaleItem>()
                 .HasOne(i => i.ProductVariant)
@@ -390,6 +411,55 @@ namespace ClothInventoryApp.Data
 
             modelBuilder.Entity<TenantDailyUsage>()
                 .HasIndex(x => x.UsageDate);
+
+            // ── ShopOrder / ShopOrderItem (storefront) ───────────────────
+            modelBuilder.Entity<ShopOrder>()
+                .HasQueryFilter(x => x.TenantId == CurrentTenantId);
+
+            modelBuilder.Entity<ShopOrderItem>()
+                .HasQueryFilter(x => x.TenantId == CurrentTenantId);
+
+            modelBuilder.Entity<ShopOrder>()
+                .HasOne(o => o.Tenant)
+                .WithMany()
+                .HasForeignKey(o => o.TenantId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ShopOrder>()
+                .HasOne(o => o.Customer)
+                .WithMany()
+                .HasForeignKey(o => o.CustomerId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<ShopOrder>()
+                .HasOne(o => o.Sale)
+                .WithMany()
+                .HasForeignKey(o => o.SaleId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<ShopOrder>()
+                .HasIndex(x => x.PublicToken)
+                .IsUnique();
+
+            modelBuilder.Entity<ShopOrder>()
+                .HasIndex(x => new { x.TenantId, x.OrderNumber })
+                .IsUnique();
+
+            modelBuilder.Entity<ShopOrder>()
+                .HasIndex(x => new { x.TenantId, x.Status, x.CreatedAt });
+
+            modelBuilder.Entity<ShopOrderItem>()
+                .HasOne(i => i.ShopOrder)
+                .WithMany(o => o.Items)
+                .HasForeignKey(i => i.ShopOrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ShopOrderItem>()
+                .HasOne(i => i.ProductVariant)
+                .WithMany()
+                .HasForeignKey(i => i.ProductVariantId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

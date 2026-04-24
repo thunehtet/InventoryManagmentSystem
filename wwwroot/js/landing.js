@@ -8,6 +8,7 @@
         }
 
         root.setAttribute('data-lang', language);
+        root.setAttribute('lang', language === 'my' ? 'my-MM' : 'en');
         localStorage.setItem('se-lang', language);
 
         var culture = language === 'my' ? 'my-MM' : 'en';
@@ -21,7 +22,7 @@
             return;
         }
 
-        var currentLanguage = root.getAttribute('data-lang') || 'en';
+        var currentLanguage = root.getAttribute('data-lang') || 'my';
         setLanguage(currentLanguage === 'en' ? 'my' : 'en');
     }
 

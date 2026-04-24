@@ -1,8 +1,11 @@
 ﻿using ClothInventoryApp.Data;
 using ClothInventoryApp.Dto;
 using ClothInventoryApp.Dto.Product;
+using ClothInventoryApp.Dto.ProductImport;
 using ClothInventoryApp.Models;
 using ClothInventoryApp.Resources;
+using ClothInventoryApp.Services.Files;
+using ClothInventoryApp.Services.ProductImport;
 using ClothInventoryApp.Services.Subscription;
 using ClothInventoryApp.Services.Tenant;
 using ClothInventoryApp.Services.Usage;
@@ -10,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using System.Security.Claims;
 
 namespace ClothInventoryApp.Controllers
 {
@@ -21,24 +25,31 @@ namespace ClothInventoryApp.Controllers
         private readonly ISubscriptionService _subscriptionService;
         private readonly IStringLocalizer<SharedResource> _localizer;
         private readonly IUsageTrackingService _usageTrackingService;
+        private readonly IFileStorageService _fileStorageService;
+        private readonly IProductImportService _productImportService;
 
         public ProductsController(
             AppDbContext context,
             ITenantProvider tenantProvider,
             ISubscriptionService subscriptionService,
             IStringLocalizer<SharedResource> localizer,
-            IUsageTrackingService usageTrackingService)
+            IUsageTrackingService usageTrackingService,
+            IFileStorageService fileStorageService,
+            IProductImportService productImportService)
         {
             _context = context;
             _tenantProvider = tenantProvider;
             _subscriptionService = subscriptionService;
             _localizer = localizer;
             _usageTrackingService = usageTrackingService;
+            _fileStorageService = fileStorageService;
+            _productImportService = productImportService;
         }
 
         public async Task<IActionResult> Index(string? search, int page = 1, int size = 10)
         {
             size = PaginationViewModel.Clamp(size);
+            var tenantId = _tenantProvider.GetTenantId();
             var query = _context.Products.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
@@ -63,6 +74,7 @@ namespace ClothInventoryApp.Controllers
                 .ToListAsync();
 
             ViewBag.Search = search;
+            ViewBag.PlanLimitWarnings = await _subscriptionService.BuildPlanLimitWarningsAsync(tenantId);
             ViewBag.Pagination = new PaginationViewModel
             {
                 Page = page, PageSize = size, TotalCount = total,
@@ -76,6 +88,181 @@ namespace ClothInventoryApp.Controllers
         public IActionResult Create()
         {
             return View(new CreateProductDto { IsActive = true });
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult QuickCreate()
+        {
+            return View(new QuickCreateProductDto());
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult Import()
+        {
+            return View(new ProductImportUploadDto());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Import(ProductImportUploadDto dto)
+        {
+            if (dto.File == null || dto.File.Length == 0)
+            {
+                ModelState.AddModelError(nameof(dto.File), "Please choose an Excel file.");
+                return View(dto);
+            }
+
+            try
+            {
+                var tenantId = _tenantProvider.GetTenantId();
+                dto.Result = await _productImportService.ImportAsync(
+                    tenantId,
+                    dto.File,
+                    HttpContext.RequestAborted);
+
+                if (dto.Result.ImportedRows > 0)
+                {
+                    await _usageTrackingService.TrackActionAsync(
+                        tenantId,
+                        "products",
+                        "import",
+                        "ProductImport",
+                        null,
+                        $"Imported {dto.Result.ImportedRows} product variant rows from Excel.",
+                        cancellationToken: HttpContext.RequestAborted);
+                }
+
+                return View(dto);
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError(nameof(dto.File), ex.Message);
+                return View(dto);
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult DownloadImportTemplate()
+        {
+            var bytes = _productImportService.BuildTemplate();
+            return File(
+                bytes,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "product-import-template.xlsx");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> QuickCreate(QuickCreateProductDto dto)
+        {
+            if (!ModelState.IsValid)
+                return View(dto);
+
+            var tenantId = _tenantProvider.GetTenantId();
+
+            if (!await _subscriptionService.CanAddProductAsync(tenantId))
+            {
+                var (current, max) = await _subscriptionService.GetProductLimitAsync(tenantId);
+                TempData["LimitError"] = $"Product limit reached ({current}/{max}). Upgrade your plan to add more products.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (!await _subscriptionService.CanAddVariantAsync(tenantId))
+            {
+                var (current, max) = await _subscriptionService.GetVariantLimitAsync(tenantId);
+                TempData["LimitError"] = $"Variant limit reached ({current}/{max}). Upgrade your plan to add more variants.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var product = new Product
+            {
+                Name = dto.Name.Trim(),
+                Category = NormalizeOptionalCatalogValue(dto.Category, "General"),
+                Brand = NormalizeOptionalCatalogValue(dto.Brand, "Own Brand"),
+                IsActive = true,
+                TenantId = tenantId
+            };
+
+            using var tx = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                _context.Products.Add(product);
+                await _context.SaveChangesAsync();
+
+                var variant = new ProductVariant
+                {
+                    ProductId = product.Id,
+                    TenantId = tenantId,
+                    SKU = await GenerateAutoSkuAsync(tenantId),
+                    Size = "Default",
+                    Color = "Default",
+                    CostPrice = dto.CostPrice,
+                    SellingPrice = dto.SellingPrice
+                };
+
+                _context.ProductVariants.Add(variant);
+                await _context.SaveChangesAsync();
+
+                if (dto.OpeningStock > 0)
+                {
+                    _context.StockMovements.Add(new StockMovement
+                    {
+                        ProductVariantId = variant.Id,
+                        TenantId = tenantId,
+                        MovementType = "IN",
+                        Quantity = dto.OpeningStock,
+                        MovementDate = DateTime.UtcNow,
+                        Remarks = "Opening stock from quick product creation"
+                    });
+                    await _context.SaveChangesAsync();
+                }
+
+                if (dto.Image is { Length: > 0 })
+                {
+                    var uploadedBy = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    var uploaded = await _fileStorageService.SaveImageAsync(
+                        dto.Image,
+                        UploadCategories.ProductImage,
+                        uploadedBy,
+                        tenantId,
+                        HttpContext.RequestAborted);
+
+                    var imageUrl = _fileStorageService.GetPublicUrl(uploaded);
+                    product.ImageUrl = imageUrl;
+                    _context.ProductVariantImages.Add(new ProductVariantImage
+                    {
+                        TenantId = tenantId,
+                        ProductVariantId = variant.Id,
+                        ImageUrl = imageUrl,
+                        SortOrder = 0,
+                        IsPrimary = true
+                    });
+                    await _context.SaveChangesAsync();
+                }
+
+                await tx.CommitAsync();
+
+                TempData["SuccessMsg"] = this.LocalizeShared("Product '{0}' is ready for storefront sales.", product.Name);
+                TempData["SuccessListUrl"] = Url.Action("Index", "Products");
+                TempData["SuccessListLabel"] = this.LocalizeShared("View Products");
+                await _usageTrackingService.TrackActionAsync(tenantId, "products", "quick_create", "Product", product.Id.ToString(), $"Quick-created product {product.Name}.", cancellationToken: HttpContext.RequestAborted);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (InvalidOperationException ex)
+            {
+                await tx.RollbackAsync();
+                ModelState.AddModelError("", ex.Message);
+                return View(dto);
+            }
+            catch
+            {
+                await tx.RollbackAsync();
+                ModelState.AddModelError("", "Failed to create the product. Please try again.");
+                return View(dto);
+            }
         }
 
         [HttpPost]
@@ -283,6 +470,33 @@ namespace ClothInventoryApp.Controllers
             }
 
             return (true, null);
+        }
+
+        private async Task<string> GenerateAutoSkuAsync(Guid tenantId)
+        {
+            var next = await _context.ProductVariants
+                .IgnoreQueryFilters()
+                .Where(v => v.TenantId == tenantId)
+                .CountAsync() + 1;
+
+            while (true)
+            {
+                var sku = $"AUTO-{next:D6}";
+                var exists = await _context.ProductVariants
+                    .IgnoreQueryFilters()
+                    .AnyAsync(v => v.TenantId == tenantId && v.SKU == sku);
+
+                if (!exists)
+                    return sku;
+
+                next++;
+            }
+        }
+
+        private static string NormalizeOptionalCatalogValue(string? value, string fallback)
+        {
+            var trimmed = value?.Trim();
+            return string.IsNullOrWhiteSpace(trimmed) ? fallback : trimmed;
         }
     }
 }

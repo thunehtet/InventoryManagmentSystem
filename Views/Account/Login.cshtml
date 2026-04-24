@@ -119,7 +119,7 @@
 
             <div class="auth-panel">
                 <a href="/" class="auth-back-link">
-                    <i class="bi bi-arrow-left"></i> @Localizer["Back to home"]
+                    <i class="bi bi-arrow-left"></i> @Localizer["Back to Home"]
                 </a>
 
                 <div class="auth-card-modern">
@@ -143,7 +143,7 @@
                             <div class="auth-input-wrap">
                                 <i class="bi bi-person-circle"></i>
                                 <input asp-for="UserNameOrEmail" class="form-control auth-input"
-                                       placeholder="@Localizer["Email or username"]" autocomplete="username" />
+                                       placeholder="@Localizer["Email or Username"]" autocomplete="username" />
                             </div>
                             <span asp-validation-for="UserNameOrEmail" class="text-danger small"></span>
                         </div>
@@ -164,9 +164,9 @@
                         <div class="auth-form-row">
                             <div class="form-check auth-check">
                                 <input asp-for="RememberMe" class="form-check-input" />
-                                <label asp-for="RememberMe" class="form-check-label auth-remember-label">@Localizer["Remember me"]</label>
+                                <label asp-for="RememberMe" class="form-check-label auth-remember-label">@Localizer["Remember Me"]</label>
                             </div>
-                            <a asp-action="ForgotPassword" class="auth-link">@Localizer["Forgot password?"]</a>
+                            <a asp-action="ForgotPassword" class="auth-link">@Localizer["Forgot Password?"]</a>
                         </div>
 
                         <button type="submit" class="btn auth-submit-btn">

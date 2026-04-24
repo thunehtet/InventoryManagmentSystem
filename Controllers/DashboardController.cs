@@ -3,6 +3,7 @@ using ClothInventoryApp.Dto.Dashboard;
 using ClothInventoryApp.Filters;
 using ClothInventoryApp.Services.Tenant;
 using ClothInventoryApp.Services.Time;
+using ClothInventoryApp.Services.Subscription;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,11 +15,17 @@ namespace ClothInventoryApp.Controllers
     public class DashboardController : TenantAwareController
     {
         private readonly ITenantTimeService _tenantTimeService;
+        private readonly ISubscriptionService _subscriptionService;
 
-        public DashboardController(AppDbContext context, ITenantProvider tenantProvider, ITenantTimeService tenantTimeService)
+        public DashboardController(
+            AppDbContext context,
+            ITenantProvider tenantProvider,
+            ITenantTimeService tenantTimeService,
+            ISubscriptionService subscriptionService)
             : base(context, tenantProvider)
         {
             _tenantTimeService = tenantTimeService;
+            _subscriptionService = subscriptionService;
         }
 
         [HttpGet]
@@ -95,11 +102,11 @@ namespace ClothInventoryApp.Controllers
         public async Task<IActionResult> Index(int? month, int? year)
         {
             var vm = new DashboardViewModel();
+            var tenantId = _tenantProvider.GetTenantId();
 
             vm.TotalProducts = await _context.Products.CountAsync();
             vm.TotalVariants = await _context.ProductVariants.CountAsync();
 
-            var tenantId = _tenantProvider.GetTenantId();
             var tenantSettings = await _context.TenantSettings.AsNoTracking()
                 .FirstOrDefaultAsync(s => s.TenantId == tenantId);
             var lowStockThreshold = tenantSettings?.LowStockThreshold ?? 10;
@@ -255,6 +262,7 @@ namespace ClothInventoryApp.Controllers
                     Tone = vm.CurrentMonthProfitAmount >= 0 ? "blue" : "red"
                 }
             };
+            vm.PlanLimitWarnings = await _subscriptionService.BuildPlanLimitWarningsAsync(tenantId);
 
             return View(vm);
         }

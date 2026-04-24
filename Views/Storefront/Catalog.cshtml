@@ -1,0 +1,124 @@
+@using ClothInventoryApp.Dto.Storefront
+@model List<ProductCardDto>
+@{
+    Layout = "_ShopLayout";
+    ViewBag.Title = Localizer["Shop"].Value;
+    var tenantCode = ViewBag.TenantCode as string ?? "";
+    var currency = ViewBag.Currency as string ?? "";
+    var search = ViewBag.Search as string;
+    var category = ViewBag.Category as string;
+    var categories = ViewBag.Categories as List<string> ?? new List<string>();
+    int page = (int)(ViewBag.Page ?? 1);
+    int pageSize = (int)(ViewBag.PageSize ?? 24);
+    int total = (int)(ViewBag.TotalCount ?? 0);
+    int totalPages = total == 0 ? 1 : (int)Math.Ceiling((double)total / pageSize);
+}
+
+<section class="shop-section shop-container">
+    <div class="shop-page-heading">
+        <span class="shop-section-eyebrow">@Localizer["Products"]</span>
+        <h1 class="shop-page-title">@Localizer["All products"]</h1>
+    </div>
+
+    <form class="shop-filter-bar" method="get" action="/shop/@tenantCode/products">
+        <div class="shop-filter-search">
+            <i class="bi bi-search"></i>
+            <input type="text" name="q" value="@search" placeholder='@Localizer["Search products, brand, category"]' />
+        </div>
+        <select name="category" class="shop-filter-select">
+            <option value="">@Localizer["All categories"]</option>
+            @foreach (var cat in categories)
+            {
+                if (cat == category)
+                {
+                    <option value="@cat" selected>@cat</option>
+                }
+                else
+                {
+                    <option value="@cat">@cat</option>
+                }
+            }
+        </select>
+        <button type="submit" class="shop-btn shop-btn--secondary">@Localizer["Filter"]</button>
+    </form>
+
+    @if (Model.Count == 0)
+    {
+        <div class="shop-empty">
+            <i class="bi bi-search"></i>
+            <p>@Localizer["No products match your filters."]</p>
+        </div>
+    }
+    else
+    {
+        <div class="shop-grid">
+            @foreach (var p in Model)
+            {
+                <a class="shop-card" href="/shop/@tenantCode/p/@p.Id">
+                    <div class="shop-card-img">
+                        @if (!string.IsNullOrWhiteSpace(p.ImageUrl))
+                        {
+                            <img src="@p.ImageUrl" alt="@p.Name" />
+                        }
+                        else
+                        {
+                            <div class="shop-card-img-placeholder"><i class="bi bi-image"></i></div>
+                        }
+                        @if (p.TotalStock <= 0)
+                        {
+                            <span class="shop-badge shop-badge--muted">@Localizer["Out of stock"]</span>
+                        }
+                    </div>
+                    <div class="shop-card-body">
+                        <div class="shop-card-brand">@p.Brand</div>
+                        <div class="shop-card-name">@p.Name</div>
+                        <div class="shop-card-price">
+                            @if (p.MinPrice == p.MaxPrice)
+                            {
+                                <span>@currency @p.MinPrice</span>
+                            }
+                            else
+                            {
+                                <span>@currency @p.MinPrice - @p.MaxPrice</span>
+                            }
+                        </div>
+                        <div class="shop-card-foot">
+                            @if (p.VariantCount > 1)
+                            {
+                                <span>@Localizer["{0} options", p.VariantCount]</span>
+                            }
+                            else if (p.TotalStock > 0)
+                            {
+                                <span>@Localizer["Ready to order"]</span>
+                            }
+                            else
+                            {
+                                <span>@Localizer["Unavailable"]</span>
+                            }
+                            <i class="bi bi-arrow-up-right"></i>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+
+        @if (totalPages > 1)
+        {
+            <div class="shop-pagination">
+                @if (page > 1)
+                {
+                    <a class="shop-btn shop-btn--ghost" href="/shop/@tenantCode/products?q=@search&category=@category&page=@(page - 1)">
+                        <i class="bi bi-chevron-left"></i> @Localizer["Previous"]
+                    </a>
+                }
+                <span class="shop-pagination-status">@Localizer["Page {0} of {1}", page, totalPages]</span>
+                @if (page < totalPages)
+                {
+                    <a class="shop-btn shop-btn--ghost" href="/shop/@tenantCode/products?q=@search&category=@category&page=@(page + 1)">
+                        @Localizer["Next"] <i class="bi bi-chevron-right"></i>
+                    </a>
+                }
+            </div>
+        }
+    }
+</section>

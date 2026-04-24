@@ -19,5 +19,20 @@ namespace ClothInventoryApp.Dto.TenantSettings
         public bool StaffCanSeeInventory { get; set; }
         public bool StaffCanSeeSales { get; set; }
         public bool StaffCanSeeCustomers { get; set; }
+
+        // E-commerce storefront
+        public bool StorefrontEnabled { get; set; }
+
+        [StringLength(150)]
+        [Display(Name = "E-commerce tagline")]
+        public string? StorefrontTagline { get; set; }
+
+        [StringLength(1000)]
+        [Display(Name = "E-commerce description")]
+        public string? StorefrontDescription { get; set; }
+
+        [Range(0, 999999999)]
+        [Display(Name = "Shipping fee")]
+        public int? StorefrontShippingFee { get; set; }
     }
 }

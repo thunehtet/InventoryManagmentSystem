@@ -113,7 +113,8 @@ namespace ClothInventoryApp.Controllers
                     .ToListAsync()
             };
 
-            vm.PeriodNetCashFlow = vm.PeriodCashIn - vm.PeriodCashOut;
+            vm.PeriodNetCashFlow = vm
+                .PeriodCashIn - vm.PeriodCashOut;
             vm.OperatingExpense = vm.PeriodTextileExpense + vm.PeriodPackagingFee + vm.PeriodTransportationExpense + vm.PeriodOtherExpense;
             vm.OwnerDrawings = vm.PeriodLivingExpense;
             vm.GrossProfitEstimate = vm.PeriodSalesIncome - vm.OperatingExpense;

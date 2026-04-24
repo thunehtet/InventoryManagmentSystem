@@ -1,0 +1,189 @@
+@using ClothInventoryApp.Dto.Product
+@model QuickCreateProductDto
+
+@{
+    ViewData["Title"] = Localizer["Quick Create Product"];
+}
+
+<div class="create-product-shell">
+    <div class="create-product-hero">
+        <div class="create-product-hero-content">
+            <div class="hero-kicker">
+                <i class="bi bi-lightning-charge-fill"></i>
+                <span>@Localizer["Fast Storefront Setup"]</span>
+            </div>
+
+            <h1>@Localizer["Quick create product"]</h1>
+            <p>
+                @Localizer["Create a product, hidden default variant, opening stock, and storefront photo in one step. Best for shops that do not use SKU or size/color options yet."]
+            </p>
+
+            <div class="hero-actions">
+                <a asp-controller="Products" asp-action="Index" class="btn-soft-light">
+                    <i class="bi bi-arrow-left"></i>
+                    @Localizer["Back to Products"]
+                </a>
+                <a asp-controller="Products" asp-action="Create" class="btn-soft-light">
+                    <i class="bi bi-diagram-3"></i>
+                    @Localizer["Advanced Product"]
+                </a>
+            </div>
+        </div>
+
+        <div class="create-product-hero-side">
+            <div class="hero-stat-card">
+                <div class="hero-stat-icon">
+                    <i class="bi bi-shop"></i>
+                </div>
+                <div class="hero-stat-title">@Localizer["Customer friendly"]</div>
+                <div class="hero-stat-text">
+                    @Localizer["Customers will see a normal product page without SKU or technical variant details."]
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="create-product-grid quick-create-grid">
+        <div class="create-main-card">
+            <div class="section-header">
+                <div>
+                    <h3>@Localizer["Storefront product"]</h3>
+                    <p>@Localizer["Only the fields needed to start selling online."]</p>
+                </div>
+            </div>
+
+            <form asp-action="QuickCreate" method="post" enctype="multipart/form-data" class="modern-product-form">
+                <div asp-validation-summary="ModelOnly" class="validation-summary-modern"></div>
+
+                <div class="form-grid-modern">
+                    <div class="form-group-modern form-group-full">
+                        <label asp-for="Name" class="form-label-modern"></label>
+                        <div class="input-icon-wrap">
+                            <i class="bi bi-tag-fill"></i>
+                            <input asp-for="Name" class="input-modern input-modern-lg" placeholder="@Localizer["e.g. Floral Long Dress"]" />
+                        </div>
+                        <span asp-validation-for="Name" class="field-validation-modern"></span>
+                    </div>
+
+                    <div class="form-group-modern">
+                        <label asp-for="Category" class="form-label-modern"></label>
+                        <div class="input-icon-wrap">
+                            <i class="bi bi-grid-fill"></i>
+                            <input asp-for="Category" class="input-modern" placeholder="@Localizer["Optional, e.g. Dress"]" />
+                        </div>
+                        <span asp-validation-for="Category" class="field-validation-modern"></span>
+                    </div>
+
+                    <div class="form-group-modern">
+                        <label asp-for="Brand" class="form-label-modern"></label>
+                        <div class="input-icon-wrap">
+                            <i class="bi bi-bookmark-star-fill"></i>
+                            <input asp-for="Brand" class="input-modern" placeholder="@Localizer["Optional, e.g. Own Brand"]" />
+                        </div>
+                        <span asp-validation-for="Brand" class="field-validation-modern"></span>
+                    </div>
+
+                    <div class="form-group-modern">
+                        <label asp-for="CostPrice" class="form-label-modern"></label>
+                        <div class="input-icon-wrap">
+                            <i class="bi bi-cash-stack"></i>
+                            <input asp-for="CostPrice" class="input-modern" type="number" step="1" min="0" />
+                        </div>
+                        <span asp-validation-for="CostPrice" class="field-validation-modern"></span>
+                    </div>
+
+                    <div class="form-group-modern">
+                        <label asp-for="SellingPrice" class="form-label-modern"></label>
+                        <div class="input-icon-wrap">
+                            <i class="bi bi-tag"></i>
+                            <input asp-for="SellingPrice" class="input-modern" type="number" step="1" min="1" />
+                        </div>
+                        <span asp-validation-for="SellingPrice" class="field-validation-modern"></span>
+                    </div>
+
+                    <div class="form-group-modern">
+                        <label asp-for="OpeningStock" class="form-label-modern"></label>
+                        <div class="input-icon-wrap">
+                            <i class="bi bi-boxes"></i>
+                            <input asp-for="OpeningStock" class="input-modern" type="number" step="1" min="0" />
+                        </div>
+                        <span asp-validation-for="OpeningStock" class="field-validation-modern"></span>
+                    </div>
+
+                    <div class="form-group-modern">
+                        <label asp-for="Image" class="form-label-modern"></label>
+                        <input asp-for="Image" class="input-modern quick-file-input" type="file" accept="image/png,image/jpeg" />
+                        <span class="text-muted small">@Localizer["Optional JPG/PNG photo. You can add more variant images later."]</span>
+                        <span asp-validation-for="Image" class="field-validation-modern"></span>
+                    </div>
+                </div>
+
+                <div class="form-footer-modern">
+                    <button type="submit" class="btn-modern-primary btn-modern-lg">
+                        <i class="bi bi-check2-circle"></i>
+                        @Localizer["Create Ready-to-Sell Product"]
+                    </button>
+
+                    <a asp-controller="Products" asp-action="Index" class="btn-modern-outline btn-modern-lg">
+                        @Localizer["Cancel"]
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <div class="create-side-column">
+            <div class="side-info-card">
+                <div class="side-info-header">
+                    <i class="bi bi-magic"></i>
+                    <h4>@Localizer["What the system creates"]</h4>
+                </div>
+
+                <div class="info-list-modern">
+                    <div class="info-row-modern">
+                        <span class="info-label">1</span>
+                        <span class="info-value">@Localizer["Product"]</span>
+                    </div>
+                    <div class="info-row-modern">
+                        <span class="info-label">2</span>
+                        <span class="info-value">@Localizer["Hidden default variant"]</span>
+                    </div>
+                    <div class="info-row-modern">
+                        <span class="info-label">3</span>
+                        <span class="info-value">@Localizer["Auto internal code"]</span>
+                    </div>
+                    <div class="info-row-modern">
+                        <span class="info-label">4</span>
+                        <span class="info-value">@Localizer["Opening stock"]</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="side-info-card">
+                <div class="side-info-header">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <h4>@Localizer["When to use advanced"]</h4>
+                </div>
+
+                <p class="side-info-text">
+                    @Localizer["Use advanced product and variants when the same product has customer choices such as Black/White or S/M/L."]
+                </p>
+
+                <div class="next-step-chip-wrap">
+                    <span class="next-step-chip">@Localizer["Quick"]</span>
+                    <i class="bi bi-arrow-right"></i>
+                    <span class="next-step-chip">@Localizer["Sell Online"]</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/create-product.css" />
+}

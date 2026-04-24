@@ -15,7 +15,7 @@
 
             <h1>@Localizer["Create new variant"]</h1>
             <p>
-                @Localizer["Add a new product variant with SKU, size, color, and pricing information."]
+                @Localizer["Add a product variant with optional internal code, size, color, and pricing information."]
             </p>
 
             <div class="hero-actions">
@@ -31,12 +31,12 @@
         <div class="create-main-card">
             <div class="section-header">
                 <div>
-                    <h3>@Localizer["Variant details"]</h3>
+                    <h3>@Localizer["Variant Details"]</h3>
                     <p>@Localizer["Fill in the basic fields for this product variant."]</p>
                 </div>
             </div>
 
-            <form asp-action="Create" method="post" class="modern-product-form">
+            <form asp-action="Create" method="post" enctype="multipart/form-data" class="modern-product-form">
                 <div asp-validation-summary="ModelOnly" class="validation-summary-modern"></div>
 
                 <div class="form-grid-modern">
@@ -50,19 +50,19 @@
 
                     <div class="form-group-modern form-group-full">
                         <label asp-for="SKU" class="form-label-modern"></label>
-                        <input asp-for="SKU" class="input-modern input-modern-lg" placeholder="@Localizer["e.g. TEE-BLK-M-001"]" />
+                        <input asp-for="SKU" class="input-modern input-modern-lg" placeholder="@Localizer["Leave blank to auto-generate"]" />
                         <span asp-validation-for="SKU" class="field-validation-modern"></span>
                     </div>
 
                     <div class="form-group-modern">
                         <label asp-for="Size" class="form-label-modern"></label>
-                        <input asp-for="Size" class="input-modern" placeholder="@Localizer["e.g. M"]" />
+                        <input asp-for="Size" class="input-modern" placeholder="@Localizer["Optional, e.g. M"]" />
                         <span asp-validation-for="Size" class="field-validation-modern"></span>
                     </div>
 
                     <div class="form-group-modern">
                         <label asp-for="Color" class="form-label-modern"></label>
-                        <input asp-for="Color" class="input-modern" placeholder="@Localizer["e.g. Black"]" />
+                        <input asp-for="Color" class="input-modern" placeholder="@Localizer["Optional, e.g. Black"]" />
                         <span asp-validation-for="Color" class="field-validation-modern"></span>
                     </div>
 
@@ -76,6 +76,13 @@
                         <label asp-for="SellingPrice" class="form-label-modern"></label>
                         <input asp-for="SellingPrice" class="input-modern" type="number" step="1" />
                         <span asp-validation-for="SellingPrice" class="field-validation-modern"></span>
+                    </div>
+
+                    <div class="form-group-modern form-group-full">
+                        <label asp-for="Images" class="form-label-modern"></label>
+                        <input asp-for="Images" class="input-modern" type="file" accept="image/png,image/jpeg" multiple />
+                        <span class="text-muted small">@Localizer["Upload one or more JPG/PNG images for this exact color/size variant. The first image becomes primary."]</span>
+                        <span asp-validation-for="Images" class="field-validation-modern"></span>
                     </div>
                 </div>
 

@@ -6,6 +6,7 @@
 }
 
 <div class="product-index-shell">
+    @await Html.PartialAsync("_PlanLimitWarnings", ViewBag.PlanLimitWarnings as IEnumerable<ClothInventoryApp.Dto.Subscription.PlanLimitWarningDto>)
 
     @if (TempData["LimitError"] != null)
     {
@@ -27,6 +28,12 @@
             <div class="hero-actions">
                 @if (User.IsInRole("Admin"))
                 {
+                    <a asp-controller="Products" asp-action="QuickCreate" class="btn-modern-primary">
+                        <i class="bi bi-lightning-charge-fill"></i> @Localizer["Quick Create"]
+                    </a>
+                    <a asp-controller="Products" asp-action="Import" class="btn-modern-outline">
+                        <i class="bi bi-file-earmark-spreadsheet"></i> @Localizer["Import Excel"]
+                    </a>
                     <a asp-controller="Products" asp-action="Create" class="btn-modern-primary">
                         <i class="bi bi-plus-circle"></i> @Localizer["Create Product"]
                     </a>

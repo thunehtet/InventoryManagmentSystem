@@ -1,0 +1,288 @@
+@using ClothInventoryApp.Dto.Order
+@model OrderDetailsDto
+@{
+    ViewData["Title"] = Localizer["Order"] + " " + Model.OrderNumber;
+    var currency = ViewData["Currency"] as string ?? "";
+
+    string StatusBadgeClass(string s) => s switch
+    {
+        "Pending"   => "order-badge order-badge--pending",
+        "Confirmed" => "order-badge order-badge--confirmed",
+        "Shipped"   => "order-badge order-badge--shipped",
+        "Delivered" => "order-badge order-badge--delivered",
+        "Cancelled" => "order-badge order-badge--cancelled",
+        _ => "order-badge"
+    };
+
+    var canConfirm  = Model.Status == "Pending";
+    var canShip     = Model.Status == "Confirmed";
+    var canDeliver  = Model.Status == "Shipped" || Model.Status == "Confirmed";
+    var canCancel   = Model.Status != "Cancelled" && Model.Status != "Delivered";
+    var canMarkPaid = Model.PaymentStatus != "Paid" && Model.Status != "Cancelled";
+}
+
+<div class="create-product-shell order-details-shell">
+    <div class="create-main-card">
+        <div class="section-header">
+            <div>
+                <h3>@Localizer["Order"] @Model.OrderNumber</h3>
+                <div class="order-header-meta">
+                    <span class="@StatusBadgeClass(Model.Status)">@Localizer[Model.Status]</span>
+                    @if (Model.PaymentStatus == "Paid")
+                    {
+                        <span class="order-badge order-badge--paid">@Localizer["Paid"]</span>
+                    }
+                    else
+                    {
+                        <span class="order-badge order-badge--unpaid">@Localizer["Unpaid"]</span>
+                    }
+                    <span class="text-muted order-header-date">@Model.CreatedAt.ToLocalTime().ToString("dd MMM yyyy HH:mm")</span>
+                </div>
+            </div>
+            <div class="order-details-actions">
+                @if (Model.SaleId.HasValue)
+                {
+                    <a asp-controller="Sales" asp-action="Details" asp-route-id="@Model.SaleId" class="btn-modern-outline">
+                        <i class="bi bi-file-text"></i> @Localizer["View Sale"]
+                    </a>
+                }
+                <a asp-action="Index" class="btn-modern-outline">
+                    <i class="bi bi-arrow-left"></i> @Localizer["Back"]
+                </a>
+            </div>
+        </div>
+
+        @if (TempData["SuccessMsg"] != null)
+        {
+            <div class="order-toast order-toast--ok"><i class="bi bi-check-circle-fill"></i> @TempData["SuccessMsg"]</div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="order-toast order-toast--err"><i class="bi bi-exclamation-triangle-fill"></i> @TempData["Error"]</div>
+        }
+
+        @* ── Action toolbar ───────────────────────────────── *@
+        <div class="order-action-bar">
+            @if (canConfirm)
+            {
+                <form asp-action="Confirm" asp-route-id="@Model.Id" method="post"
+                      onsubmit="return confirm('@Localizer["Confirm this order? A Sale record will be created and linked."]');">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn-modern-primary">
+                        <i class="bi bi-check2-circle"></i> @Localizer["Confirm Order"]
+                    </button>
+                </form>
+            }
+            @if (canShip)
+            {
+                <form asp-action="Ship" asp-route-id="@Model.Id" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn-modern-primary">
+                        <i class="bi bi-truck"></i> @Localizer["Mark as Shipped"]
+                    </button>
+                </form>
+            }
+            @if (canDeliver)
+            {
+                <form asp-action="Deliver" asp-route-id="@Model.Id" method="post"
+                      onsubmit="return confirm('@Localizer["Mark as delivered? Payment will be recorded automatically."]');">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn-modern-primary">
+                        <i class="bi bi-bag-check-fill"></i> @Localizer["Mark as Delivered"]
+                    </button>
+                </form>
+            }
+            @if (canMarkPaid)
+            {
+                <form asp-action="MarkPaid" asp-route-id="@Model.Id" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn-modern-outline">
+                        <i class="bi bi-cash-coin"></i> @Localizer["Mark as Paid"]
+                    </button>
+                </form>
+            }
+            @if (canCancel)
+            {
+                <button type="button" class="btn-modern-outline order-btn-danger" data-toggle-cancel>
+                    <i class="bi bi-x-octagon"></i> @Localizer["Cancel Order"]
+                </button>
+            }
+        </div>
+
+        @if (canCancel)
+        {
+            <form asp-action="Cancel" asp-route-id="@Model.Id" method="post" class="order-cancel-form" id="orderCancelForm" hidden
+                  onsubmit="return confirm('@Localizer["Cancel this order? Stock will be returned to inventory and the Sale record (if any) will be removed."]');">
+                @Html.AntiForgeryToken()
+                <label for="cancel-reason">@Localizer["Reason (optional, visible only to staff):"]</label>
+                <textarea id="cancel-reason" name="reason" rows="2" maxlength="500" placeholder="@Localizer["e.g. Customer changed mind"]"></textarea>
+                <div class="order-cancel-form__actions">
+                    <button type="submit" class="btn-modern-primary order-btn-danger">
+                        <i class="bi bi-check-lg"></i> @Localizer["Confirm Cancellation"]
+                    </button>
+                    <button type="button" class="btn-modern-outline" data-toggle-cancel>@Localizer["Back"]</button>
+                </div>
+            </form>
+        }
+
+        <div class="order-grid">
+            <section class="order-panel">
+                <h4>@Localizer["Delivery details"]</h4>
+                <dl class="order-dl">
+                    <dt>@Localizer["Name"]</dt>
+                    <dd>
+                        @if (Model.CustomerId.HasValue)
+                        {
+                            <a asp-controller="Customer" asp-action="Details" asp-route-id="@Model.CustomerId" class="link-inline-primary">@Model.CustomerName</a>
+                        }
+                        else
+                        {
+                            @Model.CustomerName
+                        }
+                    </dd>
+                    <dt>@Localizer["Phone"]</dt><dd><a href="tel:@Model.CustomerPhone">@Model.CustomerPhone</a></dd>
+                    @if (!string.IsNullOrWhiteSpace(Model.CustomerEmail))
+                    {
+                        <dt>@Localizer["Email"]</dt><dd><a href="mailto:@Model.CustomerEmail">@Model.CustomerEmail</a></dd>
+                    }
+                    <dt>@Localizer["Address"]</dt><dd>@Model.ShippingAddress</dd>
+                    @if (!string.IsNullOrWhiteSpace(Model.CustomerNotes))
+                    {
+                        <dt>@Localizer["Customer notes"]</dt><dd>@Model.CustomerNotes</dd>
+                    }
+                </dl>
+            </section>
+
+            <section class="order-panel">
+                <h4>@Localizer["Timeline"]</h4>
+                <ul class="order-timeline">
+                    <li class="is-done">
+                        <span class="order-timeline__dot"></span>
+                        <div>
+                            <strong>@Localizer["Placed"]</strong>
+                            <small>@Model.CreatedAt.ToLocalTime().ToString("dd MMM yyyy HH:mm")</small>
+                        </div>
+                    </li>
+                    <li class="@(Model.ConfirmedAt.HasValue ? "is-done" : "")">
+                        <span class="order-timeline__dot"></span>
+                        <div>
+                            <strong>@Localizer["Confirmed"]</strong>
+                            <small>@(Model.ConfirmedAt?.ToLocalTime().ToString("dd MMM yyyy HH:mm") ?? "—")</small>
+                        </div>
+                    </li>
+                    <li class="@(Model.ShippedAt.HasValue ? "is-done" : "")">
+                        <span class="order-timeline__dot"></span>
+                        <div>
+                            <strong>@Localizer["Shipped"]</strong>
+                            <small>@(Model.ShippedAt?.ToLocalTime().ToString("dd MMM yyyy HH:mm") ?? "—")</small>
+                        </div>
+                    </li>
+                    <li class="@(Model.DeliveredAt.HasValue ? "is-done" : "")">
+                        <span class="order-timeline__dot"></span>
+                        <div>
+                            <strong>@Localizer["Delivered"]</strong>
+                            <small>@(Model.DeliveredAt?.ToLocalTime().ToString("dd MMM yyyy HH:mm") ?? "—")</small>
+                        </div>
+                    </li>
+                    @if (Model.CancelledAt.HasValue)
+                    {
+                        <li class="is-done is-cancelled">
+                            <span class="order-timeline__dot"></span>
+                            <div>
+                                <strong>@Localizer["Cancelled"]</strong>
+                                <small>@Model.CancelledAt?.ToLocalTime().ToString("dd MMM yyyy HH:mm")</small>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </section>
+        </div>
+
+        <section class="order-panel order-items-panel">
+            <h4>@Localizer["Items"]</h4>
+            <div class="table-responsive-modern">
+                <table class="table-modern">
+                    <thead>
+                        <tr>
+                            <th>@Localizer["Product"]</th>
+                            <th>@Localizer["Variant"]</th>
+                            <th>@Localizer["SKU"]</th>
+                            <th class="text-end">@Localizer["Unit Price"]</th>
+                            <th class="text-end">@Localizer["Qty"]</th>
+                            <th class="text-end">@Localizer["Line Total"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>@item.ProductName</td>
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.Color)) { <span class="order-variant-pill">@item.Color</span> }
+                                    @if (!string.IsNullOrWhiteSpace(item.Size)) { <span class="order-variant-pill">@item.Size</span> }
+                                </td>
+                                <td class="text-muted">@item.Sku</td>
+                                <td class="text-end">@item.UnitPrice.ToString("N0") @currency</td>
+                                <td class="text-end">@item.Quantity</td>
+                                <td class="text-end fw-semibold">@item.LineTotal.ToString("N0") @currency</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="order-totals">
+                <div class="order-totals__row">
+                    <span>@Localizer["Subtotal"]</span>
+                    <span>@Model.Subtotal.ToString("N0") @currency</span>
+                </div>
+                @if (Model.Discount > 0)
+                {
+                    <div class="order-totals__row">
+                        <span>@Localizer["Discount"]</span>
+                        <span>- @Model.Discount.ToString("N0") @currency</span>
+                    </div>
+                }
+                <div class="order-totals__row">
+                    <span>@Localizer["Shipping"]</span>
+                    <span>@(Model.ShippingFee > 0 ? Model.ShippingFee.ToString("N0") + " " + currency : Localizer["Free"].Value)</span>
+                </div>
+                <div class="order-totals__row order-totals__row--total">
+                    <span>@Localizer["Total"]</span>
+                    <span>@Model.TotalAmount.ToString("N0") @currency</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="order-panel">
+            <h4>@Localizer["Internal notes"]</h4>
+            <form asp-action="SaveNotes" asp-route-id="@Model.Id" method="post" class="order-notes-form">
+                @Html.AntiForgeryToken()
+                <textarea name="internalNotes" rows="3" maxlength="500" placeholder="@Localizer["Notes visible only to your staff"]">@Model.InternalNotes</textarea>
+                <button type="submit" class="btn-modern-outline">
+                    <i class="bi bi-save"></i> @Localizer["Save notes"]
+                </button>
+            </form>
+        </section>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/create-product.css" />
+    <link rel="stylesheet" href="~/css/pages/orders.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script>
+        (function () {
+            var form = document.getElementById('orderCancelForm');
+            document.querySelectorAll('[data-toggle-cancel]').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    if (!form) return;
+                    form.hidden = !form.hidden;
+                    if (!form.hidden) form.querySelector('textarea')?.focus();
+                });
+            });
+        })();
+    </script>
+}

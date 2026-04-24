@@ -32,12 +32,12 @@
         <div class="create-main-card">
             <div class="section-header">
                 <div>
-                    <h3>@Localizer["Variant details"]</h3>
+                    <h3>@Localizer["Variant Details"]</h3>
                     <p>@Localizer["Update the selected product variant."]</p>
                 </div>
             </div>
 
-            <form asp-action="Edit" method="post" class="modern-product-form">
+            <form asp-action="Edit" method="post" enctype="multipart/form-data" class="modern-product-form">
                 <div asp-validation-summary="ModelOnly" class="validation-summary-modern"></div>
 
                 <input asp-for="Id" type="hidden" />
@@ -80,6 +80,12 @@
                         <input asp-for="SellingPrice" class="input-modern" type="number" step="1" />
                         <span asp-validation-for="SellingPrice" class="field-validation-modern"></span>
                     </div>
+
+                    <div class="form-group-modern form-group-full">
+                        <label asp-for="NewImages" class="form-label-modern">@Localizer["Add more variant images"]</label>
+                        <input asp-for="NewImages" class="input-modern" type="file" accept="image/png,image/jpeg" multiple />
+                        <span class="text-muted small">@Localizer["Upload JPG/PNG images for this exact variant."]</span>
+                    </div>
                 </div>
 
                 <div class="form-footer-modern">
@@ -93,6 +99,56 @@
                     </a>
                 </div>
             </form>
+
+            <div class="section-header mt-4">
+                <div>
+                    <h3>@Localizer["Variant images"]</h3>
+                    <p>@Localizer["Primary image is used on the e-commerce product card, product page, and cart."]</p>
+                </div>
+            </div>
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="validation-summary-modern">@TempData["Error"]</div>
+            }
+
+            @if (Model.Images.Count == 0)
+            {
+                <div class="empty-state">
+                    <i class="bi bi-images"></i>
+                    <div>@Localizer["No images uploaded for this variant yet."]</div>
+                </div>
+            }
+            else
+            {
+                <div class="variant-image-admin-grid">
+                    @foreach (var image in Model.Images)
+                    {
+                        <div class="variant-image-admin-card">
+                            <img src="@image.ImageUrl" alt="@Model.SKU" />
+                            @if (image.IsPrimary)
+                            {
+                                <span class="variant-image-badge">@Localizer["Primary"]</span>
+                            }
+                            <div class="variant-image-actions">
+                                @if (!image.IsPrimary)
+                                {
+                                    <form asp-action="SetPrimaryImage" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="imageId" value="@image.Id" />
+                                        <button type="submit" class="btn-modern-outline">@Localizer["Set Primary"]</button>
+                                    </form>
+                                }
+                                <form asp-action="RemoveImage" method="post" onsubmit="return confirm('@Localizer["Remove this image?"]');">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="imageId" value="@image.Id" />
+                                    <button type="submit" class="btn-modern-outline order-btn-danger">@Localizer["Remove"]</button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
         </div>
     </div>
 </div>

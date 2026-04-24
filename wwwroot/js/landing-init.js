@@ -6,6 +6,7 @@
         return;
     }
 
-    var savedLanguage = localStorage.getItem('se-lang') || 'en';
+    var savedLanguage = localStorage.getItem('se-lang') || 'my';
     root.setAttribute('data-lang', savedLanguage);
+    root.setAttribute('lang', savedLanguage === 'my' ? 'my-MM' : 'en');
 }());

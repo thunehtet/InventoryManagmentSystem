@@ -1,6 +1,7 @@
-﻿using ClothInventoryApp.Data;
+using ClothInventoryApp.Data;
 using ClothInventoryApp.Dto.ProductVariant;
 using ClothInventoryApp.Models;
+using ClothInventoryApp.Services.Files;
 using ClothInventoryApp.Services.Subscription;
 using ClothInventoryApp.Services.Tenant;
 using ClothInventoryApp.Services.Usage;
@@ -8,26 +9,41 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace ClothInventoryApp.Controllers
 {
     [Authorize]
     public class ProductVariantsController : TenantAwareController
     {
+        private const int MaxImagesPerVariant = 12;
+        private const int MaxImagesPerUpload = 5;
+
         private readonly ISubscriptionService _subscriptionService;
         private readonly IUsageTrackingService _usageTrackingService;
+        private readonly IFileStorageService _fileStorageService;
 
-        public ProductVariantsController(AppDbContext context, ITenantProvider tenantProvider, ISubscriptionService subscriptionService, IUsageTrackingService usageTrackingService)
+        public ProductVariantsController(
+            AppDbContext context,
+            ITenantProvider tenantProvider,
+            ISubscriptionService subscriptionService,
+            IUsageTrackingService usageTrackingService,
+            IFileStorageService fileStorageService)
             : base(context, tenantProvider)
         {
             _subscriptionService = subscriptionService;
             _usageTrackingService = usageTrackingService;
+            _fileStorageService = fileStorageService;
         }
 
         public async Task<IActionResult> Index(string? search, int page = 1, int size = 10)
         {
             size = PaginationViewModel.Clamp(size);
-            var query = _context.ProductVariants.Include(v => v.Product).AsQueryable();
+            var tenantId = _tenantProvider.GetTenantId();
+            var query = _context.ProductVariants
+                .Include(v => v.Product)
+                .Include(v => v.Images)
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
                 query = query.Where(v =>
@@ -50,11 +66,23 @@ namespace ClothInventoryApp.Controllers
                     Size = v.Size,
                     Color = v.Color,
                     CostPrice = v.CostPrice,
-                    SellingPrice = v.SellingPrice
+                    SellingPrice = v.SellingPrice,
+                    Images = v.Images
+                        .OrderByDescending(i => i.IsPrimary)
+                        .ThenBy(i => i.SortOrder)
+                        .Select(i => new ProductVariantImageDto
+                        {
+                            Id = i.Id,
+                            ImageUrl = i.ImageUrl,
+                            SortOrder = i.SortOrder,
+                            IsPrimary = i.IsPrimary
+                        })
+                        .ToList()
                 })
                 .ToListAsync();
 
             ViewBag.Search = search;
+            ViewBag.PlanLimitWarnings = await _subscriptionService.BuildPlanLimitWarningsAsync(tenantId);
             ViewBag.Pagination = new PaginationViewModel
             {
                 Page = page, PageSize = size, TotalCount = total,
@@ -92,8 +120,12 @@ namespace ClothInventoryApp.Controllers
                 return View(dto);
             }
 
+            var sku = string.IsNullOrWhiteSpace(dto.SKU)
+                ? await GenerateAutoSkuAsync(tenantId)
+                : dto.SKU.Trim();
+
             var skuExists = await _context.ProductVariants
-                .AnyAsync(v => v.TenantId == tenantId && v.SKU == dto.SKU);
+                .AnyAsync(v => v.TenantId == tenantId && v.SKU == sku);
             if (skuExists)
             {
                 ModelState.AddModelError(nameof(dto.SKU), "This SKU already exists in your workspace.");
@@ -112,15 +144,24 @@ namespace ClothInventoryApp.Controllers
             {
                 ProductId = dto.ProductId,
                 TenantId = tenantId,
-                SKU = dto.SKU,
-                Size = dto.Size,
-                Color = dto.Color,
+                SKU = sku,
+                Size = NormalizeVariantOption(dto.Size),
+                Color = NormalizeVariantOption(dto.Color),
                 CostPrice = dto.CostPrice,
                 SellingPrice = dto.SellingPrice
             };
 
             _context.ProductVariants.Add(variant);
             await _context.SaveChangesAsync();
+
+            try
+            {
+                await SaveVariantImagesAsync(variant.Id, tenantId, dto.Images);
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
 
             TempData["SuccessMsg"]      = this.LocalizeShared("Variant added successfully.");
             TempData["SuccessListUrl"]  = Url.Action("Index", "ProductVariants");
@@ -137,6 +178,7 @@ namespace ClothInventoryApp.Controllers
         {
             var variant = await _context.ProductVariants
                 .Include(v => v.Product)
+                .Include(v => v.Images)
                 .FirstOrDefaultAsync(v => v.Id == id);
 
             if (variant == null)
@@ -151,7 +193,8 @@ namespace ClothInventoryApp.Controllers
                 Size = variant.Size,
                 Color = variant.Color,
                 CostPrice = variant.CostPrice,
-                SellingPrice = variant.SellingPrice
+                SellingPrice = variant.SellingPrice,
+                Images = MapImages(variant.Images)
             };
 
             await LoadProductsDropDown();
@@ -170,8 +213,12 @@ namespace ClothInventoryApp.Controllers
             }
 
             var tenantId = _tenantProvider.GetTenantId();
+            var sku = string.IsNullOrWhiteSpace(dto.SKU)
+                ? await GenerateAutoSkuAsync(tenantId)
+                : dto.SKU.Trim();
+
             var skuExists = await _context.ProductVariants
-                .AnyAsync(v => v.TenantId == tenantId && v.SKU == dto.SKU && v.Id != dto.Id);
+                .AnyAsync(v => v.TenantId == tenantId && v.SKU == sku && v.Id != dto.Id);
             if (skuExists)
             {
                 ModelState.AddModelError(nameof(dto.SKU), "This SKU already exists in your workspace.");
@@ -192,14 +239,23 @@ namespace ClothInventoryApp.Controllers
             }
 
             variant.ProductId = dto.ProductId;
-            variant.SKU = dto.SKU;
-            variant.Size = dto.Size;
-            variant.Color = dto.Color;
+            variant.SKU = sku;
+            variant.Size = NormalizeVariantOption(dto.Size);
+            variant.Color = NormalizeVariantOption(dto.Color);
             variant.CostPrice = dto.CostPrice;
             variant.SellingPrice = dto.SellingPrice;
 
             _context.ProductVariants.Update(variant);
             await _context.SaveChangesAsync();
+
+            try
+            {
+                await SaveVariantImagesAsync(variant.Id, tenantId, dto.NewImages);
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
 
             TempData["SuccessMsg"]      = this.LocalizeShared("Variant updated.");
             TempData["SuccessType"]     = "update";
@@ -213,6 +269,7 @@ namespace ClothInventoryApp.Controllers
         {
             var variant = await _context.ProductVariants
                 .Include(v => v.Product)
+                .Include(v => v.Images)
                 .Where(v => v.Id == id)
                 .Select(v => new ViewProductVariantDto
                 {
@@ -223,7 +280,18 @@ namespace ClothInventoryApp.Controllers
                     Size = v.Size,
                     Color = v.Color,
                     CostPrice = v.CostPrice,
-                    SellingPrice = v.SellingPrice
+                    SellingPrice = v.SellingPrice,
+                    Images = v.Images
+                        .OrderByDescending(i => i.IsPrimary)
+                        .ThenBy(i => i.SortOrder)
+                        .Select(i => new ProductVariantImageDto
+                        {
+                            Id = i.Id,
+                            ImageUrl = i.ImageUrl,
+                            SortOrder = i.SortOrder,
+                            IsPrimary = i.IsPrimary
+                        })
+                        .ToList()
                 })
                 .FirstOrDefaultAsync();
 
@@ -287,6 +355,57 @@ namespace ClothInventoryApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> SetPrimaryImage(Guid imageId)
+        {
+            var image = await _context.ProductVariantImages.FirstOrDefaultAsync(i => i.Id == imageId);
+            if (image == null) return NotFound();
+
+            var images = await _context.ProductVariantImages
+                .Where(i => i.ProductVariantId == image.ProductVariantId)
+                .ToListAsync();
+
+            foreach (var item in images)
+                item.IsPrimary = item.Id == imageId;
+
+            await _context.SaveChangesAsync();
+            TempData["SuccessMsg"] = this.LocalizeShared("Primary image updated.");
+            return RedirectToAction(nameof(Edit), new { id = image.ProductVariantId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RemoveImage(Guid imageId)
+        {
+            var image = await _context.ProductVariantImages.FirstOrDefaultAsync(i => i.Id == imageId);
+            if (image == null) return NotFound();
+
+            var variantId = image.ProductVariantId;
+            var wasPrimary = image.IsPrimary;
+
+            _context.ProductVariantImages.Remove(image);
+            await _context.SaveChangesAsync();
+
+            if (wasPrimary)
+            {
+                var next = await _context.ProductVariantImages
+                    .Where(i => i.ProductVariantId == variantId)
+                    .OrderBy(i => i.SortOrder)
+                    .FirstOrDefaultAsync();
+                if (next != null)
+                {
+                    next.IsPrimary = true;
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            TempData["SuccessMsg"] = this.LocalizeShared("Image removed.");
+            return RedirectToAction(nameof(Edit), new { id = variantId });
+        }
+
         private async Task LoadProductsDropDown()
         {
             var products = await _context.Products
@@ -329,6 +448,90 @@ namespace ClothInventoryApp.Controllers
             }
 
             return (true, null);
+        }
+
+        private async Task SaveVariantImagesAsync(Guid variantId, Guid tenantId, IEnumerable<IFormFile>? files)
+        {
+            var images = files?
+                .Where(f => f != null && f.Length > 0)
+                .ToList() ?? new List<IFormFile>();
+            if (images.Count == 0) return;
+
+            if (images.Count > MaxImagesPerUpload)
+                throw new InvalidOperationException($"Upload up to {MaxImagesPerUpload} images at a time.");
+
+            var existingCount = await _context.ProductVariantImages
+                .CountAsync(i => i.ProductVariantId == variantId);
+            if (existingCount + images.Count > MaxImagesPerVariant)
+                throw new InvalidOperationException($"A variant can have up to {MaxImagesPerVariant} images.");
+
+            var sortOrder = existingCount;
+            var uploadedBy = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            foreach (var file in images)
+            {
+                var uploaded = await _fileStorageService.SaveImageAsync(
+                    file,
+                    UploadCategories.ProductImage,
+                    uploadedBy,
+                    tenantId,
+                    HttpContext.RequestAborted);
+
+                _context.ProductVariantImages.Add(new ProductVariantImage
+                {
+                    TenantId = tenantId,
+                    ProductVariantId = variantId,
+                    ImageUrl = _fileStorageService.GetPublicUrl(uploaded),
+                    SortOrder = sortOrder,
+                    IsPrimary = existingCount == 0 && sortOrder == 0
+                });
+
+                sortOrder++;
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        private static List<ProductVariantImageDto> MapImages(IEnumerable<ProductVariantImage> images)
+        {
+            return images
+                .OrderByDescending(i => i.IsPrimary)
+                .ThenBy(i => i.SortOrder)
+                .Select(i => new ProductVariantImageDto
+                {
+                    Id = i.Id,
+                    ImageUrl = i.ImageUrl,
+                    SortOrder = i.SortOrder,
+                    IsPrimary = i.IsPrimary
+                })
+                .ToList();
+        }
+
+        private async Task<string> GenerateAutoSkuAsync(Guid tenantId)
+        {
+            var next = await _context.ProductVariants
+                .IgnoreQueryFilters()
+                .Where(v => v.TenantId == tenantId)
+                .CountAsync() + 1;
+
+            while (true)
+            {
+                var sku = $"AUTO-{next:D6}";
+                var exists = await _context.ProductVariants
+                    .IgnoreQueryFilters()
+                    .AnyAsync(v => v.TenantId == tenantId && v.SKU == sku);
+
+                if (!exists)
+                    return sku;
+
+                next++;
+            }
+        }
+
+        private static string NormalizeVariantOption(string? value)
+        {
+            var trimmed = value?.Trim();
+            return string.IsNullOrWhiteSpace(trimmed) ? "Default" : trimmed;
         }
     }
 }

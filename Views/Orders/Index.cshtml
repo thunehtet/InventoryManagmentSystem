@@ -1,0 +1,145 @@
+@using ClothInventoryApp.Dto.Order
+@model IEnumerable<OrderListItemDto>
+@{
+    ViewData["Title"] = Localizer["E-commerce Orders"];
+    var currency       = ViewData["Currency"] as string ?? "";
+    var pg             = ViewBag.Pagination as ClothInventoryApp.Models.PaginationViewModel;
+    var statusCounts   = ViewBag.StatusCounts as Dictionary<string, int> ?? new();
+    var activeStatus   = ViewBag.StatusFilter as string;
+
+    int CountFor(string s) => statusCounts.TryGetValue(s, out var v) ? v : 0;
+    string StatusBadge(string s) => s switch
+    {
+        "Pending"   => "order-badge order-badge--pending",
+        "Confirmed" => "order-badge order-badge--confirmed",
+        "Shipped"   => "order-badge order-badge--shipped",
+        "Delivered" => "order-badge order-badge--delivered",
+        "Cancelled" => "order-badge order-badge--cancelled",
+        _ => "order-badge"
+    };
+}
+
+<div class="product-index-shell">
+    <div class="product-hero">
+        <div class="product-hero-content">
+            <div class="hero-kicker">
+                <i class="bi bi-bag-heart-fill"></i>
+                <span>@Localizer["E-commerce"]</span>
+            </div>
+            <h1>@Localizer["E-commerce Orders"]</h1>
+            <p>@Localizer["Manage orders placed through your public online shop."]</p>
+        </div>
+        <div class="product-hero-side">
+            <div class="hero-stat-card">
+                <div class="hero-stat-icon"><i class="bi bi-receipt-cutoff"></i></div>
+                <div class="hero-stat-title">@Localizer["Total Orders"]</div>
+                <div class="hero-stat-text">@(pg?.TotalCount ?? 0)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="order-status-tabs">
+        <a href="@Url.Action("Index", new { size = pg?.PageSize ?? 10, search = ViewBag.Search })"
+           class="order-status-tab @(string.IsNullOrEmpty(activeStatus) ? "is-active" : "")">
+            @Localizer["All"] <span>@(pg?.TotalCount ?? 0)</span>
+        </a>
+        @foreach (var s in new[] { "Pending", "Confirmed", "Shipped", "Delivered", "Cancelled" })
+        {
+            <a href="@Url.Action("Index", new { status = s, size = pg?.PageSize ?? 10, search = ViewBag.Search })"
+               class="order-status-tab @(activeStatus == s ? "is-active" : "")">
+                @Localizer[s] <span>@CountFor(s)</span>
+            </a>
+        }
+    </div>
+
+    <div class="list-filter-bar">
+        <form method="get" asp-action="Index" class="filter-form">
+            @if (pg != null) { <input type="hidden" name="size" value="@pg.PageSize" /> }
+            @if (!string.IsNullOrEmpty(activeStatus)) { <input type="hidden" name="status" value="@activeStatus" /> }
+            <div class="filter-search-wrap">
+                <i class="bi bi-search filter-search-icon"></i>
+                <input type="text" name="search" value="@ViewBag.Search"
+                       class="filter-search-input" placeholder="@Localizer["Order #, customer name, or phone..."]" autocomplete="off" />
+                @if (!string.IsNullOrWhiteSpace(ViewBag.Search as string))
+                {
+                    <a href="@Url.Action("Index", new { status = activeStatus, size = pg?.PageSize ?? 10 })" class="filter-clear-btn" title="@Localizer["Clear"]">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </a>
+                }
+            </div>
+            <button type="submit" class="filter-search-btn">
+                <i class="bi bi-search"></i> @Localizer["Search"]
+            </button>
+        </form>
+    </div>
+
+    <div class="product-table-card">
+        <div class="table-responsive-modern">
+            <table class="table-modern">
+                <thead>
+                    <tr>
+                        <th>@Localizer["Order #"]</th>
+                        <th>@Localizer["Customer"]</th>
+                        <th>@Localizer["Items"]</th>
+                        <th>@Localizer["Total"]</th>
+                        <th>@Localizer["Status"]</th>
+                        <th>@Localizer["Payment"]</th>
+                        <th>@Localizer["Placed"]</th>
+                        <th>@Localizer["Actions"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="8" class="empty-state">
+                                <i class="bi bi-inbox"></i>
+                                <div>@Localizer["No orders yet."]</div>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var o in Model)
+                        {
+                            <tr>
+                                <td class="fw-semibold">
+                                    <a asp-action="Details" asp-route-id="@o.Id" class="link-inline-primary">@o.OrderNumber</a>
+                                </td>
+                                <td>
+                                    <div>@o.CustomerName</div>
+                                    <small class="text-muted">@o.CustomerPhone</small>
+                                </td>
+                                <td>@o.ItemCount</td>
+                                <td class="fw-semibold">@o.TotalAmount.ToString("N0") @currency</td>
+                                <td><span class="@StatusBadge(o.Status)">@Localizer[o.Status]</span></td>
+                                <td>
+                                    @if (o.PaymentStatus == "Paid")
+                                    {
+                                        <span class="order-badge order-badge--paid">@Localizer["Paid"]</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="order-badge order-badge--unpaid">@Localizer["Unpaid"]</span>
+                                    }
+                                </td>
+                                <td class="text-muted table-cell-sm">@o.CreatedAt.ToLocalTime().ToString("dd MMM yyyy HH:mm")</td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a asp-action="Details" asp-route-id="@o.Id" class="action-btn action-btn-view" title="@Localizer["Details"]"><i class="bi bi-eye-fill"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (pg != null) { @await Html.PartialAsync("_Pagination", pg) }
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/product-index.css" />
+    <link rel="stylesheet" href="~/css/pages/orders.css" asp-append-version="true" />
+}

@@ -19,10 +19,63 @@ namespace ClothInventoryApp.Data
 
             await SeedSuperAdminAsync(context, userManager);
             await SeedPlansAndFeaturesAsync(context);   // always runs — idempotent
+            await SeedStorefrontFeatureAsync(context);  // idempotent - applies to existing installs
 
             // Demo data only in development
             if (env.IsDevelopment())
                 await SeedDemoDataAsync(context, userManager);
+        }
+
+        // Idempotent: adds/renames the 'storefront' feature on existing installations.
+        private static async Task SeedStorefrontFeatureAsync(AppDbContext context)
+        {
+            const string featureCode = "storefront";
+
+            var feature = await context.Features
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(f => f.Code == featureCode);
+
+            if (feature == null)
+            {
+                feature = new Feature
+                {
+                    Code = featureCode,
+                    Name = "E-commerce",
+                    Description = "Public online shop with cart and checkout so customers can place orders online",
+                    IsActive = true
+                };
+                context.Features.Add(feature);
+                await context.SaveChangesAsync();
+            }
+            else if (feature.Name != "E-commerce")
+            {
+                feature.Name = "E-commerce";
+                feature.Description = "Public online shop with cart and checkout so customers can place orders online";
+                await context.SaveChangesAsync();
+            }
+
+            // Grant to Pro plan by default (idempotent per-plan)
+            var proPlan = await context.Plans
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(p => p.Code == "PRO");
+
+            if (proPlan != null)
+            {
+                var exists = await context.PlanFeatures
+                    .IgnoreQueryFilters()
+                    .AnyAsync(pf => pf.PlanId == proPlan.Id && pf.FeatureId == feature.Id);
+
+                if (!exists)
+                {
+                    context.PlanFeatures.Add(new PlanFeature
+                    {
+                        PlanId = proPlan.Id,
+                        FeatureId = feature.Id,
+                        IsEnabled = true
+                    });
+                    await context.SaveChangesAsync();
+                }
+            }
         }
 
         // ── Always runs — creates the System tenant + SuperAdmin user ─
@@ -112,7 +165,8 @@ namespace ClothInventoryApp.Data
             var featDashboard  = new Feature { Code = "dashboard",    Name = "Dashboard & Analytics", Description = "Sales trends, profit charts and stock analytics",      IsActive = true };
             var featFinance    = new Feature { Code = "finance",      Name = "Finance Dashboard",   Description = "Cash flow, profit charts, expense tracking",             IsActive = true };
             var featTextiles   = new Feature { Code = "textiles",     Name = "Textile / Materials", Description = "Raw material purchase tracking",                        IsActive = true };
-            context.Features.AddRange(featSales, featSaleProfit, featCustomers, featDashboard, featFinance, featTextiles);
+            var featStorefront = new Feature { Code = "storefront",   Name = "E-commerce", Description = "Public online shop with cart and checkout so customers can place orders online", IsActive = true };
+            context.Features.AddRange(featSales, featSaleProfit, featCustomers, featDashboard, featFinance, featTextiles, featStorefront);
             await context.SaveChangesAsync();
 
             // ── Plan → Feature mapping ────────────────────────────────────
@@ -133,7 +187,8 @@ namespace ClothInventoryApp.Data
                 new PlanFeature { PlanId = planPro.Id, FeatureId = featCustomers.Id,  IsEnabled = true },
                 new PlanFeature { PlanId = planPro.Id, FeatureId = featDashboard.Id,  IsEnabled = true },
                 new PlanFeature { PlanId = planPro.Id, FeatureId = featFinance.Id,    IsEnabled = true },
-                new PlanFeature { PlanId = planPro.Id, FeatureId = featTextiles.Id,   IsEnabled = true }
+                new PlanFeature { PlanId = planPro.Id, FeatureId = featTextiles.Id,   IsEnabled = true },
+                new PlanFeature { PlanId = planPro.Id, FeatureId = featStorefront.Id, IsEnabled = true }
             );
             await context.SaveChangesAsync();
         }

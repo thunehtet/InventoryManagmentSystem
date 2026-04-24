@@ -48,7 +48,7 @@
             @if (saleMax.HasValue)
             {
                 <span class="sa-usage-pill @(saleUsed >= saleMax.Value ? "sa-usage-pill--warn" : "")">
-                    @saleUsed / @saleMax @Localizer["sales this month"]
+                    @saleUsed / @saleMax @Localizer["Sales this month"]
                 </span>
             }
         </div>
@@ -112,37 +112,23 @@
             <!-- Hidden inputs populated by JS before submit -->
             <div id="hiddenInputs"></div>
 
-            <!-- Totals -->
-            <div class="sc-totals">
-                <div class="sc-total-row">
-                    <span class="sc-total-label">@Localizer["Subtotal"]</span>
-                    <span class="sc-total-val" id="sumRevenue">0</span>
-                </div>
-                <div class="sc-total-row sc-hidden" id="discountRow">
-                    <span class="sc-total-label">@Localizer["Discount"]</span>
-                    <span class="sc-total-val sc-cost" id="sumDiscount">0</span>
-                </div>
-                @if (!isStaff)
-                {
-                    <div class="sc-total-row">
-                        <span class="sc-total-label">@Localizer["Cost"]</span>
-                        <span class="sc-total-val sc-cost" id="sumCost">0</span>
-                    </div>
-                }
-                @if (!isStaff)
-                {
-                <div class="sc-total-row sc-profit-row">
-                    <span class="sc-total-label">@Localizer["Profit"]</span>
-                    <span class="sc-total-val sc-profit" id="sumProfit">0</span>
-                </div>
-                }
-            </div>
-
             <!-- Discount (optional) -->
             <div class="sc-field-group sc-discount-group">
                 <label class="sc-label">@Localizer["Discount"] <span class="text-muted small">(@Localizer["optional"])</span></label>
                 <input name="Discount" id="discountInput" type="number" min="0" class="sc-input"
                        placeholder="@Localizer["Enter discount amount (0 = no discount)"]" value="0" />
+            </div>
+
+            <!-- Totals -->
+            <div class="sc-totals">
+                <div class="sc-total-row sc-hidden" id="discountRow">
+                    <span class="sc-total-label">@Localizer["Discount"]</span>
+                    <span class="sc-total-val sc-cost" id="sumDiscount">0</span>
+                </div>
+                <div class="sc-total-row sc-profit-row">
+                    <span class="sc-total-label">@Localizer["Total"]</span>
+                    <span class="sc-total-val" id="sumRevenue">0</span>
+                </div>
             </div>
 
             <!-- Actions -->

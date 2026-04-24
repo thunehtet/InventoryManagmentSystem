@@ -516,6 +516,40 @@ namespace ClothInventoryApp.Migrations
                     b.ToTable("PlanFeatures");
                 });
 
+            modelBuilder.Entity("ClothInventoryApp.Models.ProductVariantImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<Guid>("ProductVariantId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductVariantId");
+
+                    b.HasIndex("TenantId", "ProductVariantId", "SortOrder");
+
+                    b.ToTable("ProductVariantImages");
+                });
+
             modelBuilder.Entity("ClothInventoryApp.Models.Sale", b =>
                 {
                     b.Property<Guid>("Id")
@@ -611,6 +645,167 @@ namespace ClothInventoryApp.Migrations
                     b.HasIndex("TenantId");
 
                     b.ToTable("SaleItems");
+                });
+
+            modelBuilder.Entity("ClothInventoryApp.Models.ShopOrder", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime?>("CancelledAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("ConfirmedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("CustomerEmail")
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<Guid?>("CustomerId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("CustomerNotes")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("CustomerPhone")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)");
+
+                    b.Property<DateTime?>("DeliveredAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Discount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("InternalNotes")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("OrderNumber")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)");
+
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<string>("PublicToken")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)");
+
+                    b.Property<Guid?>("SaleId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime?>("ShippedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("ShippingAddress")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<int>("ShippingFee")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<int>("Subtotal")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("TotalAmount")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("PublicToken")
+                        .IsUnique();
+
+                    b.HasIndex("SaleId");
+
+                    b.HasIndex("TenantId", "OrderNumber")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "Status", "CreatedAt");
+
+                    b.ToTable("ShopOrders");
+                });
+
+            modelBuilder.Entity("ClothInventoryApp.Models.ShopOrderItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("LineTotal")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductColorSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ProductNameSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ProductSizeSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ProductSkuSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<Guid?>("ProductVariantId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ShopOrderId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("UnitPrice")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductVariantId");
+
+                    b.HasIndex("ShopOrderId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("ShopOrderItems");
                 });
 
             modelBuilder.Entity("ClothInventoryApp.Models.SubscriptionPaymentRequest", b =>
@@ -941,6 +1136,20 @@ namespace ClothInventoryApp.Migrations
 
                     b.Property<bool>("StaffCanSeeVariants")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("StorefrontDescription")
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<bool>("StorefrontEnabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int?>("StorefrontShippingFee")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StorefrontTagline")
+                        .HasMaxLength(150)
+                        .HasColumnType("varchar(150)");
 
                     b.Property<Guid>("TenantId")
                         .HasColumnType("char(36)");
@@ -1341,6 +1550,12 @@ namespace ClothInventoryApp.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("longtext");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)");
 
@@ -1542,6 +1757,25 @@ namespace ClothInventoryApp.Migrations
                     b.Navigation("Plan");
                 });
 
+            modelBuilder.Entity("ClothInventoryApp.Models.ProductVariantImage", b =>
+                {
+                    b.HasOne("ProductVariant", "ProductVariant")
+                        .WithMany("Images")
+                        .HasForeignKey("ProductVariantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ClothInventoryApp.Models.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProductVariant");
+
+                    b.Navigation("Tenant");
+                });
+
             modelBuilder.Entity("ClothInventoryApp.Models.Sale", b =>
                 {
                     b.HasOne("ClothInventoryApp.Models.Customer", "Customer")
@@ -1582,6 +1816,57 @@ namespace ClothInventoryApp.Migrations
                     b.Navigation("ProductVariant");
 
                     b.Navigation("Sale");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("ClothInventoryApp.Models.ShopOrder", b =>
+                {
+                    b.HasOne("ClothInventoryApp.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ClothInventoryApp.Models.Sale", "Sale")
+                        .WithMany()
+                        .HasForeignKey("SaleId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ClothInventoryApp.Models.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Sale");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("ClothInventoryApp.Models.ShopOrderItem", b =>
+                {
+                    b.HasOne("ProductVariant", "ProductVariant")
+                        .WithMany()
+                        .HasForeignKey("ProductVariantId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ClothInventoryApp.Models.ShopOrder", "ShopOrder")
+                        .WithMany("Items")
+                        .HasForeignKey("ShopOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ClothInventoryApp.Models.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProductVariant");
+
+                    b.Navigation("ShopOrder");
 
                     b.Navigation("Tenant");
                 });
@@ -1903,6 +2188,11 @@ namespace ClothInventoryApp.Migrations
                     b.Navigation("Items");
                 });
 
+            modelBuilder.Entity("ClothInventoryApp.Models.ShopOrder", b =>
+                {
+                    b.Navigation("Items");
+                });
+
             modelBuilder.Entity("ClothInventoryApp.Models.Tenant", b =>
                 {
                     b.Navigation("FeatureOverrides");
@@ -1921,6 +2211,8 @@ namespace ClothInventoryApp.Migrations
 
             modelBuilder.Entity("ProductVariant", b =>
                 {
+                    b.Navigation("Images");
+
                     b.Navigation("SaleItems");
 
                     b.Navigation("StockMovements");

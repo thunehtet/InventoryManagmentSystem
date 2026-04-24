@@ -1,0 +1,115 @@
+@model ClothInventoryApp.Models.ShopOrder
+@{
+    Layout = "_ShopLayout";
+    ViewBag.Title = Localizer["Order {0}", Model.OrderNumber].Value;
+    var tenantCode = ViewBag.TenantCode as string ?? "";
+    var currency = ViewBag.Currency as string ?? "";
+
+    var statusLabel = Model.Status switch
+    {
+        "Pending" => Localizer["Received - awaiting shop confirmation"].Value,
+        "Confirmed" => Localizer["Confirmed - preparing your order"].Value,
+        "Shipped" => Localizer["On the way"].Value,
+        "Delivered" => Localizer["Delivered"].Value,
+        "Cancelled" => Localizer["Cancelled"].Value,
+        _ => Model.Status
+    };
+
+    var statusClass = Model.Status switch
+    {
+        "Pending" => "shop-status--pending",
+        "Confirmed" => "shop-status--confirmed",
+        "Shipped" => "shop-status--shipped",
+        "Delivered" => "shop-status--delivered",
+        "Cancelled" => "shop-status--cancelled",
+        _ => ""
+    };
+}
+
+<section class="shop-container shop-order-page">
+    <div class="shop-order-success">
+        <div class="shop-order-check"><i class="bi bi-check-circle-fill"></i></div>
+        <h1>@Localizer["Thank you! Your order is received."]</h1>
+        <p class="shop-order-num">@Localizer["Order"] <strong>@Model.OrderNumber</strong></p>
+        <div class="shop-order-status @statusClass">
+            <span>@statusLabel</span>
+        </div>
+        <p class="shop-order-note">
+            @Localizer["Bookmark this page to check your order status anytime."]
+        </p>
+    </div>
+
+    <div class="shop-order-grid">
+        <div class="shop-order-card">
+            <h3>@Localizer["Delivery details"]</h3>
+            <dl>
+                <dt>@Localizer["Name"]</dt><dd>@Model.CustomerName</dd>
+                <dt>@Localizer["Phone"]</dt><dd>@Model.CustomerPhone</dd>
+                @if (!string.IsNullOrWhiteSpace(Model.CustomerEmail))
+                {
+                    <dt>@Localizer["Email"]</dt><dd>@Model.CustomerEmail</dd>
+                }
+                <dt>@Localizer["Address"]</dt><dd>@Model.ShippingAddress</dd>
+                @if (!string.IsNullOrWhiteSpace(Model.CustomerNotes))
+                {
+                    <dt>@Localizer["Notes"]</dt><dd>@Model.CustomerNotes</dd>
+                }
+            </dl>
+        </div>
+
+        <div class="shop-order-card">
+            <h3>@Localizer["Items"]</h3>
+            <ul class="shop-summary-items">
+                @foreach (var item in Model.Items)
+                {
+                    var color = DisplayOption(item.ProductColorSnapshot);
+                    var size = DisplayOption(item.ProductSizeSnapshot);
+                    <li>
+                        <span class="shop-summary-qty">@item.Quantity x</span>
+                        <span class="shop-summary-name">@item.ProductNameSnapshot
+                            @if (!string.IsNullOrWhiteSpace(color) || !string.IsNullOrWhiteSpace(size))
+                            {
+                                <small>(@color @size)</small>
+                            }
+                        </span>
+                        <span class="shop-summary-amt">@currency @item.LineTotal</span>
+                    </li>
+                }
+            </ul>
+            <div class="shop-summary-row">
+                <span>@Localizer["Subtotal"]</span>
+                <span>@currency @Model.Subtotal</span>
+            </div>
+            @if (Model.ShippingFee > 0)
+            {
+                <div class="shop-summary-row">
+                    <span>@Localizer["Shipping"]</span>
+                    <span>@currency @Model.ShippingFee</span>
+                </div>
+            }
+            <div class="shop-summary-row shop-summary-total">
+                <span>@Localizer["Total"]</span>
+                <span>@currency @Model.TotalAmount</span>
+            </div>
+            <div class="shop-summary-row">
+                <span>@Localizer["Payment"]</span>
+                <span>@Model.PaymentStatus</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="shop-order-actions">
+        <a class="shop-btn shop-btn--primary" href="/shop/@tenantCode/products">@Localizer["Continue shopping"]</a>
+    </div>
+</section>
+
+@functions {
+    private static string DisplayOption(string? value)
+    {
+        var trimmed = value?.Trim();
+        return string.IsNullOrWhiteSpace(trimmed) ||
+            string.Equals(trimmed, "Default", StringComparison.OrdinalIgnoreCase)
+                ? string.Empty
+                : trimmed;
+    }
+}

@@ -74,7 +74,8 @@ namespace ClothInventoryApp.Controllers
                 return View(nameof(Index), dto);
             }
 
-            var normalizedEmail = NormalizeEmail(dto.Email);
+            var email = dto.Email.Trim();
+            var normalizedEmail = NormalizeEmail(email);
             if (await EmailAlreadyExistsAsync(normalizedEmail))
             {
                 ModelState.AddModelError(nameof(dto.Email), "This email is already registered.");
@@ -82,7 +83,7 @@ namespace ClothInventoryApp.Controllers
             }
 
             var hasPendingInquiry = await _db.ContactInquiries.AnyAsync(x =>
-                x.Email == normalizedEmail &&
+                x.Email.ToUpper() == normalizedEmail &&
                 x.Status == "Pending");
 
             if (hasPendingInquiry)
@@ -96,7 +97,7 @@ namespace ClothInventoryApp.Controllers
                 BusinessName = dto.BusinessName.Trim(),
                 BusinessType = dto.BusinessType.Trim(),
                 Name = dto.FullName.Trim(),
-                Email = normalizedEmail,
+                Email = email,
                 Phone = dto.Phone?.Trim(),
                 Message = "Landing page free account inquiry.",
                 Status = "Pending",

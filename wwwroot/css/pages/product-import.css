@@ -1,0 +1,228 @@
+.product-import-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding: 24px;
+}
+
+.product-import-hero {
+    overflow: hidden;
+    position: relative;
+    border-radius: 22px;
+    padding: 32px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #0f766e 0%, #0f172a 100%);
+    box-shadow: 0 20px 48px rgba(15, 118, 110, 0.22);
+}
+
+.product-import-hero::after {
+    content: "";
+    position: absolute;
+    right: -70px;
+    top: -80px;
+    width: 260px;
+    height: 260px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.product-import-hero-copy {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+}
+
+.product-import-hero h1 {
+    margin: 0 0 10px;
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.product-import-hero p {
+    max-width: 620px;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.65;
+}
+
+.product-import-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 22px;
+}
+
+.product-import-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 18px;
+    align-items: start;
+}
+
+.product-import-card {
+    border: 1px solid rgba(15, 23, 42, 0.07);
+    border-radius: 20px;
+    background: #ffffff;
+    padding: 24px;
+    box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
+}
+
+.product-import-card-header {
+    margin-bottom: 18px;
+}
+
+.product-import-card-header h3 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+.product-import-card-header p {
+    margin: 5px 0 0;
+    color: #64748b;
+    line-height: 1.55;
+}
+
+.product-import-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.product-import-dropzone {
+    display: flex;
+    min-height: 180px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    border: 2px dashed #99f6e4;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #f0fdfa, #f8fafc);
+    color: #0f766e;
+    cursor: pointer;
+    text-align: center;
+}
+
+.product-import-dropzone i {
+    font-size: 2.4rem;
+}
+
+.product-import-dropzone span {
+    font-weight: 800;
+}
+
+.product-import-dropzone input {
+    max-width: min(100%, 320px);
+    color: #0f172a;
+}
+
+.product-import-submit {
+    justify-content: center;
+}
+
+.product-import-column-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.product-import-column-list span {
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #ecfeff;
+    color: #0e7490;
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+.product-import-note {
+    margin: 18px 0 0;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+.product-import-results-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.product-import-stats {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.product-import-stats div {
+    padding: 16px;
+    border-radius: 16px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.product-import-stats strong {
+    display: block;
+    color: #0f172a;
+    font-size: 1.35rem;
+    line-height: 1;
+}
+
+.product-import-stats span {
+    display: block;
+    margin-top: 6px;
+    color: #64748b;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.product-import-table-wrap {
+    overflow-x: auto;
+}
+
+.product-import-table {
+    min-width: 760px;
+}
+
+@media (max-width: 980px) {
+    .product-import-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .product-import-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 720px) {
+    .product-import-shell {
+        padding: 0;
+        gap: 16px;
+    }
+
+    .product-import-hero,
+    .product-import-card {
+        border-radius: 16px;
+        padding: 18px;
+    }
+
+    .product-import-actions,
+    .product-import-results-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .product-import-actions a,
+    .product-import-results-header a {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .product-import-stats {
+        grid-template-columns: 1fr;
+    }
+}

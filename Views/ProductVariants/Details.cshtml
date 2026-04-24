@@ -86,6 +86,36 @@
                     Back
                 </a>
             </div>
+
+            <div class="section-header mt-4">
+                <div>
+                    <h3>Variant images</h3>
+                    <p>Images used by the public e-commerce storefront.</p>
+                </div>
+            </div>
+
+            @if (Model.Images.Count == 0)
+            {
+                <div class="empty-state">
+                    <i class="bi bi-images"></i>
+                    <div>No images uploaded for this variant.</div>
+                </div>
+            }
+            else
+            {
+                <div class="variant-image-admin-grid">
+                    @foreach (var image in Model.Images)
+                    {
+                        <div class="variant-image-admin-card">
+                            <img src="@image.ImageUrl" alt="@Model.SKU" />
+                            @if (image.IsPrimary)
+                            {
+                                <span class="variant-image-badge">Primary</span>
+                            }
+                        </div>
+                    }
+                </div>
+            }
         </div>
     </div>
 </div>

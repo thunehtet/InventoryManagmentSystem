@@ -7,6 +7,7 @@ namespace ClothInventoryApp.Services.Subscription
     public class SubscriptionService : ISubscriptionService
     {
         private readonly AppDbContext _context;
+        private const int NoPlanLimit = 0;
 
         public SubscriptionService(AppDbContext context) => _context = context;
 
@@ -39,7 +40,7 @@ namespace ClothInventoryApp.Services.Subscription
             var plan = await GetActivePlanAsync(tenantId);
             var current = await _context.Users
                 .CountAsync(u => u.TenantId == tenantId && !u.IsSuperAdmin);
-            return (current, plan?.MaxUsers);
+            return (current, plan == null ? NoPlanLimit : plan.MaxUsers);
         }
 
         public async Task<(int Current, int? Max)> GetProductLimitAsync(Guid tenantId)
@@ -48,7 +49,7 @@ namespace ClothInventoryApp.Services.Subscription
             var current = await _context.Products
                 .Where(p => p.TenantId == tenantId)
                 .CountAsync();
-            return (current, plan?.MaxProducts);
+            return (current, plan == null ? NoPlanLimit : plan.MaxProducts);
         }
 
         public async Task<(int Current, int? Max)> GetVariantLimitAsync(Guid tenantId)
@@ -57,7 +58,7 @@ namespace ClothInventoryApp.Services.Subscription
             var current = await _context.ProductVariants
                 .Where(v => v.TenantId == tenantId)
                 .CountAsync();
-            return (current, plan?.MaxVariants);
+            return (current, plan == null ? NoPlanLimit : plan.MaxVariants);
         }
 
         public async Task<bool> CanAddUserAsync(Guid tenantId)
@@ -90,7 +91,7 @@ namespace ClothInventoryApp.Services.Subscription
                 .CountAsync(s => s.TenantId == tenantId
                               && s.SaleDate >= monthStart
                               && s.SaleDate < monthEnd);
-            return (current, plan?.MaxMonthlySales);
+            return (current, plan == null ? NoPlanLimit : plan.MaxMonthlySales);
         }
 
         public async Task<bool> CanCreateSaleAsync(Guid tenantId)
@@ -112,7 +113,10 @@ namespace ClothInventoryApp.Services.Subscription
         public async Task<(int Used, int? Max)> GetFeatureUsageAsync(Guid tenantId, string feature)
         {
             var plan = await GetActivePlanAsync(tenantId);
-            var max  = plan == null ? null : GetPlanLimitForFeature(plan, feature);
+            if (plan == null)
+                return (0, NoPlanLimit);
+
+            var max  = GetPlanLimitForFeature(plan, feature);
 
             var yearMonth = DateTime.UtcNow.ToString("yyyy-MM");
             var row = await _context.TenantFeatureUsages

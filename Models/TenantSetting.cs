@@ -40,6 +40,17 @@ namespace ClothInventoryApp.Models
         public bool StaffCanSeeSales { get; set; } = true;
         public bool StaffCanSeeCustomers { get; set; } = true;
 
+        // E-commerce settings - only used when the 'storefront' feature code is enabled.
+        public bool StorefrontEnabled { get; set; } = false;
+
+        [MaxLength(150)]
+        public string? StorefrontTagline { get; set; }
+
+        [MaxLength(1000)]
+        public string? StorefrontDescription { get; set; }
+
+        public int? StorefrontShippingFee { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
     }

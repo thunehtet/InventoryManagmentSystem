@@ -1,0 +1,217 @@
+30-Day Actions
+30-Day Logins
+Action
+Active in 30 Days
+active in last 30 days
+Active subscriptions by plan
+Active Tenants
+Active tenants with no recent usage
+Active Users
+Add a product variant with optional internal code, size, color, and pricing information.
+Add more variant images
+Address
+Admin
+Advanced Product
+Amount
+Apply
+Auto internal code
+Bulk Import
+Cancel Order
+Cancel this order? Stock will be returned to inventory and the Sale record (if any) will be removed.
+Cancelled
+Cancelled orders cannot be marked as paid.
+Choose .xlsx file
+Choose a new password for your account.
+Code
+Confirm Cancellation
+Confirm Order
+Confirm this order? A Sale record will be created and linked.
+Confirmed
+Core tenant profile and status
+Create a product, hidden default variant, opening stock, and storefront photo in one step. Best for shops that do not use SKU or size/color options yet.
+Create products, variants, and opening stock from one standard .xlsx file. Invalid rows are skipped and reported.
+Create Ready-to-Sell Product
+Customer friendly
+Customer notes
+Customers can browse products, add to cart, and place orders online.
+Customers will see a normal product page without SKU or technical variant details.
+Daily activity for the last 30 days
+Daily Breakdown
+Delete Sale
+Delivered
+Delivered orders cannot be cancelled.
+Delivery details
+Details
+Dormant Tenants
+Download Template
+e.g. Customer changed mind
+e.g. Everyday wear, delivered fast
+e.g. Floral Long Dress
+Each row creates one sellable variant. Empty SKU is auto-generated.
+E-commerce
+E-commerce is not included in your active plan. Upgrade or ask SuperAdmin to enable this feature before using the public shop link.
+E-commerce Orders
+Email
+Enable the public shop and save settings to generate the shop link.
+Enable your public shop and control the text shown to customers.
+Error
+Failed to cancel the order. Please try again.
+Failed to confirm the order. Please try again.
+Failed to mark delivery. Please try again.
+Failed to mark order as paid. Please try again.
+Fast Storefront Setup
+For simple products, leave Color and Size empty. The system will create a hidden default variant.
+Free
+Hidden default variant
+If the email exists in StockEasy, a password reset link will be sent shortly. Please check your inbox and spam folder.
+Image
+Image removed.
+Import Excel
+Import Products
+Import products from Excel
+Import result
+Imported
+In Stock
+Individual Sales
+Internal notes
+invite links this month
+Joined
+Last 7 Days
+Last Activity
+Last Month
+Latest actions from this workspace
+Latest registered workspaces
+Latest tracked actions from tenant users
+Leave blank to auto-generate
+Line Total
+Login and activity summary by user
+Logins
+Low Stock Alert
+Manage orders placed through your public online shop.
+Mark as Delivered
+Mark as delivered? Payment will be recorded automatically.
+Mark as Paid
+Mark as Shipped
+Message
+Month
+Most active workspaces over the last 30 days
+Multi-tenant
+No active subscriptions.
+No activity for 7+ days
+No activity recorded yet.
+No dormant tenants right now.
+No images uploaded for this variant yet.
+No orders yet.
+No sales in this period.
+No tenants yet.
+No usage data yet.
+Notes saved.
+Notes visible only to your staff
+Only confirmed orders can be marked as shipped.
+Only pending orders can be confirmed.
+Only the fields needed to start selling online.
+Opening stock
+Optional JPG/PNG photo. You can add more variant images later.
+Optional, e.g. Black
+Optional, e.g. Dress
+Optional, e.g. M
+Optional, e.g. Own Brand
+Order
+Order #
+Order #, customer name, or phone...
+Order cancelled and stock restored.
+Order confirmed.
+Order marked as delivered.
+Order marked as shipped.
+Overrides
+Paid
+Password reset complete
+Password Updated
+Payment
+Payment recorded.
+Phone
+Placed
+Plan
+Plan Distribution
+Plan limit notice
+Platform Snapshot
+Platform-wide overview of tenants, user activity, and operational usage.
+Primary
+Primary image is used on the e-commerce product card, product page, and cart.
+Primary image updated.
+Product '{0}' is ready for storefront sales.
+Public shop enabled
+Quick
+Quick Create
+Quick create product
+Reason (optional, visible only to staff):
+Receipt
+Recent Activity
+Recent Tenants
+Remove
+Remove this image?
+Required columns
+Reset Password
+Revenue and profit summary for a selected period.
+Review imported and skipped rows below.
+Row
+Sale deleted.
+Sales Report
+Save notes
+Sell Online
+Set a new password
+Set Primary
+Settings saved. E-commerce was not enabled because it is not included in your active plan.
+Shipped
+Shipping
+Shop Link
+Short introduction for your online shop
+Skipped
+Staff
+Stock rows
+Storefront product
+Successful sign-ins
+Successful tenant logins
+Tenant
+Tenant Overrides
+Tenant Usage
+This Month
+This order cannot be marked as delivered from its current status.
+This order is already cancelled.
+This order is already marked as paid.
+This Year
+Threshold
+Timeline
+Today's Actions
+Today's Logins
+Top Tenant Usage
+Total
+Total Discount
+Total Orders
+Total Tenants
+Total Users
+Tracked business actions
+Unknown User
+Unpaid
+Upgrade to unlock unlimited
+Upload Excel file
+Upload JPG/PNG images for this exact variant.
+Upload one or more JPG/PNG images for this exact color/size variant. The first image becomes primary.
+Usage
+Usage summary, user activity, and 30-day trend for this workspace.
+Usage Trend
+Use advanced product and variants when the same product has customer choices such as Black/White or S/M/L.
+Use the template columns exactly. Only .xlsx files are supported in this first version.
+Variant images
+View All Tenants
+View Sale
+View upgrade options
+What the system creates
+When to use advanced
+Workspace Info
+Year
+You can now sign in with your new password.
+You have used all {0} free customer invite links this month.
+You have used all {0} free invite links this month. Upgrade to create more.
+You have used all {0} free PDF invoice downloads this month.
+You have used all {0} PDF downloads this month. Upgrade to unlock unlimited.

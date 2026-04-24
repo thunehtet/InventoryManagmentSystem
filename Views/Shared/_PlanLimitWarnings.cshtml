@@ -1,0 +1,25 @@
+@model IEnumerable<ClothInventoryApp.Dto.Subscription.PlanLimitWarningDto>
+
+@{
+    var warnings = Model?.ToList() ?? new List<ClothInventoryApp.Dto.Subscription.PlanLimitWarningDto>();
+}
+
+@if (warnings.Count > 0)
+{
+    <div class="plan-limit-warning-panel" role="alert">
+        <div class="plan-limit-warning-icon">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+        <div class="plan-limit-warning-copy">
+            <h3>@Localizer["Plan limit notice"]</h3>
+            @foreach (var warning in warnings)
+            {
+                <p>@warning.Message</p>
+            }
+            <a asp-controller="SubscriptionRequest" asp-action="Plans" class="plan-limit-warning-link">
+                @Localizer["View upgrade options"]
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+}

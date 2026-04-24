@@ -10,7 +10,7 @@
     var receiptUrl = ViewBag.ReceiptUrl as string ?? "";
 }
 <!DOCTYPE html>
-<html lang="en">
+<html lang="@CultureInfo.CurrentUICulture.Name">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -48,7 +48,7 @@
                             </div>
                         </div>
                         <div class="public-powered-by">
-                            <span>Powered by</span>
+                            <span>@Localizer["Powered by"]</span>
                             <img src="~/images/websitelogo.png" alt="StockEasy" />
                         </div>
                     </div>
@@ -81,11 +81,11 @@
                 </button>
                 <a class="public-btn public-btn--ghost" href="https://www.facebook.com/sharer/sharer.php?u=@Uri.EscapeDataString(receiptUrl)" target="_blank" rel="noopener noreferrer">
                     <i class="bi bi-messenger"></i>
-                    <span>Messenger</span>
+                    <span>@Localizer["Messenger"]</span>
                 </a>
                 <a class="public-btn public-btn--ghost" href="viber://forward?text=@Uri.EscapeDataString(receiptUrl)" target="_blank" rel="noopener noreferrer">
                     <i class="bi bi-chat-dots-fill"></i>
-                    <span>Viber</span>
+                    <span>@Localizer["Viber"]</span>
                 </a>
             </section>
 
@@ -94,7 +94,7 @@
                     <thead>
                         <tr>
                             <th>@Localizer["Product"]</th>
-                            <th class="receipt-num">Qty</th>
+                            <th class="receipt-num">@Localizer["Qty"]</th>
                             <th class="receipt-num">@Localizer["Price"]</th>
                             <th class="receipt-num">@Localizer["Total"]</th>
                         </tr>

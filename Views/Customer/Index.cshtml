@@ -97,7 +97,7 @@
                 @foreach (var link in inviteLinks)
                 {
                     var statusClass = link.IsUsed ? "used" : link.IsExpired ? "expired" : link.IsActive ? "active" : "revoked";
-                    var statusText = link.IsUsed ? string.Format(Localizer["Used by {0}"].Value, link.CustomerName ?? Localizer["customer"].Value) :
+                    var statusText = link.IsUsed ? string.Format(Localizer["Used by {0}"].Value, link.CustomerName ?? Localizer["Customer"].Value) :
                         link.IsExpired ? Localizer["Expired"].Value :
                         link.IsActive ? Localizer["Active"].Value : Localizer["Revoked"].Value;
 
@@ -110,7 +110,7 @@
                             <div class="customer-share-item__url">@link.Url</div>
                         </div>
                         <div class="customer-share-item__actions">
-                            <button type="button" class="action-btn action-btn-view" title="@Localizer["Copy link"]" data-copy-text="@link.Url">
+                            <button type="button" class="action-btn action-btn-view" title="@Localizer["Copy Link"]" data-copy-text="@link.Url">
                                 <i class="bi bi-copy"></i>
                             </button>
                             @if (!link.IsUsed && !link.IsExpired && link.IsActive)

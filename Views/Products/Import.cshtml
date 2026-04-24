@@ -1,0 +1,159 @@
+@using ClothInventoryApp.Dto.ProductImport
+@model ProductImportUploadDto
+
+@{
+    ViewData["Title"] = Localizer["Import Products"];
+    var result = Model.Result;
+}
+
+<div class="product-import-shell">
+    <div class="product-import-hero">
+        <div class="product-import-hero-copy">
+            <div class="hero-kicker">
+                <i class="bi bi-file-earmark-spreadsheet-fill"></i>
+                <span>@Localizer["Bulk Import"]</span>
+            </div>
+            <h1>@Localizer["Import products from Excel"]</h1>
+            <p>@Localizer["Create products, variants, and opening stock from one standard .xlsx file. Invalid rows are skipped and reported."]</p>
+            <div class="product-import-actions">
+                <a asp-action="DownloadImportTemplate" class="btn-modern-secondary">
+                    <i class="bi bi-download"></i>
+                    @Localizer["Download Template"]
+                </a>
+                <a asp-action="Index" class="btn-modern-secondary">
+                    <i class="bi bi-arrow-left"></i>
+                    @Localizer["Back to Products"]
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="product-import-grid">
+        <section class="product-import-card">
+            <div class="product-import-card-header">
+                <h3>@Localizer["Upload Excel file"]</h3>
+                <p>@Localizer["Use the template columns exactly. Only .xlsx files are supported in this first version."]</p>
+            </div>
+
+            <form asp-action="Import" method="post" enctype="multipart/form-data" class="product-import-form">
+                <div asp-validation-summary="ModelOnly" class="validation-summary-modern"></div>
+
+                <label class="product-import-dropzone">
+                    <i class="bi bi-cloud-arrow-up-fill"></i>
+                    <span>@Localizer["Choose .xlsx file"]</span>
+                    <input asp-for="File" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+                </label>
+                <span asp-validation-for="File" class="field-validation-modern"></span>
+
+                <button type="submit" class="btn-modern-primary product-import-submit">
+                    <i class="bi bi-upload"></i>
+                    @Localizer["Import Products"]
+                </button>
+            </form>
+        </section>
+
+        <aside class="product-import-card product-import-guide">
+            <div class="product-import-card-header">
+                <h3>@Localizer["Required columns"]</h3>
+                <p>@Localizer["Each row creates one sellable variant. Empty SKU is auto-generated."]</p>
+            </div>
+
+            <div class="product-import-column-list">
+                <span>ProductName</span>
+                <span>Category</span>
+                <span>Brand</span>
+                <span>Description</span>
+                <span>SKU</span>
+                <span>Color</span>
+                <span>Size</span>
+                <span>CostPrice</span>
+                <span>SellingPrice</span>
+                <span>Quantity</span>
+                <span>ImageUrl</span>
+            </div>
+
+            <p class="product-import-note">
+                @Localizer["For simple products, leave Color and Size empty. The system will create a hidden default variant."]
+            </p>
+        </aside>
+    </div>
+
+    @if (result != null)
+    {
+        <section class="product-import-card product-import-results">
+            <div class="product-import-card-header product-import-results-header">
+                <div>
+                    <h3>@Localizer["Import result"]</h3>
+                    <p>@Localizer["Review imported and skipped rows below."]</p>
+                </div>
+                <a asp-action="Index" class="btn-modern-outline">
+                    <i class="bi bi-box-seam"></i>
+                    @Localizer["View Products"]
+                </a>
+            </div>
+
+            <div class="product-import-stats">
+                <div>
+                    <strong>@result.ImportedRows</strong>
+                    <span>@Localizer["Imported"]</span>
+                </div>
+                <div>
+                    <strong>@result.SkippedRows</strong>
+                    <span>@Localizer["Skipped"]</span>
+                </div>
+                <div>
+                    <strong>@result.CreatedProducts</strong>
+                    <span>@Localizer["Products"]</span>
+                </div>
+                <div>
+                    <strong>@result.CreatedVariants</strong>
+                    <span>@Localizer["Variants"]</span>
+                </div>
+                <div>
+                    <strong>@result.CreatedStockMovements</strong>
+                    <span>@Localizer["Stock rows"]</span>
+                </div>
+            </div>
+
+            <div class="table-responsive-modern product-import-table-wrap">
+                <table class="table-modern product-import-table">
+                    <thead>
+                        <tr>
+                            <th>@Localizer["Row"]</th>
+                            <th>@Localizer["Product"]</th>
+                            <th>@Localizer["Variant"]</th>
+                            <th>@Localizer["Status"]</th>
+                            <th>@Localizer["Message"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in result.Rows.OrderBy(r => r.RowNumber))
+                        {
+                            var ok = row.Status == "Imported";
+                            <tr>
+                                <td>@row.RowNumber</td>
+                                <td>@row.ProductName</td>
+                                <td>@row.Variant</td>
+                                <td>
+                                    <span class="badge-modern @(ok ? "badge-success" : "badge-out-danger")">@row.Status</span>
+                                </td>
+                                <td>@row.Message</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    }
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/product-index.css" />
+    <link rel="stylesheet" href="~/css/pages/product-import.css" />
+}

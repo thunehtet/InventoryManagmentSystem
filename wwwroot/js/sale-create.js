@@ -324,7 +324,7 @@
         var revenue = subtotal - discount;
         var profit = revenue - cost;
 
-        if (sumRevenue) sumRevenue.textContent = fmt(subtotal);
+        if (sumRevenue) sumRevenue.textContent = fmt(revenue);
         if (sumFinal) sumFinal.textContent = fmt(revenue);
         if (sumCost) sumCost.textContent = fmt(cost);
 

@@ -71,6 +71,7 @@ namespace ClothInventoryApp.Controllers
             var tid = _tenantProvider.GetTenantId();
             ViewBag.HasSaleProfit = await _featureService.HasFeatureAsync(tid, "sale_profit");
             ViewBag.HasCustomers  = await _featureService.HasFeatureAsync(tid, "customers");
+            ViewBag.PlanLimitWarnings = await _subscriptionService.BuildPlanLimitWarningsAsync(tid);
             ViewBag.Search = search;
             ViewBag.Pagination = new PaginationViewModel
             {

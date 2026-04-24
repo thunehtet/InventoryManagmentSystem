@@ -1,4 +1,4 @@
-﻿namespace ClothInventoryApp.Dto.ProductVariant
+namespace ClothInventoryApp.Dto.ProductVariant
 {
     public class ViewProductVariantDto
     {
@@ -10,5 +10,15 @@
         public string Color { get; set; } = string.Empty;
         public int CostPrice { get; set; }
         public int SellingPrice { get; set; }
+        public List<ProductVariantImageDto> Images { get; set; } = new();
+        public List<Microsoft.AspNetCore.Http.IFormFile> NewImages { get; set; } = new();
+    }
+
+    public class ProductVariantImageDto
+    {
+        public Guid Id { get; set; }
+        public string ImageUrl { get; set; } = string.Empty;
+        public int SortOrder { get; set; }
+        public bool IsPrimary { get; set; }
     }
 }

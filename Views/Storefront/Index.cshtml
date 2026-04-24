@@ -1,0 +1,109 @@
+@using ClothInventoryApp.Dto.Storefront
+@model List<ProductCardDto>
+@{
+    Layout = "_ShopLayout";
+    ViewBag.Title = Localizer["Home"].Value;
+    var tenantCode = ViewBag.TenantCode as string ?? "";
+    var tenantName = ViewBag.TenantName as string ?? "";
+    var tagline = ViewBag.Tagline as string;
+    var description = ViewBag.Description as string;
+    var currency = ViewBag.Currency as string ?? "";
+}
+
+<section class="shop-hero">
+    <div class="shop-container">
+        <div class="shop-hero-inner">
+            <div class="shop-hero-copy">
+                <div class="shop-hero-kicker">@Localizer["{0} online shop", tenantName]</div>
+                <h1 class="shop-hero-title">@Localizer["Shop products and place your order online."]</h1>
+                @if (!string.IsNullOrWhiteSpace(tagline))
+                {
+                    <p class="shop-hero-tagline">@tagline</p>
+                }
+                @if (!string.IsNullOrWhiteSpace(description))
+                {
+                    <p class="shop-hero-desc">@description</p>
+                }
+                <div class="shop-hero-actions">
+                    <a class="shop-btn shop-btn--primary" href="/shop/@tenantCode/products">@Localizer["Browse Products"] <i class="bi bi-arrow-right"></i></a>
+                    <a class="shop-btn shop-btn--ghost" href="/shop/@tenantCode/cart"><i class="bi bi-bag"></i> @Localizer["View Cart"]</a>
+                </div>
+            </div>
+            <div class="shop-hero-note">
+                <i class="bi bi-truck"></i>
+                <span>@Localizer["Cash on delivery available. Select variants, add to cart, and submit your order."]</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="shop-section shop-container">
+    <div class="shop-section-header">
+        <div>
+            <span class="shop-section-eyebrow">@Localizer["Products"]</span>
+            <h2>@Localizer["Featured products"]</h2>
+        </div>
+        <a class="shop-section-link" href="/shop/@tenantCode/products">@Localizer["View all"] <i class="bi bi-arrow-right"></i></a>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="shop-empty">
+            <i class="bi bi-box-seam"></i>
+            <p>@Localizer["No products available yet. Check back soon."]</p>
+        </div>
+    }
+    else
+    {
+        <div class="shop-grid">
+            @foreach (var p in Model)
+            {
+                <a class="shop-card" href="/shop/@tenantCode/p/@p.Id">
+                    <div class="shop-card-img">
+                        @if (!string.IsNullOrWhiteSpace(p.ImageUrl))
+                        {
+                            <img src="@p.ImageUrl" alt="@p.Name" />
+                        }
+                        else
+                        {
+                            <div class="shop-card-img-placeholder"><i class="bi bi-image"></i></div>
+                        }
+                        @if (p.TotalStock <= 0)
+                        {
+                            <span class="shop-badge shop-badge--muted">@Localizer["Out of stock"]</span>
+                        }
+                    </div>
+                    <div class="shop-card-body">
+                        <div class="shop-card-brand">@p.Brand</div>
+                        <div class="shop-card-name">@p.Name</div>
+                        <div class="shop-card-price">
+                            @if (p.MinPrice == p.MaxPrice)
+                            {
+                                <span>@currency @p.MinPrice</span>
+                            }
+                            else
+                            {
+                                <span>@currency @p.MinPrice - @p.MaxPrice</span>
+                            }
+                        </div>
+                        <div class="shop-card-foot">
+                            @if (p.VariantCount > 1)
+                            {
+                                <span>@Localizer["{0} options", p.VariantCount]</span>
+                            }
+                            else if (p.TotalStock > 0)
+                            {
+                            <span>@Localizer["Ready to order"]</span>
+                            }
+                            else
+                            {
+                            <span>@Localizer["Unavailable"]</span>
+                            }
+                            <i class="bi bi-arrow-up-right"></i>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+</section>

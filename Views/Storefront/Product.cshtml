@@ -1,0 +1,172 @@
+@using ClothInventoryApp.Dto.Storefront
+@model ProductDetailDto
+@{
+    Layout = "_ShopLayout";
+    ViewBag.Title = Model.Name;
+    var tenantCode = ViewBag.TenantCode as string ?? "";
+    var currency = ViewBag.Currency as string ?? "";
+    var inStockVariants = Model.Variants.Where(v => v.Stock > 0).ToList();
+    var anyInStock = inStockVariants.Count > 0;
+    var hasMultipleChoices = Model.Variants.Count(v => v.Stock > 0) > 1;
+    var singleVariant = inStockVariants.Count == 1 ? inStockVariants[0] : null;
+    var minPrice = Model.Variants.Count > 0 ? Model.Variants.Min(v => v.SellingPrice) : 0;
+    var maxPrice = Model.Variants.Count > 0 ? Model.Variants.Max(v => v.SellingPrice) : 0;
+}
+
+<section class="shop-container shop-product-page">
+    <a class="shop-back-link" href="/shop/@tenantCode/products"><i class="bi bi-arrow-left"></i> @Localizer["Back to shop"]</a>
+
+    <div class="shop-product-grid">
+        <div class="shop-product-media">
+            @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+            {
+                <img src="@Model.ImageUrl" alt="@Model.Name" />
+            }
+            else
+            {
+                <div class="shop-product-img-placeholder"><i class="bi bi-image"></i></div>
+            }
+            @if (Model.GalleryImageUrls.Count > 1)
+            {
+                <div class="shop-product-gallery">
+                    @foreach (var imageUrl in Model.GalleryImageUrls)
+                    {
+                        <img src="@imageUrl" alt="@Model.Name" />
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="shop-product-info">
+            <div class="shop-product-brand">@Model.Brand</div>
+            <h1 class="shop-product-title">@Model.Name</h1>
+            <div class="shop-product-category"><i class="bi bi-tag"></i> @Model.Category</div>
+
+            <div class="shop-product-price">
+                @if (minPrice == maxPrice)
+                {
+                    <span>@currency @minPrice</span>
+                }
+                else
+                {
+                    <span>@currency @minPrice - @maxPrice</span>
+                }
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.Description))
+            {
+                <p class="shop-product-desc">@Model.Description</p>
+            }
+
+            @if (!anyInStock)
+            {
+                <div class="shop-product-soldout">
+                    <i class="bi bi-exclamation-circle"></i> @Localizer["All variants are currently out of stock."]
+                </div>
+            }
+            else
+            {
+                @if (!hasMultipleChoices && singleVariant != null)
+                {
+                    <form method="post" action="/shop/@tenantCode/cart/add" class="shop-single-buy-card">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="variantId" value="@singleVariant.Id" />
+                        <div class="shop-single-buy-info">
+                            <div class="shop-product-stock-stack">
+                                <span class="shop-pill shop-pill--ok">@Localizer["{0} in stock", singleVariant.Stock]</span>
+                                @if (singleVariant.QuantityInCart > 0)
+                                {
+                                    <span class="shop-pill shop-pill--cart">@Localizer["In cart: {0}", singleVariant.QuantityInCart]</span>
+                                }
+                            </div>
+                            <strong>@currency @singleVariant.SellingPrice</strong>
+                        </div>
+                        <div class="shop-single-buy-actions">
+                            <input type="number" name="quantity" value="1" min="1" max="@singleVariant.Stock" />
+                            <button type="submit" class="shop-btn shop-btn--primary">
+                                <i class="bi bi-bag-plus"></i> @Localizer["Add to cart"]
+                            </button>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <h3 class="shop-variant-title">@Localizer["Choose an option"]</h3>
+                    <p class="shop-variant-helper">@Localizer["Select the color or size you want. Internal SKU codes are hidden from customers."]</p>
+                    <div class="shop-variant-list">
+                        @foreach (var v in Model.Variants)
+                        {
+                            var disabled = v.Stock <= 0;
+                            var color = DisplayOption(v.Color);
+                            var size = DisplayOption(v.Size);
+                            <form method="post" action="/shop/@tenantCode/cart/add" class="shop-variant-row @(disabled ? "shop-variant-row--disabled" : "")">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="variantId" value="@v.Id" />
+                                <div class="shop-variant-thumb">
+                                    @if (!string.IsNullOrWhiteSpace(v.PrimaryImageUrl))
+                                    {
+                                        <img src="@v.PrimaryImageUrl" alt="@Model.Name" />
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-image"></i>
+                                    }
+                                </div>
+                                <div class="shop-variant-meta">
+                                    <div class="shop-variant-name">
+                                        @if (!string.IsNullOrWhiteSpace(color))
+                                        {
+                                            <span class="shop-variant-pill">@color</span>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(size))
+                                        {
+                                            <span class="shop-variant-pill">@size</span>
+                                        }
+                                        @if (string.IsNullOrWhiteSpace(color) && string.IsNullOrWhiteSpace(size))
+                                        {
+                                            <span class="shop-variant-pill">@Localizer["Standard"]</span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="shop-variant-price">@currency @v.SellingPrice</div>
+                                <div class="shop-variant-stock">
+                                    @if (disabled)
+                                    {
+                                        <span class="shop-pill shop-pill--muted">@Localizer["Out of stock"]</span>
+                                    }
+                                    else
+                                    {
+                                        <div class="shop-product-stock-stack">
+                                            <span class="shop-pill shop-pill--ok">@Localizer["{0} in stock", v.Stock]</span>
+                                            @if (v.QuantityInCart > 0)
+                                            {
+                                                <span class="shop-pill shop-pill--cart">@Localizer["In cart: {0}", v.QuantityInCart]</span>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                                <div class="shop-variant-qty">
+                                    <input type="number" name="quantity" value="1" min="1" max="@v.Stock" @(disabled ? "disabled" : "") />
+                                </div>
+                                <button type="submit" class="shop-btn shop-btn--primary" @(disabled ? "disabled" : "")>
+                                    <i class="bi bi-bag-plus"></i> @Localizer["Add"]
+                                </button>
+                            </form>
+                        }
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>
+
+@functions {
+    private static string DisplayOption(string? value)
+    {
+        var trimmed = value?.Trim();
+        return string.IsNullOrWhiteSpace(trimmed) ||
+            string.Equals(trimmed, "Default", StringComparison.OrdinalIgnoreCase)
+                ? string.Empty
+                : trimmed;
+    }
+}
